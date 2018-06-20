@@ -3,7 +3,7 @@
   *
   * https://github.com/scalameta/scalafmt
   */
-addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.6.0-RC3")
+addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.5.1")
 
 /**
   * Refactoring/linting tool for scala.
@@ -26,7 +26,7 @@ addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.6.0-RC3")
   *
   * }}}
   */
-addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.6.0-M9")
+//addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.6.0-M9")
 
 /**
   * Used to create one big fat jar which contains all dependencies of this application
@@ -43,3 +43,11 @@ addSbtPlugin("com.eed3si9n" %% "sbt-assembly" % "0.14.7")
   *
   */
 addSbtPlugin("net.virtual-void" %% "sbt-dependency-graph" % "0.9.0")
+
+/**
+  *
+  * Allows to specify anonymous higher kinded types with easy syntax
+  *
+  * https://github.com/non/kind-projector
+  */
+//addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.7")

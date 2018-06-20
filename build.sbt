@@ -6,7 +6,22 @@ lazy val root =
   Project(id = "pure-movie-server", base = file("."))
     .settings(commonsSettings)
     .aggregate(
+      server
     )
+
+lazy val `purer-config` = project
+  .settings(commonsSettings)
+  .settings(sbtAssemblySettings)
+
+lazy val server = project
+  .settings(commonsSettings)
+  .settings(sbtAssemblySettings)
+  .settings(
+    mainClass := Option("busylabs.pms.PureMovieServerApp")
+  )
+  .dependsOn(
+    `purer-config`
+  )
 
 def commonsSettings: Seq[Setting[_]] = Seq(
   scalaVersion := "2.12.6",
@@ -39,7 +54,8 @@ def commonsSettings: Seq[Setting[_]] = Seq(
     //test stuff
     doobieTK,
     //misc
-    attoParser
+    attoParser,
+    pureConfig,
   ) ++ tsec,
   /*
    * Eliminates useless, unintuitive, and sometimes broken additions of `withFilter`
