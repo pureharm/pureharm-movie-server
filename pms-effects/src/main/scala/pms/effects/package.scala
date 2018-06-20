@@ -32,6 +32,13 @@ package object effects extends AnyRef with OptionSyntax.Implicits with OptionSyn
   type Effect[F[_]] = cats.effect.Effect[F]
   @inline def Effect: cats.effect.Effect.type = cats.effect.Effect
 
+  type Monad[F[_]] = cats.Monad[F]
+  @inline def Monad: cats.Monad.type = cats.Monad
+
+  type MonadError[F[_], E] = cats.MonadError[F, E]
+  @inline def MonadError: cats.MonadError.type = cats.MonadError
+
+
   object validated extends ValidatedTypeDefinitions with ValidatedSyntax.Implicits with ValidatedSyntaxAsync.Implcits
 
 }
