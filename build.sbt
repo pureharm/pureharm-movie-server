@@ -88,7 +88,7 @@ def commonsSettings: Seq[Setting[_]] = Seq(
     * you build apps on the JVM.
     */
   dependencyOverrides += "org.typelevel" %% "cats-core"   % "1.1.0",
-  dependencyOverrides += "org.typelevel" %% "cats-effect" % "1.0.0-RC2",
+  dependencyOverrides += "org.typelevel" %% "cats-effect" % "0.10.1",
 
   resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
