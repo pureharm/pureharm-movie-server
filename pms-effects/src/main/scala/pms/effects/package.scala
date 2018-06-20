@@ -1,4 +1,4 @@
-package busylabs
+package pms
 
 import busymachines.effects.async._
 import busymachines.effects.sync._

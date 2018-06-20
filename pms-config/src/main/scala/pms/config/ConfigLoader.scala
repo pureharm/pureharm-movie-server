@@ -1,6 +1,6 @@
-package busylabs.config
+package pms.config
 
-import busylabs.effects._
+import pms.effects._
 import pureconfig._
 import pureconfig.error.ConfigReaderFailures
 

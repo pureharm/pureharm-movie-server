@@ -1,4 +1,4 @@
-package busylabs.config
+package pms.config
 
 import busymachines.core._
 import pureconfig.error.ConfigReaderFailure

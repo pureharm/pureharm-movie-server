@@ -1,4 +1,4 @@
-package busylabs.config
+package pms.config
 
 import busymachines.core.AnomalousFailures
 import busymachines.core.AnomalyID

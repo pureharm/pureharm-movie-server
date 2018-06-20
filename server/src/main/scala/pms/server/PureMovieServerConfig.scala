@@ -1,7 +1,7 @@
-package busylabs.pms
+package pms.server
 
-import busylabs.effects._
-import busylabs.config.ConfigLoader
+import pms.effects._
+import pms.config._
 
 /**
   *

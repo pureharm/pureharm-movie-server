@@ -16,10 +16,12 @@ lazy val server = project
   .dependsOn(
     `pms-effects`,
     `pms-config`,
+    `pms-core`,
     `algebra-user`,
   ).aggregate(
   `pms-effects`,
   `pms-config`,
+  `pms-core`,
   `algebra-user`,
   )
 
@@ -29,16 +31,21 @@ lazy val `algebra-user` = project
   .dependsOn(
     `pms-config`,
     `pms-effects`,
-    `algebra-core`,
+    `pms-core`,
   ).aggregate(
   `pms-config`,
   `pms-effects`,
-  `algebra-core`,
+  `pms-core`,
   )
 
-lazy val `algebra-core` = project
+lazy val `pms-core` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      shapeless
+    )
+  )
   .dependsOn(
     `pms-effects`
   )

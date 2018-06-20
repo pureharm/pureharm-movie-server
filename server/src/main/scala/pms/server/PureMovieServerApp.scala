@@ -1,6 +1,7 @@
-package busylabs.pms
+package pms.server
 
-import busylabs.effects._
+import pms.effects._
+
 import fs2.{Stream, StreamApp}
 import org.http4s.HttpService
 import org.http4s.server.blaze.BlazeBuilder
