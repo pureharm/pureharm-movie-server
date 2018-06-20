@@ -1,6 +1,6 @@
 package busylabs.config
 
-import cats.effect.Sync
+import busylabs.effects._
 import pureconfig._
 import pureconfig.error.ConfigReaderFailures
 

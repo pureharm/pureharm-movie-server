@@ -1,9 +1,9 @@
 package busylabs.pms
 
-import busymachines.effects._
-import cats.effect.Effect
+import busylabs.effects._
 import fs2.{Stream, StreamApp}
 import org.http4s.HttpService
+import org.http4s.server.blaze.BlazeBuilder
 
 /**
   *
@@ -12,7 +12,6 @@ import org.http4s.HttpService
   *
   */
 object PureMovieServerApp extends StreamApp[IO] {
-  import org.http4s.server.blaze.BlazeBuilder
 
   private def pureMovieHttpServices[F[_]: Effect]: HttpService[F] =
     new HelloWorldService().service

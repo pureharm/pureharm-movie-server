@@ -1,12 +1,13 @@
 package busylabs.pms
 
-import cats.effect.Effect
+import busylabs.effects._
+
 import io.circe.Json
 import org.http4s.HttpService
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 
-class HelloWorldService[F[_]: Effect] extends Http4sDsl[F] {
+final class HelloWorldService[F[_]: Effect] extends Http4sDsl[F] {
 
   val service: HttpService[F] = {
     HttpService[F] {
@@ -14,4 +15,5 @@ class HelloWorldService[F[_]: Effect] extends Http4sDsl[F] {
         Ok(Json.obj("message" -> Json.fromString(s"PMS says: ${name}")))
     }
   }
+
 }

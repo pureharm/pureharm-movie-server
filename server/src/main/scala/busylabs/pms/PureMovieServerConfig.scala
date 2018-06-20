@@ -1,7 +1,7 @@
 package busylabs.pms
 
+import busylabs.effects._
 import busylabs.config.ConfigLoader
-import cats.effect.Sync
 
 /**
   *

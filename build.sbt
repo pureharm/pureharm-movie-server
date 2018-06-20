@@ -1,29 +1,64 @@
 import sbt._
-import sbtassembly.MergeStrategy
-import sbtassembly.PathList
 
 lazy val root =
   Project(id = "pure-movie-server", base = file("."))
-    .settings(commonsSettings)
+    .settings(commonSettings)
     .aggregate(
       server
     )
 
-lazy val `purer-config` = project
-  .settings(commonsSettings)
-  .settings(sbtAssemblySettings)
-
 lazy val server = project
-  .settings(commonsSettings)
+  .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
     mainClass := Option("busylabs.pms.PureMovieServerApp")
   )
   .dependsOn(
-    `purer-config`
+    `pms-effects`,
+    `pms-config`,
+    `algebra-user`,
+  ).aggregate(
+  `pms-effects`,
+  `pms-config`,
+  `algebra-user`,
   )
 
-def commonsSettings: Seq[Setting[_]] = Seq(
+lazy val `algebra-user` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .dependsOn(
+    `pms-config`,
+    `pms-effects`,
+    `algebra-core`,
+  ).aggregate(
+  `pms-config`,
+  `pms-effects`,
+  `algebra-core`,
+  )
+
+lazy val `algebra-core` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .dependsOn(
+    `pms-effects`
+  )
+
+lazy val `pms-config` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .dependsOn(
+    `pms-effects`
+  )
+
+
+lazy val `pms-effects` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+
+//=============================================================================
+//=============================================================================
+
+def commonSettings: Seq[Setting[_]] = Seq(
   scalaVersion := "2.12.6",
   libraryDependencies ++= Seq(
     //utils
@@ -94,6 +129,9 @@ def commonsSettings: Seq[Setting[_]] = Seq(
 )
 
 def sbtAssemblySettings: Seq[Setting[_]] = {
+  import sbtassembly.MergeStrategy
+  import sbtassembly.PathList
+
   baseAssemblySettings ++
     Seq(
       // Skip tests during while running the assembly task
@@ -171,6 +209,9 @@ def customScalaCompileFlags: Seq[String] = Seq(
   "-P:bm4:no-tupling:y",
 )
 
+//=============================================================================
+//=============================================================================
+
 //https://github.com/busymachines/busymachines-commons
 def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$m" % "0.3.0-RC8"
 
@@ -218,9 +259,9 @@ lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.2" withSour
 //https://github.com/http4s/http4s
 lazy val Http4sVersion = "0.18.12"
 
-lazy val http4sBlazeServer = "org.http4s" %% "http4s-blaze-server" % Http4sVersion withSources ()
-lazy val http4sCirce       = "org.http4s" %% "http4s-circe"        % Http4sVersion withSources ()
-lazy val http4sDSL         = "org.http4s" %% "http4s-dsl"          % Http4sVersion withSources ()
+lazy val http4sBlazeServer: ModuleID = "org.http4s" %% "http4s-blaze-server" % Http4sVersion withSources ()
+lazy val http4sCirce:       ModuleID = "org.http4s" %% "http4s-circe"        % Http4sVersion withSources ()
+lazy val http4sDSL:         ModuleID = "org.http4s" %% "http4s-dsl"          % Http4sVersion withSources ()
 
 //https://github.com/tpolecat/doobie
 lazy val doobieVersion = "0.5.3"
@@ -229,8 +270,10 @@ lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"    % doobieVersion w
 lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres"  % doobieVersion withSources () // Postgres driver 42.2.2 + type mappings.
 lazy val doobieTK       = "org.tpolecat" %% "doobie-specs2"    % doobieVersion % Test withSources () // specs2 support for typechecking statements.
 
+lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.3" withSources()
+
 //https://github.com/jmcardon/tsec
-val tsecV = "0.0.1-M11"
+lazy val tsecV = "0.0.1-M11"
 
 lazy val tsec = Seq(
   "io.github.jmcardon" %% "tsec-common"        % tsecV withSources(),
