@@ -100,8 +100,10 @@ def sbtAssemblySettings: Seq[Setting[_]] = {
       test in assembly := {},
       assemblyMergeStrategy in assembly := {
         case PathList("application.conf", _ @_*) => MergeStrategy.concat
-        case "application.conf" => MergeStrategy.concat
-        case x                  => (assemblyMergeStrategy in assembly).value(x)
+        case "application.conf"                  => MergeStrategy.concat
+        case PathList("reference.conf", _ @_*)   => MergeStrategy.concat
+        case "reference.conf"                    => MergeStrategy.concat
+        case x                                   => (assemblyMergeStrategy in assembly).value(x)
       },
       //this is to avoid propagation of the assembly task to all subprojects.
       //changing this makes assembly incredibly slow
