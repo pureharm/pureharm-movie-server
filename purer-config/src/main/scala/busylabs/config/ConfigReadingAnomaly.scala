@@ -19,7 +19,7 @@ final case class ConfigReadingAnomaly(c: ConfigReaderFailure)
       "reason" -> c.description
     )
     val loc = c.location.map(l => ("location" -> l.description): (String, Anomaly.Parameter))
-    orig.++(loc.toMap : Anomaly.Parameters)
+    orig.++(loc.toMap: Anomaly.Parameters)
   }
 }
 
