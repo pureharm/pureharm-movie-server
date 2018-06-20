@@ -14,8 +14,7 @@ object PlainTextPassword {
   //TODO: make these restrictions configurable
   def apply(pw: String): Result[PlainTextPassword] =
     if (pw.length < 6)
-      Result.fail(
-        InvalidInputFailure("Password needs to have at least 6 characters"))
+      Result.fail(InvalidInputFailure("Password needs to have at least 6 characters"))
     else Result.pure(new PlainTextPassword(pw))
 
 }

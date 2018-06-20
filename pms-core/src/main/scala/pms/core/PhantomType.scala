@@ -12,7 +12,7 @@ trait PhantomType[T] {
 
   type Phantom <: this.type
 
-  type Raw = T
+  type Raw  = T
   type Type = T @@ Phantom
 
   @inline def apply(value: T): @@[T, Phantom] = {
