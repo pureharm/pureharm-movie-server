@@ -14,8 +14,8 @@ package object movie {
   object MovieID extends PhantomType[Long]
   type MovieID = MovieID.Type
 
-  object MovieName extends PhantomType[String]
-  type MovieName = MovieName.Type
+  object MovieTitle extends PhantomType[String]
+  type MovieTitle = MovieTitle.Type
 
   object ReleaseDate extends PhantomType[LocalDate]
   type ReleaseDate = ReleaseDate.Type
