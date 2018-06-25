@@ -8,7 +8,9 @@ import pms.algebra.user._
   * @since 25 Jun 2018
   *
   */
-abstract class MovieAlgebra[F[_]](implicit userAuth: UserAuthAlgebra[F]) {
+abstract class MovieAlgebra[F[_]] {
+
+  protected def userAuth: UserAuthAlgebra[F]
 
   final def createMovie(title: MovieTitle, date: Option[ReleaseDate])(implicit auth: AuthCtx): F[Movie] = {
     userAuth.authorize(createMovieImpl(title, date))
@@ -16,11 +18,12 @@ abstract class MovieAlgebra[F[_]](implicit userAuth: UserAuthAlgebra[F]) {
 
   protected def createMovieImpl(title: MovieTitle, date: Option[ReleaseDate]): F[Movie]
 
-  protected def findMoviesBetween(interval: QueryInterval): F[List[Movie]]
+  def findMoviesBetween(interval: QueryInterval): F[List[Movie]]
 }
 
 object MovieAlgebra {
   import pms.effects._
 
-  def async[F[_]: Async](implicit userAuth: UserAuthAlgebra[F]): MovieAlgebra[F] = ???
+  def async[F[_]: Async](userAuth: UserAuthAlgebra[F]): MovieAlgebra[F] =
+    new impl.AsyncMovieAlgebraImpl(userAuth)
 }
