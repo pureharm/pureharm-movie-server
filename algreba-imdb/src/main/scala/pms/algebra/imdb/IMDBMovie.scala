@@ -8,5 +8,5 @@ package pms.algebra.imdb
   */
 final case class IMDBMovie(
   title: IMDBTitle,
-  year:  Option[ReleaseDate],
+  year:  Option[ReleaseYear],
 )

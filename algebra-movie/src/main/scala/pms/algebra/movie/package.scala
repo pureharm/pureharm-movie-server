@@ -20,5 +20,7 @@ package object movie {
   object ReleaseDate extends PhantomType[LocalDate]
   type ReleaseDate = ReleaseDate.Type
 
+  implicit val releaseDateOrder: spire.algebra.Order[ReleaseDate] = ???
+
   type QueryInterval = Interval[ReleaseDate]
 }

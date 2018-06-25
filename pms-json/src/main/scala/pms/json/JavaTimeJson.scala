@@ -1,7 +1,7 @@
 package pms.json
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import pms.core._
 
 /**
   *
@@ -12,11 +12,10 @@ import java.time.format.DateTimeFormatter
 object JavaTimeJson extends JavaTimeJson
 
 trait JavaTimeJson {
-  private val localDateFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd")
 
   implicit val localDateCirceCodec: Codec[LocalDate] = Codec.instance(
-    Encoder.apply[String].contramap(m => m.format(localDateFormatter)),
-    Decoder.apply[String].map(s => LocalDate.parse(s, localDateFormatter))
+    Encoder.apply[String].contramap(m => m.format(TimeFormatters.LocalDateFormatter)),
+    Decoder.apply[String].map(s => LocalDate.parse(s, TimeFormatters.LocalDateFormatter))
   )
 
 }

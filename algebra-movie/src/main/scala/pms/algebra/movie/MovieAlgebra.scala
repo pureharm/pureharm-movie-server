@@ -12,13 +12,15 @@ abstract class MovieAlgebra[F[_]] {
 
   protected def userAuth: UserAuthAlgebra[F]
 
-  final def createMovie(title: MovieTitle, date: Option[ReleaseDate])(implicit auth: AuthCtx): F[Movie] = {
-    userAuth.authorize(createMovieImpl(title, date))
-  }
+  final def createMovie(mc: MovieCreation)(implicit auth: AuthCtx): F[Movie] =
+    userAuth.authorize(createMovieImpl(mc))
 
-  protected def createMovieImpl(title: MovieTitle, date: Option[ReleaseDate]): F[Movie]
+  protected def createMovieImpl(mc: MovieCreation): F[Movie]
 
-  def findMoviesBetween(interval: QueryInterval): F[List[Movie]]
+  def findMoviesBetween(interval: QueryInterval)(implicit auth: AuthCtx): F[List[Movie]] =
+    userAuth.authorize(findMoviesBetweenImpl(interval))
+
+  protected def findMoviesBetweenImpl(interval: QueryInterval): F[List[Movie]]
 }
 
 object MovieAlgebra {

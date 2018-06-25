@@ -1,6 +1,6 @@
 package pms.algebra
 
-import java.time.LocalDate
+import java.time.Year
 
 import pms.core._
 
@@ -17,6 +17,6 @@ package object imdb {
   object IMDBTitle extends PhantomType[String]
   type IMDBTitle = IMDBTitle.Type
 
-  object ReleaseDate extends PhantomType[LocalDate]
-  type ReleaseDate = ReleaseDate.Type
+  object ReleaseYear extends PhantomType[Year]
+  type ReleaseYear = ReleaseYear.Type
 }

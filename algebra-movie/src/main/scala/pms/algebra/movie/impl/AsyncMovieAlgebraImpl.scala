@@ -16,9 +16,9 @@ final private[movie] class AsyncMovieAlgebraImpl[F[_]](
   implicit val F: Async[F],
 ) extends MovieAlgebra[F] {
 
-  override protected def createMovieImpl(title: MovieTitle, date: Option[ReleaseDate]): F[Movie] =
+  override protected def createMovieImpl(mc: MovieCreation): F[Movie] =
     F.delay(???)
 
-  override def findMoviesBetween(interval: QueryInterval): F[List[Movie]] =
+  override def findMoviesBetweenImpl(interval: QueryInterval): F[List[Movie]] =
     F.delay(???)
 }
