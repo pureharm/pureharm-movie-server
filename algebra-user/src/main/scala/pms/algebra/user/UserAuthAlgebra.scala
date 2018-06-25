@@ -10,7 +10,7 @@ import busymachines.core.UnauthorizedFailure
   * @since 20 Jun 2018
   *
   */
-abstract class UserAuthAlgebra[F[_]](implicit val ME: MonadError[F, Throwable]) {
+abstract class UserAuthAlgebra[F[_]](implicit val monadError: MonadError[F, Throwable]) {
 
   def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx]
 
@@ -66,7 +66,7 @@ abstract class UserAuthAlgebra[F[_]](implicit val ME: MonadError[F, Throwable]) 
   final protected[user] def authorizeGTERole[A](minRole: UserRole)(op: => F[A])(implicit auth: AuthCtx): F[A] =
     for {
       _ <- if (auth.user.role >= minRole) op
-          else ME.raiseError(UnauthorizedFailure("User not authorized to perform this action"))
+          else monadError.raiseError(UnauthorizedFailure("User not authorized to perform this action"))
       result <- op
     } yield result
 }
