@@ -13,9 +13,10 @@ class PhantomTypeSpec extends mutable.Specification {
 
   "PhantomType" >> {
     "should haunt and excorcise the types" >> {
-      val original  = "EVERYTHING IS A SPOOK!"
-      val haunted   = Haunted.haunt(original)
-      val exorcised = Haunted.exorcise(haunted)
+      val original:  String  = "EVERYTHING IS A SPOOK!"
+      val haunted:   Haunted = Haunted.haunt(original)
+      val exorcised: String  = Haunted.exorcise(haunted)
+
       original must_=== exorcised
     }
   }
