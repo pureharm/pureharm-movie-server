@@ -17,15 +17,65 @@ lazy val server = project
     `pms-effects`,
     `pms-config`,
     `pms-core`,
-    `algebra-user`,
-    `algebra-movie`,
+    `service-user`,
+    `service-movie`,
   )
   .aggregate(
     `pms-effects`,
     `pms-config`,
     `pms-core`,
+    `service-user`,
+    `service-movie`,
+  )
+
+lazy val `service-user` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .dependsOn(
     `algebra-user`,
+    `pms-config`,
+    `pms-effects`,
+    `pms-core`,
+  )
+  .aggregate(
+    `algebra-user`,
+    `pms-config`,
+    `pms-effects`,
+    `pms-core`,
+  )
+
+lazy val `service-movie` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .dependsOn(
+    `algebra-user`,
+    `algreba-imdb`,
     `algebra-movie`,
+    `pms-config`,
+    `pms-effects`,
+    `pms-core`,
+  )
+  .aggregate(
+    `algebra-user`,
+    `algreba-imdb`,
+    `algebra-movie`,
+    `pms-config`,
+    `pms-effects`,
+    `pms-core`,
+  )
+
+lazy val `algreba-imdb` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .dependsOn(
+    `pms-config`,
+    `pms-effects`,
+    `pms-core`,
+  )
+  .aggregate(
+    `pms-config`,
+    `pms-effects`,
+    `pms-core`,
   )
 
 lazy val `algebra-movie` = project
@@ -298,7 +348,15 @@ lazy val doobieTK       = "org.tpolecat" %% "doobie-specs2"   % doobieVersion % 
 
 lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.3" withSources ()
 
+//============================================================================================
+//==========================================  math ===========================================
+//============================================================================================
+
 lazy val spire: ModuleID = "org.typelevel" %% "spire" % "0.14.1" withSources ()
+
+//============================================================================================
+//========================================  security  ========================================
+//============================================================================================
 
 //https://github.com/jmcardon/tsec
 lazy val tsecV = "0.0.1-M11"
@@ -336,6 +394,13 @@ lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % "1.2.3" withSou
 lazy val javaxMail = "com.sun.mail" % "javax.mail" % "1.6.1" withSources ()
 
 //============================================================================================
+//========================================= html =============================================
+//============================================================================================
+
+//https://github.com/ruippeixotog/scala-scraper
+lazy val scalaScrapper = "net.ruippeixotog" %% "scala-scraper" % "2.1.0" withSources ()
+
+//============================================================================================
 //=========================================  testing =========================================
 //============================================================================================
 
@@ -346,4 +411,5 @@ lazy val specs2: ModuleID = "org.specs2" %% "specs2-core" % "4.3.0" % Test withS
 //=========================================== misc ===========================================
 //============================================================================================
 
+//https://github.com/pureconfig/pureconfig
 lazy val pureConfig: ModuleID = "com.github.pureconfig" %% "pureconfig" % "0.9.1" withSources ()
