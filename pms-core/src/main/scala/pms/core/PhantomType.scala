@@ -15,8 +15,15 @@ trait PhantomType[T] {
   type Raw  = T
   type Type = T @@ Phantom
 
-  @inline def apply(value: T): @@[T, Phantom] = {
+  @inline def apply(value: T): @@[T, Phantom] =
     shapeless.tag[Phantom](value)
-  }
 
+  /**
+    * alias for [[apply]]
+    */
+  @inline def haunt(value: T): @@[T, Phantom] =
+    shapeless.tag[Phantom](value)
+
+  @inline def exorcise(phantom: Type): T =
+    identity(phantom)
 }
