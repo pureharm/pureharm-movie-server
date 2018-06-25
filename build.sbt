@@ -18,11 +18,30 @@ lazy val server = project
     `pms-config`,
     `pms-core`,
     `algebra-user`,
-  ).aggregate(
-  `pms-effects`,
-  `pms-config`,
-  `pms-core`,
-  `algebra-user`,
+    `algebra-movie`,
+  )
+  .aggregate(
+    `pms-effects`,
+    `pms-config`,
+    `pms-core`,
+    `algebra-user`,
+    `algebra-movie`,
+  )
+
+lazy val `algebra-movie` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .dependsOn(
+    `algebra-user`,
+    `pms-config`,
+    `pms-effects`,
+    `pms-core`,
+  )
+  .aggregate(
+    `algebra-user`,
+    `pms-config`,
+    `pms-effects`,
+    `pms-core`,
   )
 
 lazy val `algebra-user` = project
@@ -32,10 +51,11 @@ lazy val `algebra-user` = project
     `pms-config`,
     `pms-effects`,
     `pms-core`,
-  ).aggregate(
-  `pms-config`,
-  `pms-effects`,
-  `pms-core`,
+  )
+  .aggregate(
+    `pms-config`,
+    `pms-effects`,
+    `pms-core`,
   )
 
 lazy val `pms-core` = project
@@ -56,7 +76,6 @@ lazy val `pms-config` = project
   .dependsOn(
     `pms-effects`
   )
-
 
 lazy val `pms-effects` = project
   .settings(commonSettings)
@@ -98,6 +117,7 @@ def commonSettings: Seq[Setting[_]] = Seq(
     //misc
     attoParser,
     pureConfig,
+    spire,
   ) ++ tsec,
   /*
    * Eliminates useless, unintuitive, and sometimes broken additions of `withFilter`
@@ -131,7 +151,6 @@ def commonSettings: Seq[Setting[_]] = Seq(
     */
   dependencyOverrides += "org.typelevel" %% "cats-core"   % "1.1.0",
   dependencyOverrides += "org.typelevel" %% "cats-effect" % "0.10.1",
-
   resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
@@ -145,10 +164,10 @@ def sbtAssemblySettings: Seq[Setting[_]] = {
       test in assembly := {},
       assemblyMergeStrategy in assembly := {
         case PathList("application.conf", _ @_*) => MergeStrategy.concat
-        case "application.conf"                  => MergeStrategy.concat
-        case PathList("reference.conf", _ @_*)   => MergeStrategy.concat
-        case "reference.conf"                    => MergeStrategy.concat
-        case x                                   => (assemblyMergeStrategy in assembly).value(x)
+        case "application.conf" => MergeStrategy.concat
+        case PathList("reference.conf", _ @_*) => MergeStrategy.concat
+        case "reference.conf" => MergeStrategy.concat
+        case x                => (assemblyMergeStrategy in assembly).value(x)
       },
       //this is to avoid propagation of the assembly task to all subprojects.
       //changing this makes assembly incredibly slow
@@ -273,28 +292,30 @@ lazy val http4sDSL:         ModuleID = "org.http4s" %% "http4s-dsl"          % H
 //https://github.com/tpolecat/doobie
 lazy val doobieVersion = "0.5.3"
 
-lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"    % doobieVersion withSources () // HikariCP transactor.
-lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres"  % doobieVersion withSources () // Postgres driver 42.2.2 + type mappings.
-lazy val doobieTK       = "org.tpolecat" %% "doobie-specs2"    % doobieVersion % Test withSources () // specs2 support for typechecking statements.
+lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"   % doobieVersion withSources () // HikariCP transactor.
+lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres" % doobieVersion withSources () // Postgres driver 42.2.2 + type mappings.
+lazy val doobieTK       = "org.tpolecat" %% "doobie-specs2"   % doobieVersion % Test withSources () // specs2 support for typechecking statements.
 
-lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.3" withSources()
+lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.3" withSources ()
+
+lazy val spire: ModuleID = "org.typelevel" %% "spire" % "0.14.1" withSources ()
 
 //https://github.com/jmcardon/tsec
 lazy val tsecV = "0.0.1-M11"
 
 lazy val tsec = Seq(
-  "io.github.jmcardon" %% "tsec-common"        % tsecV withSources(),
-  "io.github.jmcardon" %% "tsec-password"      % tsecV withSources(),
-  "io.github.jmcardon" %% "tsec-cipher-jca"    % tsecV withSources(),
-  "io.github.jmcardon" %% "tsec-cipher-bouncy" % tsecV withSources(),
-  "io.github.jmcardon" %% "tsec-mac"           % tsecV withSources(),
-  "io.github.jmcardon" %% "tsec-signatures"    % tsecV withSources(),
-  "io.github.jmcardon" %% "tsec-hash-jca"      % tsecV withSources(),
-  "io.github.jmcardon" %% "tsec-hash-bouncy"   % tsecV withSources(),
-  "io.github.jmcardon" %% "tsec-libsodium"     % tsecV withSources(),
-  "io.github.jmcardon" %% "tsec-jwt-mac"       % tsecV withSources(),
-  "io.github.jmcardon" %% "tsec-jwt-sig"       % tsecV withSources(),
-  "io.github.jmcardon" %% "tsec-http4s"        % tsecV withSources(),
+  "io.github.jmcardon" %% "tsec-common"        % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-password"      % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-cipher-jca"    % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-cipher-bouncy" % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-mac"           % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-signatures"    % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-hash-jca"      % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-hash-bouncy"   % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-libsodium"     % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-jwt-mac"       % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-jwt-sig"       % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-http4s"        % tsecV withSources (),
 )
 
 //============================================================================================
@@ -325,5 +346,4 @@ lazy val specs2: ModuleID = "org.specs2" %% "specs2-core" % "4.3.0" % Test withS
 //=========================================== misc ===========================================
 //============================================================================================
 
-lazy val pureConfig: ModuleID =  "com.github.pureconfig" %% "pureconfig" % "0.9.1" withSources()
-
+lazy val pureConfig: ModuleID = "com.github.pureconfig" %% "pureconfig" % "0.9.1" withSources ()
