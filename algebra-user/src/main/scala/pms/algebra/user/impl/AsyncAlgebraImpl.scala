@@ -28,9 +28,7 @@ final private[user] class AsyncAlgebraImpl[F[_]](
     F.raiseError(new NotImplementedError("Cannot promote user yet"))
 
   override protected def registrationStep1OP(
-    email: Email,
-    pw:    PlainTextPassword,
-    role:  UserRole
+    reg: UserRegistration
   ): F[UserRegistrationToken] =
     F.raiseError(new NotImplementedError("Cannot perform registration step 1 OP at this time"))
 
