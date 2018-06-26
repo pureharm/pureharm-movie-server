@@ -1,5 +1,6 @@
 package pms.algebra.movie
 
+import doobie.util.transactor.Transactor
 import pms.algebra.user._
 
 /**
@@ -26,6 +27,6 @@ abstract class MovieAlgebra[F[_]] {
 object MovieAlgebra {
   import pms.effects._
 
-  def async[F[_]: Async](userAuth: UserAuthAlgebra[F]): MovieAlgebra[F] =
+  def async[F[_]: Async](userAuth: UserAuthAlgebra[F])(implicit transactor: Transactor[F]): MovieAlgebra[F] =
     new impl.AsyncMovieAlgebraImpl(userAuth)
 }
