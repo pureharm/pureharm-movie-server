@@ -7,9 +7,8 @@ import cats.implicits._
 
 import pms.core._
 import pms.effects._
-import pms.http._
 
-import pms.algebra.user._
+import pms.algebra.http._
 import pms.algebra.imdb._
 import pms.algebra.movie._
 
@@ -49,29 +48,29 @@ final class MovieRestService[F[_]](
   //=======================
   //=======================
 
-  val imdbImportService: HttpService[F] = {
-    HttpService[F] {
-      case PUT -> Root / "movie_import" / "imdb" :? TitleQueryParamMatcher(title) =>
-        Ok(imdbService.scrapeIMDBForTitle(TitleQuery(title))(???))
+  val imdbImportService: AuthCtxService[F] = {
+    AuthCtxService[F] {
+      case PUT -> Root / "movie_import" / "imdb" :? TitleQueryParamMatcher(title) as user =>
+        Ok(imdbService.scrapeIMDBForTitle(TitleQuery(title))(user))
     }
   }
 
   //=======================
   //=======================
 
-  val movieService: HttpService[F] = {
-    HttpService[F] {
-      case req @ POST -> Root / "movie" =>
+  val movieService: AuthCtxService[F] = {
+    AuthCtxService[F] {
+      case req @ POST -> Root / "movie" as user =>
         for {
-          mc   <- req.as[MovieCreation]
-          resp <- Created(movieAlgebra.createMovie(mc)(??? : AuthCtx))
+          mc   <- req.bodyAs[MovieCreation]
+          resp <- Created(movieAlgebra.createMovie(mc)(user))
         } yield resp
 
       //=================
 
-      case GET -> Root / "movie" :? StartReleaseDateQueryMatcher(start) :? EndReleaseDateQueryMatcher(end) =>
+      case GET -> Root / "movie" :? StartReleaseDateQueryMatcher(start) :? EndReleaseDateQueryMatcher(end) as user =>
         val interval = Interval.closed(start, end)
-        Ok(movieAlgebra.findMoviesBetween(interval)(??? : AuthCtx))
+        Ok(movieAlgebra.findMoviesBetween(interval)(user))
     }
   }
 
