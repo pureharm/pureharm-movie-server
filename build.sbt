@@ -38,6 +38,7 @@ lazy val `service-user` = project
     `pms-effects`,
     `pms-core`,
     `pms-json`,
+    `pms-http`,
   )
   .aggregate(
     `algebra-user`,
@@ -46,6 +47,7 @@ lazy val `service-user` = project
     `pms-effects`,
     `pms-core`,
     `pms-json`,
+    `pms-http`,
   )
 
 lazy val `service-movie` = project
@@ -59,6 +61,7 @@ lazy val `service-movie` = project
     `pms-effects`,
     `pms-core`,
     `pms-json`,
+    `pms-http`,
   )
   .aggregate(
     `algebra-user`,
@@ -68,6 +71,7 @@ lazy val `service-movie` = project
     `pms-effects`,
     `pms-core`,
     `pms-json`,
+    `pms-http`,
   )
 
 lazy val `algreba-imdb` = project
@@ -121,6 +125,16 @@ lazy val `pms-email` = project
     `pms-core`,
     `pms-effects`,
   )
+
+lazy val `pms-http` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .dependsOn(
+    `pms-core`,
+    `pms-effects`,
+    `pms-json`,
+  )
+
 
 lazy val `pms-json` = project
   .settings(commonSettings)

@@ -7,6 +7,8 @@ import cats.implicits._
 
 import pms.core._
 import pms.effects._
+import pms.http._
+
 import pms.algebra.user._
 import pms.algebra.imdb._
 import pms.algebra.movie._
