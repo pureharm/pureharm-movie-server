@@ -8,11 +8,9 @@ import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import javax.mail._
 import javax.mail.internet._
 
-import cats.effect.Async
-
+import pms.effects._
+import pms.core._
 import pms.email._
-
-import scala.util.control.NonFatal
 
 /**
   *
@@ -29,7 +27,7 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
 ) extends EmailAlgebra[F] {
 
   import cats.implicits._
-  private val F: Async[F] = Async[F]
+  private val F: Async[F] = Async.apply[F]
 
   private val logger: SelfAwareStructuredLogger[F] =
     Slf4jLogger.unsafeCreate[F]
@@ -65,7 +63,9 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
     * This would make this whole thing super trivial.
     */
   private def cleanupErr(transport: Transport): PartialFunction[Throwable, F[Unit]] = {
-    case NonFatal(e) => logger.warn(e)("Failed to send email.") >> cleanup(transport)
+    case scala.util.control.NonFatal(e) =>
+      logger.warn(e)("Failed to send email.") >>
+        cleanup(transport)
   }
 
   private def cleanup(transport: Transport): F[Unit] = F.delay(transport.close())

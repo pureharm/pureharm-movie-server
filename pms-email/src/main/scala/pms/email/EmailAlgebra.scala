@@ -1,5 +1,7 @@
 package pms.email
 
+import pms.core._
+
 import cats.effect.Async
 
 /**
