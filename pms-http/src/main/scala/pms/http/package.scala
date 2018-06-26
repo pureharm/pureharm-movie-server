@@ -6,4 +6,4 @@ package pms
   * @since 26 Jun 2018
   *
   */
-package object http extends CirceToHttp4sEncoders
+package object http extends CirceToHttp4sEncoders with MessageOpsFixSyntax
