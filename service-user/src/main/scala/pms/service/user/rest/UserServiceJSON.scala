@@ -22,4 +22,10 @@ trait UserServiceJSON extends PMSJson {
 
   implicit val pwResetComCirceCodec: Codec[PasswordResetCompletion] =
     ???
+
+  implicit val authenticationTokenCirceCodec: Codec[AuthenticationToken] =
+    ???
+
+  implicit val authCtxCirceCodec: Codec[AuthCtx] =
+    ???
 }
