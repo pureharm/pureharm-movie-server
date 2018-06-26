@@ -12,11 +12,18 @@ import pms.json._
   */
 trait CirceToHttp4sEncoders {
 
-  //FIXME: move to commons core
-  implicit def asyncEntityJsonEncoder[F[_], T](implicit codec: Encoder[T], async: Async[F]): EntityEncoder[F, T] =
+  implicit def asyncEntityJsonEncoder[F[_], T](
+    implicit
+    codec: Encoder[T],
+    async: Async[F]
+  ): EntityEncoder[F, T] =
     ???
 
-  implicit def asyncEntityJsonDecoder[F[_], T](implicit codec: Decoder[T], async: Async[F]): EntityDecoder[F, T] =
+  implicit def asyncEntityJsonDecoder[F[_], T](
+    implicit
+    codec: Decoder[T],
+    async: Async[F]
+  ): EntityDecoder[F, T] =
     ???
 
 }
