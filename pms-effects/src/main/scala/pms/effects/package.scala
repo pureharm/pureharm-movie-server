@@ -33,6 +33,9 @@ package object effects
   type Effect[F[_]] = cats.effect.Effect[F]
   @inline def Effect: cats.effect.Effect.type = cats.effect.Effect
 
+  type Concurrent[F[_]] = cats.effect.Concurrent[F]
+  @inline def Concurrent: cats.effect.Concurrent.type = cats.effect.Concurrent
+
   type Monad[F[_]] = cats.Monad[F]
   @inline def Monad: cats.Monad.type = cats.Monad
 
