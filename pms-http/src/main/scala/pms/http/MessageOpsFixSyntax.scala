@@ -14,10 +14,20 @@ import org.http4s._
   *
   */
 trait MessageOpsFixSyntax {
-  implicit def messageOpsFix[F[_]](r: Request[F]): MessageOpsFix[F] = new MessageOpsFix(r)
+
+  implicit def messageOpsFixRequestFix[F[_]](r: Request[F]): MessageOpsFixRequestFix[F] =
+    new MessageOpsFixRequestFix(r)
+
+  implicit def messageOpsFixRequestFix[F[_], A](r: AuthedRequest[F, A]): MessageOpsFixAuthedReqFix[F, A] =
+    new MessageOpsFixAuthedReqFix(r)
 }
 
-final class MessageOpsFix[F[_]](r: Request[F]) {
+final class MessageOpsFixRequestFix[F[_]](r: Request[F]) {
 
   def bodyAs[T](implicit F: FlatMap[F], decoder: EntityDecoder[F, T]): F[T] = r.as[T]
+}
+
+final class MessageOpsFixAuthedReqFix[F[_], A](r: AuthedRequest[F, A]) {
+
+  def bodyAs[T](implicit F: FlatMap[F], decoder: EntityDecoder[F, T]): F[T] = r.req.as[T]
 }
