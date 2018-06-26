@@ -1,4 +1,4 @@
-package pms.service.rest
+package pms.service.movie.rest
 
 import java.time.LocalDate
 

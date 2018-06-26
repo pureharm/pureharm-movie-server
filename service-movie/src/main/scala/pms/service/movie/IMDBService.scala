@@ -1,13 +1,13 @@
-package pms.service
+package pms.service.movie
 
 import java.time.LocalDate
 
-import pms.effects._
-import cats.implicits._
 import busymachines.core._
-import pms.algebra.user._
+import cats.implicits._
 import pms.algebra.imdb._
 import pms.algebra.movie._
+import pms.algebra.user._
+import pms.effects._
 
 /**
   *
@@ -15,7 +15,7 @@ import pms.algebra.movie._
   * @since 25 Jun 2018
   *
   */
-abstract class IMDBService[F[_]](
+final class IMDBService[F[_]] private(
   protected val movieAlgebra: MovieAlgebra[F],
   protected val imdbAlgebra:  IMDBAlgebra[F]
 )(
@@ -47,4 +47,9 @@ abstract class IMDBService[F[_]](
       ReleaseDate(ld)
     },
   )
+}
+
+object IMDBService {
+  def async[F[_]: Async](movieAlgebra: MovieAlgebra[F], imdbAlgebra: IMDBAlgebra[F]): IMDBService[F] =
+    new IMDBService[F](movieAlgebra, imdbAlgebra)
 }
