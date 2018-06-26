@@ -1,13 +1,9 @@
-package pms.service.rest
+package pms.service.movie.rest
 
 import java.time.LocalDate
 
-import org.http4s._
-
-import pms.effects._
 import pms.json._
 import pms.algebra.movie._
-
 
 /**
   *
@@ -40,10 +36,4 @@ trait MovieServiceJSON extends PMSJson {
   implicit val movieCirceCodec: Codec[Movie] = derive.codec[Movie]
 
   implicit val movieCreationCirceCodec: Codec[MovieCreation] = derive.codec[MovieCreation]
-
-  implicit def asyncEntityJsonEncoder[F[_], T](implicit codec: Encoder[T], async: Async[F]): EntityEncoder[F, T] =
-    ???
-
-  implicit def asyncEntityJsonDecoder[F[_], T](implicit codec: Decoder[T], async: Async[F]): EntityDecoder[F, T] =
-    ???
 }
