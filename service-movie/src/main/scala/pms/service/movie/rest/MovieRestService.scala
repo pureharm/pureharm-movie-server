@@ -24,8 +24,9 @@ import org.http4s.dsl._
   *
   */
 final class MovieRestService[F[_]](
-  private val imdbService:  IMDBService[F],
-  private val movieAlgebra: MovieAlgebra[F],
+  private val imdbService:       IMDBService[F],
+  private val movieAlgebra:      MovieAlgebra[F],
+  private val authCtxMiddleware: AuthCtxMiddleware[F],
 )(
   implicit val F: Async[F],
 ) extends Http4sDsl[F] with MovieServiceJSON {
@@ -45,20 +46,14 @@ final class MovieRestService[F[_]](
 
   private object TitleQueryParamMatcher extends QueryParamDecoderMatcher[TitleQuery]("title")
 
-  //=======================
-  //=======================
-
-  val imdbImportService: AuthCtxService[F] = {
+  private val imdbImportService: AuthCtxService[F] = {
     AuthCtxService[F] {
       case PUT -> Root / "movie_import" / "imdb" :? TitleQueryParamMatcher(title) as user =>
         Ok(imdbService.scrapeIMDBForTitle(TitleQuery(title))(user))
     }
   }
 
-  //=======================
-  //=======================
-
-  val movieService: AuthCtxService[F] = {
+  private val movieService: AuthCtxService[F] = {
     AuthCtxService[F] {
       case (req @ POST -> Root / "movie") as user =>
         for {
@@ -66,15 +61,13 @@ final class MovieRestService[F[_]](
           resp <- Created(movieAlgebra.createMovie(mc)(user))
         } yield resp
 
-      //=================
-
       case GET -> Root / "movie" :? StartReleaseDateQueryMatcher(start) :? EndReleaseDateQueryMatcher(end) as user =>
         val interval = Interval.closed(start, end)
         Ok(movieAlgebra.findMoviesBetween(interval)(user))
     }
   }
 
-  //=======================
-  //=======================
-
+  /*_*/
+  val service: HttpService[F] = authCtxMiddleware(imdbImportService <+> movieService)
+  /*_*/
 }
