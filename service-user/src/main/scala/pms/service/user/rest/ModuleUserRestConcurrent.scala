@@ -1,6 +1,9 @@
 package pms.service.user.rest
 
 import org.http4s._
+
+import pms.effects._
+
 import pms.algebra.user._
 import pms.algebra.http._
 import pms.service.user._
@@ -37,12 +40,14 @@ trait ModuleUserRestConcurrent[F[_]] { this: ModuleUserServiceConcurrent[F] with
     authCtxMiddleware,
   )
 
-  /*_*/
   private lazy val _service: HttpService[F] = {
     import cats.implicits._
-    userAuthRestService.service <+>
-      userRestService.service <+>
-      userAccountRestService.service
+    NonEmptyList
+      .of(
+        userAuthRestService.service,
+        userRestService.service,
+        userAccountRestService.service
+      )
+      .reduceK
   }
-  /*_*/
 }

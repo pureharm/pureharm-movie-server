@@ -31,14 +31,18 @@ trait PureMovieServerModule[F[_]]
 
   override def config: GmailConfig
 
-  override def authCtxMiddleware: AuthCtxMiddleware[F]
+  //we could delay this even more, but there is little point.
+  override def authCtxMiddleware: AuthCtxMiddleware[F] =
+    AuthedHttp4s.userTokenAuthMiddleware[F](userAuthAlgebra)
 
   def pureMovieServerService: HttpService[F] = {
-    /*_*/
     import cats.implicits._
-    userModuleService <+>
-      movieModuleService
-    /*_*/
+    NonEmptyList
+      .of[HttpService[F]](
+        userModuleService,
+        movieModuleService
+      )
+      .reduceK
   }
 
 }

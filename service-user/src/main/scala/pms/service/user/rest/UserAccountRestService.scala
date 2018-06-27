@@ -60,10 +60,13 @@ final class UserAccountRestService[F[_]](
       } yield resp
   }
 
-  /*_*/
   val service: HttpService[F] =
-    authCtxMiddleware(userRegistrationStep1Service) <+>
-      userRegistrationStep2Service <+>
-      userPasswordResetService
-  /*_*/
+    NonEmptyList
+      .of[HttpService[F]](
+        authCtxMiddleware(userRegistrationStep1Service),
+        userRegistrationStep2Service,
+        userPasswordResetService
+      )
+      .reduceK
+
 }
