@@ -146,6 +146,7 @@ lazy val `pms-email` = project
   .dependsOn(
     `pms-core`,
     `pms-effects`,
+    `pms-config`,
   )
 
 lazy val `pms-http` = project
@@ -156,7 +157,6 @@ lazy val `pms-http` = project
     `pms-effects`,
     `pms-json`,
   )
-
 
 lazy val `pms-json` = project
   .settings(commonSettings)

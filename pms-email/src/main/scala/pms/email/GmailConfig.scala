@@ -1,5 +1,8 @@
 package pms.email
 
+import pms.config._
+import pms.effects.Sync
+
 /**
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
@@ -15,3 +18,8 @@ final case class GmailConfig(
   auth:     Boolean,
   startTLS: Boolean
 )
+
+object GmailConfig extends ConfigLoader[GmailConfig] {
+  override def default[F[_]: Sync]: F[GmailConfig] =
+    this.load[F]("pms.email.gmail")
+}
