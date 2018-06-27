@@ -22,7 +22,7 @@ import pms.service.movie.rest._
   * @since 27 Jun 2018
   *
   */
-trait PureMovieServerModule[F[_]]
+trait ModulePureMovieServer[F[_]]
     extends ModuleEmailASync[F] with ModuleUserAsync[F] with ModuleMovieAsync[F] with ModuleUserServiceConcurrent[F]
     with ModuleUserRestConcurrent[F] with ModuleMovieServiceAsync[F] with ModuleMovieRestAsync[F] {
 
@@ -47,10 +47,10 @@ trait PureMovieServerModule[F[_]]
   }
 }
 
-object PureMovieServerModule {
+object ModulePureMovieServer {
 
-  def concurrent[F[_]](gConfig: GmailConfig)(implicit c: Concurrent[F]): PureMovieServerModule[F] =
-    new PureMovieServerModule[F] {
+  def concurrent[F[_]](gConfig: GmailConfig)(implicit c: Concurrent[F]): ModulePureMovieServer[F] =
+    new ModulePureMovieServer[F] {
       implicit override def concurrent: Concurrent[F] = c
 
       override def gmailConfig: GmailConfig = gConfig
