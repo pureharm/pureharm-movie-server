@@ -60,9 +60,9 @@ final class MovieRestService[F[_]](
 
   val movieService: AuthCtxService[F] = {
     AuthCtxService[F] {
-      case req @ POST -> Root / "movie" as user =>
+      case (req @ POST -> Root / "movie") as user =>
         for {
-          mc   <- req.bodyAs[MovieCreation]
+          mc   <- req.as[MovieCreation]
           resp <- Created(movieAlgebra.createMovie(mc)(user))
         } yield resp
 
