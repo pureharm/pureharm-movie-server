@@ -17,5 +17,5 @@ final case class PureMovieServerConfig(
 
 object PureMovieServerConfig extends ConfigLoader[PureMovieServerConfig] {
   override def default[F[_]: Sync]: F[PureMovieServerConfig] =
-    this.load[F]("busylabs.pms.server")
+    this.load[F]("pms.server")
 }
