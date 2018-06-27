@@ -26,8 +26,9 @@ trait PureMovieServerModule[F[_]]
     extends ModuleEmailASync[F] with ModuleUserAsync[F] with ModuleMovieAsync[F] with ModuleUserServiceConcurrent[F]
     with ModuleUserRestConcurrent[F] with ModuleMovieServiceAsync[F] with ModuleMovieRestAsync[F] {
 
-  implicit override def async:      Async[F]
   implicit override def concurrent: Concurrent[F]
+  //at this point we can use the same concurrent instance
+  implicit override def async: Async[F] = concurrent
 
   override def gmailConfig: GmailConfig
 
@@ -48,9 +49,8 @@ trait PureMovieServerModule[F[_]]
 
 object PureMovieServerModule {
 
-  def concurrent[F[_]](gConfig: GmailConfig)(implicit a: Async[F], c: Concurrent[F]): PureMovieServerModule[F] =
+  def concurrent[F[_]](gConfig: GmailConfig)(implicit c: Concurrent[F]): PureMovieServerModule[F] =
     new PureMovieServerModule[F] {
-      implicit override def async:      Async[F]      = a
       implicit override def concurrent: Concurrent[F] = c
 
       override def gmailConfig: GmailConfig = gConfig
