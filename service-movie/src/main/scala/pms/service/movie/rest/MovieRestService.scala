@@ -4,17 +4,13 @@ import java.time._
 
 import spire.math.Interval
 import cats.implicits._
-
+import doobie.util.transactor.Transactor
 import pms.core._
 import pms.effects._
-import pms.http._
-
 import pms.algebra.user._
 import pms.algebra.imdb._
 import pms.algebra.movie._
-
 import pms.service.movie._
-
 import org.http4s._
 import org.http4s.dsl._
 
@@ -29,6 +25,7 @@ final class MovieRestService[F[_]](
   private val movieAlgebra: MovieAlgebra[F],
 )(
   implicit val F: Async[F],
+  val transactor: Transactor[F]
 ) extends Http4sDsl[F] with MovieServiceJSON {
 
   //TODO: move to separate commons class

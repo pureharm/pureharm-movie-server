@@ -18,9 +18,7 @@ object UserRole {
       .get(s)
       .asResult(InvalidInputFailure(s"UserRole has to be one of $allString, but was: $s"))
 
-  implicit val userRoleOrdering: Ordering[UserRole] = new Ordering[UserRole] {
-    override def compare(x: UserRole, y: UserRole): Int = x.compare(y)
-  }
+  implicit val userRoleOrdering: Ordering[UserRole] = (x: UserRole, y: UserRole) => x.compare(y)
 
   private val LT = -1
   private val EQ = 0

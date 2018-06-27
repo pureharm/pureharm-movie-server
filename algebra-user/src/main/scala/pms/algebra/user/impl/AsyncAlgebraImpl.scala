@@ -1,8 +1,16 @@
 package pms.algebra.user.impl
 
+import cats.syntax.all._
+import doobie._
+import doobie.implicits._
+import pms.algebra.user._
 import pms.core._
 import pms.effects._
-import pms.algebra.user._
+import tsec.jws.mac._
+import tsec.jwt._
+import tsec.mac.jca._
+
+import scala.concurrent.duration._
 
 /**
   *
@@ -13,13 +21,35 @@ import pms.algebra.user._
 final private[user] class AsyncAlgebraImpl[F[_]](
   implicit
   val F:                   Async[F],
-  override val monadError: MonadError[F, Throwable]
+  override val monadError: MonadError[F, Throwable],
+  val transactor:          Transactor[F]
 ) extends UserAuthAlgebra()(monadError) with UserAccountAlgebra[F] with UserAlgebra[F] {
+
+  import UserSql._
 
   override protected def authAlgebra: UserAuthAlgebra[F] = this
 
-  override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] =
-    F.raiseError(new NotImplementedError("Cannot authenticate w/ email and password yet"))
+  override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] = {
+    def generateToken(): F[AuthenticationToken] =
+      for {
+        key    <- HMACSHA256.generateKey[F]
+        claims <- JWTClaims.withDuration[F](expiration = Some(10.minutes))
+        token  <- JWTMac.buildToString[F, HMACSHA256](claims, key)
+      } yield AuthenticationToken.haunt(token)
+
+    def insertToken(token: AuthenticationToken) =
+      for {
+        authUser <- find(email, pw)
+        _        <- insertAuthenticationToken(authUser.get.id, token)
+        userId   <- find(AuthenticationToken.haunt(token))
+        user     <- find(UserID.haunt(userId.get))
+      } yield user
+
+    for {
+      token <- generateToken()
+      auth  <- insertToken(token).transact(transactor)
+    } yield AuthCtx(token, auth.get)
+  }
 
   override def authenticate(token: AuthenticationToken): F[AuthCtx] =
     F.raiseError(new NotImplementedError("Cannot authenticate with token yet"))
@@ -42,5 +72,34 @@ final private[user] class AsyncAlgebraImpl[F[_]](
     F.raiseError(new NotImplementedError("Cannot perform resetPassword step 2 at this time"))
 
   override def findUser(id: UserID)(implicit auth: AuthCtx): F[Option[User]] =
-    F.raiseError(new NotImplementedError("Cannot perform find user operation at this time"))
+    find(id).transact(transactor)
+}
+
+object UserSql {
+  implicit val userIDMeta: Meta[UserID] = Meta[Long].xmap(
+    UserID.haunt,
+    UserID.exorcise
+  )
+  implicit val authenticationTokenMeta: Meta[AuthenticationToken] = Meta[String].xmap(
+    AuthenticationToken.haunt,
+    AuthenticationToken.exorcise
+  )
+  implicit val emailMeta:    Meta[Email]             = Meta[String].xmap(Email.apply(_).unsafeGet(),             _.plainTextEmail)
+  implicit val pwdMeta:      Meta[PlainTextPassword] = Meta[String].xmap(PlainTextPassword.apply(_).unsafeGet(), _.plainText)
+  implicit val userRoleMeta: Meta[UserRole]          = Meta[String].xmap(UserRole.fromName(_).unsafeGet(),       _.toString)
+  implicit val userComposite: Composite[User] =
+    Composite[(UserID, Email, UserRole)]
+      .imap((t: (UserID, Email, UserRole)) => User(t._1, t._2, t._3))((u: User) => (u.id, u.email, u.role))
+
+  def find(id: UserID): ConnectionIO[Option[User]] =
+    sql"""SELECT id, email, role FROM users WHERE id=$id""".query[User].option
+
+  def find(email: Email, pwd: PlainTextPassword): ConnectionIO[Option[User]] =
+    sql"""SELECT id, email, role FROM users WHERE email=$email AND password=$pwd""".query[User].option
+
+  def find(token: AuthenticationToken): ConnectionIO[Option[Long]] =
+    sql"""SELECT userId FROM authentications WHERE token=$token""".query[Long].option
+
+  def insertAuthenticationToken(id: UserID, token: AuthenticationToken): ConnectionIO[Long] =
+    sql"""INSERT INTO authentications(userId, token) VALUES($id, $token)""".update.withUniqueGeneratedKeys[Long]("id")
 }

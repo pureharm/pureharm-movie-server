@@ -3,6 +3,7 @@ package pms.algebra.user
 import pms.core._
 import pms.effects._
 import busymachines.core.UnauthorizedFailure
+import doobie.util.transactor.Transactor
 
 /**
   *
@@ -72,5 +73,5 @@ abstract class UserAuthAlgebra[F[_]](implicit val monadError: MonadError[F, Thro
 }
 
 object UserAuthAlgebra {
-  def async[F[_]: Async]: UserAuthAlgebra[F] = new impl.AsyncAlgebraImpl[F]()
+  def async[F[_]: Async](implicit transactor: Transactor[F]): UserAuthAlgebra[F] = new impl.AsyncAlgebraImpl[F]()
 }

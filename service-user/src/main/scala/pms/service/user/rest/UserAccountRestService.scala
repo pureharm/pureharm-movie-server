@@ -3,7 +3,6 @@ package pms.service.user.rest
 import cats.implicits._
 
 import pms.effects._
-import pms.http._
 import pms.algebra.user._
 
 import pms.service.user._

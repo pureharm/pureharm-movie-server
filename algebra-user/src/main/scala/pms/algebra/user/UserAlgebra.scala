@@ -1,5 +1,7 @@
 package pms.algebra.user
 
+import doobie.util.transactor.Transactor
+
 /**
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
@@ -15,5 +17,5 @@ trait UserAlgebra[F[_]] {
 object UserAlgebra {
   import pms.effects._
 
-  def async[F[_]: Async]: UserAlgebra[F] = new impl.AsyncAlgebraImpl[F]()
+  def async[F[_]: Async](implicit transactor: Transactor[F]): UserAlgebra[F] = new impl.AsyncAlgebraImpl[F]()
 }
