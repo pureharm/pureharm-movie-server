@@ -44,5 +44,15 @@ trait PureMovieServerModule[F[_]]
       )
       .reduceK
   }
+}
 
+object PureMovieServerModule {
+
+  def concurrent[F[_]](gConfig: GmailConfig)(implicit a: Async[F], c: Concurrent[F]): PureMovieServerModule[F] =
+    new PureMovieServerModule[F] {
+      implicit override def async:      Async[F]      = a
+      implicit override def concurrent: Concurrent[F] = c
+
+      override def gmailConfig: GmailConfig = gConfig
+    }
 }
