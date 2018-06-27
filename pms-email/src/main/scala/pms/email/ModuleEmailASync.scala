@@ -12,10 +12,10 @@ trait ModuleEmailASync[F[_]] {
 
   implicit def async: Async[F]
 
-  def config: GmailConfig
+  def gmailConfig: GmailConfig
 
   def emailAlgebra: EmailAlgebra[F] = _emailAlgebra
 
-  private lazy val _emailAlgebra = new impl.EmailAlgebraJavaGmailAsyncImpl[F](config)
+  private lazy val _emailAlgebra = new impl.EmailAlgebraJavaGmailAsyncImpl[F](gmailConfig)
 
 }

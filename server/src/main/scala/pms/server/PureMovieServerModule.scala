@@ -29,7 +29,7 @@ trait PureMovieServerModule[F[_]]
   implicit override def async:      Async[F]
   implicit override def concurrent: Concurrent[F]
 
-  override def config: GmailConfig
+  override def gmailConfig: GmailConfig
 
   //we could delay this even more, but there is little point.
   override def authCtxMiddleware: AuthCtxMiddleware[F] =
