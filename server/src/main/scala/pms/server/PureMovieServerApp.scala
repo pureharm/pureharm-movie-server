@@ -15,7 +15,7 @@ import org.http4s.server.blaze.BlazeBuilder
 object PureMovieServerApp extends StreamApp[IO] {
 
   private def pureMovieHttpServices[F[_]: Effect]: HttpService[F] =
-    new HelloWorldService().service
+    ???
 
   private def serverStream[F[_]: Effect](
     config:      PureMovieServerConfig
