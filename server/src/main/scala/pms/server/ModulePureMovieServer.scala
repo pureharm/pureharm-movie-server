@@ -5,8 +5,10 @@ import org.http4s._
 import pms.effects._
 import pms.email._
 
-import pms.algebra.movie._
 import pms.algebra.user._
+import pms.algebra.imdb._
+import pms.algebra.movie._
+
 import pms.algebra.http._
 
 import pms.service.user._
@@ -23,8 +25,9 @@ import pms.service.movie.rest._
   *
   */
 trait ModulePureMovieServer[F[_]]
-    extends ModuleEmailASync[F] with ModuleUserAsync[F] with ModuleMovieAsync[F] with ModuleUserServiceConcurrent[F]
-    with ModuleUserRestConcurrent[F] with ModuleMovieServiceAsync[F] with ModuleMovieRestAsync[F] {
+    extends ModuleEmailASync[F] with ModuleUserAsync[F] with ModuleIMDBAsync[F] with ModuleMovieAsync[F]
+    with ModuleUserServiceConcurrent[F] with ModuleUserRestConcurrent[F] with ModuleMovieServiceAsync[F]
+    with ModuleMovieRestAsync[F] {
 
   implicit override def concurrent: Concurrent[F]
   //at this point we can use the same concurrent instance
