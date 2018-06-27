@@ -25,7 +25,7 @@ import scala.util.control.NonFatal
   */
 object AuthedHttp4s {
 
-  def userTokenAuthMiddleware[F[_]: Async](implicit authAlgebra: UserAuthAlgebra[F]): AuthMiddleware[F, AuthCtx] =
+  def userTokenAuthMiddleware[F[_]: Async](authAlgebra: UserAuthAlgebra[F]): AuthMiddleware[F, AuthCtx] =
     AuthMiddleware(verifyToken[F](authAlgebra), onFailure)
 
   private val `X-Auth-Token` = CaseInsensitiveString("X-AUTH-TOKEN")
