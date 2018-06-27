@@ -53,6 +53,7 @@ object AuthedHttp4s {
         case None => F.pure(Result.fail(UnauthorizedFailure(s"No ${`X-Auth-Token`} provided")))
         case Some(header) =>
           authAlgebra.authenticate(AuthenticationToken(header.value)).map(Result.pure).recover {
+            case NonFatal(a: Anomaly) => Result.fail(a)
             case NonFatal(a) => Result.failThr(a)
           }
       }
