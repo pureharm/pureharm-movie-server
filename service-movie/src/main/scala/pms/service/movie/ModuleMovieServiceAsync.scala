@@ -8,6 +8,6 @@ package pms.service.movie
   */
 trait ModuleMovieServiceAsync[F[_]] {
 
-  def imdbService: IMDBService[F]
+  def imdbService: IMDBService[F] = ???
 
 }

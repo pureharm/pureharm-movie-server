@@ -21,7 +21,7 @@ trait ModuleUserRestConcurrent[F[_]] { this: ModuleUserServiceConcurrent[F] with
 
   def userAccountRestService: UserAccountRestService[F] = _userAccountRestService
 
-  def service: HttpService[F] = _service
+  def userModuleService: HttpService[F] = _service
 
   private lazy val _userRestService: UserRestService[F] = new UserRestService[F](
     userAlgebra = userAlgebra,

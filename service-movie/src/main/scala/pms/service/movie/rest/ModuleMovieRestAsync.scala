@@ -17,7 +17,7 @@ trait ModuleMovieRestAsync[F[_]] { this: ModuleMovieServiceAsync[F] with ModuleM
 
   def movieRestService: MovieRestService[F] = _movieRestService
 
-  def service: HttpService[F] = _movieRestService.service
+  def movieModuleService: HttpService[F] = _movieRestService.service
 
   private lazy val _movieRestService: MovieRestService[F] = new MovieRestService[F](
     imdbService       = imdbService,
