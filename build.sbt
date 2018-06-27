@@ -11,7 +11,7 @@ lazy val server = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
-    mainClass := Option("busylabs.pms.PureMovieServerApp")
+    mainClass := Option("pms.server.PureMovieServerApp")
   )
   .dependsOn(
     `pms-effects`,
