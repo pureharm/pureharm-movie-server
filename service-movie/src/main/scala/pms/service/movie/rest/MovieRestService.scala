@@ -6,6 +6,7 @@ import spire.math.Interval
 import cats.implicits._
 import doobie.util.transactor.Transactor
 import pms.core._
+import pms.http._
 import pms.effects._
 import pms.algebra.user._
 import pms.algebra.imdb._

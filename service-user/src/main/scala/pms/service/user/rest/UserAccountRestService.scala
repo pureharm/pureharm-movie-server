@@ -6,6 +6,7 @@ import pms.effects._
 import pms.algebra.user._
 
 import pms.service.user._
+import pms.http._
 
 import org.http4s._
 import org.http4s.dsl._
