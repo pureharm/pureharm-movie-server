@@ -1,7 +1,9 @@
 package pms.algebra.user.impl
 
+import cats.free.Free
 import cats.syntax.all._
 import doobie._
+import doobie.free.connection
 import doobie.implicits._
 import pms.algebra.user._
 import pms.core._
@@ -29,30 +31,11 @@ final private[user] class AsyncAlgebraImpl[F[_]](
 
   override protected def authAlgebra: UserAuthAlgebra[F] = this
 
-  override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] = {
-    def generateToken(): F[AuthenticationToken] =
-      for {
-        key    <- HMACSHA256.generateKey[F]
-        claims <- JWTClaims.withDuration[F](expiration = Some(10.minutes))
-        token  <- JWTMac.buildToString[F, HMACSHA256](claims, key)
-      } yield AuthenticationToken.haunt(token)
-
-    def insertToken(token: AuthenticationToken) =
-      for {
-        authUser <- find(email, pw)
-        _        <- insertAuthenticationToken(authUser.get.id, token)
-        userId   <- find(AuthenticationToken.haunt(token))
-        user     <- find(UserID.haunt(userId.get))
-      } yield user
-
-    for {
-      token <- generateToken()
-      auth  <- insertToken(token).transact(transactor)
-    } yield AuthCtx(token, auth.get)
-  }
+  override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] =
+    storeAuth(find(email, pw))
 
   override def authenticate(token: AuthenticationToken): F[AuthCtx] =
-    F.raiseError(new NotImplementedError("Cannot authenticate with token yet"))
+    storeAuth(findUserByToken(token))
 
   override protected[user] def promoteUserOP(id: UserID, newRole: UserRole): F[Unit] =
     F.raiseError(new NotImplementedError("Cannot promote user yet"))
@@ -73,6 +56,24 @@ final private[user] class AsyncAlgebraImpl[F[_]](
 
   override def findUser(id: UserID)(implicit auth: AuthCtx): F[Option[User]] =
     find(id).transact(transactor)
+
+  private def storeAuth(thunk: => ConnectionIO[Option[User]]): F[AuthCtx] = {
+    for {
+      token <- generateToken()
+      user  <- thunk
+      _ <- user match {
+            case Some(value) => insertAuthenticationToken(value.id, token).transact(transactor)
+            case None        => throw new Exception("Unauthorized")
+          }
+    } yield AuthCtx(token, user.get)
+  }
+
+  private def generateToken() =
+    for {
+      key    <- HMACSHA256.generateKey[F]
+      claims <- JWTClaims.withDuration[F](expiration = Some(10.minutes))
+      token  <- JWTMac.buildToString[F, HMACSHA256](claims, key)
+    } yield AuthenticationToken.haunt(token)
 }
 
 object UserSql {
@@ -102,4 +103,13 @@ object UserSql {
 
   def insertAuthenticationToken(id: UserID, token: AuthenticationToken): ConnectionIO[Long] =
     sql"""INSERT INTO authentications(userId, token) VALUES($id, $token)""".update.withUniqueGeneratedKeys[Long]("id")
+
+  def findUserByToken(token: AuthenticationToken): ConnectionIO[Option[User]] =
+    for {
+      userId <- find(token)
+      user <- userId match {
+               case Some(value) => find(UserID.haunt(value))
+               case None        => throw new Exception("Unauthorized")
+             }
+    } yield user
 }

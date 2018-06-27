@@ -7,6 +7,7 @@ import doobie.implicits._
 import pms.algebra.movie._
 import pms.algebra.user.UserAuthAlgebra
 import pms.effects.Async
+import spire.math._
 
 /**
   *
@@ -26,12 +27,25 @@ final private[movie] class AsyncMovieAlgebraImpl[F[_]](
     insertMovie(mc).transact(transactor)
 
   override def findMoviesBetweenImpl(interval: QueryInterval): F[List[Movie]] =
-    F.delay(???)
+    findBetween(interval).transact(transactor)
+
+  private def findBetween(interval: QueryInterval) = interval match {
+    case All() => all()
+    case Above(_,       _) => ???
+    case Below(_,       _) => ???
+    case Bounded(lower, upper, flags) =>
+      flags match {
+        case 0 => between(lower, upper)
+        case _ => ???
+      }
+    case Point(_) => ???
+    case Empty()  => ???
+  }
 
   private def insertMovie(mc: MovieCreation) =
     for {
       id    <- insert(mc)
-      movie <- find(id)
+      movie <- findById(id)
     } yield movie
 }
 
@@ -57,6 +71,12 @@ object MovieSql {
 
   def lastId(): ConnectionIO[MovieID] = sql"""SELECT lastval()""".query[MovieID].unique
 
-  def find(id: MovieID): ConnectionIO[Movie] =
+  def findById(id: MovieID): ConnectionIO[Movie] =
     sql"""SELECT id, name, date FROM movies WHERE id=$id""".query[Movie].unique
+
+  def all(): ConnectionIO[List[Movie]] =
+    sql"""SELECT id, name, date FROM movies""".query[Movie].to[List]
+
+  def between(lower: ReleaseDate, upper: ReleaseDate): ConnectionIO[List[Movie]] =
+    sql"""SELECT id, name, date FROM movies WHERE date>=$lower AND date<=$upper""".query[Movie].to[List]
 }
