@@ -6,9 +6,13 @@ import doobie.implicits._
 import pms.algebra.user._
 import pms.core._
 import pms.effects._
+
 import tsec.jws.mac._
 import tsec.jwt._
 import tsec.mac.jca._
+
+import tsec.passwordhashers._
+import tsec.passwordhashers.jca._
 
 import scala.concurrent.duration._
 
@@ -30,7 +34,10 @@ final private[user] class AsyncAlgebraImpl[F[_]](
   override protected def authAlgebra: UserAuthAlgebra[F] = this
 
   override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] =
-    storeAuth(find(email, pw))
+    for {
+      hash <- hashPWWithScrypt(pw)
+      auth <- storeAuth(find(email, hash))
+    } yield auth
 
   override def authenticate(token: AuthenticationToken): F[AuthCtx] =
     storeAuth(findUserByAuthToken(token))
@@ -42,8 +49,10 @@ final private[user] class AsyncAlgebraImpl[F[_]](
     reg: UserRegistration
   ): F[UserRegistrationToken] =
     for {
-      token <- generateToken()
-      _     <- insert(reg, UserRegistrationToken(token)).transact(transactor)
+      token      <- generateToken()
+      scryptHash <- hashPWWithScrypt(reg.pw)
+      repr = UserRepr(email = reg.email, pw = scryptHash, role = reg.role)
+      _ <- insert(repr, UserRegistrationToken(token)).transact(transactor)
     } yield UserRegistrationToken(token)
 
   override def registrationStep2(token: UserRegistrationToken): F[User] =
@@ -61,7 +70,10 @@ final private[user] class AsyncAlgebraImpl[F[_]](
     } yield PasswordResetToken(token)
 
   override def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit] =
-    changePassword(token, newPassword).transact(transactor).map(_ => ())
+    for {
+      hash <- hashPWWithScrypt(newPassword)
+      _    <- changePassword(token, hash).transact(transactor)
+    } yield ()
 
   override def findUser(id: UserID)(implicit auth: AuthCtx): F[Option[User]] =
     find(id).transact(transactor)
@@ -78,9 +90,20 @@ final private[user] class AsyncAlgebraImpl[F[_]](
       claims <- JWTClaims.withDuration[F](expiration = Some(10.minutes))
       token  <- JWTMac.buildToString[F, HMACSHA256](claims, key)
     } yield token
+
+  private def hashPWWithScrypt(ptpw: PlainTextPassword): F[ScryptPW] =
+    HardenedSCrypt.hashpw[F](ptpw.plainText)
+
 }
 
-object UserSql {
+private[impl] object UserSql {
+  type ScryptPW = PasswordHash[HardenedSCrypt]
+
+  private[impl] case class UserRepr(
+    email: Email,
+    pw:    ScryptPW,
+    role:  UserRole
+  )
 
   /*_*/
   implicit val userIDMeta: Meta[UserID] = Meta[Long].xmap(
@@ -118,14 +141,14 @@ object UserSql {
   def updatePasswordToken(id: UserID, token: PasswordResetToken): ConnectionIO[Int] =
     sql"""UPDATE users SET passwordReset=$token WHERE id=$id""".update.run
 
-  def updatePassword(id: UserID, newPassword: PlainTextPassword): ConnectionIO[Int] =
-    sql"""UPDATE users SET password=$newPassword WHERE id=$id""".update.run
+  def updatePassword(id: UserID, newPassword: ScryptPW): ConnectionIO[Int] =
+    sql"""UPDATE users SET password=${newPassword.toString} WHERE id=$id""".update.run
 
   def find(id: UserID): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE id=$id""".query[User].option
 
-  def find(email: Email, pwd: PlainTextPassword): ConnectionIO[Option[User]] =
-    sql"""SELECT id, email, role FROM users WHERE email=$email AND password=$pwd""".query[User].option
+  def find(email: Email, pwd: ScryptPW): ConnectionIO[Option[User]] =
+    sql"""SELECT id, email, role FROM users WHERE email=$email AND password=${pwd.toString}""".query[User].option
 
   def find(email: Email): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE email=$email""".query[User].option
@@ -139,9 +162,10 @@ object UserSql {
   def findByPwdToken(token: PasswordResetToken): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE passwordReset=$token""".query[User].option
 
-  def insert(reg: UserRegistration, token: UserRegistrationToken): ConnectionIO[Long] =
-    sql"""INSERT INTO users(email, password, role, registration) VALUES (${reg.email}, ${reg.pw}, ${reg.role}, $token)""".update
+  def insert(repr: UserRepr, token: UserRegistrationToken): ConnectionIO[Long] = {
+    sql"""INSERT INTO users(email, password, role, registration) VALUES (${repr.email}, ${repr.pw.toString}, ${repr.role}, $token)""".update
       .withUniqueGeneratedKeys[Long]("id")
+  }
 
   def insertAuthenticationToken(id: UserID, token: AuthenticationToken): ConnectionIO[Long] =
     sql"""INSERT INTO authentications(userId, token) VALUES($id, $token)""".update.withUniqueGeneratedKeys[Long]("id")
@@ -176,7 +200,7 @@ object UserSql {
       _    <- updatePasswordToken(user.get.id, token)
     } yield user
 
-  def changePassword(token: PasswordResetToken, newPassword: PlainTextPassword): ConnectionIO[Unit] =
+  def changePassword(token: PasswordResetToken, newPassword: ScryptPW): ConnectionIO[Unit] =
     for {
       user <- findByPwdToken(token)
       _ <- user match {
