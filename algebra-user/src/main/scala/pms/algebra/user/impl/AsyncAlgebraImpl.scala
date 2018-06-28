@@ -33,7 +33,7 @@ final private[user] class AsyncAlgebraImpl[F[_]](
     storeAuth(find(email, pw))
 
   override def authenticate(token: AuthenticationToken): F[AuthCtx] =
-    storeAuth(findUserByToken(token))
+    storeAuth(findUserByAuthToken(token))
 
   override protected[user] def promoteUserOP(id: UserID, newRole: UserRole): F[Unit] =
     updateRole(id, newRole).transact(transactor).map(_ => ())
@@ -41,10 +41,18 @@ final private[user] class AsyncAlgebraImpl[F[_]](
   override protected def registrationStep1OP(
     reg: UserRegistration
   ): F[UserRegistrationToken] =
-    F.raiseError(new NotImplementedError("Cannot perform registration step 1 OP at this time"))
+    for {
+      token <- generateToken()
+      _     <- insert(reg, UserRegistrationToken.haunt(token)).transact(transactor)
+    } yield UserRegistrationToken.haunt(token)
 
   override def registrationStep2(token: UserRegistrationToken): F[User] =
-    F.raiseError(new NotImplementedError("Cannot perform registration step 2 at this time"))
+    updateRegToken(token)
+      .transact(transactor)
+      .map {
+        case Some(value) => value
+        case None => throw new Exception("User not found")
+      }
 
   override def resetPasswordStep1(email: Email): F[PasswordResetToken] =
     F.raiseError(new NotImplementedError("Cannot perform resetPassword step 1 at this time"))
@@ -58,8 +66,8 @@ final private[user] class AsyncAlgebraImpl[F[_]](
   private def storeAuth(findUser: => ConnectionIO[Option[User]]): F[AuthCtx] =
     for {
       token <- generateToken()
-      user  <- insertToken(findUser, token).transact(transactor)
-    } yield AuthCtx(token, user.get)
+      user  <- insertToken(findUser, AuthenticationToken.haunt(token)).transact(transactor)
+    } yield AuthCtx(AuthenticationToken.haunt(token), user.get)
 
   private def insertToken(findUser: => ConnectionIO[Option[User]], token: AuthenticationToken) =
     for {
@@ -75,7 +83,7 @@ final private[user] class AsyncAlgebraImpl[F[_]](
       key    <- HMACSHA256.generateKey[F]
       claims <- JWTClaims.withDuration[F](expiration = Some(10.minutes))
       token  <- JWTMac.buildToString[F, HMACSHA256](claims, key)
-    } yield AuthenticationToken.haunt(token)
+    } yield token
 }
 
 object UserSql {
@@ -87,6 +95,10 @@ object UserSql {
     AuthenticationToken.haunt,
     AuthenticationToken.exorcise
   )
+  implicit val userRegistrationTokenMeta: Meta[UserRegistrationToken] = Meta[String].xmap(
+    UserRegistrationToken.haunt,
+    UserRegistrationToken.exorcise
+  )
   implicit val emailMeta:    Meta[Email]             = Meta[String].xmap(Email.apply(_).unsafeGet(),             _.plainTextEmail)
   implicit val pwdMeta:      Meta[PlainTextPassword] = Meta[String].xmap(PlainTextPassword.apply(_).unsafeGet(), _.plainText)
   implicit val userRoleMeta: Meta[UserRole]          = Meta[String].xmap(UserRole.fromName(_).unsafeGet(),       _.toString)
@@ -97,24 +109,40 @@ object UserSql {
   def updateRole(id: UserID, role: UserRole): ConnectionIO[Int] =
     sql"""UPDATE users SET role=$role WHERE id=$id""".update.run
 
+  def updateRegistrationToken(id: UserID, token: UserRegistrationToken): ConnectionIO[Int] =
+    sql"""UPDATE users SET registration=$token WHERE id=$id""".update.run
+
   def find(id: UserID): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE id=$id""".query[User].option
 
   def find(email: Email, pwd: PlainTextPassword): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE email=$email AND password=$pwd""".query[User].option
 
-  def find(token: AuthenticationToken): ConnectionIO[Option[Long]] =
+  def findByAuthToken(token: AuthenticationToken): ConnectionIO[Option[Long]] =
     sql"""SELECT userId FROM authentications WHERE token=$token""".query[Long].option
+
+  def findByRegToken(token: UserRegistrationToken): ConnectionIO[Option[User]] =
+    sql"""SELECT id, email, role FROM users WHERE registration=$token""".query[User].option
+
+  def insert(reg: UserRegistration, token: UserRegistrationToken): ConnectionIO[Long] =
+    sql"""INSERT INTO users(email, password, role, registration) VALUES (${reg.email}, ${reg.pw}, ${reg.role}, $token)""".update
+      .withUniqueGeneratedKeys[Long]("id")
 
   def insertAuthenticationToken(id: UserID, token: AuthenticationToken): ConnectionIO[Long] =
     sql"""INSERT INTO authentications(userId, token) VALUES($id, $token)""".update.withUniqueGeneratedKeys[Long]("id")
 
-  def findUserByToken(token: AuthenticationToken): ConnectionIO[Option[User]] =
+  def findUserByAuthToken(token: AuthenticationToken): ConnectionIO[Option[User]] =
     for {
-      userId <- find(token)
+      userId <- findByAuthToken(token)
       user <- userId match {
                case Some(value) => find(UserID.haunt(value))
                case None        => throw new Exception("Unauthorized")
              }
+    } yield user
+
+  def updateRegToken(token: UserRegistrationToken): ConnectionIO[Option[User]] =
+    for {
+      user <- findByRegToken(token)
+      _    <- updateRegistrationToken(user.get.id, token)
     } yield user
 }
