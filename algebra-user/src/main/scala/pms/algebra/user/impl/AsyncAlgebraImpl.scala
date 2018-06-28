@@ -72,7 +72,7 @@ final private[user] class AsyncAlgebraImpl[F[_]](
       user  <- insertToken(findUser, AuthenticationToken(token)).transact(transactor)
     } yield AuthCtx(AuthenticationToken(token), user.get)
 
-  private def generateToken() =
+  private def generateToken(): F[String] =
     for {
       key    <- HMACSHA256.generateKey[F]
       claims <- JWTClaims.withDuration[F](expiration = Some(10.minutes))
@@ -81,14 +81,18 @@ final private[user] class AsyncAlgebraImpl[F[_]](
 }
 
 object UserSql {
+
+  /*_*/
   implicit val userIDMeta: Meta[UserID] = Meta[Long].xmap(
     UserID.haunt,
     UserID.exorcise
   )
+
   implicit val authenticationTokenMeta: Meta[AuthenticationToken] = Meta[String].xmap(
     AuthenticationToken.haunt,
     AuthenticationToken.exorcise
   )
+
   implicit val userRegistrationTokenMeta: Meta[UserRegistrationToken] = Meta[String].xmap(
     UserRegistrationToken.haunt,
     UserRegistrationToken.exorcise
@@ -103,6 +107,7 @@ object UserSql {
   implicit val userComposite: Composite[User] =
     Composite[(UserID, Email, UserRole)]
       .imap((t: (UserID, Email, UserRole)) => User(t._1, t._2, t._3))((u: User) => (u.id, u.email, u.role))
+  /*_*/
 
   def updateRole(id: UserID, role: UserRole): ConnectionIO[Int] =
     sql"""UPDATE users SET role=$role WHERE id=$id""".update.run
