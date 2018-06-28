@@ -51,7 +51,7 @@ final private[user] class AsyncAlgebraImpl[F[_]](
       .transact(transactor)
       .map {
         case Some(value) => value
-        case None => throw new Exception("User not found")
+        case None        => throw new Exception("User not found")
       }
 
   override def resetPasswordStep1(email: Email): F[PasswordResetToken] =
@@ -68,15 +68,6 @@ final private[user] class AsyncAlgebraImpl[F[_]](
       token <- generateToken()
       user  <- insertToken(findUser, AuthenticationToken.haunt(token)).transact(transactor)
     } yield AuthCtx(AuthenticationToken.haunt(token), user.get)
-
-  private def insertToken(findUser: => ConnectionIO[Option[User]], token: AuthenticationToken) =
-    for {
-      user <- findUser
-      _ <- user match {
-            case Some(value) => insertAuthenticationToken(value.id, token)
-            case None        => throw new Exception("Unauthorized")
-          }
-    } yield user
 
   private def generateToken() =
     for {
@@ -144,5 +135,14 @@ object UserSql {
     for {
       user <- findByRegToken(token)
       _    <- updateRegistrationToken(user.get.id, token)
+    } yield user
+
+  def insertToken(findUser: => ConnectionIO[Option[User]], token: AuthenticationToken): ConnectionIO[Option[User]] =
+    for {
+      user <- findUser
+      _ <- user match {
+            case Some(value) => insertAuthenticationToken(value.id, token)
+            case None        => throw new Exception("Unauthorized")
+          }
     } yield user
 }
