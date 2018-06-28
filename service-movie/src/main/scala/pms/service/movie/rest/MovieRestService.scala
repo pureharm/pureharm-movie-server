@@ -37,7 +37,7 @@ final class MovieRestService[F[_]](
   private object EndReleaseDateQueryMatcher   extends QueryParamDecoderMatcher[ReleaseDate]("end")
 
   implicit private val titleQueryParamDecoder: QueryParamDecoder[TitleQuery] =
-    implicitly[QueryParamDecoder[String]].map(TitleQuery.apply)
+    QueryParamDecoder[String].map(TitleQuery.apply)
 
   private object TitleQueryParamMatcher extends QueryParamDecoderMatcher[TitleQuery]("title")
 
