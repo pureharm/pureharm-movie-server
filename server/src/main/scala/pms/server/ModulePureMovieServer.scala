@@ -1,6 +1,5 @@
 package pms.server
 
-import doobie.util.transactor
 import doobie.util.transactor.Transactor
 import org.http4s._
 import pms.effects._
@@ -56,6 +55,6 @@ object ModulePureMovieServer {
 
       override def gmailConfig: GmailConfig = gConfig
 
-      override implicit def transactor: transactor.Transactor[F] = t
+      override implicit def transactor: Transactor[F] = t
     }
 }

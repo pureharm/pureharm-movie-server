@@ -2,7 +2,6 @@ package pms.db.config
 
 import cats.implicits._
 import cats.effect.{Async, Sync}
-import doobie.hikari.HikariTransactor
 import doobie.util.transactor.Transactor
 import org.flywaydb.core.Flyway
 
