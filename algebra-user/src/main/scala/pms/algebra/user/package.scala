@@ -16,7 +16,7 @@ package object user {
   type UserRegistrationToken = UserRegistrationToken.Type
 
   object PasswordResetToken extends PhantomType[String]
-  type PasswordResetToken = UserRegistrationToken.Type
+  type PasswordResetToken = PasswordResetToken.Type
 
   object AuthenticationToken extends PhantomType[String]
   type AuthenticationToken = AuthenticationToken.Type

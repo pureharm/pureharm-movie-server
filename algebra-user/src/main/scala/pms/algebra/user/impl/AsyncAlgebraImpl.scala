@@ -3,6 +3,7 @@ package pms.algebra.user.impl
 import cats.syntax.all._
 import doobie._
 import doobie.implicits._
+import pms.algebra.user
 import pms.algebra.user._
 import pms.core._
 import pms.effects._
@@ -55,10 +56,13 @@ final private[user] class AsyncAlgebraImpl[F[_]](
       }
 
   override def resetPasswordStep1(email: Email): F[PasswordResetToken] =
-    F.raiseError(new NotImplementedError("Cannot perform resetPassword step 1 at this time"))
+    for {
+      token <- generateToken()
+      _     <- updatePwdToken(email, PasswordResetToken.haunt(token)).transact(transactor)
+    } yield PasswordResetToken.haunt(token)
 
   override def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit] =
-    F.raiseError(new NotImplementedError("Cannot perform resetPassword step 2 at this time"))
+    changePassword(token, newPassword).transact(transactor).map(_ => ())
 
   override def findUser(id: UserID)(implicit auth: AuthCtx): F[Option[User]] =
     find(id).transact(transactor)
@@ -90,6 +94,10 @@ object UserSql {
     UserRegistrationToken.haunt,
     UserRegistrationToken.exorcise
   )
+  implicit val passwordResetTokenMeta: Meta[PasswordResetToken] = Meta[String].xmap(
+    PasswordResetToken.haunt,
+    PasswordResetToken.exorcise
+  )
   implicit val emailMeta:    Meta[Email]             = Meta[String].xmap(Email.apply(_).unsafeGet(),             _.plainTextEmail)
   implicit val pwdMeta:      Meta[PlainTextPassword] = Meta[String].xmap(PlainTextPassword.apply(_).unsafeGet(), _.plainText)
   implicit val userRoleMeta: Meta[UserRole]          = Meta[String].xmap(UserRole.fromName(_).unsafeGet(),       _.toString)
@@ -103,17 +111,29 @@ object UserSql {
   def updateRegistrationToken(id: UserID, token: UserRegistrationToken): ConnectionIO[Int] =
     sql"""UPDATE users SET registration=$token WHERE id=$id""".update.run
 
+  def updatePasswordToken(id: UserID, token: PasswordResetToken): ConnectionIO[Int] =
+    sql"""UPDATE users SET passwordReset=$token WHERE id=$id""".update.run
+
+  def updatePassword(id: UserID, newPassword: PlainTextPassword): ConnectionIO[Int] =
+    sql"""UPDATE users SET password=$newPassword""".update.run
+
   def find(id: UserID): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE id=$id""".query[User].option
 
   def find(email: Email, pwd: PlainTextPassword): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE email=$email AND password=$pwd""".query[User].option
 
+  def find(email: Email): ConnectionIO[Option[User]] =
+    sql"""SELECT id, email, role FROM users WHERE email=$email""".query[User].option
+
   def findByAuthToken(token: AuthenticationToken): ConnectionIO[Option[Long]] =
     sql"""SELECT userId FROM authentications WHERE token=$token""".query[Long].option
 
   def findByRegToken(token: UserRegistrationToken): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE registration=$token""".query[User].option
+
+  def findByPwdToken(token: PasswordResetToken): ConnectionIO[Option[User]] =
+    sql"""SELECT id, email, role FROM users WHERE passwordReset=$token""".query[User].option
 
   def insert(reg: UserRegistration, token: UserRegistrationToken): ConnectionIO[Long] =
     sql"""INSERT INTO users(email, password, role, registration) VALUES (${reg.email}, ${reg.pw}, ${reg.role}, $token)""".update
@@ -145,4 +165,19 @@ object UserSql {
             case None        => throw new Exception("Unauthorized")
           }
     } yield user
+
+  def updatePwdToken(email: Email, token: PasswordResetToken): ConnectionIO[Option[User]] =
+    for {
+      user <- find(email)
+      _    <- updatePasswordToken(user.get.id, token)
+    } yield user
+
+  def changePassword(token: PasswordResetToken, newPassword: PlainTextPassword): ConnectionIO[Unit] =
+    for {
+      user <- findByPwdToken(token)
+      _ <- user match {
+            case Some(value) => updatePassword(value.id, newPassword)
+            case None        => throw new Exception("User not found")
+          }
+    } yield ()
 }
