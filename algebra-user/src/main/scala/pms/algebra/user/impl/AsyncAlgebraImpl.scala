@@ -3,7 +3,6 @@ package pms.algebra.user.impl
 import cats.syntax.all._
 import doobie._
 import doobie.implicits._
-import pms.algebra.user
 import pms.algebra.user._
 import pms.core._
 import pms.effects._
@@ -44,8 +43,8 @@ final private[user] class AsyncAlgebraImpl[F[_]](
   ): F[UserRegistrationToken] =
     for {
       token <- generateToken()
-      _     <- insert(reg, UserRegistrationToken.haunt(token)).transact(transactor)
-    } yield UserRegistrationToken.haunt(token)
+      _     <- insert(reg, UserRegistrationToken(token)).transact(transactor)
+    } yield UserRegistrationToken(token)
 
   override def registrationStep2(token: UserRegistrationToken): F[User] =
     updateRegToken(token)
@@ -58,8 +57,8 @@ final private[user] class AsyncAlgebraImpl[F[_]](
   override def resetPasswordStep1(email: Email): F[PasswordResetToken] =
     for {
       token <- generateToken()
-      _     <- updatePwdToken(email, PasswordResetToken.haunt(token)).transact(transactor)
-    } yield PasswordResetToken.haunt(token)
+      _     <- updatePwdToken(email, PasswordResetToken(token)).transact(transactor)
+    } yield PasswordResetToken(token)
 
   override def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit] =
     changePassword(token, newPassword).transact(transactor).map(_ => ())
@@ -70,8 +69,8 @@ final private[user] class AsyncAlgebraImpl[F[_]](
   private def storeAuth(findUser: => ConnectionIO[Option[User]]): F[AuthCtx] =
     for {
       token <- generateToken()
-      user  <- insertToken(findUser, AuthenticationToken.haunt(token)).transact(transactor)
-    } yield AuthCtx(AuthenticationToken.haunt(token), user.get)
+      user  <- insertToken(findUser, AuthenticationToken(token)).transact(transactor)
+    } yield AuthCtx(AuthenticationToken(token), user.get)
 
   private def generateToken() =
     for {
@@ -115,7 +114,7 @@ object UserSql {
     sql"""UPDATE users SET passwordReset=$token WHERE id=$id""".update.run
 
   def updatePassword(id: UserID, newPassword: PlainTextPassword): ConnectionIO[Int] =
-    sql"""UPDATE users SET password=$newPassword""".update.run
+    sql"""UPDATE users SET password=$newPassword WHERE id=$id""".update.run
 
   def find(id: UserID): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE id=$id""".query[User].option
@@ -146,7 +145,7 @@ object UserSql {
     for {
       userId <- findByAuthToken(token)
       user <- userId match {
-               case Some(value) => find(UserID.haunt(value))
+               case Some(value) => find(UserID(value))
                case None        => throw new Exception("Unauthorized")
              }
     } yield user
