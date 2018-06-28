@@ -5,7 +5,6 @@ import java.time._
 import spire.math.Interval
 import cats.implicits._
 
-import pms.core._
 import pms.effects._
 
 import pms.algebra.http._
@@ -31,12 +30,8 @@ final class MovieRestService[F[_]](
   implicit val F: Async[F],
 ) extends Http4sDsl[F] with MovieServiceJSON {
 
-  //TODO: move to separate commons class
-  implicit private val localDateParamDecoder: QueryParamDecoder[LocalDate] =
-    QueryParamDecoder.stringQueryParamDecoder.map(s => LocalDate.parse(s, TimeFormatters.LocalDateFormatter))
-
   implicit private val releaseDateQueryParamDecoder: QueryParamDecoder[ReleaseDate] =
-    localDateParamDecoder.map(ReleaseDate.apply)
+    QueryParamDecoder[LocalDate].map(ReleaseDate.apply)
 
   private object StartReleaseDateQueryMatcher extends QueryParamDecoderMatcher[ReleaseDate]("start")
   private object EndReleaseDateQueryMatcher   extends QueryParamDecoderMatcher[ReleaseDate]("end")

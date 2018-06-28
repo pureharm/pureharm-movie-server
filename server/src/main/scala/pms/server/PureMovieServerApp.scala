@@ -15,7 +15,7 @@ import org.http4s.server.blaze._
   */
 object PureMovieServerApp extends StreamApp[IO] {
 
-  override def stream(args: List[String], requestShutdown: IO[Unit]): Stream[IO, StreamApp.ExitCode] = {
+  override def stream(args: List[ String], requestShutdown: IO[Unit]): Stream[IO, StreamApp.ExitCode] = {
     implicit val sch: Scheduler = Scheduler.global
     for {
       serverConfig <- Stream.eval(PureMovieServerConfig.default[IO])
