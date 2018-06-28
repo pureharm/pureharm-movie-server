@@ -36,7 +36,7 @@ final private[user] class AsyncAlgebraImpl[F[_]](
     storeAuth(findUserByToken(token))
 
   override protected[user] def promoteUserOP(id: UserID, newRole: UserRole): F[Unit] =
-    F.raiseError(new NotImplementedError("Cannot promote user yet"))
+    updateRole(id, newRole).transact(transactor).map(_ => ())
 
   override protected def registrationStep1OP(
     reg: UserRegistration
@@ -93,6 +93,9 @@ object UserSql {
   implicit val userComposite: Composite[User] =
     Composite[(UserID, Email, UserRole)]
       .imap((t: (UserID, Email, UserRole)) => User(t._1, t._2, t._3))((u: User) => (u.id, u.email, u.role))
+
+  def updateRole(id: UserID, role: UserRole): ConnectionIO[Int] =
+    sql"""UPDATE users SET role=$role WHERE id=$id""".update.run
 
   def find(id: UserID): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE id=$id""".query[User].option
