@@ -1,9 +1,7 @@
 package pms.algebra.user.impl
 
-import cats.free.Free
 import cats.syntax.all._
 import doobie._
-import doobie.free.connection
 import doobie.implicits._
 import pms.algebra.user._
 import pms.core._
@@ -57,16 +55,20 @@ final private[user] class AsyncAlgebraImpl[F[_]](
   override def findUser(id: UserID)(implicit auth: AuthCtx): F[Option[User]] =
     find(id).transact(transactor)
 
-  private def storeAuth(thunk: => ConnectionIO[Option[User]]): F[AuthCtx] = {
+  private def storeAuth(findUser: => ConnectionIO[Option[User]]): F[AuthCtx] =
     for {
       token <- generateToken()
-      user  <- thunk
+      user  <- insertToken(findUser, token).transact(transactor)
+    } yield AuthCtx(token, user.get)
+
+  private def insertToken(findUser: => ConnectionIO[Option[User]], token: AuthenticationToken) =
+    for {
+      user <- findUser
       _ <- user match {
-            case Some(value) => insertAuthenticationToken(value.id, token).transact(transactor)
+            case Some(value) => insertAuthenticationToken(value.id, token)
             case None        => throw new Exception("Unauthorized")
           }
-    } yield AuthCtx(token, user.get)
-  }
+    } yield user
 
   private def generateToken() =
     for {
