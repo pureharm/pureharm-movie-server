@@ -3,10 +3,11 @@ package pms.service.user.rest
 import cats.implicits._
 
 import pms.effects._
+
 import pms.algebra.user._
+import pms.algebra.http._
 
 import pms.service.user._
-import pms.http._
 
 import org.http4s._
 import org.http4s.dsl._
@@ -18,21 +19,24 @@ import org.http4s.dsl._
   *
   */
 final class UserAccountRestService[F[_]](
-  private val userService: UserAccountService[F]
+  private val userService:       UserAccountService[F],
+  private val authCtxMiddleware: AuthCtxMiddleware[F]
 )(
   implicit val F: Async[F]
 ) extends Http4sDsl[F] with UserServiceJSON {
 
   private object RegistrationTokenMatcher extends QueryParamDecoderMatcher[String]("registrationToken")
 
-  val userRegistrationService: HttpService[F] = HttpService[F] {
-    case req @ POST -> Root / "user_registration" =>
+  private val userRegistrationStep1Service: AuthCtxService[F] = AuthCtxService[F] {
+    case (req @ POST -> Root / "user_registration") as user =>
       for {
         reg  <- req.as[UserRegistration]
-        _    <- userService.registrationStep1(reg)(??? : AuthCtx)
+        _    <- userService.registrationStep1(reg)(user)
         resp <- Created()
       } yield resp
+  }
 
+  private val userRegistrationStep2Service: HttpService[F] = HttpService[F] {
     case PUT -> Root / "user_registration" / "confirmation" :? RegistrationTokenMatcher(token) =>
       for {
         user <- userService.registrationStep2(UserRegistrationToken(token))
@@ -40,7 +44,7 @@ final class UserAccountRestService[F[_]](
       } yield resp
   }
 
-  val userPasswordResetService: HttpService[F] = HttpService[F] {
+  private val userPasswordResetService: HttpService[F] = HttpService[F] {
     case req @ POST -> Root / "user" / "password_reset" / "request" =>
       for {
         pwr  <- req.as[PasswordResetRequest]
@@ -55,5 +59,14 @@ final class UserAccountRestService[F[_]](
         resp <- Created()
       } yield resp
   }
+
+  val service: HttpService[F] =
+    NonEmptyList
+      .of[HttpService[F]](
+        authCtxMiddleware(userRegistrationStep1Service),
+        userRegistrationStep2Service,
+        userPasswordResetService
+      )
+      .reduceK
 
 }

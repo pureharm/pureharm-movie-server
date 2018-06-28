@@ -35,9 +35,10 @@ trait ConfigLoader[Config] {
   }
 
   private def suspendInF[F[_]: Sync](thunk: => Either[ConfigReaderFailures, Config]): F[Config] = {
-    Sync[F].flatMap(Sync[F].delay(thunk)) {
-      case Left(err) => Sync[F].raiseError(ConfigReadingAnomalies(err))
-      case Right(c)  => Sync[F].pure(c)
+    val F = Sync.apply[F]
+    F.flatMap(F.delay(thunk)) {
+      case Left(err) => F.raiseError(ConfigReadingAnomalies(err))
+      case Right(c)  => F.pure(c)
     }
   }
 }

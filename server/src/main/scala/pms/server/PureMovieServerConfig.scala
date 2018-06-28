@@ -10,12 +10,16 @@ import pms.config._
   *
   */
 final case class PureMovieServerConfig(
-  port: Int,
-  host: String,
-  apiRoot: String,
+  port:         Int,
+  host:         String,
+  apiRoot:      String,
+  psqlDriver:   String,
+  psqlURL:      String,
+  psqlUser:     String,
+  psqlPassword: String
 )
 
 object PureMovieServerConfig extends ConfigLoader[PureMovieServerConfig] {
   override def default[F[_]: Sync]: F[PureMovieServerConfig] =
-    this.load[F]("busylabs.pms.server")
+    this.load[F]("pms.server")
 }

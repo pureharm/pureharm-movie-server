@@ -11,11 +11,12 @@ lazy val server = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
-    mainClass := Option("busylabs.pms.PureMovieServerApp")
+    mainClass := Option("pms.server.PureMovieServerApp")
   )
   .dependsOn(
     `pms-effects`,
     `pms-config`,
+    `pms-db-config`,
     `pms-core`,
     `service-user`,
     `service-movie`,
@@ -23,6 +24,7 @@ lazy val server = project
   .aggregate(
     `pms-effects`,
     `pms-config`,
+    `pms-db-config`,
     `pms-core`,
     `service-user`,
     `service-movie`,
@@ -33,6 +35,7 @@ lazy val `service-user` = project
   .settings(sbtAssemblySettings)
   .dependsOn(
     `algebra-user`,
+    `algebra-http-sec`,
     `pms-email`,
     `pms-config`,
     `pms-effects`,
@@ -42,6 +45,7 @@ lazy val `service-user` = project
   )
   .aggregate(
     `algebra-user`,
+    `algebra-http-sec`,
     `pms-email`,
     `pms-config`,
     `pms-effects`,
@@ -57,6 +61,7 @@ lazy val `service-movie` = project
     `algebra-user`,
     `algreba-imdb`,
     `algebra-movie`,
+    `algebra-http-sec`,
     `pms-config`,
     `pms-effects`,
     `pms-core`,
@@ -67,11 +72,30 @@ lazy val `service-movie` = project
     `algebra-user`,
     `algreba-imdb`,
     `algebra-movie`,
+    `algebra-http-sec`,
     `pms-config`,
     `pms-effects`,
     `pms-core`,
     `pms-json`,
     `pms-http`,
+  )
+
+lazy val `algebra-http-sec` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .dependsOn(
+    `pms-config`,
+    `pms-effects`,
+    `pms-core`,
+    `pms-http`,
+    `algebra-user`,
+  )
+  .aggregate(
+    `pms-config`,
+    `pms-effects`,
+    `pms-core`,
+    `pms-http`,
+    `algebra-user`,
   )
 
 lazy val `algreba-imdb` = project
@@ -124,6 +148,7 @@ lazy val `pms-email` = project
   .dependsOn(
     `pms-core`,
     `pms-effects`,
+    `pms-config`,
   )
 
 lazy val `pms-http` = project
@@ -134,7 +159,6 @@ lazy val `pms-http` = project
     `pms-effects`,
     `pms-json`,
   )
-
 
 lazy val `pms-json` = project
   .settings(commonSettings)
@@ -160,6 +184,14 @@ lazy val `pms-config` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .dependsOn(
+    `pms-effects`
+  )
+
+lazy val `pms-db-config` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .dependsOn(
+    `pms-config`,
     `pms-effects`
   )
 
@@ -201,6 +233,7 @@ def commonSettings: Seq[Setting[_]] = Seq(
     //test stuff
     doobieTK,
     //misc
+    flyway,
     attoParser,
     pureConfig,
     spire,
@@ -381,6 +414,8 @@ lazy val doobieVersion = "0.5.3"
 lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"   % doobieVersion withSources () // HikariCP transactor.
 lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres" % doobieVersion withSources () // Postgres driver 42.2.2 + type mappings.
 lazy val doobieTK       = "org.tpolecat" %% "doobie-specs2"   % doobieVersion % Test withSources () // specs2 support for typechecking statements.
+
+lazy val flyway = "org.flywaydb" % "flyway-core" % "4.2.0" withSources ()
 
 lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.3" withSources ()
 
