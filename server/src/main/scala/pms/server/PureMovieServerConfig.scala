@@ -12,11 +12,7 @@ import pms.config._
 final case class PureMovieServerConfig(
   port:         Int,
   host:         String,
-  apiRoot:      String,
-  psqlDriver:   String,
-  psqlURL:      String,
-  psqlUser:     String,
-  psqlPassword: String
+  apiRoot:      String
 )
 
 object PureMovieServerConfig extends ConfigLoader[PureMovieServerConfig] {
