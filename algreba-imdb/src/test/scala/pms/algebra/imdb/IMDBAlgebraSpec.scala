@@ -10,7 +10,7 @@ import monix.execution.Scheduler.Implicits.global
 
 class IMDBAlgebraSpec extends org.specs2.mutable.Specification {
 
-  private val rateLimiter = new RateLimiter[Document](1.seconds, 1)
+  private val rateLimiter = RateLimiter[IO, Document](1.seconds, 1)
   private val imdbAlgebra = new impl.AsyncIMDBAlgebraImpl[IO](rateLimiter)
 
   "Searching for" >> {

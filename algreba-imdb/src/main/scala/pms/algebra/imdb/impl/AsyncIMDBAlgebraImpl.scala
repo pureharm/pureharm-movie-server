@@ -16,22 +16,24 @@ import pms.algebra.imdb.extra.RateLimiter
   * @since 25 Jun 2018
   *
   */
-final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](val rateLimiter: RateLimiter[Document])(
+final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](val rateLimiter: RateLimiter[F, Document])(
   implicit val F:                                                     Async[F],
   implicit val scheduler:                                             Scheduler
 ) extends IMDBAlgebra[F] {
 
   override def scrapeMovieByTitle(title: TitleQuery): F[Option[IMDBMovie]] = {
     val browser = JsoupBrowser()
-    val movie = for {
-      doc <- rateLimiter.addToQueue {
-              browser.get(s"https://imdb.com/find?q=$title&s=tt")
-            }
-      imdbMovie <- Future {
-                    parseIMDBDocument(doc)
-                  }
-    } yield imdbMovie
-    F.liftIO(movie.asIO)
+    val movie = IO.suspendFuture {
+      for {
+        doc <- rateLimiter.addToQueue {
+                browser.get(s"https://imdb.com/find?q=$title&s=tt")
+              }
+        imdbMovie <- Future {
+                      parseIMDBDocument(doc)
+                    }
+      } yield imdbMovie
+    }
+    F.liftIO(movie)
   }
 
   private def parseIMDBDocument(imdbDocument: Document): Option[IMDBMovie] = {

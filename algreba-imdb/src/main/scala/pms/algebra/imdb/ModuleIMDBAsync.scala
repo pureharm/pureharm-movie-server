@@ -19,9 +19,14 @@ trait ModuleIMDBAsync[F[_]] {
 
   def imdbAlgebraConfig : IMDBAlgebraConfig
 
-  def rateLimiter = new RateLimiter[Document](FiniteDuration(imdbAlgebraConfig.requestsInterval, MILLISECONDS), imdbAlgebraConfig.requestsNumber)
+  def rateLimiter : RateLimiter[F, Document] = _rateLimiter
 
   def imdbAlgebra: IMDBAlgebra[F] = _imdbAlgebra
+
+  private lazy val _rateLimiter : RateLimiter[F, Document] = RateLimiter.async(
+    interval = FiniteDuration(imdbAlgebraConfig.requestsInterval, MILLISECONDS),
+    size = imdbAlgebraConfig.requestsNumber
+  )
 
   private lazy val _imdbAlgebra: IMDBAlgebra[F] = new impl.AsyncIMDBAlgebraImpl[F](rateLimiter)
 }
