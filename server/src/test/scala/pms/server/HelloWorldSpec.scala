@@ -1,4 +1,4 @@
-//package pms.pms.server
+//package pms.server
 //
 ///**
 //  *
@@ -9,9 +9,7 @@
 //
 //import cats.effect.IO
 //import org.http4s._
-//import org.http4s.implicits._
 //import org.specs2.matcher.MatchResult
-//import pms.server.HelloWorldService
 //
 //class HelloWorldSpec extends org.specs2.mutable.Specification {
 //

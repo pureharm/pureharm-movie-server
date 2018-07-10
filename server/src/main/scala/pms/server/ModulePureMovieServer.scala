@@ -12,6 +12,7 @@ import pms.service.user._
 import pms.service.user.rest._
 import pms.service.movie._
 import pms.service.movie.rest._
+import monix.execution.Scheduler
 
 /**
   * Overriding all abstract things just to make clear what
@@ -49,9 +50,13 @@ trait ModulePureMovieServer[F[_]]
 
 object ModulePureMovieServer {
 
-  def concurrent[F[_]](gConfig: GmailConfig)(implicit c: Concurrent[F], t: Transactor[F]): ModulePureMovieServer[F] =
+  def concurrent[F[_]](imbdAlgebraConfig : IMDBAlgebraConfig, gConfig: GmailConfig)(implicit c: Concurrent[F], t: Transactor[F]): ModulePureMovieServer[F] =
     new ModulePureMovieServer[F] {
-      implicit override def concurrent: Concurrent[F] = c
+      override implicit def concurrent: Concurrent[F] = c
+
+      override implicit def scheduler: Scheduler  = monix.execution.Scheduler.Implicits.global
+
+      override def imdbAlgebraConfig: IMDBAlgebraConfig = imbdAlgebraConfig
 
       override def gmailConfig: GmailConfig = gConfig
 
