@@ -15,23 +15,24 @@ import doobie.util.transactor.Transactor
   * @since 11 Jul 2018
   *
   */
-object PureMovieServer {
+final class PureMovieServer[F[_]: Concurrent] {
 
-  def init[F[_]: Concurrent]: F[(PureMovieServerConfig, ModulePureMovieServer[F])] = {
+  private val logger = Slf4jLogger.unsafeCreate[F]
+
+  def init: F[(PureMovieServerConfig, ModulePureMovieServer[F])] = {
     for {
-      logger       <- Slf4jLogger.create[F]
       serverConfig <- PureMovieServerConfig.default[F]
       gmailConfig  <- GmailConfig.default[F]
       dbConfig     <- DatabaseConfig.default[F]
       transactor   <- DatabaseConfigAlgebra.transactor[F](dbConfig)
       nrOfMigs     <- DatabaseConfigAlgebra.initializeSQLDb[F](dbConfig)
       _            <- logger.info(s"Successfully ran #$nrOfMigs migrations")
-      pmsModule    <- moduleInit[F](gmailConfig, transactor)
+      pmsModule    <- moduleInit(gmailConfig, transactor)
       _            <- logger.info(s"Successfully initialized pure-movie-server")
     } yield (serverConfig, pmsModule)
   }
 
-  private def moduleInit[F[_]: Concurrent](
+  private def moduleInit(
     gmailConfig: GmailConfig,
     transactor:  Transactor[F]
   ): F[ModulePureMovieServer[F]] =
