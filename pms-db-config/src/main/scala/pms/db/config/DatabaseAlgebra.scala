@@ -14,12 +14,11 @@ object DatabaseConfigAlgebra {
     Transactor.fromDriverManager[F](config.driver, config.url, config.user, config.password)
   }
 
-  def initializeSQLDb[F[_]](config: DatabaseConfig)(implicit S: Sync[F]): F[Unit] =
+  def initializeSQLDb[F[_]](config: DatabaseConfig)(implicit S: Sync[F]): F[Int] =
     S.delay {
       val fw = new Flyway()
       fw.setDataSource(config.url, config.user, config.password)
       if (config.clean) fw.clean()
       fw.migrate()
-      ()
     }
 }
