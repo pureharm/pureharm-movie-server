@@ -15,7 +15,7 @@ import doobie.util.transactor.Transactor
   * @since 11 Jul 2018
   *
   */
-final class PureMovieServer[F[_]: Concurrent] {
+final class PureMovieServer[F[_]: Concurrent] private () {
 
   private val logger = Slf4jLogger.unsafeCreate[F]
 
@@ -38,4 +38,8 @@ final class PureMovieServer[F[_]: Concurrent] {
   ): F[ModulePureMovieServer[F]] =
     Concurrent.apply[F].delay(ModulePureMovieServer.concurrent(gmailConfig)(implicitly, transactor))
 
+}
+
+object PureMovieServer {
+  def concurrent[F[_]: Concurrent]: F[PureMovieServer[F]] = Concurrent.apply[F].delay(new PureMovieServer[F]())
 }
