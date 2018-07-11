@@ -1,12 +1,17 @@
 package pms.server
 
-import doobie.util.transactor.Transactor
+import cats.implicits._
+
 import pms.effects._
 import pms.email._
 import pms.db.config._
+
 import fs2.{Stream, StreamApp}
 import org.http4s._
 import org.http4s.server.blaze._
+
+import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import doobie.util.transactor.Transactor
 
 /**
   *
@@ -19,17 +24,26 @@ object PureMovieServerApp extends StreamApp[IO] {
   override def stream(args: List[String], requestShutdown: IO[Unit]): Stream[IO, StreamApp.ExitCode] = {
     implicit val sch: Scheduler = Scheduler.global
     for {
-      serverConfig <- Stream.eval(PureMovieServerConfig.default[IO])
-      gmailConfig  <- Stream.eval(GmailConfig.default[IO])
-      dbConfig     <- Stream.eval(DatabaseConfig.default[IO])
-      transactor   <- Stream.eval(DatabaseConfigAlgebra.transactor[IO](dbConfig))
-      _            <- Stream.eval(DatabaseConfigAlgebra.initializeSQLDb[IO](dbConfig))
-      pmsModule    <- Stream.eval(pureMovieServerModule[IO](gmailConfig, transactor))
+      server <- Stream.eval(serverInit[IO])
       exitCode <- serverStream[IO](
-                   config  = serverConfig,
-                   service = pmsModule.pureMovieServerService
+                   config  = server._1,
+                   service = server._2.pureMovieServerService
                  )
     } yield exitCode
+  }
+
+  private def serverInit[F[_]: Concurrent]: F[(PureMovieServerConfig, ModulePureMovieServer[F])] = {
+    for {
+      logger       <- Slf4jLogger.create[F]
+      serverConfig <- PureMovieServerConfig.default[F]
+      gmailConfig  <- GmailConfig.default[F]
+      dbConfig     <- DatabaseConfig.default[F]
+      transactor   <- DatabaseConfigAlgebra.transactor[F](dbConfig)
+      nrOfMigs     <- DatabaseConfigAlgebra.initializeSQLDb[F](dbConfig)
+      _            <- logger.info(s"Successfully ran #$nrOfMigs migrations")
+      pmsModule    <- pureMovieServerModule[F](gmailConfig, transactor)
+      _            <- logger.info(s"Successfully initialized pure-movie-server")
+    } yield (serverConfig, pmsModule)
   }
 
   private def pureMovieServerModule[F[_]: Concurrent](
