@@ -24,10 +24,10 @@ object PureMovieServerApp extends StreamApp[IO] {
   override def stream(args: List[String], requestShutdown: IO[Unit]): Stream[IO, StreamApp.ExitCode] = {
     implicit val sch: Scheduler = Scheduler.global
     for {
-      server <- Stream.eval(serverInit[IO])
+      (serverConfig, pmsModule) <- Stream.eval(serverInit[IO])
       exitCode <- serverStream[IO](
-                   config  = server._1,
-                   service = server._2.pureMovieServerService
+                   config  = serverConfig,
+                   service = pmsModule.pureMovieServerService
                  )
     } yield exitCode
   }
