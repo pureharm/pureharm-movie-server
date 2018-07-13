@@ -1,5 +1,5 @@
 CREATE TABLE users (
-  id int(11) unsigned NOT NULL AUTO_INCREMENT,
+  id serial NOT NULL,
   email varchar(255) NOT NULL,
   password varchar(255) NOT NULL,
   role varchar(255) NOT NULL,
@@ -9,15 +9,15 @@ CREATE TABLE users (
 );
 
 CREATE TABLE authentications (
-  id int(11) unsigned NOT NULL AUTO_INCREMENT,
-  userId int(11) NOT NULL,
+  id serial NOT NULL,
+  userId integer NOT NULL,
   token varchar(255) NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE movies (
-  id int(11) unsigned NOT NULL AUTO_INCREMENT,
+  id serial NOT NULL,
   name varchar(255) NOT NULL,
-  date DATETIME NOT NULL,
+  date timestamp NOT NULL,
   PRIMARY KEY (id)
 )

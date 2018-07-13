@@ -1,12 +1,14 @@
 package pms.server
 
-import doobie.util.transactor.Transactor
-
 import pms.effects._
 import pms.email._
+
 import pms.algebra.user._
+import pms.algebra.imdb.IMDBAlgebraConfig
 
 import pms.server.bootstrap._
+
+import doobie.util.transactor.Transactor
 
 /**
   *
@@ -22,11 +24,23 @@ trait ModulePureMovieServerBootstrap[F[_]]
 
 object ModulePureMovieServerBootstrap {
 
-  def concurrent[F[_]](gConfig: GmailConfig)(implicit c: Concurrent[F], t: Transactor[F]): ModulePureMovieServerBootstrap[F] =
+  def concurrent[F[_]](
+    gConfig:           GmailConfig,
+    imbdAlgebraConfig: IMDBAlgebraConfig
+  )(
+    implicit
+    c:  Concurrent[F],
+    t:  Transactor[F],
+    sc: Scheduler
+  ): ModulePureMovieServerBootstrap[F] =
     new ModulePureMovieServerBootstrap[F] {
       implicit override def concurrent: Concurrent[F] = c
 
+      implicit override def scheduler: Scheduler = sc
+
       override def gmailConfig: GmailConfig = gConfig
+
+      override def imdbAlgebraConfig: IMDBAlgebraConfig = imbdAlgebraConfig
 
       implicit override def transactor: Transactor[F] = t
     }

@@ -258,6 +258,7 @@ def commonSettings: Seq[Setting[_]] = Seq(
     attoParser,
     pureConfig,
     spire,
+    scalaScrapper,
   ) ++ tsec,
   /*
    * Eliminates useless, unintuitive, and sometimes broken additions of `withFilter`

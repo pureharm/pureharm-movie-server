@@ -12,6 +12,7 @@ import pms.service.user._
 import pms.service.user.rest._
 import pms.service.movie._
 import pms.service.movie.rest._
+import monix.execution.Scheduler
 
 /**
   * Overriding all abstract things just to make clear what
@@ -32,6 +33,8 @@ trait ModulePureMovieServer[F[_]]
 
   override def gmailConfig: GmailConfig
 
+  override def imdbAlgebraConfig: IMDBAlgebraConfig
+
   //we could delay this even more, but there is little point.
   override def authCtxMiddleware: AuthCtxMiddleware[F] =
     AuthedHttp4s.userTokenAuthMiddleware[F](userAuthAlgebra)
@@ -49,12 +52,21 @@ trait ModulePureMovieServer[F[_]]
 
 object ModulePureMovieServer {
 
-  def concurrent[F[_]](gConfig: GmailConfig)(implicit c: Concurrent[F], t: Transactor[F]): ModulePureMovieServer[F] =
+  def concurrent[F[_]](gConfig: GmailConfig, imbdAlgebraConfig: IMDBAlgebraConfig)(
+    implicit
+    c:  Concurrent[F],
+    t:  Transactor[F],
+    sc: Scheduler
+  ): ModulePureMovieServer[F] =
     new ModulePureMovieServer[F] {
       implicit override def concurrent: Concurrent[F] = c
 
+      implicit override def scheduler: Scheduler = sc
+
       override def gmailConfig: GmailConfig = gConfig
 
-      override implicit def transactor: Transactor[F] = t
+      override def imdbAlgebraConfig: IMDBAlgebraConfig = imbdAlgebraConfig
+
+      implicit override def transactor: Transactor[F] = t
     }
 }
