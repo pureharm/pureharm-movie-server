@@ -50,7 +50,7 @@ trait ModulePureMovieServer[F[_]]
 
 object ModulePureMovieServer {
 
-  def concurrent[F[_]](imbdAlgebraConfig : IMDBAlgebraConfig, gConfig: GmailConfig)(implicit c: Concurrent[F], t: Transactor[F]): ModulePureMovieServer[F] =
+  def concurrent[F[_]](gConfig: GmailConfig, imbdAlgebraConfig : IMDBAlgebraConfig)(implicit c: Concurrent[F], t: Transactor[F]): ModulePureMovieServer[F] =
     new ModulePureMovieServer[F] {
       override implicit def concurrent: Concurrent[F] = c
 
