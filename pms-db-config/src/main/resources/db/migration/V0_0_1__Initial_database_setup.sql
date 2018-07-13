@@ -4,7 +4,7 @@ CREATE TABLE users (
   password varchar(255) NOT NULL,
   role varchar(255) NOT NULL,
   registration varchar(255) NOT NULL,
-  passwordReset varchar(255) NOT NULL,
+  passwordReset varchar(255),
   PRIMARY KEY (id)
 );
 
