@@ -16,7 +16,7 @@ import doobie.util.transactor.Transactor
   *
   */
 final class PureMovieServer[F[_]: Concurrent] private () {
-
+  private val F: Concurrent[F] = Concurrent.apply[F]
   private val logger = Slf4jLogger.unsafeCreate[F]
 
   def init: F[(PureMovieServerConfig, ModulePureMovieServer[F])] = {
@@ -27,16 +27,29 @@ final class PureMovieServer[F[_]: Concurrent] private () {
       transactor   <- DatabaseConfigAlgebra.transactor[F](dbConfig)
       nrOfMigs     <- DatabaseConfigAlgebra.initializeSQLDb[F](dbConfig)
       _            <- logger.info(s"Successfully ran #$nrOfMigs migrations")
-      pmsModule    <- moduleInit(gmailConfig, transactor)
+      pmsModule    <- moduleInit(gmailConfig, transactor, bootstrap = serverConfig.bootstrap)
       _            <- logger.info(s"Successfully initialized pure-movie-server")
     } yield (serverConfig, pmsModule)
   }
 
   private def moduleInit(
     gmailConfig: GmailConfig,
-    transactor:  Transactor[F]
-  ): F[ModulePureMovieServer[F]] =
-    Concurrent.apply[F].delay(ModulePureMovieServer.concurrent(gmailConfig)(implicitly, transactor))
+    transactor:  Transactor[F],
+    bootstrap:   Boolean
+  ): F[ModulePureMovieServer[F]] = {
+    if (bootstrap) {
+      logger.warn(
+        "BOOTSTRAP — initializing server in bootstrap mode — if this is on prod, you seriously botched this one"
+      ) *>
+        F.delay(ModulePureMovieServerBootstrap.concurrent(gmailConfig)(F, transactor)).flatMap { module =>
+          module.bootstrap >> F.pure(module)
+        }
+    }
+    else {
+      F.delay(ModulePureMovieServer.concurrent(gmailConfig)(F, transactor))
+    }
+
+  }
 
 }
 
