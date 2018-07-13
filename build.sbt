@@ -20,6 +20,7 @@ lazy val server = project
     `pms-core`,
     `service-user`,
     `service-movie`,
+    `server-bootstrap`,
   )
   .aggregate(
     `pms-effects`,
@@ -28,6 +29,26 @@ lazy val server = project
     `pms-core`,
     `service-user`,
     `service-movie`,
+    `server-bootstrap`,
+  )
+
+lazy val `server-bootstrap` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .settings()
+  .dependsOn(
+    `pms-effects`,
+    `pms-config`,
+    `pms-db-config`,
+    `pms-core`,
+    `algebra-user`,
+  )
+  .aggregate(
+    `pms-effects`,
+    `pms-config`,
+    `pms-db-config`,
+    `pms-core`,
+    `algebra-user`,
   )
 
 lazy val `service-user` = project
