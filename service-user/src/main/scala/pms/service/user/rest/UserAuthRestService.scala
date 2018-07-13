@@ -37,7 +37,24 @@ final class UserAuthRestService[F[_]](
   private def logInWithUserNamePassword(bc: BasicCredentials): F[Option[AuthCtx]] = {
     val optT = for {
       email <- OptionT[F, Email](F.pure(Email(bc.username).toOption))
-      ptpw  <- OptionT[F, PlainTextPassword](F.pure(PlainTextPassword(bc.password).toOption))
+      ptpw <- OptionT[F, PlainTextPassword](F.pure(PlainTextPassword(bc.password).toOption))
+      _ <- OptionT[F, Unit] {
+        F.delay {
+          Option {
+            println(
+              s"""
+                 |
+                     |FUCCKKK!!!!
+                 |usr=${bc.username}
+                 |pwd=${bc.password}
+                 |
+                     |
+                     |
+              """.stripMargin
+            )
+          }
+        }
+      }
       auth <- OptionT[F, AuthCtx](userAuthAlgebra.authenticate(email, ptpw).map(Option.apply).recover {
                case NonFatal(_) => Option.empty[AuthCtx]
              })
@@ -46,7 +63,7 @@ final class UserAuthRestService[F[_]](
   }
 
   private val middleware: AuthMiddleware[F, AuthCtx] =
-    BasicAuth("Basic", logInWithUserNamePassword)
+    BasicAuth("'Authorization' header format: Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==", logInWithUserNamePassword)
 
   private val basicAuthService: AuthedService[AuthCtx, F] =
     AuthedService {

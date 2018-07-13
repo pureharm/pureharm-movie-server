@@ -36,10 +36,30 @@ final private[user] class AsyncAlgebraImpl[F[_]](
 
   override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] =
     for {
+      _ <- F.delay(
+            println(
+              "\n\n WHAT THE FUCK!! — this is called, but the printlns related to finding the user are not??? \n\n"
+            )
+          )
       userRepr <- findRepr(email).transact(transactor).flatMap {
-                   case None    => F.raiseError[UserRepr](invalidEmailOrPW)
-                   case Some(v) => F.pure[UserRepr](v)
+                   case None =>
+                     F.delay(println(s"\n\n wtf, how can you not find the user w/ email:${email.plainTextEmail}\n\n")) >>
+                       F.raiseError[UserRepr](invalidEmailOrPW)
+                   case Some(v) =>
+                     F.delay(println(s"\n\n found userrepr by email: $v \n\n")) >>
+                       F.pure[UserRepr](v)
                  }
+      _ <- F.delay {
+            println {
+              s"""
+                 |
+                 |USER REPR:
+                 |hashed=${userRepr.pw.toString}
+                 |
+                 |
+          """.stripMargin
+            }
+          }
       validPW <- HardenedSCrypt.checkpw[F](pw.plainText, userRepr.pw)
       _ <- F.delay {
             println {
