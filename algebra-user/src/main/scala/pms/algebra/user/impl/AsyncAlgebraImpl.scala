@@ -45,7 +45,7 @@ final private[user] class AsyncAlgebraImpl[F[_]](
   override protected[user] def promoteUserOP(id: UserID, newRole: UserRole): F[Unit] =
     updateRole(id, newRole).transact(transactor).map(_ => ())
 
-  override protected def registrationStep1OP(
+  override protected[user] def registrationStep1OP(
     reg: UserRegistration
   ): F[UserRegistrationToken] =
     for {

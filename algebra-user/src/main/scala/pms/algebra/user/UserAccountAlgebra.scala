@@ -21,7 +21,7 @@ trait UserAccountAlgebra[F[_]] {
     implicit auth: AuthCtx
   ): F[UserRegistrationToken] = authAlgebra.authorizeGTERole(reg.role)(registrationStep1OP(reg))
 
-  protected def registrationStep1OP(reg: UserRegistration): F[UserRegistrationToken]
+  protected[user] def registrationStep1OP(reg: UserRegistration): F[UserRegistrationToken]
 
   def registrationStep2(token: UserRegistrationToken): F[User]
 
@@ -31,7 +31,7 @@ trait UserAccountAlgebra[F[_]] {
 }
 
 object UserAccountAlgebra {
-  import pms.effects._
 
-  def async[F[_]: Async](implicit transactor: Transactor[F]): UserAccountAlgebra[F] = new impl.AsyncAlgebraImpl[F]()
+  def async[F[_]: Async](implicit transactor: Transactor[F]): UserAccountAlgebra[F] =
+    new impl.AsyncAlgebraImpl[F]()
 }
