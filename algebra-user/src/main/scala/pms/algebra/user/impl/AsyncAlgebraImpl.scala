@@ -36,43 +36,11 @@ final private[user] class AsyncAlgebraImpl[F[_]](
 
   override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] =
     for {
-      _ <- F.delay(
-            println(
-              "\n\n WHAT THE FUCK!! — this is called, but the printlns related to finding the user are not??? \n\n"
-            )
-          )
       userRepr <- findRepr(email).transact(transactor).flatMap {
-                   case None =>
-                     F.delay(println(s"\n\n wtf, how can you not find the user w/ email:${email.plainTextEmail}\n\n")) >>
-                       F.raiseError[UserRepr](invalidEmailOrPW)
-                   case Some(v) =>
-                     F.delay(println(s"\n\n found userrepr by email: $v \n\n")) >>
-                       F.pure[UserRepr](v)
+                   case None    => F.raiseError[UserRepr](invalidEmailOrPW)
+                   case Some(v) => F.pure[UserRepr](v)
                  }
-      _ <- F.delay {
-            println {
-              s"""
-                 |
-                 |USER REPR:
-                 |hashed=${userRepr.pw.toString}
-                 |
-                 |
-          """.stripMargin
-            }
-          }
-      validPW <- HardenedSCrypt.checkpw[F](pw.plainText, userRepr.pw)
-      _ <- F.delay {
-            println {
-              s"""
-                 |
-                 |
-                 |VERIFICATION STATUS OF:
-                 |${validPW}
-                 |
-                 |
-          """.stripMargin
-            }
-          }
+      validPW <- BCrypt.checkpw[F](pw.plainText, userRepr.pw)
       auth <- validPW match {
                case tsec.common.Verified           => storeAuth(find(email))
                case tsec.common.VerificationFailed => F.raiseError[AuthCtx](invalidEmailOrPW)
@@ -131,17 +99,18 @@ final private[user] class AsyncAlgebraImpl[F[_]](
       token  <- JWTMac.buildToString[F, HMACSHA256](claims, key)
     } yield token
 
-  private def hashPWWithScrypt(ptpw: PlainTextPassword): F[ScryptPW] =
-    HardenedSCrypt.hashpw[F](ptpw.plainText)
+  private def hashPWWithScrypt(ptpw: PlainTextPassword): F[BcryptPW] =
+    BCrypt.hashpw[F](ptpw.plainText)
 
 }
 
 private[impl] object UserSql {
-  type ScryptPW = PasswordHash[HardenedSCrypt]
+  type BcryptPW = PasswordHash[BCrypt]
+  def BcryptPW(pt: String): BcryptPW = PasswordHash[BCrypt](pt)
 
   private[impl] case class UserRepr(
     email: Email,
-    pw:    ScryptPW,
+    pw:    BcryptPW,
     role:  UserRole
   )
 
@@ -174,7 +143,7 @@ private[impl] object UserSql {
 
   implicit val userReprComposite: Composite[UserRepr] =
     Composite[(Email, String, UserRole)]
-      .imap((t: (Email, String, UserRole)) => UserRepr(t._1, PasswordHash[HardenedSCrypt](t._2), t._3))(
+      .imap((t: (Email, String, UserRole)) => UserRepr(t._1, BcryptPW(t._2), t._3))(
         (u: UserRepr) => (u.email, u.pw.toString, u.role)
       )
   /*_*/
@@ -188,13 +157,13 @@ private[impl] object UserSql {
   def updatePasswordToken(id: UserID, token: PasswordResetToken): ConnectionIO[Int] =
     sql"""UPDATE users SET passwordReset=$token WHERE id=$id""".update.run
 
-  def updatePassword(id: UserID, newPassword: ScryptPW): ConnectionIO[Int] =
+  def updatePassword(id: UserID, newPassword: BcryptPW): ConnectionIO[Int] =
     sql"""UPDATE users SET password=${newPassword.toString} WHERE id=$id""".update.run
 
   def find(id: UserID): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE id=$id""".query[User].option
 
-  def find(email: Email, pwd: ScryptPW): ConnectionIO[Option[User]] =
+  def find(email: Email, pwd: BcryptPW): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE email=$email AND password=${pwd.toString}""".query[User].option
 
   def find(email: Email): ConnectionIO[Option[User]] =
@@ -250,7 +219,7 @@ private[impl] object UserSql {
       _    <- updatePasswordToken(user.get.id, token)
     } yield user
 
-  def changePassword(token: PasswordResetToken, newPassword: ScryptPW): ConnectionIO[Unit] =
+  def changePassword(token: PasswordResetToken, newPassword: BcryptPW): ConnectionIO[Unit] =
     for {
       user <- findByPwdToken(token)
       _ <- user match {
