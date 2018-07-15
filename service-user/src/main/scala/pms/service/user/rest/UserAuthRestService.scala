@@ -38,23 +38,6 @@ final class UserAuthRestService[F[_]](
     val optT = for {
       email <- OptionT[F, Email](F.pure(Email(bc.username).toOption))
       ptpw <- OptionT[F, PlainTextPassword](F.pure(PlainTextPassword(bc.password).toOption))
-      _ <- OptionT[F, Unit] {
-        F.delay {
-          Option {
-            println(
-              s"""
-                 |
-                     |FUCCKKK!!!!
-                 |usr=${bc.username}
-                 |pwd=${bc.password}
-                 |
-                     |
-                     |
-              """.stripMargin
-            )
-          }
-        }
-      }
       auth <- OptionT[F, AuthCtx](userAuthAlgebra.authenticate(email, ptpw).map(Option.apply).recover {
                case NonFatal(_) => Option.empty[AuthCtx]
              })
