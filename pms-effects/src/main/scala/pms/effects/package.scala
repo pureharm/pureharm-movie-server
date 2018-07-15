@@ -42,6 +42,9 @@ package object effects
   type MonadError[F[_], E] = cats.MonadError[F, E]
   @inline def MonadError: cats.MonadError.type = cats.MonadError
 
+  type Applicative[F[_]] = cats.Applicative[F]
+  @inline def Applicative: cats.Applicative.type = cats.Applicative
+
   object validated extends ValidatedTypeDefinitions with ValidatedSyntax.Implicits with ValidatedSyntaxAsync.Implcits
 
 }
