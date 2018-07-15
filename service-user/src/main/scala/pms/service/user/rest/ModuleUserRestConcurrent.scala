@@ -16,38 +16,43 @@ import pms.service.user._
   */
 trait ModuleUserRestConcurrent[F[_]] { this: ModuleUserServiceConcurrent[F] with ModuleUserAsync[F] =>
 
-  def authCtxMiddleware: AuthCtxMiddleware[F]
-
   def userRestService: UserRestService[F] = _userRestService
 
-  def userAuthRestService: UserAuthRestService[F] = _userAuthRestService
+  def userLoginRestService: UserLoginRestService[F] = _userLoginRestService
 
   def userAccountRestService: UserAccountRestService[F] = _userAccountRestService
 
   def userModuleService: HttpService[F] = _service
 
+  def userModuleAuthedService: AuthCtxService[F] = _authedService
+
   private lazy val _userRestService: UserRestService[F] = new UserRestService[F](
-    userAlgebra = userAlgebra,
-    authCtxMiddleware,
+    userAlgebra = userAlgebra
   )
 
-  private lazy val _userAuthRestService: UserAuthRestService[F] = new UserAuthRestService[F](
+  private lazy val _userLoginRestService: UserLoginRestService[F] = new UserLoginRestService[F](
     userAuthAlgebra = userAuthAlgebra
   )
 
   private lazy val _userAccountRestService: UserAccountRestService[F] = new UserAccountRestService(
-    userService = userAccountService,
-    authCtxMiddleware,
+    userService = userAccountService
   )
 
-  private lazy val _service: HttpService[F] = {
-    import cats.implicits._
+  import cats.implicits._
+
+  private lazy val _service: HttpService[F] =
     NonEmptyList
       .of(
-        userAuthRestService.service,
-        userRestService.service,
-        userAccountRestService.service
+        userAccountRestService.service,
+        userLoginRestService.service
       )
       .reduceK
-  }
+
+  private lazy val _authedService: AuthCtxService[F] =
+    NonEmptyList
+      .of(
+        userRestService.authedService,
+        userAccountRestService.authedService,
+      )
+      .reduceK
 }

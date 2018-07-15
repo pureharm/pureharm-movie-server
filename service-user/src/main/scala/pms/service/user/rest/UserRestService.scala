@@ -6,7 +6,6 @@ import pms.effects._
 import pms.algebra.user._
 import pms.algebra.http._
 
-import org.http4s.HttpService
 import org.http4s.dsl._
 
 /**
@@ -16,8 +15,7 @@ import org.http4s.dsl._
   *
   */
 final class UserRestService[F[_]](
-  private val userAlgebra:       UserAlgebra[F],
-  private val authCtxMiddleware: AuthCtxMiddleware[F],
+  private val userAlgebra: UserAlgebra[F]
 )(
   implicit val F: Async[F],
 ) extends Http4sDsl[F] with UserServiceJSON {
@@ -29,6 +27,6 @@ final class UserRestService[F[_]](
       } yield resp
   }
 
-  val service: HttpService[F] = authCtxMiddleware(userRestService)
+  val authedService: AuthCtxService[F] = userRestService
 
 }

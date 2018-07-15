@@ -19,8 +19,7 @@ import org.http4s.dsl._
   *
   */
 final class UserAccountRestService[F[_]](
-  private val userService:       UserAccountService[F],
-  private val authCtxMiddleware: AuthCtxMiddleware[F]
+  private val userService: UserAccountService[F]
 )(
   implicit val F: Async[F]
 ) extends Http4sDsl[F] with UserServiceJSON {
@@ -63,10 +62,12 @@ final class UserAccountRestService[F[_]](
   val service: HttpService[F] =
     NonEmptyList
       .of[HttpService[F]](
-        authCtxMiddleware(userRegistrationStep1Service),
         userRegistrationStep2Service,
         userPasswordResetService
       )
       .reduceK
+
+  val authedService: AuthCtxService[F] =
+    userRegistrationStep1Service
 
 }

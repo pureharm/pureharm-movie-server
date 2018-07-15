@@ -1,6 +1,5 @@
 package pms.service.movie.rest
 
-import org.http4s._
 import pms.algebra.http._
 import pms.algebra.movie._
 import pms.service.movie._
@@ -13,15 +12,12 @@ import pms.service.movie._
   */
 trait ModuleMovieRestAsync[F[_]] { this: ModuleMovieServiceAsync[F] with ModuleMovieAsync[F] =>
 
-  def authCtxMiddleware: AuthCtxMiddleware[F]
-
   def movieRestService: MovieRestService[F] = _movieRestService
 
-  def movieModuleService: HttpService[F] = _movieRestService.service
+  def movieModuleAuthedService: AuthCtxService[F] = _movieRestService.authedService
 
   private lazy val _movieRestService: MovieRestService[F] = new MovieRestService[F](
-    imdbService       = imdbService,
-    movieAlgebra      = movieAlgebra,
-    authCtxMiddleware = authCtxMiddleware,
+    imdbService  = imdbService,
+    movieAlgebra = movieAlgebra
   )
 }

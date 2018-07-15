@@ -36,17 +36,27 @@ trait ModulePureMovieServer[F[_]]
   override def imdbAlgebraConfig: IMDBAlgebraConfig
 
   //we could delay this even more, but there is little point.
-  override def authCtxMiddleware: AuthCtxMiddleware[F] =
+  def authCtxMiddleware: AuthCtxMiddleware[F] =
     AuthedHttp4s.userTokenAuthMiddleware[F](userAuthAlgebra)
 
   def pureMovieServerService: HttpService[F] = {
     import cats.implicits._
-    NonEmptyList
+    val service = NonEmptyList
       .of[HttpService[F]](
-        userModuleService,
-        movieModuleService
+        userModuleService
       )
       .reduceK
+
+    val authed = NonEmptyList
+      .of[AuthCtxService[F]](
+        userModuleAuthedService,
+        movieModuleAuthedService
+      )
+      .reduceK
+
+    /*_*/
+    service <+> authCtxMiddleware(authed)
+    /*_*/
   }
 }
 

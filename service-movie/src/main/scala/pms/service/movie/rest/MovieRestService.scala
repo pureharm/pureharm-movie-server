@@ -23,9 +23,8 @@ import org.http4s.dsl._
   *
   */
 final class MovieRestService[F[_]](
-  private val imdbService:       IMDBService[F],
-  private val movieAlgebra:      MovieAlgebra[F],
-  private val authCtxMiddleware: AuthCtxMiddleware[F],
+  private val imdbService:  IMDBService[F],
+  private val movieAlgebra: MovieAlgebra[F]
 )(
   implicit val F: Async[F],
 ) extends Http4sDsl[F] with MovieServiceJSON {
@@ -63,6 +62,6 @@ final class MovieRestService[F[_]](
   }
 
   /*_*/
-  val service: HttpService[F] = authCtxMiddleware(imdbImportService <+> movieService)
+  val authedService: AuthCtxService[F] = imdbImportService <+> movieService
   /*_*/
 }
