@@ -1,13 +1,15 @@
 package pms.http
 
 import fs2.Chunk
-import io.circe.Json
-import org.http4s.MediaType
+import io.circe.Printer
+
+import pms.effects._
+import pms.json._
+
+import org.http4s._
 import org.http4s.headers.`Content-Type`
 import org.http4s.{EntityDecoder, EntityEncoder}
 import org.http4s.circe.CirceInstances
-import pms.effects._
-import io.circe.{Decoder, Encoder, Printer}
 
 /**
   *
@@ -37,7 +39,7 @@ trait Http4sCirceInstances {
         Chunk.byteBuffer(bytes)
       }
       .withContentType(`Content-Type`(MediaType.`application/json`))
-      .contramap(t => Encoder[T].apply(t))
+      .contramap(t => Encoder.apply[T].apply(t))
 
   implicit def syncEntityJsonDecoder[F[_]: Sync, T: Decoder]: EntityDecoder[F, T] =
     circeInstances.jsonOf[F, T]
