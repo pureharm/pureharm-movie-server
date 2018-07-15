@@ -3,7 +3,7 @@ package pms.algebra
 import org.http4s.AuthedService
 import org.http4s.server.AuthMiddleware
 import pms.algebra.user.AuthCtx
-import pms.http.{CirceToHttp4sEncoders, JavaTimeQueryParameterDecoders}
+import pms.http.{Http4sCirceInstances, JavaTimeQueryParameterDecoders}
 
 /**
   *
@@ -11,7 +11,7 @@ import pms.http.{CirceToHttp4sEncoders, JavaTimeQueryParameterDecoders}
   * @since 26 Jun 2018
   *
   */
-package object http extends CirceToHttp4sEncoders with JavaTimeQueryParameterDecoders {
+package object http extends Http4sCirceInstances with JavaTimeQueryParameterDecoders {
   type AuthCtxService[F[_]]    = AuthedService[AuthCtx, F]
   type AuthCtxMiddleware[F[_]] = AuthMiddleware[F,      AuthCtx]
 }
