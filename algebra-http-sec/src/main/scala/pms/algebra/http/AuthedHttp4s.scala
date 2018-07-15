@@ -1,12 +1,12 @@
 package pms.algebra.http
 
-import cats.data._
+import cats.data.{Kleisli, OptionT}
 import cats.implicits._
 
 import busymachines.core.Anomaly
 import busymachines.core.UnauthorizedFailure
 
-import pms.effects.{NonEmptyList => _, _}
+import pms.effects._
 import pms.algebra.user._
 
 import org.http4s._
