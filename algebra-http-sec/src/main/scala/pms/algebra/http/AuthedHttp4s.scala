@@ -32,7 +32,7 @@ object AuthedHttp4s {
   private val challenges: NonEmptyList[Challenge] = NonEmptyList.of(
     Challenge(
       scheme = "Basic",
-      realm  = "Go to POST /pms/api/user_login to get valid token",
+      realm  = "Go to POST /pms/api/user/login to get valid token",
     )
   )
 

@@ -60,7 +60,7 @@ final class UserLoginRestService[F[_]](
 
   private val loginService: HttpService[F] =
     HttpService[F] {
-      case req @ (POST -> Root / "user_login") =>
+      case req @ (POST -> Root / "user" / "login") =>
         Ok(findBasicAuth(req.headers).flatMap(logInWithUserNamePassword))
     }
 
