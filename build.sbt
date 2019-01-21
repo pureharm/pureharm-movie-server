@@ -428,7 +428,7 @@ lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"   % doobieVersion wi
 lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres" % doobieVersion withSources () // Postgres driver 42.2.2 + type mappings.
 lazy val doobieTK       = "org.tpolecat" %% "doobie-specs2"   % doobieVersion % Test withSources () // specs2 support for typechecking statements.
 
-lazy val flyway = "org.flywaydb" % "flyway-core" % "4.2.0" withSources ()
+lazy val flyway = "org.flywaydb" % "flyway-core" % "5.2.4" withSources ()
 
 lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.3" withSources ()
 
