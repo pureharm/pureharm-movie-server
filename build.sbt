@@ -277,7 +277,7 @@ def commonSettings: Seq[Setting[_]] = Seq(
    *
    * https://github.com/oleg-py/better-monadic-for
    */
-  addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.2.4"),
+  addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0-M4"),
   scalacOptions ++= customScalaCompileFlags,
   /**
     * This is here to eliminate eviction warnings from SBT.
@@ -374,6 +374,7 @@ def customScalaCompileFlags: Seq[String] = Seq(
   "-P:bm4:no-filtering:y",
   "-P:bm4:no-map-id:y",
   "-P:bm4:no-tupling:y",
+  "-P:bm4:implicit-patterns:y"
 )
 
 //=============================================================================
