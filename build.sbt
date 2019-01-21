@@ -255,7 +255,6 @@ def commonSettings: Seq[Setting[_]] = Seq(
     doobieTK,
     //misc
     flyway,
-    attoParser,
     pureConfig,
     spire,
     scalaScrapper,
@@ -414,8 +413,6 @@ lazy val circeVersion: String = "0.11.1"
 lazy val circeCore:          ModuleID = "io.circe" %% "circe-core"           % circeVersion
 lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % circeVersion
 lazy val circeGenericExtras: ModuleID = "io.circe" %% "circe-generic-extras" % circeVersion
-
-lazy val attoParser: ModuleID = "org.tpolecat" %% "atto-core" % "0.6.2" withSources ()
 
 //https://github.com/http4s/http4s
 lazy val Http4sVersion = "0.18.12"
