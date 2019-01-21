@@ -381,7 +381,7 @@ def customScalaCompileFlags: Seq[String] = Seq(
 //=============================================================================
 
 //https://github.com/busymachines/busymachines-commons
-def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$m" % "0.3.0-RC8"
+def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$m" % "0.3.0-RC9"
 
 lazy val bmcCore:          ModuleID = bmCommons("core")              withSources ()
 lazy val bmcDuration:      ModuleID = bmCommons("duration")          withSources ()
@@ -390,13 +390,6 @@ lazy val bmcEffectsSync:   ModuleID = bmCommons("effects-sync")      withSources
 lazy val bmcEffectsSyncC:  ModuleID = bmCommons("effects-sync-cats") withSources ()
 lazy val bmcEffectsAsync:  ModuleID = bmCommons("effects-async")     withSources ()
 lazy val bmcJson:          ModuleID = bmCommons("json")              withSources ()
-lazy val bmcSemVer:        ModuleID = bmCommons("semver")            withSources ()
-lazy val bmcSemVerParsers: ModuleID = bmCommons("semver-parsers")    withSources ()
-//yucky akka stuff. Ew, stay away.
-//lazy val bmcRestJson:      ModuleID = bmCommons("rest-json")         withSources ()
-//lazy val bmcRestCore:      ModuleID = bmCommons("rest-core")         withSources ()
-//lazy val bmcRestJsonTK:    ModuleID = bmCommons("rest-json-testkit") % Test withSources ()
-//lazy val bmcRestCoreTK:    ModuleID = bmCommons("rest-core-testkit") % Test withSources ()
 
 //============================================================================================
 //================================= http://typelevel.org/scala/ ==============================
