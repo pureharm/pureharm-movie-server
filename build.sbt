@@ -224,7 +224,7 @@ lazy val `pms-effects` = project
 //=============================================================================
 
 def commonSettings: Seq[Setting[_]] = Seq(
-  scalaVersion := "2.12.6",
+  scalaVersion := "2.12.8",
   libraryDependencies ++= Seq(
     //utils
     bmcCore,
