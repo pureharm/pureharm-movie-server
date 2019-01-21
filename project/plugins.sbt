@@ -20,13 +20,13 @@ addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.5.1")
   *
   *   > scalafix                               // Run all rules configured in .scalafix.conf
   *
-  *   > scalafix RemoveUnusedImports           // Run only RemoveUnusedImports rule
+  *   > scalafix RemoveUnused                  // Run only RemoveUnused rule
   *
-  *   > myProject/scalafix RemoveUnusedImports // Run rule in one project only
+  *   > myProject/scalafix RemoveUnused // Run rule in one project only
   *
   * }}}
   */
-//addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.6.0-M9")
+addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.1")
 
 /**
   * Used to create one big fat jar which contains all dependencies of this application
