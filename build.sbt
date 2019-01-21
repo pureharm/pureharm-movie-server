@@ -403,7 +403,7 @@ lazy val catsCore: ModuleID = "org.typelevel" %% "cats-core" % "1.5.0" withSourc
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "1.1.0" withSources ()
 
 //https://github.com/monix/monix
-lazy val monix: ModuleID = "io.monix" %% "monix" % "3.0.0-RC1" withSources ()
+lazy val monix: ModuleID = "io.monix" %% "monix" % "3.0.0-RC2" withSources ()
 
 //https://github.com/functional-streams-for-scala/fs2
 lazy val fs2: ModuleID = "co.fs2" %% "fs2-core" % "0.10.4" withSources ()
