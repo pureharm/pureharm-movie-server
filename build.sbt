@@ -484,7 +484,7 @@ lazy val scalaScrapper = "net.ruippeixotog" %% "scala-scraper" % "2.1.0" withSou
 //============================================================================================
 
 //https://github.com/etorreborre/specs2
-lazy val specs2: ModuleID = "org.specs2" %% "specs2-core" % "4.3.0" % Test withSources ()
+lazy val specs2: ModuleID = "org.specs2" %% "specs2-core" % "4.3.6" % Test withSources ()
 
 //============================================================================================
 //=========================================== misc ===========================================
