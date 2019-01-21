@@ -464,7 +464,7 @@ lazy val tsec = Seq(
 //=========================================  logging =========================================
 //============================================================================================
 //https://github.com/ChristopherDavenport/log4cats
-lazy val log4cats = "io.chrisdavenport" %% "log4cats-slf4j" % "0.0.6" withSources ()
+lazy val log4cats = "io.chrisdavenport" %% "log4cats-slf4j" % "0.2.0" withSources ()
 
 //this is a Java library, notice that we used one single % instead of %%
 //it is the backend implementation used by log4cats
