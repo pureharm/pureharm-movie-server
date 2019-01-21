@@ -400,7 +400,7 @@ lazy val bmcJson:          ModuleID = bmCommons("json")              withSources
 lazy val catsCore: ModuleID = "org.typelevel" %% "cats-core" % "1.5.0" withSources ()
 
 //https://github.com/typelevel/cats-effect
-lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "0.10.1" withSources ()
+lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "1.1.0" withSources ()
 
 //https://github.com/monix/monix
 lazy val monix: ModuleID = "io.monix" %% "monix" % "3.0.0-RC1" withSources ()
