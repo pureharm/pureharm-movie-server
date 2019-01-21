@@ -409,7 +409,7 @@ lazy val monix: ModuleID = "io.monix" %% "monix" % "3.0.0-RC2" withSources ()
 lazy val fs2: ModuleID = "co.fs2" %% "fs2-core" % "1.0.2" withSources ()
 
 //https://circe.github.io/circe/
-lazy val circeVersion: String = "0.9.3"
+lazy val circeVersion: String = "0.11.1"
 
 lazy val circeCore:          ModuleID = "io.circe" %% "circe-core"           % circeVersion
 lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % circeVersion
