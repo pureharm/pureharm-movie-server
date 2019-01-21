@@ -415,7 +415,7 @@ lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % c
 lazy val circeGenericExtras: ModuleID = "io.circe" %% "circe-generic-extras" % circeVersion
 
 //https://github.com/http4s/http4s
-lazy val Http4sVersion = "0.18.12"
+lazy val Http4sVersion = "0.20.0-M5"
 
 lazy val http4sBlazeServer: ModuleID = "org.http4s" %% "http4s-blaze-server" % Http4sVersion withSources ()
 lazy val http4sCirce:       ModuleID = "org.http4s" %% "http4s-circe"        % Http4sVersion withSources ()
