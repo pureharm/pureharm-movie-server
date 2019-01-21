@@ -422,7 +422,7 @@ lazy val http4sCirce:       ModuleID = "org.http4s" %% "http4s-circe"        % H
 lazy val http4sDSL:         ModuleID = "org.http4s" %% "http4s-dsl"          % Http4sVersion withSources ()
 
 //https://github.com/tpolecat/doobie
-lazy val doobieVersion = "0.5.3"
+lazy val doobieVersion = "0.7.0-M2"
 
 lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"   % doobieVersion withSources () // HikariCP transactor.
 lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres" % doobieVersion withSources () // Postgres driver 42.2.2 + type mappings.
