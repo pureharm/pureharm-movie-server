@@ -491,4 +491,4 @@ lazy val specs2: ModuleID = "org.specs2" %% "specs2-core" % "4.3.0" % Test withS
 //============================================================================================
 
 //https://github.com/pureconfig/pureconfig
-lazy val pureConfig: ModuleID = "com.github.pureconfig" %% "pureconfig" % "0.9.1" withSources ()
+lazy val pureConfig: ModuleID = "com.github.pureconfig" %% "pureconfig" % "0.10.1" withSources ()
