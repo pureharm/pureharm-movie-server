@@ -50,4 +50,4 @@ addSbtPlugin("net.virtual-void" %% "sbt-dependency-graph" % "0.9.2")
   *
   * https://github.com/non/kind-projector
   */
-//addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.7")
+// addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.8")
