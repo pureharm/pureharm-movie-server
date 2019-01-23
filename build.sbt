@@ -243,6 +243,7 @@ def commonSettings: Seq[Setting[_]] = Seq(
     //http4s
     http4sBlazeServer,
     http4sCirce,
+    http4sDSL,
     //doobie
     doobieHikari,
     doobiePostgres,
