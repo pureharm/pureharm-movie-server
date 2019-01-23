@@ -10,14 +10,15 @@ import org.flywaydb.core.Flyway
   */
 object DatabaseConfigAlgebra {
 
-  def transactor[F[_]: Async : ContextShift](config: DatabaseConfig): F[Transactor[F]] = Async[F].delay {
+  def transactor[F[_]: Async: ContextShift](config: DatabaseConfig): F[Transactor[F]] = Async[F].delay {
     Transactor.fromDriverManager[F](config.driver, config.url, config.user, config.password)
   }
 
-  def initializeSQLDb[F[_]](config: DatabaseConfig)(implicit S: Sync[F]): F[Int] =
-    S.delay {
-      val fw = new Flyway()
-      fw.setDataSource(config.url, config.user, config.password)
+  def initializeSQLDb[F[_]: Sync](config: DatabaseConfig): F[Int] =
+    Sync[F].delay {
+      val fwConfig = Flyway.configure()
+      fwConfig.dataSource(config.url, config.user, config.password)
+      val fw = new Flyway(fwConfig)
       if (config.clean) fw.clean()
       fw.migrate()
     }
