@@ -138,7 +138,7 @@ private[impl] object UserSql {
   implicit val userRoleMeta: Meta[UserRole]          = Meta[String].xmap(UserRole.fromName(_).unsafeGet(),       _.toString)
 
   implicit val userComposite: Read[User] =
-    Read.apply[(UserID, Email, UserRole)]
+    Read[(UserID, Email, UserRole)]
       .imap((t: (UserID, Email, UserRole)) => User(t._1, t._2, t._3))((u: User) => (u.id, u.email, u.role))
 
   implicit val userReprComposite: Read[UserRepr] =
