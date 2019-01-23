@@ -39,11 +39,11 @@ final class UserLoginRestService[F[_]](
     } yield auth
 
   private def findBasicAuth(hs: Headers): F[BasicCredentials] = {
-    val r = for {
+    val r: Result[BasicCredentials] = for {
       auth <- hs.get(headers.Authorization).asResult(UnauthorizedFailure("Missing Authorization header"))
       basic <- auth.credentials match {
-                case BasicCredentials(basic) =>
-                  Result.pure(basic)
+                case Credentials.Token(AuthScheme.Basic, token) =>
+                  Result.pure(BasicCredentials(token))
                 case credentials =>
                   Result.fail(UnauthorizedFailure(s"Unsupported credentials w/ AuthScheme ${credentials.authScheme}"))
               }
