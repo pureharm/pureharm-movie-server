@@ -115,27 +115,25 @@ private[impl] object UserSql {
   )
 
   /*_*/
-  implicit val userIDMeta: Meta[UserID] = Meta[Long].xmap(
-    UserID.haunt,
-    UserID.exorcise
-  )
+  implicit val userIDMeta: Meta[UserID] = Meta[Long].imap(UserID.haunt)(UserID.exorcise)
 
-  implicit val authenticationTokenMeta: Meta[AuthenticationToken] = Meta[String].xmap(
-    AuthenticationToken.haunt,
-    AuthenticationToken.exorcise
-  )
+  implicit val authenticationTokenMeta: Meta[AuthenticationToken] =
+    Meta[String].imap(AuthenticationToken.haunt)(AuthenticationToken.exorcise)
 
-  implicit val userRegistrationTokenMeta: Meta[UserRegistrationToken] = Meta[String].xmap(
-    UserRegistrationToken.haunt,
-    UserRegistrationToken.exorcise
-  )
-  implicit val passwordResetTokenMeta: Meta[PasswordResetToken] = Meta[String].xmap(
-    PasswordResetToken.haunt,
-    PasswordResetToken.exorcise
-  )
-  implicit val emailMeta:    Meta[Email]             = Meta[String].xmap(Email.apply(_).unsafeGet(),             _.plainTextEmail)
-  implicit val pwdMeta:      Meta[PlainTextPassword] = Meta[String].xmap(PlainTextPassword.apply(_).unsafeGet(), _.plainText)
-  implicit val userRoleMeta: Meta[UserRole]          = Meta[String].xmap(UserRole.fromName(_).unsafeGet(),       _.toString)
+  implicit val userRegistrationTokenMeta: Meta[UserRegistrationToken] =
+    Meta[String].imap(UserRegistrationToken.haunt)(UserRegistrationToken.exorcise)
+
+  implicit val passwordResetTokenMeta: Meta[PasswordResetToken] =
+    Meta[String].imap(PasswordResetToken.haunt)(PasswordResetToken.exorcise)
+
+  implicit val emailMeta: Meta[Email] =
+    Meta[String].imap(Email.apply(_).unsafeGet())(_.plainTextEmail)
+
+  implicit val pwdMeta: Meta[PlainTextPassword] =
+    Meta[String].imap(PlainTextPassword.apply(_).unsafeGet())(_.plainText)
+
+  implicit val userRoleMeta: Meta[UserRole] =
+    Meta[String].imap(UserRole.fromName(_).unsafeGet())(_.toString)
 
   implicit val userComposite: Read[User] =
     Read[(UserID, Email, UserRole)]
