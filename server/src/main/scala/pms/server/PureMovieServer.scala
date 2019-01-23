@@ -1,13 +1,11 @@
 package pms.server
 
+import cats.effect.ContextShift
 import cats.implicits._
-
 import pms.effects._
 import pms.email._
 import pms.db.config._
-
 import pms.algebra.imdb.IMDBAlgebraConfig
-
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import doobie.util.transactor.Transactor
 
@@ -18,8 +16,9 @@ import doobie.util.transactor.Transactor
   *
   */
 final class PureMovieServer[F[_]] private (
-  implicit private val F: Concurrent[F],
-  private val scheduler:  Scheduler
+  implicit private val F:     Concurrent[F],
+  private val dbContextShift: ContextShift[F],
+  private val scheduler:      Scheduler
 ) {
   private val logger = Slf4jLogger.unsafeCreate[F]
 
@@ -68,6 +67,6 @@ final class PureMovieServer[F[_]] private (
 
 object PureMovieServer {
 
-  def concurrent[F[_]: Concurrent](implicit sch: Scheduler): F[PureMovieServer[F]] =
+  def concurrent[F[_]: Concurrent](implicit sch: Scheduler, dbContextShift: ContextShift[F]): F[PureMovieServer[F]] =
     Concurrent.apply[F].delay(new PureMovieServer[F]())
 }
