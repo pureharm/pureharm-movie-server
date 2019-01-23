@@ -50,18 +50,14 @@ final private[movie] class AsyncMovieAlgebraImpl[F[_]](
 }
 
 object MovieSql {
-  implicit val movieIDMeta: Meta[MovieID] = Meta[Long].xmap(
-    MovieID.haunt,
-    MovieID.exorcise
-  )
-  implicit val movieTitleMeta: Meta[MovieTitle] = Meta[String].xmap(
-    MovieTitle.haunt,
-    MovieTitle.exorcise
-  )
-  implicit val releaseDateMeta: Meta[ReleaseDate] = Meta[LocalDate].xmap(
-    ReleaseDate.haunt,
-    ReleaseDate.exorcise
-  )
+  implicit val movieIDMeta: Meta[MovieID] =
+    Meta[Long].imap(MovieID.haunt)(MovieID.exorcise)
+
+  implicit val movieTitleMeta: Meta[MovieTitle] =
+    Meta[String].imap(MovieTitle.haunt)(MovieTitle.exorcise)
+
+  implicit val releaseDateMeta: Meta[ReleaseDate] =
+    Meta[LocalDate].imap(ReleaseDate.haunt)(ReleaseDate.exorcise)
 
   def insert(mc: MovieCreation): ConnectionIO[MovieID] = mc.date match {
     case Some(date) =>
