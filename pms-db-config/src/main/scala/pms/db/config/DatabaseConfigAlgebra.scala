@@ -1,6 +1,6 @@
 package pms.db.config
 
-import cats.effect.{Async, Sync}
+import cats.effect.{Async, ContextShift, Sync}
 import doobie.util.transactor.Transactor
 import org.flywaydb.core.Flyway
 
@@ -10,7 +10,7 @@ import org.flywaydb.core.Flyway
   */
 object DatabaseConfigAlgebra {
 
-  def transactor[F[_]: Async](config: DatabaseConfig): F[Transactor[F]] = Async[F].delay {
+  def transactor[F[_]: Async : ContextShift](config: DatabaseConfig): F[Transactor[F]] = Async[F].delay {
     Transactor.fromDriverManager[F](config.driver, config.url, config.user, config.password)
   }
 
