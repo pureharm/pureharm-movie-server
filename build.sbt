@@ -289,8 +289,8 @@ def commonSettings: Seq[Setting[_]] = Seq(
     * It is an important issue that you need to keep track of if
     * you build apps on the JVM.
     */
-  dependencyOverrides += "org.typelevel" %% "cats-core"   % "1.1.0",
-  dependencyOverrides += "org.typelevel" %% "cats-effect" % "0.10.1",
+  dependencyOverrides += "org.typelevel" %% "cats-core"   % "1.5.0",
+  dependencyOverrides += "org.typelevel" %% "cats-effect" % "1.2.0",
   resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
@@ -399,7 +399,7 @@ lazy val bmcJson:          ModuleID = bmCommons("json")              withSources
 lazy val catsCore: ModuleID = "org.typelevel" %% "cats-core" % "1.5.0" withSources ()
 
 //https://github.com/typelevel/cats-effect
-lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "1.1.0" withSources ()
+lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "1.2.0" withSources ()
 
 //https://github.com/monix/monix
 lazy val monix: ModuleID = "io.monix" %% "monix" % "3.0.0-RC2" withSources ()
