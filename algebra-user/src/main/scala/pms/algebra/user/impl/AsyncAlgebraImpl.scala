@@ -137,12 +137,12 @@ private[impl] object UserSql {
   implicit val pwdMeta:      Meta[PlainTextPassword] = Meta[String].xmap(PlainTextPassword.apply(_).unsafeGet(), _.plainText)
   implicit val userRoleMeta: Meta[UserRole]          = Meta[String].xmap(UserRole.fromName(_).unsafeGet(),       _.toString)
 
-  implicit val userComposite: Composite[User] =
-    Composite[(UserID, Email, UserRole)]
+  implicit val userComposite: Read[User] =
+    Read.apply[(UserID, Email, UserRole)]
       .imap((t: (UserID, Email, UserRole)) => User(t._1, t._2, t._3))((u: User) => (u.id, u.email, u.role))
 
-  implicit val userReprComposite: Composite[UserRepr] =
-    Composite[(Email, String, UserRole)]
+  implicit val userReprComposite: Read[UserRepr] =
+    Read[(Email, String, UserRole)]
       .imap((t: (Email, String, UserRole)) => UserRepr(t._1, BcryptPW(t._2), t._3))(
         (u: UserRepr) => (u.email, u.pw.toString, u.role)
       )
