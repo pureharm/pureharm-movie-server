@@ -192,7 +192,7 @@ private[impl] object UserSql {
       userId <- findByAuthToken(token)
       user <- userId match {
                case Some(value) => find(UserID(value))
-               case None        => throw new Exception("Unauthorized")
+               case None        => throw new Exception("Unauthorized") //FIXME: replace with proper error
              }
     } yield user
 
