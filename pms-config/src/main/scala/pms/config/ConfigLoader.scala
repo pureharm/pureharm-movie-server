@@ -3,6 +3,9 @@ package pms.config
 import pms.effects._
 import pureconfig._
 import pureconfig.error.ConfigReaderFailures
+import pureconfig.generic.ExportMacros
+
+import scala.language.experimental.macros
 
 /**
   *
@@ -24,14 +27,17 @@ import pureconfig.error.ConfigReaderFailures
   */
 trait ConfigLoader[Config] {
 
+  implicit def exportReader[A]: Exported[ConfigReader[A]] = macro ExportMacros.exportDerivedReader[A]
+  implicit def exportedReader[A](implicit ex: Exported[ConfigReader[A]]): ConfigReader[A] = ex.instance
+
   def default[F[_]: Sync]: F[Config]
 
-  def load[F[_]: Sync](implicit reader: Derivation[ConfigReader[Config]]): F[Config] = {
-    suspendInF(pureconfig.loadConfig[Config])
+  def load[F[_]: Sync](implicit reader: ConfigReader[Config]): F[Config] = {
+    suspendInF(pureconfig.loadConfig[Config](Derivation.Successful(reader)))
   }
 
-  def load[F[_]: Sync](namespace: String)(implicit reader: Derivation[ConfigReader[Config]]): F[Config] = {
-    suspendInF(pureconfig.loadConfig[Config](namespace))
+  def load[F[_]: Sync](namespace: String)(implicit reader: ConfigReader[Config]): F[Config] = {
+    suspendInF(pureconfig.loadConfig[Config](namespace)(Derivation.Successful(reader)))
   }
 
   private def suspendInF[F[_]: Sync](thunk: => Either[ConfigReaderFailures, Config]): F[Config] = {
