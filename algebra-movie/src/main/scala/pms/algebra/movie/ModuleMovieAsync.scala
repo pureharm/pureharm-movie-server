@@ -12,12 +12,12 @@ import pms.effects._
   */
 trait ModuleMovieAsync[F[_]] { this: ModuleUserAsync[F] =>
 
-  implicit def async: Async[F]
+  implicit def async:      Async[F]
   implicit def transactor: Transactor[F]
 
   def movieAlgebra: MovieAlgebra[F] = _moviesAlgebra
 
-  private lazy val _moviesAlgebra: MovieAlgebra[F] = new impl.AsyncMovieAlgebraImpl[F](
+  private lazy val _moviesAlgebra: MovieAlgebra[F] = MovieAlgebra.async[F](
     this.userAuthAlgebra
   )
 }
