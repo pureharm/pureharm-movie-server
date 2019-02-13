@@ -1,5 +1,6 @@
 package pms.server
 
+import cats.effect.Timer
 import doobie.util.transactor.Transactor
 import org.http4s._
 import pms.effects._
@@ -39,7 +40,7 @@ trait ModulePureMovieServer[F[_]]
   def authCtxMiddleware: AuthCtxMiddleware[F] =
     AuthedHttp4s.userTokenAuthMiddleware[F](userAuthAlgebra)
 
-  def pureMovieServerService: HttpService[F] = {
+  def pureMovieServerService: F[HttpService[F]] = {
     import cats.implicits._
     val service = NonEmptyList
       .of[HttpService[F]](
@@ -47,16 +48,20 @@ trait ModulePureMovieServer[F[_]]
       )
       .reduceK
 
-    val authed = NonEmptyList
-      .of[AuthCtxService[F]](
-        userModuleAuthedService,
-        movieModuleAuthedService
-      )
-      .reduceK
+      for {
+        mmas <- movieModuleAuthedService
+        authed = NonEmptyList
+          .of[AuthCtxService[F]](
+            userModuleAuthedService,
+            mmas
+          )
+          .reduceK
+      } yield {
+        /*_*/
+        service <+> authCtxMiddleware(authed)
+        /*_*/
+      }
 
-    /*_*/
-    service <+> authCtxMiddleware(authed)
-    /*_*/
   }
 }
 
@@ -66,10 +71,13 @@ object ModulePureMovieServer {
     implicit
     c:  Concurrent[F],
     t:  Transactor[F],
+    ti: Timer[F],
     sc: Scheduler
   ): ModulePureMovieServer[F] =
     new ModulePureMovieServer[F] {
       implicit override def concurrent: Concurrent[F] = c
+
+      implicit override def timer: Timer[F] = ti
 
       implicit override def scheduler: Scheduler = sc
 

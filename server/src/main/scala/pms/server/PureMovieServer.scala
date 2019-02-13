@@ -1,6 +1,6 @@
 package pms.server
 
-import cats.effect.ContextShift
+import cats.effect.{ContextShift, Timer}
 import cats.implicits._
 import pms.effects._
 import pms.email._
@@ -18,7 +18,8 @@ import doobie.util.transactor.Transactor
 final class PureMovieServer[F[_]] private (
   implicit private val F:     Concurrent[F],
   private val dbContextShift: ContextShift[F],
-  private val scheduler:      Scheduler
+  private val scheduler:      Scheduler,
+  private val timer:          Timer[F],
 ) {
   private val logger = Slf4jLogger.unsafeCreate[F]
 
@@ -35,7 +36,7 @@ final class PureMovieServer[F[_]] private (
                     gmailConfig,
                     imdbAlgebraConfig,
                     bootstrap = serverConfig.bootstrap
-                  )(transactor, implicitly[Scheduler])
+                  )(transactor, timer, scheduler)
       _ <- logger.info(s"Successfully initialized pure-movie-server")
     } yield (serverConfig, pmsModule)
   }
@@ -47,6 +48,7 @@ final class PureMovieServer[F[_]] private (
   )(
     implicit
     transactor: Transactor[F],
+    timer:      Timer[F],
     scheduler:  Scheduler
   ): F[ModulePureMovieServer[F]] = {
     if (bootstrap) {
@@ -67,6 +69,6 @@ final class PureMovieServer[F[_]] private (
 
 object PureMovieServer {
 
-  def concurrent[F[_]: Concurrent](implicit sch: Scheduler, dbContextShift: ContextShift[F]): F[PureMovieServer[F]] =
+  def concurrent[F[_]: Concurrent](implicit sch: Scheduler, timer: Timer[F], dbContextShift: ContextShift[F]): F[PureMovieServer[F]] =
     Concurrent.apply[F].delay(new PureMovieServer[F]())
 }

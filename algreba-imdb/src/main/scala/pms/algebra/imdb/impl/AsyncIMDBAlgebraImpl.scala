@@ -5,6 +5,7 @@ import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import pms.effects._
 import pms.algebra.imdb._
+import cats.implicits._
 import java.time.Year
 
 import net.ruippeixotog.scalascraper.model.Document
@@ -23,17 +24,12 @@ final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](val rateLimiter: RateLimite
 
   override def scrapeMovieByTitle(title: TitleQuery): F[Option[IMDBMovie]] = {
     val browser = JsoupBrowser()
-    val movie = IO.suspendFuture {
       for {
-        doc <- rateLimiter.addToQueue {
-                browser.get(s"https://imdb.com/find?q=$title&s=tt")
+        doc <- rateLimiter.throttle {
+                F.delay[Document](browser.get(s"https://imdb.com/find?q=$title&s=tt"))
               }
-        imdbMovie <- Future {
-                      parseIMDBDocument(doc)
-                    }
+        imdbMovie <- F.delay(parseIMDBDocument(doc))
       } yield imdbMovie
-    }
-    F.liftIO(movie)
   }
 
   private def parseIMDBDocument(imdbDocument: Document): Option[IMDBMovie] = {

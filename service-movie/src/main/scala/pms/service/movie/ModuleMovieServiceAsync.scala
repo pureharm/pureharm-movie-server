@@ -2,6 +2,7 @@ package pms.service.movie
 
 import pms.algebra.movie._
 import pms.algebra.imdb._
+import cats.implicits._
 
 /**
   *
@@ -11,11 +12,13 @@ import pms.algebra.imdb._
   */
 trait ModuleMovieServiceAsync[F[_]] { this: ModuleMovieAsync[F] with ModuleIMDBAsync[F] =>
 
-  def imdbService: IMDBService[F] = _imdbService
-
-  private lazy val _imdbService: IMDBService[F] = IMDBService.async(
-    movieAlgebra = movieAlgebra,
-    imdbAlgebra  = imdbAlgebra
-  )
+  def imdbService: F[IMDBService[F]] =
+    for {
+      imbd <- imdbAlgebra
+    } yield
+      IMDBService.async(
+        movieAlgebra = movieAlgebra,
+        imdbAlgebra  = imbd
+      )
 
 }

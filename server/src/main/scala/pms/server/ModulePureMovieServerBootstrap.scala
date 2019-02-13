@@ -1,13 +1,11 @@
 package pms.server
 
+import cats.effect.Timer
 import pms.effects._
 import pms.email._
-
 import pms.algebra.user._
 import pms.algebra.imdb.IMDBAlgebraConfig
-
 import pms.server.bootstrap._
-
 import doobie.util.transactor.Transactor
 
 /**
@@ -31,10 +29,13 @@ object ModulePureMovieServerBootstrap {
     implicit
     c:  Concurrent[F],
     t:  Transactor[F],
-    sc: Scheduler
+    ti: Timer[F],
+    sc: Scheduler,
   ): ModulePureMovieServerBootstrap[F] =
     new ModulePureMovieServerBootstrap[F] {
       implicit override def concurrent: Concurrent[F] = c
+
+      implicit override def timer: Timer[F] = ti
 
       implicit override def scheduler: Scheduler = sc
 

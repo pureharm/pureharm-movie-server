@@ -19,9 +19,10 @@ object PureMovieServerApp extends IOApp {
     for {
       server <- PureMovieServer.concurrent[IO]
       (serverConfig, pmsModule) <- server.init
+      service <- pmsModule.pureMovieServerService
       exitCode <- serverStream[IO](
                    config  = serverConfig,
-                   service = pmsModule.pureMovieServerService
+                   service = service
                  ).compile.lastOrError
     } yield exitCode
   }

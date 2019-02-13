@@ -3,6 +3,7 @@ package pms.service.movie.rest
 import pms.algebra.http._
 import pms.algebra.movie._
 import pms.service.movie._
+import cats.implicits._
 
 /**
   *
@@ -12,12 +13,15 @@ import pms.service.movie._
   */
 trait ModuleMovieRestAsync[F[_]] { this: ModuleMovieServiceAsync[F] with ModuleMovieAsync[F] =>
 
-  def movieRestService: MovieRestService[F] = _movieRestService
+  def movieRestService: F[MovieRestService[F]] =
+    for {
+      imdb <- imdbService
+    } yield
+      new MovieRestService[F](
+        imdbService  = imdb,
+        movieAlgebra = movieAlgebra
+      )
 
-  def movieModuleAuthedService: AuthCtxService[F] = _movieRestService.authedService
+  def movieModuleAuthedService: F[AuthCtxService[F]] = movieRestService.map(_.authedService)
 
-  private lazy val _movieRestService: MovieRestService[F] = new MovieRestService[F](
-    imdbService  = imdbService,
-    movieAlgebra = movieAlgebra
-  )
 }
