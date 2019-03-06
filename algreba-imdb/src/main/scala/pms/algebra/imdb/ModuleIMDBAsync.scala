@@ -1,5 +1,6 @@
 package pms.algebra.imdb
 
+import cats.effect
 import cats.effect.Timer
 import net.ruippeixotog.scalascraper.model.Document
 import pms.algebra.imdb.extra.RateLimiter
@@ -32,3 +33,15 @@ trait ModuleIMDBAsync[F[_]] {
       rl <- rateLimiter
     } yield new impl.AsyncIMDBAlgebraImpl[F](rl)
 }
+
+//object ModuleIMDBAsync {
+//  def instance[F[_]: Async, Timer](implicit sch: Scheduler): ModuleIMDBAsync[F[_]] = new ModuleIMDBAsync[F[_]] {
+//    override implicit def async: Async[F[_]] = ???
+//
+//    override implicit def timer: effect.Timer[F[_]] = ???
+//
+//    override implicit def scheduler: _root_.pms.effects.Scheduler = ???
+//
+//    override def imdbAlgebraConfig: IMDBAlgebraConfig = ???
+//  }
+//}

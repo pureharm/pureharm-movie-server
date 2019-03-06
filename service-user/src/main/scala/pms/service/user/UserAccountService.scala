@@ -35,7 +35,7 @@ final class UserAccountService[F[_]] private (
           }
     } yield ()
 
-  def registrationStep2(token: UserRegistrationToken): F[User] =
+  def registrationStep2(token: UserRegistrationToken): F[User] =    ///de ce mai creez si functia asta cca wrapper?
     for {
       user <- userAccount.registrationStep2(token)
     } yield user

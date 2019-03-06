@@ -29,7 +29,7 @@ object AuthedHttp4s {
     AuthMiddleware(verifyToken[F](authAlgebra), onFailure)
 
   private val `X-Auth-Token` = CaseInsensitiveString("X-AUTH-TOKEN")
-  private val challenges: NonEmptyList[Challenge] = NonEmptyList.of(
+  private val challenges: NonEmptyList[Challenge] = NonEmptyList.of(     ////ce sunt aceste challenges?
     Challenge(
       scheme = "Basic",
       realm  = "Go to POST /pms/api/user/login to get valid token",
@@ -38,13 +38,13 @@ object AuthedHttp4s {
 
   private val wwwHeader = headers.`WWW-Authenticate`(challenges)
 
-  private def onFailure[F[_]: Async]: AuthedService[Anomaly, F] = Kleisli { _: AuthedRequest[F, Anomaly] =>
+  private def onFailure[F[_]: Async]: AuthedService[Anomaly, F] = Kleisli { _: AuthedRequest[F, Anomaly] =>   /// asa descompun tot timpul un autherService?
     val fdsl = Http4sDsl[F]
-    import fdsl._
-    OptionT.liftF(Unauthorized(wwwHeader))
+    import fdsl._           //to have access to Unauthorized
+    OptionT.liftF(Unauthorized(wwwHeader)) //din F[Response[F] fac lift in OptionT[F,Response[F]] , dar Unauthorized imi returneaza un status cum  ajung la F[Response[F]] ?
   }
 
-  private def verifyToken[F[_]: Async](authAlgebra: UserAuthAlgebra[F]): Kleisli[F, Request[F], Result[AuthCtx]] =
+  private def verifyToken[F[_]: Async](authAlgebra: UserAuthAlgebra[F]): Kleisli[F, Request[F], Result[AuthCtx]] =  /// de ce am F si nu OptionT[F,?]
     Kleisli { req: Request[F] =>
       val F         = Async.apply[F]
       val optHeader = req.headers.get(`X-Auth-Token`)

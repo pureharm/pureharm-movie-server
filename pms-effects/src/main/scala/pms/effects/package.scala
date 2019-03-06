@@ -24,7 +24,7 @@ package object effects
   type Seq[A] = scala.collection.immutable.Seq[A]
   @inline def Seq: scala.collection.immutable.Seq.type = scala.collection.immutable.Seq
 
-  type Sync[F[_]] = cats.effect.Sync[F]
+  type Sync[F[_]] = cats.effect.Sync[F]    ///deci noi creeam un alias si deci F = F[_] ?
   @inline def Sync: cats.effect.Sync.type = cats.effect.Sync
 
   type Async[F[_]] = cats.effect.Async[F]

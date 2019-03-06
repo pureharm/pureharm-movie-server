@@ -10,7 +10,7 @@ import pms.effects._
   * @since 25 Jun 2018
   *
   */
-trait ModuleMovieAsync[F[_]] { this: ModuleUserAsync[F] =>
+trait ModuleMovieAsync[F[_]] { this: ModuleUserAsync[F] =>  ///de ce aici e doar F si in trait e F[_]
 
   implicit def async:      Async[F]
   implicit def transactor: Transactor[F]

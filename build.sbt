@@ -141,6 +141,10 @@ lazy val `algebra-movie` = project
     `pms-config`,
     `pms-effects`,
     `pms-core`,
+    `pms-db-config`,
+    `service-user`,
+    `server-bootstrap`
+    
   )
   .aggregate(
     `algebra-user`,
@@ -156,6 +160,8 @@ lazy val `algebra-user` = project
     `pms-config`,
     `pms-effects`,
     `pms-core`,
+    `pms-email`,
+    `pms-db-config`,
   )
   .aggregate(
     `pms-config`,

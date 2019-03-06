@@ -12,7 +12,7 @@ import org.http4s.{AuthedRequest, AuthedService, Response}
   * @since 26 Jun 2018
   *
   */
-object AuthCtxService {
+object AuthCtxService { /// Need explanations!
 
   def apply[F[_]](
     pf:         PartialFunction[AuthedRequest[F, AuthCtx], F[Response[F]]]

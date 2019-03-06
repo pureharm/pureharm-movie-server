@@ -24,12 +24,12 @@ final class UserAccountRestService[F[_]](
   implicit val F: Async[F]
 ) extends Http4sDsl[F] with UserServiceJSON {
 
-  private object RegistrationTokenMatcher extends QueryParamDecoderMatcher[String]("registrationToken")
+  private object RegistrationTokenMatcher extends QueryParamDecoderMatcher[String]("registrationToken")   //?
 
   private val userRegistrationStep1Service: AuthCtxService[F] = AuthCtxService[F] {
-    case (req @ POST -> Root / "user_registration") as user =>
+    case (req @ POST -> Root / "user_registration") as user =>    //req @ il folosesc ca sa am access la tot req nu doar la ce match-ui prin case, dar as user??e un alias?
       for {
-        reg  <- req.as[UserRegistration]
+        reg  <- req.as[UserRegistration] ///atunci de ce folosesc req aici si nu alias?
         _    <- userService.registrationStep1(reg)(user)
         resp <- Created()
       } yield resp
@@ -59,13 +59,13 @@ final class UserAccountRestService[F[_]](
       } yield resp
   }
 
-  val service: HttpService[F] =
+  val service: HttpService[F] =    ///de ce nu le combin (service-urile cu <+> ) ?
     NonEmptyList
       .of[HttpService[F]](
         userRegistrationStep2Service,
         userPasswordResetService
       )
-      .reduceK
+      .reduceK    ///care e scopul mai exact?
 
   val authedService: AuthCtxService[F] =
     userRegistrationStep1Service

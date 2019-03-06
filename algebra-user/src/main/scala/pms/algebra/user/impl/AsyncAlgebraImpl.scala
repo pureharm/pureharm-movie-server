@@ -30,7 +30,7 @@ final private[user] class AsyncAlgebraImpl[F[_]](
 
   import UserSql._
 
-  override protected def authAlgebra: UserAuthAlgebra[F] = this
+  override protected def authAlgebra: UserAuthAlgebra[F] = this  ///se face o convertire automata din cauza ca extind UserAuthAlgebra?
 
   private val invalidEmailOrPW = UnauthorizedFailure("Invalid email or password")
 
@@ -43,7 +43,7 @@ final private[user] class AsyncAlgebraImpl[F[_]](
       validPW <- BCrypt.checkpw[F](pw.plainText, userRepr.pw)
       auth <- validPW match {
                case tsec.common.Verified           => storeAuth(find(email))
-               case tsec.common.VerificationFailed => F.raiseError[AuthCtx](invalidEmailOrPW)
+               case tsec.common.VerificationFailed => F.raiseError[AuthCtx](invalidEmailOrPW)  //lift the error in the AuthCtx context, but how it looks its not like an Either to be Left("Error")
              }
     } yield auth
 
