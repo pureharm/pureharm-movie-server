@@ -2,12 +2,12 @@ package pms.algebra.imdb.extra
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
-import cats.effect.concurrent.{Deferred, Ref}
+import cats.effect.concurrent.{Deferred, Ref, Semaphore}
 import monix.execution.Scheduler
 import cats.implicits._
 
 import scala.concurrent.duration._
-import cats.effect.{Async, Timer}
+import cats.effect.{Concurrent, Timer}
 
 /**
   *
@@ -20,33 +20,36 @@ import cats.effect.{Async, Timer}
   * @tparam F type used to initialize Rate Limiter.
   * @tparam T type of expected response
   */
-final private[imdb] class RateLimiter[F[_]: Timer: Async, T] private (
-  val interval:            FiniteDuration,
-  val size:                Int,
-  private val initialTime: Ref[F, FiniteDuration]
+final private[imdb] class RateLimiter[F[_]: Timer: Concurrent, T] private (
+  val interval:  FiniteDuration,
+  val semaphore: Semaphore[F]
 ) {
 
   def throttle(f: F[T]): F[T] =
-    delayLogic >> f <* updateTimeRefLogic
-
-  private def delayLogic: F[Unit] =
     for {
-      init <- initialTime.get
-      now  <- timeNow
-      _ <- if (isWithinInterval(init, now))
-            Timer[F].sleep(init.max(now) - init.min(now))
-          else
-            Async[F].unit
-    } yield ()
+      acquireTime <- acquireSemaphore
+      res         <- f.onError { case _ => delayLogic(acquireTime) }
+      _           <- delayLogic(acquireTime)
+    } yield res
 
-  private def updateTimeRefLogic: F[Unit] =
+  private def acquireSemaphore: F[FiniteDuration] =
+    for {
+      _   <- semaphore.acquire
+      now <- timeNow
+    } yield now
+
+  private def delayLogic(acquireTime: FiniteDuration): F[Unit] =
     for {
       now <- timeNow
-      _   <- initialTime.set(now)
+      _ <- if (isWithinInterval(acquireTime, now))
+            Timer[F].sleep(acquireTime.max(now) - acquireTime.min(now))
+          else
+            Concurrent[F].unit
+      _ <- semaphore.release
     } yield ()
 
-  private def isWithinInterval(init: FiniteDuration, now: FiniteDuration): Boolean =
-    init - now < interval //TODO:
+  private def isWithinInterval(acquireTime: FiniteDuration, now: FiniteDuration): Boolean =
+    acquireTime - now < interval
 
   private def timeNow: F[FiniteDuration] =
     Timer[F].clock.monotonic(interval.unit).map(l => FiniteDuration(l, interval.unit))
@@ -87,19 +90,16 @@ final private[imdb] class RateLimiter[F[_]: Timer: Async, T] private (
 
 object RateLimiter {
 
-  def async[F[_]: Timer: Async, T](
+  def async[F[_]: Timer: Concurrent, T](
     interval: FiniteDuration,
     size:     Int
   ): F[RateLimiter[F, T]] = {
     for {
-      initTime <- Timer[F].clock.monotonic(interval.unit)
-      ref      <- Ref.of[F, FiniteDuration](FiniteDuration(initTime, interval.unit))
-
+      sem <- Semaphore(size)
     } yield
       new RateLimiter[F, T](
-        interval    = interval,
-        size        = size,
-        initialTime = ref
+        interval  = interval,
+        semaphore = sem
       )
   }
 
