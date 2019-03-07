@@ -8,7 +8,7 @@ import shapeless.tag.@@
   * @since 20 Jun 2018
   *
   */
-trait PhantomType[T] {  ///explanations needed
+trait PhantomType[T] {
 
   type Phantom <: this.type
 

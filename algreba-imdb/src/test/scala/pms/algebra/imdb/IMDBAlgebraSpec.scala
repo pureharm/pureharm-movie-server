@@ -4,14 +4,18 @@ import java.time.Year
 
 import net.ruippeixotog.scalascraper.model.Document
 import pms.algebra.imdb.extra.RateLimiter
+
 import scala.concurrent.duration._
 import monix.execution.Scheduler.Implicits.global
+import cats.effect.{Concurrent, IO, Timer}
 
-import cats.effect.{IO, Timer}
+import scala.concurrent.ExecutionContext
 
 class IMDBAlgebraSpec extends org.specs2.mutable.Specification {
 
   implicit val timer: Timer[IO] = IO.timer(global)
+  implicit val cs = IO.contextShift(ExecutionContext.global)
+  implicit val concurrent: Concurrent[IO] = Concurrent.apply[IO]
 
   "IMDBAlgebra" should {
     val rateLimiter = RateLimiter.async[IO, Document](1.seconds, 1)

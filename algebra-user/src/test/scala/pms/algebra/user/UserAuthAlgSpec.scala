@@ -1,75 +1,53 @@
 package pms.algebra.user
 
-import java.time.LocalDate
-
+import busymachines.core.UnauthorizedFailure
 import doobie.util.transactor.Transactor
 import pms.core.{Email,               PlainTextPassword}
 import pms.db.config.{DatabaseConfig, DatabaseConfigAlgebra}
 import pms.effects._
-import pms.email.{EmailAlgebra, GmailConfig}
 
 import scala.concurrent.ExecutionContext
 
 class UserAuthAlgSpec extends org.specs2.mutable.Specification with ModuleUserAsync[IO] with ModuleUserBootstrap[IO] {
 
-  implicit val cs = IO.contextShift(ExecutionContext.global)
+  implicit val cs          = IO.contextShift(ExecutionContext.global)
+  implicit val userAccount = UserAccountAlgebra.async(async, transactor)
 
-  val (user: User, email: Email, userPw, transact) = (for {
-    email    <- Email("andrei@yahoo.com")
-    userRole <- UserRole.fromName("Curator")
-    userPw   <- PlainTextPassword("password1234")
-    user     <- bootStrapUser(email, userPw, userRole)
-    transact <- DatabaseConfigAlgebra.transactor(databaseConfig)
-  } yield (user, email, userPw, transact)).unsafeGet()
+  implicit def userBootstrapAlg = UserAccountBootstrapAlgebra.impl(userAccount)
+
+  val (user: User, email: Email, userRole: UserRole, userPw: PlainTextPassword) =
+    TestHelpersFunctions.createUser("SuperAdmin@yahoo.com", "SuperAdmin", "password1234")
 
   implicit def async: Async[IO] = Async.apply[IO]
+
+  implicit def transactor: Transactor[IO] = DatabaseConfigAlgebra.transactor(databaseConfig).unsafeRunSync()
 
   val databaseConfig =
     DatabaseConfig("org.postgresql.Driver", "jdbc:postgresql:testmoviedatabase", "busyuser", "qwerty", true)
 
-  implicit def transactor: Transactor[IO] = transact
-
   DatabaseConfigAlgebra.initializeSQLDb(databaseConfig)
 
-  val gmailConfig = GmailConfig(
-    from     = "john.busylabs@gmail.com",
-    user     = "john.busylabs@gmail.com",
-    password = "]6|F;o2HPx/85-}BPgDo",
-    host     = "smtp.gmail.com",
-    port     = 587,
-    auth     = true,
-    startTLS = true
-  )
+  //  val gmailConfig = GmailConfig(
+  //    from     = "john.busylabs@gmail.com",
+  //    user     = "john.busylabs@gmail.com",
+  //    password = "]6|F;o2HPx/85-}BPgDo",
+  //    host     = "smtp.gmail.com",
+  //    port     = 587,
+  //    auth     = true,
+  //    startTLS = true
+  //  )
 
-  val userAuth         = UserAuthAlgebra.async(async, transactor)
-  val userAccount      = UserAccountAlgebra.async(async, transactor)
-  val userBootstrapAlg = UserAccountBootstrapAlgebra.impl(userAccount)
+  val userAuth   = UserAuthAlgebra.async(async, transactor)
+  val userAlgebr = UserAlgebra.async(async,     transactor)
 
-  final def bootStrapUser(email: Email, pw: PlainTextPassword, role: UserRole): IO[User] =
-    this.bootStrapUser(UserRegistration(email, pw, role))
-
-  final def bootStrapUser(reg: UserRegistration): IO[User] =
-    for {
-      token <- userBootstrapAlg.bootstrapUser(reg)
-      user  <- userAccount.registrationStep2(token)
-    } yield user
-
-  // val userAlgebr   = UserAlgebra.async(async, transactor)
   // val emailAlgebra = EmailAlgebra.gmailClient(gmailConfig)(async)
   // val userService = UserAccountService.concurrent(userAuth, userAccount, userAlgebr, emailAlgebra)
-
-  "UserAccountAlgebra" should {
-
-    """register a user""" in {
-      user.email mustEqual email
-    }
-  }
 
   "UserAuthAlgebra" should {
 
     var authCtx: IO[AuthCtx] = IO.unit()
 
-    """authenticate a user with eamil and password""" in {
+    """authenticate a user with email and password""" in {
       authCtx = userAuth.authenticate(email, userPw)
       val result = authCtx.unsafeRunSync()
 
@@ -84,9 +62,82 @@ class UserAuthAlgSpec extends org.specs2.mutable.Specification with ModuleUserAs
     }
 
     """promote a user """ in {
-      val result = userAuth.pr
+      implicit val authCtx = userAuth.authenticate(email, userPw).unsafeRunSync()
 
-      result.unsafeRunSync().user mustEqual user
+      val (newbieUser, newbieEmail, newbieRole, newbiePw) =
+        TestHelpersFunctions.createUser("newbie@yahoo.com", "Newbie", "password1234")
+
+      val result = for {
+        _    <- userAuth.promoteUser(newbieUser.id, UserRole.Member)
+        user <- userAlgebr.findUser(newbieUser.id) ////!!!!daca user e Option[User] cum am ajuns cu result la IO[Option[User]]?
+
+      } yield user
+
+      result.unsafeRunSync() match {
+        case Some(User(_, _, role)) => role mustEqual UserRole.Member
+       // case _ => // not sure what to do
+      }
+
+    }
+
+    """authorize a newbie to perform a certain operatin  """ in {
+      val (newbieUser, newbieEmail, newbieRole, newbiePw) =
+        TestHelpersFunctions.createUser("newbie_1@yahoo.com", "Newbie", "password1234")
+      implicit val authCtx = userAuth.authenticate(newbieEmail, newbiePw).unsafeRunSync()
+
+      def sum = (value: Int) => IO.pure(1 + value)
+
+      val result = userAuth.authorize(sum(1))
+
+      result.unsafeRunSync() should_== (2)
+
+    }
+
+    """authorize a member to perform a certain operatin && check that a newbie cant perfom that operation """ in {
+      val (newbieUser, newbieEmail, newbieRole, newbiePw) =
+        TestHelpersFunctions.createUser("newbie_2@yahoo.com", "Newbie", "password1234")
+
+      val (memberUser, memberEmail, memberRole, memberPw) =
+        TestHelpersFunctions.createUser("member@yahoo.com", "Member", "password1234")
+
+      val authCtxMember = userAuth.authenticate(memberEmail, memberPw).unsafeRunSync()
+      val authCtxNewbie = userAuth.authenticate(newbieEmail, newbiePw).unsafeRunSync()
+
+      def sum = (value: Int) => IO.pure(1 + value)
+
+      val resultMember = userAuth.authorizeMember(sum(1))(authCtxMember)
+      val resultNewbie = userAuth.authorizeMember(sum(1))(authCtxNewbie)
+
+      resultMember.unsafeRunSync() should_== (2)
+      resultNewbie
+        .unsafeRunSync() mustEqual UnauthorizedFailure("User not authorized to perform this action") //!!!not sure about this
+    }
+
+    """authorize a curator to perform a certain operatin  """ in {
+      val (curatorUser, curatorEmail, curatorRole, curatorPw) =
+        TestHelpersFunctions.createUser("curator@yahoo.com", "Curator", "password1234")
+
+      implicit val authCtxNewbie = userAuth.authenticate(curatorEmail, curatorPw).unsafeRunSync()
+
+      def sum = (value: Int) => IO.pure(1 + value)
+
+      val result = userAuth.authorizeMember(sum(1))
+
+      result.unsafeRunSync() should_== (2)
+    }
+
+    """authorize a SuperAdmin to perform a certain operatin  """ in {
+      val (superUser, superEmail, superRole, superPw) =
+        TestHelpersFunctions.createUser("super@yahoo.com", "SuperAdmin", "password1234")
+
+      implicit val authCtxNewbie = userAuth.authenticate(superEmail, superPw).unsafeRunSync()
+
+      def sum = (value: Int) => IO.pure(1 + value)
+
+      val result = userAuth.authorizeMember(sum(1))
+
+      result.unsafeRunSync() should_== (2)
     }
   }
+
 }

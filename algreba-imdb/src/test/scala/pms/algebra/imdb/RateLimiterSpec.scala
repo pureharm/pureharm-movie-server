@@ -1,15 +1,18 @@
 package pms.algebra.imdb
 
-import cats.effect.{IO, Timer}
+import cats.effect.{Concurrent, IO, Timer}
 import pms.algebra.imdb.extra.RateLimiter
 import monix.execution.Scheduler.Implicits.global
-import scala.concurrent.duration._
 
+import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 import scala.concurrent.duration.{FiniteDuration, NANOSECONDS}
 
 class RateLimiterSpec extends org.specs2.mutable.Specification {
 
   implicit val timer: Timer[IO] = IO.timer(global)
+  implicit val cs = IO.contextShift(ExecutionContext.global)
+  implicit val concurrent: Concurrent[IO] = Concurrent.apply[IO]
 
   "Verify RateLimiter independenly" >> {
     val rateLimiter: RateLimiter[IO, Unit] = RateLimiter.async[IO, Unit](1.seconds, 1).unsafeRunSync()
