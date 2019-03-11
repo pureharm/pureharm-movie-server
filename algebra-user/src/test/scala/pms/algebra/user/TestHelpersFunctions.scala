@@ -6,30 +6,39 @@ import pms.effects._
 object TestHelpersFunctions {
 
   final def bootStrapUser(email: Email, pw: PlainTextPassword, role: UserRole)(
-    implicit userBootstrapAlg:   UserAccountBootstrapAlgebra[IO],
-    userAccount:                 UserAccountAlgebra[IO]
+    implicit userBootstrapAlg: UserAccountBootstrapAlgebra[IO],
+    userAccount: UserAccountAlgebra[IO]
   ): IO[User] =
     this.bootStrapUser(UserRegistration(email, pw, role))
 
   final def bootStrapUser(
-    reg:                       UserRegistration
-  )(implicit userBootstrapAlg: UserAccountBootstrapAlgebra[IO], userAccount: UserAccountAlgebra[IO]): IO[User] =
+                           reg: UserRegistration
+                         )(implicit userBootstrapAlg: UserAccountBootstrapAlgebra[IO], userAccount: UserAccountAlgebra[IO]): IO[User] =
     for {
       token <- userBootstrapAlg.bootstrapUser(reg)
-      user  <- userAccount.registrationStep2(token)
+      user <- userAccount.registrationStep2(token)
     } yield user
 
-  def createUser(email:        String, role: String, userPw: String)(
+  def createUser(email: String, role: String, password: String)(
     implicit userBootstrapAlg: UserAccountBootstrapAlgebra[IO],
-    userAccount:               UserAccountAlgebra[IO]
-  ): (User, Email, UserRole, PlainTextPassword) = {
-    val (user: User, email: Email, userRole: UserRole, userPw: PlainTextPassword) = (for {
-      email    <- Email(email)
-      userRole <- UserRole.fromName(role)
-      userPw   <- PlainTextPassword(userPw)
-      user     <- bootStrapUser(email, userPw, userRole)
-    } yield (user, email, userRole, userPw)).unsafeGet()
+    userAccount: UserAccountAlgebra[IO]
+  ): IO[(User, Email, UserRole, PlainTextPassword)] = {
 
-    (user, email, userRole, userPw)
+    val result = for {
+      userEmail <- Email(email)
+      userRole <- UserRole.fromName(role)
+      userPw <- PlainTextPassword(password)
+    } yield (userEmail, userRole, userPw)
+    for {
+      (userEmail, userRole, userPw) <- result.asIO
+      user <- bootStrapUser(userEmail, userPw, userRole)
+    } yield (user, userEmail, userRole, userPw)
+  }
+
+  def unsafeCreateUser(email: String, role: String, password: String)(
+    implicit userBootstrapAlg: UserAccountBootstrapAlgebra[IO],
+    userAccount: UserAccountAlgebra[IO]
+  ): (User, Email, UserRole, PlainTextPassword) = {
+    createUser(email, role, password).unsafeRunSync()
   }
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Script that setups and runs a postgres 10.4 database inside a docker container.
-# You can run this script via terminal using `sh docker-postgresql.sh`
+# You can run this script via terminal using `sh docker-Testpostgresql.sh`
 
 # Running the script for the first time pulls a postgres image from docker repository.
 # If a container with the same name already exists, running this script will start/restart the container.
@@ -30,5 +30,5 @@ else
 		-e POSTGRES_DB=$DB_NAME \
 		-e POSTGRES_USER=$DB_USER \
 		-e POSTGRES_PASSWORD=$DB_PASS \
-		postgres:10.4
+		postgres:10.1
 fi

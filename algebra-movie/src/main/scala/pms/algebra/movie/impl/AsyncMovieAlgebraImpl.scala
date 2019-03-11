@@ -61,7 +61,7 @@ object MovieSql {
 
   def insert(mc: MovieCreation): ConnectionIO[MovieID] = mc.date match {
     case Some(date) =>
-      sql"""INSERT INTO movies(name, date) VALUES(${mc.name}, $date})""".update.withUniqueGeneratedKeys[MovieID]("id")
+      sql"""INSERT INTO movies(name, date) VALUES(${mc.name}, ${date})""".update.withUniqueGeneratedKeys[MovieID]("id")
     case None => sql"""INSERT INTO movies(name) VALUES(${mc.name}""".update.withUniqueGeneratedKeys[MovieID]("id")
   }
 
