@@ -19,7 +19,7 @@ import pms.algebra.imdb.extra.RateLimiter
   */
 final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](val rateLimiter: RateLimiter[F, Document])(
   implicit val F:                                                     Async[F],
-  implicit val scheduler:                                             Scheduler
+
 ) extends IMDBAlgebra[F] {
 
   override def scrapeMovieByTitle(title: TitleQuery): F[Option[IMDBMovie]] = {

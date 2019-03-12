@@ -19,8 +19,6 @@ trait ModuleIMDBAsync[F[_]] {
   implicit def concurrent: Concurrent[F]
   implicit def timer: Timer[F]
 
-  implicit def scheduler: Scheduler
-
   def imdbAlgebraConfig: IMDBAlgebraConfig
 
   private[imdb] def rateLimiter: F[RateLimiter[F, Document]] = RateLimiter.async[F, Document](
