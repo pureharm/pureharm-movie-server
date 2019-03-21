@@ -403,7 +403,7 @@ lazy val bmcJson:          ModuleID = bmCommons("json")              withSources
 //============================================================================================
 
 //https://github.com/typelevel/cats
-lazy val catsCore: ModuleID = "org.typelevel" %% "cats-core" % "1.5.0" withSources ()
+lazy val catsCore: ModuleID = "org.typelevel" %% "cats-core" % "1.6.0" withSources ()
 
 //https://github.com/typelevel/cats-effect
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "1.2.0" withSources ()
