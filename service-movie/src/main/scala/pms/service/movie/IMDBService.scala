@@ -15,7 +15,7 @@ import pms.effects._
   * @since 25 Jun 2018
   *
   */
-final class IMDBService[F[_]] private(
+final class IMDBService[F[_]] private (
   protected val movieAlgebra: MovieAlgebra[F],
   protected val imdbAlgebra:  IMDBAlgebra[F]
 )(
@@ -50,6 +50,7 @@ final class IMDBService[F[_]] private(
 }
 
 object IMDBService {
+
   def async[F[_]: Async](movieAlgebra: MovieAlgebra[F], imdbAlgebra: IMDBAlgebra[F]): IMDBService[F] =
     new IMDBService[F](movieAlgebra, imdbAlgebra)
 }

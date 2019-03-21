@@ -47,19 +47,19 @@ trait ModulePureMovieServer[F[_]]
       )
       .reduceK
 
-      for {
-        mmas <- movieModuleAuthedRoutes
-        authed = NonEmptyList
-          .of[AuthCtxRoutes[F]](
-            userModuleAuthedRoutes,
-            mmas
-          )
-          .reduceK
-      } yield {
-        /*_*/
-        routes <+> authCtxMiddleware(authed)
-        /*_*/
-      }
+    for {
+      mmas <- movieModuleAuthedRoutes
+      authed = NonEmptyList
+        .of[AuthCtxRoutes[F]](
+          userModuleAuthedRoutes,
+          mmas
+        )
+        .reduceK
+    } yield {
+      /*_*/
+      routes <+> authCtxMiddleware(authed)
+      /*_*/
+    }
 
   }
 }

@@ -4,8 +4,8 @@ import cats.effect.Sync
 import pms.config.ConfigLoader
 
 final case class IMDBAlgebraConfig(
-    requestsInterval:   Long,
-    requestsNumber:     Long
+  requestsInterval: Long,
+  requestsNumber:   Long
 )
 
 object IMDBAlgebraConfig extends ConfigLoader[IMDBAlgebraConfig] {
