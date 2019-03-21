@@ -13,7 +13,6 @@ import pms.service.user._
 import pms.service.user.rest._
 import pms.service.movie._
 import pms.service.movie.rest._
-import monix.execution.Scheduler
 
 /**
   * Overriding all abstract things just to make clear what
@@ -40,27 +39,27 @@ trait ModulePureMovieServer[F[_]]
   def authCtxMiddleware: AuthCtxMiddleware[F] =
     AuthedHttp4s.userTokenAuthMiddleware[F](userAuthAlgebra)
 
-  def pureMovieServerService: F[HttpService[F]] = {
+  def pureMovieServerRoutes: F[HttpRoutes[F]] = {
     import cats.implicits._
-    val service = NonEmptyList
-      .of[HttpService[F]](
-        userModuleService
+    val routes = NonEmptyList
+      .of[HttpRoutes[F]](
+        userModuleRoutes
       )
       .reduceK
 
-      for {
-        mmas <- movieModuleAuthedService
-        authed = NonEmptyList
-          .of[AuthCtxService[F]](
-            userModuleAuthedService,
-            mmas
-          )
-          .reduceK
-      } yield {
-        /*_*/
-        service <+> authCtxMiddleware(authed)
-        /*_*/
-      }
+    for {
+      mmas <- movieModuleAuthedRoutes
+      authed = NonEmptyList
+        .of[AuthCtxRoutes[F]](
+          userModuleAuthedRoutes,
+          mmas
+        )
+        .reduceK
+    } yield {
+      /*_*/
+      routes <+> authCtxMiddleware(authed)
+      /*_*/
+    }
 
   }
 }
@@ -72,7 +71,6 @@ object ModulePureMovieServer {
     c:  Concurrent[F],
     t:  Transactor[F],
     ti: Timer[F],
-    sc: Scheduler
   ): ModulePureMovieServer[F] =
     new ModulePureMovieServer[F] {
       implicit override def concurrent: Concurrent[F] = c

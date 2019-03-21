@@ -30,7 +30,6 @@ object ModulePureMovieServerBootstrap {
     c:  Concurrent[F],
     t:  Transactor[F],
     ti: Timer[F],
-    sc: Scheduler,
   ): ModulePureMovieServerBootstrap[F] =
     new ModulePureMovieServerBootstrap[F] {
       implicit override def concurrent: Concurrent[F] = c

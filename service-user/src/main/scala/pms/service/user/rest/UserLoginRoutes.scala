@@ -19,11 +19,11 @@ import org.http4s.headers
   * @since 26 Jun 2018
   *
   */
-final class UserLoginRestService[F[_]](
+final class UserLoginRoutes[F[_]](
   private val userAuthAlgebra: UserAuthAlgebra[F],
 )(
   implicit val F: Async[F],
-) extends Http4sDsl[F] with UserServiceJSON {
+) extends Http4sDsl[F] with UserRoutesJSON {
 
   /**
     * User/password gets transimited in the ``Authorization``
@@ -58,12 +58,12 @@ final class UserLoginRestService[F[_]](
     case Right(value) => F.pure(value)
   }
 
-  private val loginService: HttpService[F] =
-    HttpService[F] {
+  private val loginRoutes: HttpRoutes[F] =
+    HttpRoutes.of[F] {
       case req @ (POST -> Root / "user" / "login") =>
         Ok(findBasicAuth(req.headers).flatMap(logInWithUserNamePassword))
     }
 
-  val service: HttpService[F] = loginService
+  val routes: HttpRoutes[F] = loginRoutes
 
 }

@@ -20,7 +20,7 @@ final class UserAccountService[F[_]] private (
   private val userAlgebra:  UserAlgebra[F],
   private val emailAlgebra: EmailAlgebra[F]
 )(
-  private implicit val F: Concurrent[F]
+  implicit private val F: Concurrent[F]
 ) {
 
   def registrationStep1(reg: UserRegistration)(implicit authCtx: AuthCtx): F[Unit] =

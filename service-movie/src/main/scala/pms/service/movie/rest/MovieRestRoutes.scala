@@ -22,12 +22,12 @@ import org.http4s.dsl._
   * @since 25 Jun 2018
   *
   */
-final class MovieRestService[F[_]](
+final class MovieRestRoutes[F[_]](
   private val imdbService:  IMDBService[F],
   private val movieAlgebra: MovieAlgebra[F]
 )(
   implicit val F: Async[F],
-) extends Http4sDsl[F] with MovieServiceJSON {
+) extends Http4sDsl[F] with MovieRoutesJSON {
 
   implicit private val releaseDateQueryParamDecoder: QueryParamDecoder[ReleaseDate] =
     QueryParamDecoder[LocalDate].map(ReleaseDate.apply)
@@ -40,15 +40,15 @@ final class MovieRestService[F[_]](
 
   private object TitleQueryParamMatcher extends QueryParamDecoderMatcher[TitleQuery]("title")
 
-  private val imdbImportService: AuthCtxService[F] = {
-    AuthCtxService[F] {
+  private val imdbImportRoutes: AuthCtxRoutes[F] = {
+    AuthCtxRoutes[F] {
       case PUT -> Root / "movie_import" / "imdb" :? TitleQueryParamMatcher(title) as user =>
         Ok(imdbService.scrapeIMDBForTitle(TitleQuery(title))(user))
     }
   }
 
-  private val movieService: AuthCtxService[F] = {
-    AuthCtxService[F] {
+  private val movieRoutes: AuthCtxRoutes[F] = {
+    AuthCtxRoutes[F] {
       case (req @ POST -> Root / "movie") as user =>
         for {
           mc   <- req.as[MovieCreation]
@@ -62,6 +62,6 @@ final class MovieRestService[F[_]](
   }
 
   /*_*/
-  val authedService: AuthCtxService[F] = imdbImportService <+> movieService
+  val authedRoutes: AuthCtxRoutes[F] = imdbImportRoutes <+> movieRoutes
   /*_*/
 }

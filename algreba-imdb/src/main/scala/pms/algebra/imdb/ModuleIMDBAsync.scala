@@ -16,7 +16,7 @@ import scala.concurrent.duration._
   */
 trait ModuleIMDBAsync[F[_]] {
   implicit def concurrent: Concurrent[F]
-  implicit def timer: Timer[F]
+  implicit def timer:      Timer[F]
 
   def imdbAlgebraConfig: IMDBAlgebraConfig
 

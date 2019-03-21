@@ -13,15 +13,15 @@ import cats.implicits._
   */
 trait ModuleMovieRestAsync[F[_]] { this: ModuleMovieServiceAsync[F] with ModuleMovieAsync[F] =>
 
-  def movieRestService: F[MovieRestService[F]] =
+  def movieRestRoutes: F[MovieRestRoutes[F]] =
     for {
       imdb <- imdbService
     } yield
-      new MovieRestService[F](
+      new MovieRestRoutes[F](
         imdbService  = imdb,
         movieAlgebra = movieAlgebra
       )
 
-  def movieModuleAuthedService: F[AuthCtxService[F]] = movieRestService.map(_.authedService)
+  def movieModuleAuthedRoutes: F[AuthCtxRoutes[F]] = movieRestRoutes.map(_.authedRoutes)
 
 }

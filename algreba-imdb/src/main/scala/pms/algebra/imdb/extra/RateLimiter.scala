@@ -12,8 +12,7 @@ import cats.effect.{Concurrent, Timer}
   * Implemented using a queue of outgoing requests which are scheduled to execute.
   *
   * @param interval  time unit between `size` consecutive requests
-  * @param size      number of requests allowed to be sent in an `interval`
-  * @param scheduler used to schedule the requests
+  * @param semaphore bounded by the number of requests allowed to be sent in the configured `interval`
   * @tparam F type used to initialize Rate Limiter.
   * @tparam T type of expected response
   */

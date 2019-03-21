@@ -16,10 +16,10 @@ import doobie.util.transactor.Transactor
   *
   */
 final class PureMovieServer[F[_]] private (
-  implicit private val F:     Concurrent[F],
-  private val dbContextShift: ContextShift[F],
-  private val scheduler:      Scheduler,
   private val timer:          Timer[F],
+  private val dbContextShift: ContextShift[F],
+)(
+  implicit private val F: Concurrent[F],
 ) {
   private val logger = Slf4jLogger.unsafeCreate[F]
 
@@ -29,14 +29,14 @@ final class PureMovieServer[F[_]] private (
       gmailConfig       <- GmailConfig.default[F]
       imdbAlgebraConfig <- IMDBAlgebraConfig.default[F]
       dbConfig          <- DatabaseConfig.default[F]
-      transactor        <- DatabaseConfigAlgebra.transactor[F](dbConfig)
+      transactor        <- DatabaseConfigAlgebra.transactor[F](dbConfig)(F, dbContextShift)
       nrOfMigs          <- DatabaseConfigAlgebra.initializeSQLDb[F](dbConfig)
       _                 <- logger.info(s"Successfully ran #$nrOfMigs migrations")
       pmsModule <- moduleInit(
                     gmailConfig,
                     imdbAlgebraConfig,
                     bootstrap = serverConfig.bootstrap
-                  )(transactor, timer, scheduler)
+                  )(transactor, timer)
       _ <- logger.info(s"Successfully initialized pure-movie-server")
     } yield (serverConfig, pmsModule)
   }
@@ -49,7 +49,6 @@ final class PureMovieServer[F[_]] private (
     implicit
     transactor: Transactor[F],
     timer:      Timer[F],
-    scheduler:  Scheduler
   ): F[ModulePureMovieServer[F]] = {
     if (bootstrap) {
       logger.warn(
@@ -69,6 +68,6 @@ final class PureMovieServer[F[_]] private (
 
 object PureMovieServer {
 
-  def concurrent[F[_]: Concurrent](implicit sch: Scheduler, timer: Timer[F], dbContextShift: ContextShift[F]): F[PureMovieServer[F]] =
-    Concurrent.apply[F].delay(new PureMovieServer[F]())
+  def concurrent[F[_]: Concurrent](timer: Timer[F], dbContextShift: ContextShift[F]): F[PureMovieServer[F]] =
+    Concurrent.apply[F].delay(new PureMovieServer[F](timer, dbContextShift))
 }

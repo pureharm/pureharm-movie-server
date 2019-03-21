@@ -5,6 +5,8 @@ import pms.effects._
 import fs2.Stream
 import org.http4s._
 import org.http4s.server.blaze._
+import org.http4s.implicits._
+import org.http4s.server.Router
 
 /**
   *
@@ -15,24 +17,26 @@ import org.http4s.server.blaze._
 object PureMovieServerApp extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] = {
-    implicit val sch: Scheduler = Scheduler.global
     for {
-      server <- PureMovieServer.concurrent[IO]
+      server <- PureMovieServer.concurrent[IO](timer, contextShift) //FIXME: pass in proper context shift to do DB IO
       (serverConfig, pmsModule) <- server.init
-      service <- pmsModule.pureMovieServerService
+      routes <- pmsModule.pureMovieServerRoutes
       exitCode <- serverStream[IO](
-                   config  = serverConfig,
-                   service = service
+                   config = serverConfig,
+                   routes = routes
                  ).compile.lastOrError
     } yield exitCode
   }
 
   private def serverStream[F[_]: ConcurrentEffect: Timer](
-    config:  PureMovieServerConfig,
-    service: HttpService[F]
-  ): Stream[F, ExitCode] =
-    BlazeBuilder[F]
+    config: PureMovieServerConfig,
+    routes: HttpRoutes[F]
+  ): Stream[F, ExitCode] = {
+    val httpApp = Router(config.apiRoot -> routes).orNotFound
+    BlazeServerBuilder[F]
       .bindHttp(config.port, config.host)
-      .mountService(service, config.apiRoot)
+      .withHttpApp(httpApp)
       .serve
+  }
+
 }

@@ -14,19 +14,19 @@ import org.http4s.dsl._
   * @since 26 Jun 2018
   *
   */
-final class UserRestService[F[_]](
+final class UserRoutes[F[_]](
   private val userAlgebra: UserAlgebra[F]
 )(
   implicit val F: Async[F],
-) extends Http4sDsl[F] with UserServiceJSON {
+) extends Http4sDsl[F] with UserRoutesJSON {
 
-  private val userRestService: AuthCtxService[F] = AuthCtxService[F] {
+  private val userRestRoutes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {
     case GET -> Root / "user" / LongVar(userID) as user =>
       for {
         resp <- Ok(userAlgebra.findUser(UserID(userID))(user))
       } yield resp
   }
 
-  val authedService: AuthCtxService[F] = userRestService
+  val authedRoutes: AuthCtxRoutes[F] = userRestRoutes
 
 }

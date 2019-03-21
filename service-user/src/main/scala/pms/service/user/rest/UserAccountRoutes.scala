@@ -18,24 +18,24 @@ import org.http4s.dsl._
   * @since 26 Jun 2018
   *
   */
-final class UserAccountRestService[F[_]](
+final class UserAccountRoutes[F[_]](
   private val userService: UserAccountService[F]
 )(
   implicit val F: Async[F]
-) extends Http4sDsl[F] with UserServiceJSON {
+) extends Http4sDsl[F] with UserRoutesJSON {
 
-  private object RegistrationTokenMatcher extends QueryParamDecoderMatcher[String]("registrationToken")   //?
+  private object RegistrationTokenMatcher extends QueryParamDecoderMatcher[String]("registrationToken")
 
-  private val userRegistrationStep1Service: AuthCtxService[F] = AuthCtxService[F] {
-    case (req @ POST -> Root / "user_registration") as user =>    //req @ il folosesc ca sa am access la tot req nu doar la ce match-ui prin case, dar as user??e un alias?
+  private val userRegistrationStep1Routes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {
+    case (req @ POST -> Root / "user_registration") as user =>
       for {
-        reg  <- req.as[UserRegistration] ///atunci de ce folosesc req aici si nu alias?
+        reg  <- req.as[UserRegistration]
         _    <- userService.registrationStep1(reg)(user)
         resp <- Created()
       } yield resp
   }
 
-  private val userRegistrationStep2Service: HttpService[F] = HttpService[F] {
+  private val userRegistrationStep2Routes: HttpRoutes[F] = HttpRoutes.of[F] {
     case PUT -> Root / "user_registration" / "confirmation" :? RegistrationTokenMatcher(token) =>
       for {
         user <- userService.registrationStep2(UserRegistrationToken(token))
@@ -43,7 +43,7 @@ final class UserAccountRestService[F[_]](
       } yield resp
   }
 
-  private val userPasswordResetService: HttpService[F] = HttpService[F] {
+  private val userPasswordResetRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ POST -> Root / "user" / "password_reset" / "request" =>
       for {
         pwr  <- req.as[PasswordResetRequest]
@@ -59,15 +59,15 @@ final class UserAccountRestService[F[_]](
       } yield resp
   }
 
-  val service: HttpService[F] =    ///de ce nu le combin (service-urile cu <+> ) ?
+  val routes: HttpRoutes[F] =
     NonEmptyList
-      .of[HttpService[F]](
-        userRegistrationStep2Service,
-        userPasswordResetService
+      .of[HttpRoutes[F]](
+        userRegistrationStep2Routes,
+        userPasswordResetRoutes
       )
-      .reduceK    ///care e scopul mai exact?
+      .reduceK
 
-  val authedService: AuthCtxService[F] =
-    userRegistrationStep1Service
+  val authedRoutes: AuthCtxRoutes[F] =
+    userRegistrationStep1Routes
 
 }

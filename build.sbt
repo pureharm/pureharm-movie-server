@@ -403,7 +403,7 @@ lazy val bmcJson:          ModuleID = bmCommons("json")              withSources
 //============================================================================================
 
 //https://github.com/typelevel/cats
-lazy val catsCore: ModuleID = "org.typelevel" %% "cats-core" % "1.5.0" withSources ()
+lazy val catsCore: ModuleID = "org.typelevel" %% "cats-core" % "1.6.0" withSources ()
 
 //https://github.com/typelevel/cats-effect
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "1.2.0" withSources ()
@@ -412,7 +412,7 @@ lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "1.2.0" withS
 lazy val monix: ModuleID = "io.monix" %% "monix" % "3.0.0-RC2" withSources ()
 
 //https://github.com/functional-streams-for-scala/fs2
-lazy val fs2: ModuleID = "co.fs2" %% "fs2-core" % "1.0.2" withSources ()
+lazy val fs2: ModuleID = "co.fs2" %% "fs2-core" % "1.0.4" withSources ()
 
 //https://circe.github.io/circe/
 lazy val circeVersion: String = "0.11.1"
@@ -422,7 +422,7 @@ lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % c
 lazy val circeGenericExtras: ModuleID = "io.circe" %% "circe-generic-extras" % circeVersion
 
 //https://github.com/http4s/http4s
-lazy val Http4sVersion = "0.20.0-M5"
+lazy val Http4sVersion = "0.20.0-M7"
 
 lazy val http4sBlazeServer: ModuleID = "org.http4s" %% "http4s-blaze-server" % Http4sVersion withSources ()
 lazy val http4sCirce:       ModuleID = "org.http4s" %% "http4s-circe"        % Http4sVersion withSources ()
