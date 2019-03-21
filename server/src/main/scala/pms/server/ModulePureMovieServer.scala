@@ -40,25 +40,25 @@ trait ModulePureMovieServer[F[_]]
   def authCtxMiddleware: AuthCtxMiddleware[F] =
     AuthedHttp4s.userTokenAuthMiddleware[F](userAuthAlgebra)
 
-  def pureMovieServerService: F[HttpService[F]] = {
+  def pureMovieServerRoutes: F[HttpRoutes[F]] = {
     import cats.implicits._
-    val service = NonEmptyList
-      .of[HttpService[F]](
-        userModuleService
+    val routes = NonEmptyList
+      .of[HttpRoutes[F]](
+        userModuleRoutes
       )
       .reduceK
 
       for {
-        mmas <- movieModuleAuthedService
+        mmas <- movieModuleAuthedRoutes
         authed = NonEmptyList
-          .of[AuthCtxService[F]](
-            userModuleAuthedService,
+          .of[AuthCtxRoutes[F]](
+            userModuleAuthedRoutes,
             mmas
           )
           .reduceK
       } yield {
         /*_*/
-        service <+> authCtxMiddleware(authed)
+        routes <+> authCtxMiddleware(authed)
         /*_*/
       }
 

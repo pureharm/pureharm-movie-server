@@ -11,9 +11,9 @@ import pms.algebra.movie._
   * @since 25 Jun 2018
   *
   */
-object MovieServiceJSON extends MovieServiceJSON
+object MovieRoutesJSON extends MovieRoutesJSON
 
-trait MovieServiceJSON extends PMSJson {
+trait MovieRoutesJSON extends PMSJson {
 
   //TODO: remove boilerplate
   implicit val movieIDCirceCodec: Codec[MovieID] = Codec.instance(

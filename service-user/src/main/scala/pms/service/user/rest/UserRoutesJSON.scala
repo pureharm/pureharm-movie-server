@@ -11,7 +11,7 @@ import pms.service.user._
   * @since 26 Jun 2018
   *
   */
-trait UserServiceJSON extends PMSJson {
+trait UserRoutesJSON extends PMSJson {
 
   implicit val userRoleCirceCodec: Codec[UserRole] = Codec.instance(
     encode = Encoder.apply[String].contramap(ur => ur.productPrefix),

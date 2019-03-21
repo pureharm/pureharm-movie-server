@@ -29,7 +29,7 @@ final class PureMovieServer[F[_]] private (
       gmailConfig       <- GmailConfig.default[F]
       imdbAlgebraConfig <- IMDBAlgebraConfig.default[F]
       dbConfig          <- DatabaseConfig.default[F]
-      transactor        <- DatabaseConfigAlgebra.transactor[F](dbConfig)
+      transactor        <- DatabaseConfigAlgebra.transactor[F](dbConfig)(F, dbContextShift)
       nrOfMigs          <- DatabaseConfigAlgebra.initializeSQLDb[F](dbConfig)
       _                 <- logger.info(s"Successfully ran #$nrOfMigs migrations")
       pmsModule <- moduleInit(

@@ -16,43 +16,43 @@ import pms.service.user._
   */
 trait ModuleUserRestConcurrent[F[_]] { this: ModuleUserServiceConcurrent[F] with ModuleUserAsync[F] =>
 
-  def userRestService: UserRestService[F] = _userRestService
+  def userRestService: UserRoutes[F] = _userRoutes
 
-  def userLoginRestService: UserLoginRestService[F] = _userLoginRestService
+  def userLoginRoutes: UserLoginRoutes[F] = _userLoginRoutes
 
-  def userAccountRestService: UserAccountRestService[F] = _userAccountRestService
+  def userAccountRoutes: UserAccountRoutes[F] = _userAccountRoutes
 
-  def userModuleService: HttpService[F] = _service
+  def userModuleRoutes: HttpRoutes[F] = _routes
 
-  def userModuleAuthedService: AuthCtxService[F] = _authedService
+  def userModuleAuthedRoutes: AuthCtxRoutes[F] = _authedRoutes
 
-  private lazy val _userRestService: UserRestService[F] = new UserRestService[F](
+  private lazy val _userRoutes: UserRoutes[F] = new UserRoutes[F](
     userAlgebra = userAlgebra
   )
 
-  private lazy val _userLoginRestService: UserLoginRestService[F] = new UserLoginRestService[F](
+  private lazy val _userLoginRoutes: UserLoginRoutes[F] = new UserLoginRoutes[F](
     userAuthAlgebra = userAuthAlgebra
   )
 
-  private lazy val _userAccountRestService: UserAccountRestService[F] = new UserAccountRestService(
+  private lazy val _userAccountRoutes: UserAccountRoutes[F] = new UserAccountRoutes(
     userService = userAccountService
   )
 
   import cats.implicits._
 
-  private lazy val _service: HttpService[F] =
+  private lazy val _routes: HttpRoutes[F] =
     NonEmptyList
       .of(
-        userAccountRestService.service,
-        userLoginRestService.service
+        userAccountRoutes.routes,
+        userLoginRoutes.routes
       )
       .reduceK
 
-  private lazy val _authedService: AuthCtxService[F] =
+  private lazy val _authedRoutes: AuthCtxRoutes[F] =
     NonEmptyList
       .of(
-        userRestService.authedService,
-        userAccountRestService.authedService,
+        userRestService.authedRoutes,
+        userAccountRoutes.authedRoutes,
       )
       .reduceK
 }
