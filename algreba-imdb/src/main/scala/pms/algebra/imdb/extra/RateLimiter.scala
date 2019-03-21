@@ -1,9 +1,6 @@
 package pms.algebra.imdb.extra
 
-import java.util.concurrent.ConcurrentLinkedQueue
-
-import cats.effect.concurrent.{Deferred, Ref, Semaphore}
-import monix.execution.Scheduler
+import cats.effect.concurrent.Semaphore
 import cats.implicits._
 
 import scala.concurrent.duration._
@@ -53,46 +50,14 @@ final private[imdb] class RateLimiter[F[_]: Timer: Concurrent, T] private (
 
   private def timeNow: F[FiniteDuration] =
     Timer[F].clock.monotonic(interval.unit).map(l => FiniteDuration(l, interval.unit))
-  //  // might be replaceable with cats.effect.Timer
-  //  private val requestQueue = new ConcurrentLinkedQueue[() => Promise[T]]() ///care e faza cu parametrizarea?
-  //
-  //  /* scheduler.scheduleAtFixedRate(0.millis, interval) {
-  //     for (_ <- 0 until size if !requestQueue.isEmpty) {
-  //       val request = requestQueue.poll()
-  //       request.apply()
-  //     }
-  //   }*/
-  //
-  //  Async[F].delay {
-  //    Timer.apply.sleep(interval) {
-  //      for (_ <- 0 until size if !requestQueue.isEmpty) {
-  //        val request = requestQueue.poll()
-  //        request.apply()
-  //      }
-  //    }
-  //    //    def example(thunk: => T): F[T] = Async[F].delay(thunk)
-  //    //
-  //    //    example(throw new RuntimeException("3493-0259"))
-  //
-  //    def addToQueue(f: => T): Future[T] = {
-  //      val promise = Promise[T]() ///declar a promise
-  //      requestQueue.add(() => {
-  //        promise.completeWith(Future {
-  //          f
-  //        })
-  //      })
-  //      //obtain the future that it complete
-  //
-  //      promise.future
-  //    }
-  //  }
+
 }
 
 object RateLimiter {
 
   def async[F[_]: Timer: Concurrent, T](
     interval: FiniteDuration,
-    size:     Int
+    size:     Long
   ): F[RateLimiter[F, T]] = {
     for {
       sem <- Semaphore(size)
@@ -103,7 +68,4 @@ object RateLimiter {
       )
   }
 
-  //  def async[F[_]: Async, T](interval: FiniteDuration, size: Int)(implicit scheduler: Scheduler): RateLimiter[F, T] = {
-  //    new RateLimiter[F, T](interval, size)
-  //  }
 }

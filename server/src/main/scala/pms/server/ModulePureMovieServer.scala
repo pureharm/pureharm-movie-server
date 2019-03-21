@@ -79,8 +79,6 @@ object ModulePureMovieServer {
 
       implicit override def timer: Timer[F] = ti
 
-      implicit override def scheduler: Scheduler = sc
-
       override def gmailConfig: GmailConfig = gConfig
 
       override def imdbAlgebraConfig: IMDBAlgebraConfig = imbdAlgebraConfig

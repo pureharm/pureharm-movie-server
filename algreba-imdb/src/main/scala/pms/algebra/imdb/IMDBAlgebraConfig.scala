@@ -5,7 +5,7 @@ import pms.config.ConfigLoader
 
 final case class IMDBAlgebraConfig(
     requestsInterval:   Long,
-    requestsNumber:     Int
+    requestsNumber:     Long
 )
 
 object IMDBAlgebraConfig extends ConfigLoader[IMDBAlgebraConfig] {
