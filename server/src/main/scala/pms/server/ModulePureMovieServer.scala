@@ -13,7 +13,6 @@ import pms.service.user._
 import pms.service.user.rest._
 import pms.service.movie._
 import pms.service.movie.rest._
-import monix.execution.Scheduler
 
 /**
   * Overriding all abstract things just to make clear what
@@ -72,7 +71,6 @@ object ModulePureMovieServer {
     c:  Concurrent[F],
     t:  Transactor[F],
     ti: Timer[F],
-    sc: Scheduler
   ): ModulePureMovieServer[F] =
     new ModulePureMovieServer[F] {
       implicit override def concurrent: Concurrent[F] = c

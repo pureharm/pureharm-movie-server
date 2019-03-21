@@ -17,7 +17,6 @@ import org.http4s.server.Router
 object PureMovieServerApp extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] = {
-    implicit val sch: Scheduler = Scheduler.global
     for {
       server <- PureMovieServer.concurrent[IO]
       (serverConfig, pmsModule) <- server.init
