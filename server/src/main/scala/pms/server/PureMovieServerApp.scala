@@ -18,7 +18,7 @@ object PureMovieServerApp extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] = {
     for {
-      server <- PureMovieServer.concurrent[IO]
+      server <- PureMovieServer.concurrent[IO](timer, contextShift) //FIXME: pass in proper context shift to do DB IO
       (serverConfig, pmsModule) <- server.init
       routes <- pmsModule.pureMovieServerRoutes
       exitCode <- serverStream[IO](

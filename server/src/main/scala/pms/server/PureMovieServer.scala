@@ -16,9 +16,10 @@ import doobie.util.transactor.Transactor
   *
   */
 final class PureMovieServer[F[_]] private (
-  implicit private val F:     Concurrent[F],
-  private val dbContextShift: ContextShift[F],
   private val timer:          Timer[F],
+  private val dbContextShift: ContextShift[F],
+)(
+  implicit private val F: Concurrent[F],
 ) {
   private val logger = Slf4jLogger.unsafeCreate[F]
 
@@ -67,6 +68,6 @@ final class PureMovieServer[F[_]] private (
 
 object PureMovieServer {
 
-  def concurrent[F[_]: Concurrent](implicit timer: Timer[F], dbContextShift: ContextShift[F]): F[PureMovieServer[F]] =
-    Concurrent.apply[F].delay(new PureMovieServer[F]())
+  def concurrent[F[_]: Concurrent](timer: Timer[F], dbContextShift: ContextShift[F]): F[PureMovieServer[F]] =
+    Concurrent.apply[F].delay(new PureMovieServer[F](timer, dbContextShift))
 }
