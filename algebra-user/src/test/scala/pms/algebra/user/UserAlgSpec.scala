@@ -8,7 +8,7 @@ import pms.effects._
 import scala.concurrent.ExecutionContext
 
 class UserAlgSpec
-    extends org.specs2.mutable.Specification with Module[IO] with ModuleUserAsync[IO] with ModuleUserBootstrap[IO] {
+    extends org.specs2.mutable.Specification with Module[IO] with ModuleUserAlgebra[IO] with ModuleUserBootstrap[IO] {
   implicit override def F: Concurrent[IO] = Concurrent.apply[IO]
 
   val databaseConfig =

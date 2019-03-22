@@ -8,7 +8,7 @@ import pms.core.Module
   * @since 27 Jun 2018
   *
   */
-trait ModuleEmailASync[F[_]] { this: Module[F] =>
+trait ModuleEmail[F[_]] { this: Module[F] =>
 
   def gmailConfig: GmailConfig
 

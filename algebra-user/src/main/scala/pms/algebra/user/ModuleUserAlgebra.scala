@@ -12,7 +12,7 @@ import pms.core.Module
   * @since 21 Jun 2018
   *
   */
-trait ModuleUserAsync[F[_]] { this: Module[F] =>
+trait ModuleUserAlgebra[F[_]] { this: Module[F] =>
 
   def transactor: Transactor[F]
 

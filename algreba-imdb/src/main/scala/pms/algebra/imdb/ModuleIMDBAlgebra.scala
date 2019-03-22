@@ -12,7 +12,7 @@ import pms.core.Module
   * @since 25 Jun 2018
   *
   */
-trait ModuleIMDBAsync[F[_]] { this: Module[F] =>
+trait ModuleIMDBAlgebra[F[_]] { this: Module[F] =>
   implicit def timer: Timer[F]
 
   def imdbAlgebraConfig: IMDBAlgebraConfig

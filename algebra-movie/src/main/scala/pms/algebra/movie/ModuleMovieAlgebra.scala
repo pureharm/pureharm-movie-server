@@ -1,7 +1,7 @@
 package pms.algebra.movie
 
 import doobie.util.transactor.Transactor
-import pms.algebra.user.ModuleUserAsync
+import pms.algebra.user.ModuleUserAlgebra
 import pms.core.Module
 
 /**
@@ -10,7 +10,7 @@ import pms.core.Module
   * @since 25 Jun 2018
   *
   */
-trait ModuleMovieAsync[F[_]] { this: Module[F] with ModuleUserAsync[F] =>
+trait ModuleMovieAlgebra[F[_]] { this: Module[F] with ModuleUserAlgebra[F] =>
 
   override def transactor: Transactor[F]
 

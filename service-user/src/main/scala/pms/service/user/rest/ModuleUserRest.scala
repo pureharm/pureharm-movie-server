@@ -14,7 +14,7 @@ import cats.implicits._
   * @since 27 Jun 2018
   *
   */
-trait ModuleUserRestConcurrent[F[_]] { this: Module[F] with ModuleUserServiceConcurrent[F] with ModuleUserAsync[F] =>
+trait ModuleUserRest[F[_]] { this: Module[F] with ModuleUserService[F] with ModuleUserAlgebra[F] =>
 
   def userRestService: F[UserRoutes[F]] = _userRoutes
 
@@ -38,14 +38,17 @@ trait ModuleUserRestConcurrent[F[_]] { this: Module[F] with ModuleUserServiceCon
     userAccountService.map(aac => new UserAccountRoutes(userService = aac))
   }
 
-  private lazy val _routes: F[HttpRoutes[F]] =
+  private lazy val _routes: F[HttpRoutes[F]] = singleton {
     for {
       uar <- userAccountRoutes
       ulr <- userLoginRoutes
     } yield NonEmptyList.of(uar.routes, ulr.routes).reduceK
+  }
 
-  private lazy val _authedRoutes: F[AuthCtxRoutes[F]] = for {
-    urs <- userRestService
-    uar <- userAccountRoutes
-  } yield NonEmptyList.of(urs.authedRoutes, uar.authedRoutes).reduceK
+  private lazy val _authedRoutes: F[AuthCtxRoutes[F]] = singleton {
+    for {
+      urs <- userRestService
+      uar <- userAccountRoutes
+    } yield NonEmptyList.of(urs.authedRoutes, uar.authedRoutes).reduceK
+  }
 }

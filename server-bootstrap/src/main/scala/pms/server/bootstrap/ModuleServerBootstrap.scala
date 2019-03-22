@@ -9,7 +9,7 @@ import pms.core.Module
   * @since 13 Jul 2018
   *
   */
-trait ModuleServerBootstrap[F[_]] { this: Module[F] with ModuleUserAsync[F] with ModuleUserBootstrap[F] =>
+trait ModuleServerBootstrap[F[_]] { this: Module[F] with ModuleUserAlgebra[F] with ModuleUserBootstrap[F] =>
   def serverBootstrapAlgebra: F[ServerBootstrapAlgebra[F]] = _serverBootstrapAlgebra
 
   private lazy val _serverBootstrapAlgebra: F[ServerBootstrapAlgebra[F]] = singleton {

@@ -10,11 +10,11 @@ import pms.email._
   * @since 27 Jun 2018
   *
   */
-trait ModuleUserServiceConcurrent[F[_]] { this: Module[F] with ModuleUserAsync[F] with ModuleEmailASync[F] =>
+trait ModuleUserService[F[_]] { this: Module[F] with ModuleUserAlgebra[F] with ModuleEmail[F] =>
 
   def userAccountService: F[UserAccountService[F]] = _userService
 
-  private lazy val _userService: F[UserAccountService[F]] = {
+  private lazy val _userService: F[UserAccountService[F]] = singleton {
     import cats.implicits._
     for {
       uaa  <- userAuthAlgebra

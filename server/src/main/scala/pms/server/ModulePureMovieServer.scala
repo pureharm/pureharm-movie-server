@@ -1,20 +1,21 @@
 package pms.server
 
+import cats.implicits._
 import cats.effect.Timer
 import doobie.util.transactor.Transactor
 import org.http4s._
+
+import pms.core.Module
 import pms.effects._
 import pms.email._
 import pms.algebra.user._
 import pms.algebra.imdb._
 import pms.algebra.movie._
 import pms.algebra.http._
-import pms.core.Module
 import pms.service.user._
 import pms.service.user.rest._
 import pms.service.movie._
 import pms.service.movie.rest._
-import cats.implicits._
 
 /**
   * Overriding all abstract things just to make clear what
@@ -25,9 +26,8 @@ import cats.implicits._
   *
   */
 trait ModulePureMovieServer[F[_]]
-    extends Module[F] with ModuleEmailASync[F] with ModuleUserAsync[F] with ModuleIMDBAsync[F] with ModuleMovieAsync[F]
-    with ModuleUserServiceConcurrent[F] with ModuleUserRestConcurrent[F] with ModuleMovieServiceAsync[F]
-    with ModuleMovieRestAsync[F] {
+    extends Module[F] with ModuleEmail[F] with ModuleUserAlgebra[F] with ModuleIMDBAlgebra[F] with ModuleMovieAlgebra[F]
+    with ModuleUserService[F] with ModuleMovieService[F] with ModuleUserRest[F] with ModuleMovieRest[F] {
 
   implicit override def F: Concurrent[F]
   //at this point we can use the same concurrent instance
@@ -36,12 +36,12 @@ trait ModulePureMovieServer[F[_]]
 
   override def imdbAlgebraConfig: IMDBAlgebraConfig
 
+  def pureMovieServerRoutes: F[HttpRoutes[F]] = _pureMovieServerRoutes
+
   //we could delay this even more, but there is little point.
-  def authCtxMiddleware: F[AuthCtxMiddleware[F]] = singleton {
+  private lazy val authCtxMiddleware: F[AuthCtxMiddleware[F]] = singleton {
     userAuthAlgebra.map(uaa => AuthedHttp4s.userTokenAuthMiddleware[F](uaa))
   }
-
-  def pureMovieServerRoutes: F[HttpRoutes[F]] = _pureMovieServerRoutes
 
   private lazy val _pureMovieServerRoutes: F[HttpRoutes[F]] = singleton {
     import cats.implicits._

@@ -10,9 +10,11 @@ import pms.core.Module
   * @since 27 Jun 2018
   *
   */
-trait ModuleMovieServiceAsync[F[_]] { this: Module[F] with ModuleMovieAsync[F] with ModuleIMDBAsync[F] =>
+trait ModuleMovieService[F[_]] { this: Module[F] with ModuleMovieAlgebra[F] with ModuleIMDBAlgebra[F] =>
 
-  def imdbService: F[IMDBService[F]] = singleton {
+  def imdbService: F[IMDBService[F]] = _imdbService
+
+  private lazy val _imdbService: F[IMDBService[F]] = singleton {
     import cats.implicits._
     for {
       imbd <- imdbAlgebra

@@ -9,7 +9,7 @@ import pms.db.config.{DatabaseConfig, DatabaseConfigAlgebra}
 import scala.concurrent.ExecutionContext
 
 class UserAccountAlgSpec
-    extends org.specs2.mutable.Specification with Module[IO] with ModuleUserAsync[IO] with ModuleUserBootstrap[IO] {
+    extends org.specs2.mutable.Specification with Module[IO] with ModuleUserAlgebra[IO] with ModuleUserBootstrap[IO] {
 
   val databaseConfig =
     DatabaseConfig("org.postgresql.Driver", "jdbc:postgresql:testmoviedatabase", "busyuser", "qwerty", false)

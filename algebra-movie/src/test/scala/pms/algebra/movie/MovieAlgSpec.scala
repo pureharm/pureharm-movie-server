@@ -13,8 +13,8 @@ import spire.math.Interval
 import scala.concurrent.ExecutionContext
 
 class MovieAlgSpec
-    extends org.specs2.mutable.Specification with Module[IO] with ModuleMovieAsync[IO] with ModuleServerBootstrap[IO]
-    with ModuleUserAsync[IO] with ModuleUserBootstrap[IO] {
+    extends org.specs2.mutable.Specification with Module[IO] with ModuleMovieAlgebra[IO] with ModuleServerBootstrap[IO]
+    with ModuleUserAlgebra[IO] with ModuleUserBootstrap[IO] {
 
   implicit def F: Concurrent[IO] = Concurrent.apply[IO]
 

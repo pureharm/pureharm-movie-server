@@ -11,7 +11,7 @@ import cats.implicits._
   * @since 13 Jul 2018
   *
   */
-trait ModuleUserBootstrap[F[_]] { this: Module[F] with ModuleUserAsync[F] =>
+trait ModuleUserBootstrap[F[_]] { this: Module[F] with ModuleUserAlgebra[F] =>
 
   def userBootstrapAlgebra: F[UserAccountBootstrapAlgebra[F]] = _userBootstrapAlgebra
 
