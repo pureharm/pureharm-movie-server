@@ -3,7 +3,6 @@ package pms.algebra.user
 import pms.core._
 import pms.effects._
 import busymachines.core.UnauthorizedFailure
-import doobie.util.transactor.Transactor
 
 /**
   *

@@ -1,6 +1,5 @@
 package pms.algebra.user
 
-import doobie.util.transactor.Transactor
 import pms.effects._
 import pms.core._
 
