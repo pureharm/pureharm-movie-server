@@ -22,7 +22,7 @@ import org.http4s.dsl._
   * @since 25 Jun 2018
   *
   */
-final class MovieRestRoutes[F[_]](
+private[rest]final class MovieRestRoutes[F[_]](
   private val imdbService:  IMDBService[F],
   private val movieAlgebra: MovieAlgebra[F]
 )(

@@ -1,6 +1,7 @@
 package pms.server.bootstrap
 
 import pms.algebra.user._
+import pms.core.Module
 
 /**
   *
@@ -8,9 +9,15 @@ import pms.algebra.user._
   * @since 13 Jul 2018
   *
   */
-trait ModuleServerBootstrap[F[_]] { this: ModuleUserAsync[F] with ModuleUserBootstrap[F] =>
-  def serverBootstrapAlgebra: ServerBootstrapAlgebra[F] = _serverBootstrapAlgebra
+trait ModuleServerBootstrap[F[_]] { this: Module[F] with ModuleUserAlgebra[F] with ModuleUserBootstrap[F] =>
+  def serverBootstrapAlgebra: F[ServerBootstrapAlgebra[F]] = _serverBootstrapAlgebra
 
-  private lazy val _serverBootstrapAlgebra: ServerBootstrapAlgebra[F] =
-    ServerBootstrapAlgebra.async(userAccountAlgebra, userBootstrapAlgebra)
+  private lazy val _serverBootstrapAlgebra: F[ServerBootstrapAlgebra[F]] = singleton {
+    import cats.implicits._
+    for {
+      uacc <- userAccountAlgebra
+      ubal <- userBootstrapAlgebra
+    } yield ServerBootstrapAlgebra.async(uacc, ubal)
+  }
+
 }

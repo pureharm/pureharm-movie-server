@@ -25,8 +25,9 @@ abstract class MovieAlgebra[F[_]] {
 }
 
 object MovieAlgebra {
+  import pms.algebra.movie.impl.MovieAlgebraImpl
   import pms.effects._
 
-  def async[F[_]: Async](userAuth: UserAuthAlgebra[F])(implicit transactor: Transactor[F]): MovieAlgebra[F] =
-    new impl.AsyncMovieAlgebraImpl(userAuth)
+  def async[F[_]: Async](userAuth: UserAuthAlgebra[F])(implicit transactor: Transactor[F]): F[MovieAlgebra[F]] =
+    Async.apply[F].delay(MovieAlgebraImpl.bracket(userAuth, transactor))
 }

@@ -1,116 +1,24 @@
 package pms.algebra.user.impl
 
-import busymachines.core.UnauthorizedFailure
-import cats.syntax.all._
 import doobie._
 import doobie.implicits._
+import cats.implicits._
+
 import pms.algebra.user._
 import pms.core._
 import pms.effects._
-import tsec.jws.mac._
-import tsec.jwt._
-import tsec.mac.jca._
-import tsec.passwordhashers._
-import tsec.passwordhashers.jca._
-
-import scala.concurrent.duration._
 
 /**
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 21 Jun 2018
+  * @since 22 Mar 2019
   *
   */
-final private[user] class AsyncAlgebraImpl[F[_]](
-  implicit
-  val F:                   Async[F],
-  override val monadError: MonadError[F, Throwable],
-  val transactor:          Transactor[F]
-) extends UserAuthAlgebra()(monadError) with UserAccountAlgebra[F] with UserAlgebra[F] {
-
-  import UserSql._
-
-  override protected def authAlgebra: UserAuthAlgebra[F] = this
-
-  private val invalidEmailOrPW = UnauthorizedFailure("Invalid email or password")
-
-  override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] =
-    for {
-      userRepr <- findRepr(email).transact(transactor).flatMap {
-                   case None    => F.raiseError[UserRepr](invalidEmailOrPW)
-                   case Some(v) => F.pure[UserRepr](v)
-                 }
-      validPW <- BCrypt.checkpw[F](pw.plainText, userRepr.pw)
-      auth <- validPW match {
-               case tsec.common.Verified           => storeAuth(find(email))
-               case tsec.common.VerificationFailed => F.raiseError[AuthCtx](invalidEmailOrPW)
-             }
-    } yield auth
-
-  override def authenticate(token: AuthenticationToken): F[AuthCtx] =
-    storeAuth(findUserByAuthToken(token))
-
-  override protected[user] def promoteUserOP(id: UserID, newRole: UserRole): F[Unit] =
-    updateRole(id, newRole).transact(transactor).map(_ => ())
-
-  override protected[user] def registrationStep1OP(
-    reg: UserRegistration
-  ): F[UserRegistrationToken] =
-    for {
-      token      <- generateToken()
-      scryptHash <- hashPWWithScrypt(reg.pw)
-      repr = UserRepr(email = reg.email, pw = scryptHash, role = reg.role)
-      _ <- insert(repr, UserRegistrationToken(token)).transact(transactor)
-    } yield UserRegistrationToken(token)
-
-  override def registrationStep2(token: UserRegistrationToken): F[User] =
-    updateRegToken(token)
-      .transact(transactor)
-      .map {
-        case Some(value) => value
-        case None        => throw new Exception("User not found")
-      }
-
-  override def resetPasswordStep1(email: Email): F[PasswordResetToken] =
-    for {
-      token <- generateToken()
-      _     <- updatePwdToken(email, PasswordResetToken(token)).transact(transactor)
-    } yield PasswordResetToken(token)
-
-  override def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit] =
-    for {
-      hash <- hashPWWithScrypt(newPassword)
-      _    <- changePassword(token, hash).transact(transactor)
-    } yield ()
-
-  override def findUser(id: UserID)(implicit auth: AuthCtx): F[Option[User]] =
-    find(id).transact(transactor)
-
-  private def storeAuth(findUser: => ConnectionIO[Option[User]]): F[AuthCtx] =
-    for {
-      token <- generateToken()
-      user  <- insertToken(findUser, AuthenticationToken(token)).transact(transactor)
-    } yield AuthCtx(AuthenticationToken(token), user.get)
-
-  private def generateToken(): F[String] =
-    for {
-      key    <- HMACSHA256.generateKey[F]
-      claims <- JWTClaims.withDuration[F](expiration = Some(10.minutes))
-      token  <- JWTMac.buildToString[F, HMACSHA256](claims, key)
-    } yield token
-
-  private def hashPWWithScrypt(ptpw: PlainTextPassword): F[BcryptPW] =
-    BCrypt.hashpw[F](ptpw.plainText)
-
-}
-
-private[impl] object UserSql {
-  type BcryptPW = PasswordHash[BCrypt]
-  def BcryptPW(pt: String): BcryptPW = PasswordHash[BCrypt](pt)
+private[impl] object UserAlgebraSQL {
 
   private[impl] case class UserRepr(
     email: Email,
-    pw:    BcryptPW,
+    pw:    UserCrypto.BcryptPW,
     role:  UserRole
   )
 
@@ -141,7 +49,7 @@ private[impl] object UserSql {
 
   implicit val userReprComposite: Read[UserRepr] =
     Read[(Email, String, UserRole)]
-      .imap((t: (Email, String, UserRole)) => UserRepr(t._1, BcryptPW(t._2), t._3))(
+      .imap((t: (Email, String, UserRole)) => UserRepr(t._1, UserCrypto.BcryptPW(t._2), t._3))(
         (u: UserRepr) => (u.email, u.pw.toString, u.role)
       )
   /*_*/
@@ -155,13 +63,13 @@ private[impl] object UserSql {
   def updatePasswordToken(id: UserID, token: PasswordResetToken): ConnectionIO[Int] =
     sql"""UPDATE users SET passwordReset=$token WHERE id=$id""".update.run
 
-  def updatePassword(id: UserID, newPassword: BcryptPW): ConnectionIO[Int] =
+  def updatePassword(id: UserID, newPassword: UserCrypto.BcryptPW): ConnectionIO[Int] =
     sql"""UPDATE users SET password=${newPassword.toString} WHERE id=$id""".update.run
 
   def find(id: UserID): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE id=$id""".query[User].option
 
-  def find(email: Email, pwd: BcryptPW): ConnectionIO[Option[User]] =
+  def find(email: Email, pwd: UserCrypto.BcryptPW): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE email=$email AND password=${pwd.toString}""".query[User].option
 
   def find(email: Email): ConnectionIO[Option[User]] =
@@ -217,7 +125,7 @@ private[impl] object UserSql {
       _    <- updatePasswordToken(user.get.id, token)
     } yield user
 
-  def changePassword(token: PasswordResetToken, newPassword: BcryptPW): ConnectionIO[Unit] =
+  def changePassword(token: PasswordResetToken, newPassword: UserCrypto.BcryptPW): ConnectionIO[Unit] =
     for {
       user <- findByPwdToken(token)
       _ <- user match {

@@ -1,5 +1,7 @@
 package pms.algebra.user
 
+import cats.Applicative
+
 /**
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
@@ -16,6 +18,6 @@ final class UserAccountBootstrapAlgebra[F[_]] private (
 
 object UserAccountBootstrapAlgebra {
 
-  def impl[F[_]](uca: UserAccountAlgebra[F]): UserAccountBootstrapAlgebra[F] =
-    new UserAccountBootstrapAlgebra[F](uca)
+  def impl[F[_]: Applicative](uca: UserAccountAlgebra[F]): F[UserAccountBootstrapAlgebra[F]] =
+    Applicative[F].pure(new UserAccountBootstrapAlgebra[F](uca))
 }

@@ -4,6 +4,7 @@ import pms.algebra.http._
 import pms.algebra.movie._
 import pms.service.movie._
 import cats.implicits._
+import pms.core.Module
 
 /**
   *
@@ -11,17 +12,19 @@ import cats.implicits._
   * @since 27 Jun 2018
   *
   */
-trait ModuleMovieRestAsync[F[_]] { this: ModuleMovieServiceAsync[F] with ModuleMovieAsync[F] =>
+trait ModuleMovieRest[F[_]] { this: Module[F] with ModuleMovieService[F] with ModuleMovieAlgebra[F] =>
 
-  def movieRestRoutes: F[MovieRestRoutes[F]] =
+  def movieModuleAuthedRoutes: F[AuthCtxRoutes[F]] = movieRestRoutes.map(_.authedRoutes)
+
+  private lazy val movieRestRoutes: F[MovieRestRoutes[F]] = singleton {
     for {
       imdb <- imdbService
+      malb <- movieAlgebra
     } yield
       new MovieRestRoutes[F](
         imdbService  = imdb,
-        movieAlgebra = movieAlgebra
+        movieAlgebra = malb
       )
-
-  def movieModuleAuthedRoutes: F[AuthCtxRoutes[F]] = movieRestRoutes.map(_.authedRoutes)
+  }
 
 }
