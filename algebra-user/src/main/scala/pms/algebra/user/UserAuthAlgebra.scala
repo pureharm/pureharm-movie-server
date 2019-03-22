@@ -71,7 +71,3 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
       result <- op
     } yield result
 }
-
-object UserAuthAlgebra {
-  def async[F[_]: Async](implicit transactor: Transactor[F]): UserAuthAlgebra[F] = new impl.UserAlgebraImpl[F]()
-}

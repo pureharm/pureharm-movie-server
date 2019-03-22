@@ -29,9 +29,3 @@ trait UserAccountAlgebra[F[_]] {
 
   def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit]
 }
-
-object UserAccountAlgebra {
-
-  def async[F[_]: Async](implicit transactor: Transactor[F]): UserAccountAlgebra[F] =
-    new impl.UserAlgebraImpl[F]()
-}

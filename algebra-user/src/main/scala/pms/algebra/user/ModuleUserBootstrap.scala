@@ -16,6 +16,6 @@ trait ModuleUserBootstrap[F[_]] { this: Module[F] with ModuleUserAlgebra[F] =>
   def userBootstrapAlgebra: F[UserAccountBootstrapAlgebra[F]] = _userBootstrapAlgebra
 
   private lazy val _userBootstrapAlgebra: F[UserAccountBootstrapAlgebra[F]] = singleton {
-    userAccountAlgebra.flatMap(a => F.delay(UserAccountBootstrapAlgebra.impl(a)))
+    userAccountAlgebra.flatMap(a => UserAccountBootstrapAlgebra.impl(a))
   }
 }

@@ -20,7 +20,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (
   implicit
   val F:          Async[F],
   val transactor: Transactor[F]
-) extends UserAuthAlgebra()(F) with UserAccountAlgebra[F] with UserAlgebra[F] {
+) extends UserAuthAlgebra[F]()(F) with UserAccountAlgebra[F] with UserAlgebra[F] {
 
   import UserAlgebraSQL._
 
@@ -89,5 +89,5 @@ final private[user] class UserAlgebraImpl[F[_]] private (
 }
 
 private[user] object UserAlgebraImpl {
-  def async[F[_]: Async: Transactor]: F[UserModuleAlgebra[F]] = Async.apply[F].pure(new UserAlgebraImpl[F]())
+  def async[F[_]: Async: Transactor]: F[UserAlgebraImpl[F]] = Async.apply[F].pure(new UserAlgebraImpl[F]())
 }
