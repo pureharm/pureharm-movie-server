@@ -3,10 +3,8 @@ package pms.algebra.imdb
 import cats.effect.Timer
 import net.ruippeixotog.scalascraper.model.Document
 import pms.algebra.imdb.extra.RateLimiter
-import pms.effects._
 import cats.implicits._
-
-import scala.concurrent.duration._
+import pms.core.Module
 
 /**
   *
@@ -14,19 +12,24 @@ import scala.concurrent.duration._
   * @since 25 Jun 2018
   *
   */
-trait ModuleIMDBAsync[F[_]] {
-  implicit def concurrent: Concurrent[F]
-  implicit def timer:      Timer[F]
+trait ModuleIMDBAsync[F[_]] { this: Module[F] =>
+  implicit def timer: Timer[F]
 
   def imdbAlgebraConfig: IMDBAlgebraConfig
 
-  private[imdb] def rateLimiter: F[RateLimiter[F, Document]] = RateLimiter.async[F, Document](
-    interval = FiniteDuration(imdbAlgebraConfig.requestsInterval, MILLISECONDS),
-    size     = imdbAlgebraConfig.requestsNumber
-  )
+  def imdbAlgebra: F[IMDBAlgebra[F]] = _imdbAlgebra
 
-  def imdbAlgebra: F[IMDBAlgebra[F]] =
+  private lazy val _imdbAlgebra: F[IMDBAlgebra[F]] = singleton {
     for {
       rl <- rateLimiter
     } yield new impl.AsyncIMDBAlgebraImpl[F](rl)
+  }
+
+  private lazy val rateLimiter: F[RateLimiter[F, Document]] = singleton {
+    RateLimiter.async[F, Document](
+      interval = imdbAlgebraConfig.requestsInterval,
+      size     = imdbAlgebraConfig.requestsNumber
+    )
+  }
+
 }

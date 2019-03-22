@@ -37,6 +37,7 @@ object PureMovieServerApp extends IOApp {
       .bindHttp(config.port, config.host)
       .withHttpApp(httpApp)
       .serve
+      .covary
   }
 
 }

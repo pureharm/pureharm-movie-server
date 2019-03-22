@@ -12,8 +12,8 @@ import pms.core._
   */
 trait UserAccountAlgebra[F[_]] {
 
-  implicit def monadError:   MonadError[F, Throwable]
-  protected def authAlgebra: UserAuthAlgebra[F]
+  implicit protected def monadError: MonadError[F, Throwable]
+  protected def authAlgebra:         UserAuthAlgebra[F]
 
   final def registrationStep1(
     reg: UserRegistration

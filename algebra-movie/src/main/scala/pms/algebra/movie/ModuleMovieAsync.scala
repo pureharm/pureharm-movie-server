@@ -2,7 +2,7 @@ package pms.algebra.movie
 
 import doobie.util.transactor.Transactor
 import pms.algebra.user.ModuleUserAsync
-import pms.effects._
+import pms.core.Module
 
 /**
   *
@@ -10,14 +10,14 @@ import pms.effects._
   * @since 25 Jun 2018
   *
   */
-trait ModuleMovieAsync[F[_]] { this: ModuleUserAsync[F] =>
+trait ModuleMovieAsync[F[_]] { this: Module[F] with ModuleUserAsync[F] =>
 
-  implicit def async:      Async[F]
-  implicit def transactor: Transactor[F]
+  override def transactor: Transactor[F]
 
-  def movieAlgebra: MovieAlgebra[F] = _moviesAlgebra
+  def movieAlgebra: F[MovieAlgebra[F]] = _movieAlgebra
 
-  private lazy val _moviesAlgebra: MovieAlgebra[F] = MovieAlgebra.async[F](
-    this.userAuthAlgebra
-  )
+  private lazy val _movieAlgebra = singleton {
+    import cats.implicits._
+    userAuthAlgebra.flatMap(uaa => MovieAlgebra.async[F](uaa)(F, transactor))
+  }
 }

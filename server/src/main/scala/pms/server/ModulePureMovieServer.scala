@@ -9,10 +9,12 @@ import pms.algebra.user._
 import pms.algebra.imdb._
 import pms.algebra.movie._
 import pms.algebra.http._
+import pms.core.Module
 import pms.service.user._
 import pms.service.user.rest._
 import pms.service.movie._
 import pms.service.movie.rest._
+import cats.implicits._
 
 /**
   * Overriding all abstract things just to make clear what
@@ -23,41 +25,38 @@ import pms.service.movie.rest._
   *
   */
 trait ModulePureMovieServer[F[_]]
-    extends ModuleEmailASync[F] with ModuleUserAsync[F] with ModuleIMDBAsync[F] with ModuleMovieAsync[F]
+    extends Module[F] with ModuleEmailASync[F] with ModuleUserAsync[F] with ModuleIMDBAsync[F] with ModuleMovieAsync[F]
     with ModuleUserServiceConcurrent[F] with ModuleUserRestConcurrent[F] with ModuleMovieServiceAsync[F]
     with ModuleMovieRestAsync[F] {
 
-  implicit override def concurrent: Concurrent[F]
+  implicit override def F: Concurrent[F]
   //at this point we can use the same concurrent instance
-  implicit override def async: Async[F] = concurrent
 
   override def gmailConfig: GmailConfig
 
   override def imdbAlgebraConfig: IMDBAlgebraConfig
 
   //we could delay this even more, but there is little point.
-  def authCtxMiddleware: AuthCtxMiddleware[F] =
-    AuthedHttp4s.userTokenAuthMiddleware[F](userAuthAlgebra)
+  def authCtxMiddleware: F[AuthCtxMiddleware[F]] = singleton {
+    userAuthAlgebra.map(uaa => AuthedHttp4s.userTokenAuthMiddleware[F](uaa))
+  }
 
-  def pureMovieServerRoutes: F[HttpRoutes[F]] = {
+  def pureMovieServerRoutes: F[HttpRoutes[F]] = _pureMovieServerRoutes
+
+  private lazy val _pureMovieServerRoutes: F[HttpRoutes[F]] = singleton {
     import cats.implicits._
-    val routes = NonEmptyList
-      .of[HttpRoutes[F]](
-        userModuleRoutes
-      )
-      .reduceK
-
     for {
+      umr <- userModuleRoutes
+      routes = NonEmptyList.of[HttpRoutes[F]](umr).reduceK
+
       mmas <- movieModuleAuthedRoutes
-      authed = NonEmptyList
-        .of[AuthCtxRoutes[F]](
-          userModuleAuthedRoutes,
-          mmas
-        )
-        .reduceK
+      umar <- userModuleAuthedRoutes
+      authed = NonEmptyList.of[AuthCtxRoutes[F]](umar, mmas).reduceK
+
+      middleware <- authCtxMiddleware
     } yield {
       /*_*/
-      routes <+> authCtxMiddleware(authed)
+      routes <+> middleware(authed)
       /*_*/
     }
 
@@ -73,7 +72,7 @@ object ModulePureMovieServer {
     ti: Timer[F],
   ): ModulePureMovieServer[F] =
     new ModulePureMovieServer[F] {
-      implicit override def concurrent: Concurrent[F] = c
+      override def F: Concurrent[F] = c
 
       implicit override def timer: Timer[F] = ti
 
@@ -82,5 +81,6 @@ object ModulePureMovieServer {
       override def imdbAlgebraConfig: IMDBAlgebraConfig = imbdAlgebraConfig
 
       implicit override def transactor: Transactor[F] = t
+
     }
 }

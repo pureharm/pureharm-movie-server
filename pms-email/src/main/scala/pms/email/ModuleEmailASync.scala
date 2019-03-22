@@ -1,6 +1,6 @@
 package pms.email
 
-import pms.effects.Async
+import pms.core.Module
 
 /**
   *
@@ -8,14 +8,14 @@ import pms.effects.Async
   * @since 27 Jun 2018
   *
   */
-trait ModuleEmailASync[F[_]] {
-
-  implicit def async: Async[F]
+trait ModuleEmailASync[F[_]] { this: Module[F] =>
 
   def gmailConfig: GmailConfig
 
-  def emailAlgebra: EmailAlgebra[F] = _emailAlgebra
+  def emailAlgebra: F[EmailAlgebra[F]] = _emailAlgebra
 
-  private lazy val _emailAlgebra = new impl.EmailAlgebraJavaGmailAsyncImpl[F](gmailConfig)
+  private lazy val _emailAlgebra: F[EmailAlgebra[F]] = singleton {
+    F.delay(new impl.EmailAlgebraJavaGmailAsyncImpl[F](gmailConfig))
+  }
 
 }

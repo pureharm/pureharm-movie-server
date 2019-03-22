@@ -2,7 +2,7 @@ package pms.service.movie
 
 import pms.algebra.movie._
 import pms.algebra.imdb._
-import cats.implicits._
+import pms.core.Module
 
 /**
   *
@@ -10,15 +10,18 @@ import cats.implicits._
   * @since 27 Jun 2018
   *
   */
-trait ModuleMovieServiceAsync[F[_]] { this: ModuleMovieAsync[F] with ModuleIMDBAsync[F] =>
+trait ModuleMovieServiceAsync[F[_]] { this: Module[F] with ModuleMovieAsync[F] with ModuleIMDBAsync[F] =>
 
-  def imdbService: F[IMDBService[F]] =
+  def imdbService: F[IMDBService[F]] = singleton {
+    import cats.implicits._
     for {
       imbd <- imdbAlgebra
+      malb <- movieAlgebra
     } yield
       IMDBService.async(
-        movieAlgebra = movieAlgebra,
+        movieAlgebra = malb,
         imdbAlgebra  = imbd
       )
+  }
 
 }

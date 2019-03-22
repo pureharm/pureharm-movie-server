@@ -1,12 +1,12 @@
 package pms.service.user.rest
 
 import org.http4s._
-
 import pms.effects._
-
 import pms.algebra.user._
 import pms.algebra.http._
+import pms.core.Module
 import pms.service.user._
+import cats.implicits._
 
 /**
   *
@@ -14,45 +14,38 @@ import pms.service.user._
   * @since 27 Jun 2018
   *
   */
-trait ModuleUserRestConcurrent[F[_]] { this: ModuleUserServiceConcurrent[F] with ModuleUserAsync[F] =>
+trait ModuleUserRestConcurrent[F[_]] { this: Module[F] with ModuleUserServiceConcurrent[F] with ModuleUserAsync[F] =>
 
-  def userRestService: UserRoutes[F] = _userRoutes
+  def userRestService: F[UserRoutes[F]] = _userRoutes
 
-  def userLoginRoutes: UserLoginRoutes[F] = _userLoginRoutes
+  def userLoginRoutes: F[UserLoginRoutes[F]] = _userLoginRoutes
 
-  def userAccountRoutes: UserAccountRoutes[F] = _userAccountRoutes
+  def userAccountRoutes: F[UserAccountRoutes[F]] = _userAccountRoutes
 
-  def userModuleRoutes: HttpRoutes[F] = _routes
+  def userModuleRoutes: F[HttpRoutes[F]] = _routes
 
-  def userModuleAuthedRoutes: AuthCtxRoutes[F] = _authedRoutes
+  def userModuleAuthedRoutes: F[AuthCtxRoutes[F]] = _authedRoutes
 
-  private lazy val _userRoutes: UserRoutes[F] = new UserRoutes[F](
-    userAlgebra = userAlgebra
-  )
+  private lazy val _userRoutes: F[UserRoutes[F]] = singleton {
+    userAlgebra.map(ua => new UserRoutes[F](userAlgebra = ua))
+  }
 
-  private lazy val _userLoginRoutes: UserLoginRoutes[F] = new UserLoginRoutes[F](
-    userAuthAlgebra = userAuthAlgebra
-  )
+  private lazy val _userLoginRoutes: F[UserLoginRoutes[F]] = singleton {
+    userAuthAlgebra.map(uaa => new UserLoginRoutes[F](userAuthAlgebra = uaa))
+  }
 
-  private lazy val _userAccountRoutes: UserAccountRoutes[F] = new UserAccountRoutes(
-    userService = userAccountService
-  )
+  private lazy val _userAccountRoutes: F[UserAccountRoutes[F]] = singleton {
+    userAccountService.map(aac => new UserAccountRoutes(userService = aac))
+  }
 
-  import cats.implicits._
+  private lazy val _routes: F[HttpRoutes[F]] =
+    for {
+      uar <- userAccountRoutes
+      ulr <- userLoginRoutes
+    } yield NonEmptyList.of(uar.routes, ulr.routes).reduceK
 
-  private lazy val _routes: HttpRoutes[F] =
-    NonEmptyList
-      .of(
-        userAccountRoutes.routes,
-        userLoginRoutes.routes
-      )
-      .reduceK
-
-  private lazy val _authedRoutes: AuthCtxRoutes[F] =
-    NonEmptyList
-      .of(
-        userRestService.authedRoutes,
-        userAccountRoutes.authedRoutes,
-      )
-      .reduceK
+  private lazy val _authedRoutes: F[AuthCtxRoutes[F]] = for {
+    urs <- userRestService
+    uar <- userAccountRoutes
+  } yield NonEmptyList.of(urs.authedRoutes, uar.authedRoutes).reduceK
 }

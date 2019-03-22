@@ -4,6 +4,7 @@ import pms.algebra.http._
 import pms.algebra.movie._
 import pms.service.movie._
 import cats.implicits._
+import pms.core.Module
 
 /**
   *
@@ -11,15 +12,16 @@ import cats.implicits._
   * @since 27 Jun 2018
   *
   */
-trait ModuleMovieRestAsync[F[_]] { this: ModuleMovieServiceAsync[F] with ModuleMovieAsync[F] =>
+trait ModuleMovieRestAsync[F[_]] { this: Module[F] with ModuleMovieServiceAsync[F] with ModuleMovieAsync[F] =>
 
   def movieRestRoutes: F[MovieRestRoutes[F]] =
     for {
       imdb <- imdbService
+      malb <- movieAlgebra
     } yield
       new MovieRestRoutes[F](
         imdbService  = imdb,
-        movieAlgebra = movieAlgebra
+        movieAlgebra = malb
       )
 
   def movieModuleAuthedRoutes: F[AuthCtxRoutes[F]] = movieRestRoutes.map(_.authedRoutes)

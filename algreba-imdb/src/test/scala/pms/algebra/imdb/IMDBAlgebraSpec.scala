@@ -13,10 +13,10 @@ import pms.effects._
 import scala.concurrent.ExecutionContext
 
 class IMDBAlgebraSpec extends org.specs2.mutable.Specification {
+  implicit def F: Async[IO] = Async.apply[IO]
 
   implicit val timer: Timer[IO] = IO.timer(global)
   implicit val cs = IO.contextShift(ExecutionContext.global)
-  implicit def async: Async[IO] = Concurrent.apply[IO]
 
   "IMDBAlgebra" should {
     val rateLimiter = RateLimiter.async[IO, Document](1.seconds, 1)

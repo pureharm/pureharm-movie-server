@@ -1,8 +1,7 @@
 package pms.service.user
 
-import pms.effects._
-
 import pms.algebra.user._
+import pms.core.Module
 import pms.email._
 
 /**
@@ -11,18 +10,24 @@ import pms.email._
   * @since 27 Jun 2018
   *
   */
-trait ModuleUserServiceConcurrent[F[_]] { this: ModuleUserAsync[F] with ModuleEmailASync[F] =>
+trait ModuleUserServiceConcurrent[F[_]] { this: Module[F] with ModuleUserAsync[F] with ModuleEmailASync[F] =>
 
-  implicit def concurrent: Concurrent[F]
+  def userAccountService: F[UserAccountService[F]] = _userService
 
-  def userAccountService: UserAccountService[F] = _userService
-
-  private lazy val _userService: UserAccountService[F] =
-    UserAccountService.concurrent[F](
-      userAuth     = userAuthAlgebra,
-      userAccount  = userAccountAlgebra,
-      userAlgebra  = userAlgebra,
-      emailAlgebra = emailAlgebra,
-    )
+  private lazy val _userService: F[UserAccountService[F]] = {
+    import cats.implicits._
+    for {
+      uaa  <- userAuthAlgebra
+      uacc <- userAccountAlgebra
+      ua   <- userAlgebra
+      ea   <- emailAlgebra
+    } yield
+      UserAccountService.concurrent[F](
+        userAuth     = uaa,
+        userAccount  = uacc,
+        userAlgebra  = ua,
+        emailAlgebra = ea,
+      )
+  }
 
 }
