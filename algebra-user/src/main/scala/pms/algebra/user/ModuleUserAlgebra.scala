@@ -25,6 +25,6 @@ trait ModuleUserAlgebra[F[_]] { this: Module[F] =>
   def userModuleAlgebra: F[UserModuleAlgebra[F]] = _moduleAlgebra
 
   private lazy val _moduleAlgebra: F[UserModuleAlgebra[F]] = singleton {
-    F.pure(new impl.AsyncAlgebraImpl[F]()(F, F, transactor))
+    impl.UserAlgebraImpl.async[F](F, transactor)
   }
 }

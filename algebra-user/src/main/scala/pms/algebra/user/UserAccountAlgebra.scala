@@ -33,5 +33,5 @@ trait UserAccountAlgebra[F[_]] {
 object UserAccountAlgebra {
 
   def async[F[_]: Async](implicit transactor: Transactor[F]): UserAccountAlgebra[F] =
-    new impl.AsyncAlgebraImpl[F]()
+    new impl.UserAlgebraImpl[F]()
 }
