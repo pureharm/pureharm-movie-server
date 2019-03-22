@@ -42,6 +42,13 @@ package object effects
   type MonadError[F[_], E] = cats.MonadError[F, E]
   @inline def MonadError: cats.MonadError.type = cats.MonadError
 
+  type Bracket[F[_], E] = cats.effect.Bracket[F, E]
+  @inline def BracketCase: cats.effect.Bracket.type = cats.effect.Bracket
+
+  type BracketThr[F[_]] = cats.effect.Bracket[F, Throwable]
+
+  type MonadErrorThr[F[_]] = cats.MonadError[F, Throwable]
+
   type Applicative[F[_]] = cats.Applicative[F]
   @inline def Applicative: cats.Applicative.type = cats.Applicative
 
