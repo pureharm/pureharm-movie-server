@@ -30,7 +30,6 @@ trait ModulePureMovieServer[F[_]]
     with ModuleUserService[F] with ModuleMovieService[F] with ModuleUserRest[F] with ModuleMovieRest[F] {
 
   implicit override def F: Concurrent[F]
-  //at this point we can use the same concurrent instance
 
   override def gmailConfig: GmailConfig
 
