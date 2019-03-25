@@ -457,10 +457,7 @@ lazy val tsec = Seq(
   "io.github.jmcardon" %% "tsec-common"        % tsecV withSources (),
   "io.github.jmcardon" %% "tsec-password"      % tsecV withSources (),
   "io.github.jmcardon" %% "tsec-mac"           % tsecV withSources (),
-  "io.github.jmcardon" %% "tsec-signatures"    % tsecV withSources (),
-  "io.github.jmcardon" %% "tsec-hash-bouncy"   % tsecV withSources (),
   "io.github.jmcardon" %% "tsec-jwt-mac"       % tsecV withSources (),
-  "io.github.jmcardon" %% "tsec-jwt-sig"       % tsecV withSources (),
 )
 
 //============================================================================================
