@@ -389,13 +389,13 @@ def customScalaCompileFlags: Seq[String] = Seq(
 //https://github.com/busymachines/busymachines-commons
 def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$m" % "0.3.0-RC9"
 
-lazy val bmcCore:          ModuleID = bmCommons("core")              withSources ()
-lazy val bmcDuration:      ModuleID = bmCommons("duration")          withSources ()
-lazy val bmcEffects:       ModuleID = bmCommons("effects")           withSources ()
-lazy val bmcEffectsSync:   ModuleID = bmCommons("effects-sync")      withSources ()
-lazy val bmcEffectsSyncC:  ModuleID = bmCommons("effects-sync-cats") withSources ()
-lazy val bmcEffectsAsync:  ModuleID = bmCommons("effects-async")     withSources ()
-lazy val bmcJson:          ModuleID = bmCommons("json")              withSources ()
+lazy val bmcCore:         ModuleID = bmCommons("core")              withSources ()
+lazy val bmcDuration:     ModuleID = bmCommons("duration")          withSources ()
+lazy val bmcEffects:      ModuleID = bmCommons("effects")           withSources ()
+lazy val bmcEffectsSync:  ModuleID = bmCommons("effects-sync")      withSources ()
+lazy val bmcEffectsSyncC: ModuleID = bmCommons("effects-sync-cats") withSources ()
+lazy val bmcEffectsAsync: ModuleID = bmCommons("effects-async")     withSources ()
+lazy val bmcJson:         ModuleID = bmCommons("json")              withSources ()
 
 //============================================================================================
 //================================= http://typelevel.org/scala/ ==============================
@@ -454,17 +454,17 @@ lazy val spire: ModuleID = "org.typelevel" %% "spire" % "0.16.0" withSources ()
 lazy val tsecV = "0.1.0-M3"
 
 lazy val tsec = Seq(
-  "io.github.jmcardon" %% "tsec-common"        % tsecV withSources (),
-  "io.github.jmcardon" %% "tsec-password"      % tsecV withSources (),
-  "io.github.jmcardon" %% "tsec-mac"           % tsecV withSources (),
-  "io.github.jmcardon" %% "tsec-jwt-mac"       % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-common"   % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-password" % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-mac"      % tsecV withSources (),
+  "io.github.jmcardon" %% "tsec-jwt-mac"  % tsecV withSources (),
 )
 
 //============================================================================================
 //=========================================  logging =========================================
 //============================================================================================
 //https://github.com/ChristopherDavenport/log4cats
-lazy val log4cats = "io.chrisdavenport" %% "log4cats-slf4j" % "0.2.0" withSources ()
+lazy val log4cats = "io.chrisdavenport" %% "log4cats-slf4j" % "0.3.0" withSources ()
 
 //this is a Java library, notice that we used one single % instead of %%
 //it is the backend implementation used by log4cats
