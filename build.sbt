@@ -451,16 +451,13 @@ lazy val spire: ModuleID = "org.typelevel" %% "spire" % "0.16.0" withSources ()
 //============================================================================================
 
 //https://github.com/jmcardon/tsec
-lazy val tsecV = "0.0.1-M11"
+lazy val tsecV = "0.1.0-M3"
 
 lazy val tsec = Seq(
   "io.github.jmcardon" %% "tsec-common"        % tsecV withSources (),
   "io.github.jmcardon" %% "tsec-password"      % tsecV withSources (),
   "io.github.jmcardon" %% "tsec-mac"           % tsecV withSources (),
-  "io.github.jmcardon" %% "tsec-signatures"    % tsecV withSources (),
-  "io.github.jmcardon" %% "tsec-hash-bouncy"   % tsecV withSources (),
   "io.github.jmcardon" %% "tsec-jwt-mac"       % tsecV withSources (),
-  "io.github.jmcardon" %% "tsec-jwt-sig"       % tsecV withSources (),
 )
 
 //============================================================================================

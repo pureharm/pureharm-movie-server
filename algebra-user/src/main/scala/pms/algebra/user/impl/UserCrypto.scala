@@ -5,8 +5,9 @@ import pms.effects._
 
 import scala.concurrent.duration._
 
-import tsec.jws.mac._
 import tsec.jwt._
+import tsec.jws.mac._
+
 import tsec.mac.jca._
 import tsec.passwordhashers._
 import tsec.passwordhashers.jca._
