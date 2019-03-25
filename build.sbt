@@ -276,15 +276,14 @@ lazy val `pms-effects` = project
 
 def commonSettings: Seq[Setting[_]] = Seq(
   scalaVersion := "2.12.8",
-  libraryDependencies ++= Seq(
+  libraryDependencies ++= cats ++ Seq(
     //utils
     bmcCore,
     bmcDuration,
     //effects + streams
-    catsCore,
     catsEffect,
     monix,
-    fs2,
+    fs2Core,
     bmcEffects,
     //JSON stuff
     circeCore,
@@ -332,8 +331,11 @@ def commonSettings: Seq[Setting[_]] = Seq(
   scalacOptions ++= customScalaCompileFlags,
   /**
     * This is here to eliminate eviction warnings from SBT.
-    * The eco-system is mid-upgrade, so not all dependencies
-    * depend on this newest cats, and cats-effect.
+    *
+    * WARNING:
+    * This is quite dangerous, please make sure that all downstream
+    * dependencies are actually binary compatible with these version
+    * explicitely declared here.
     *
     * See more on binary compatability:
     * https://docs.oracle.com/javase/specs/jls/se7/html/jls-13.html
@@ -341,8 +343,10 @@ def commonSettings: Seq[Setting[_]] = Seq(
     * It is an important issue that you need to keep track of if
     * you build apps on the JVM.
     */
-  dependencyOverrides += "org.typelevel" %% "cats-core"   % "1.5.0",
-  dependencyOverrides += "org.typelevel" %% "cats-effect" % "1.2.0",
+  dependencyOverrides ++= cats,
+  dependencyOverrides += catsEffect,
+  dependencyOverrides ++= fs2,
+  dependencyOverrides ++= transitive,
   resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
@@ -432,7 +436,8 @@ def customScalaCompileFlags: Seq[String] = Seq(
 //=============================================================================
 
 //https://github.com/busymachines/busymachines-commons
-def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$m" % "0.3.0-RC9"
+lazy val bmCommonsVersion: String = "0.3.0-RC9"
+def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$m" % bmCommonsVersion
 
 lazy val bmcCore:         ModuleID = bmCommons("core")              withSources ()
 lazy val bmcDuration:     ModuleID = bmCommons("duration")          withSources ()
@@ -448,16 +453,32 @@ lazy val bmcJson:         ModuleID = bmCommons("json")              withSources 
 //============================================================================================
 
 //https://github.com/typelevel/cats
-lazy val catsCore: ModuleID = "org.typelevel" %% "cats-core" % "1.6.0" withSources ()
+lazy val catsCoreVersion: String = "1.6.0"
+
+lazy val catsCore:   ModuleID = "org.typelevel" %% "cats-core"   % catsCoreVersion withSources ()
+lazy val catsKernel: ModuleID = "org.typelevel" %% "cats-kernel" % catsCoreVersion withSources ()
+lazy val catsMacros: ModuleID = "org.typelevel" %% "cats-macros" % catsCoreVersion withSources ()
+lazy val catsFree:   ModuleID = "org.typelevel" %% "cats-free"   % catsCoreVersion withSources ()
+
+lazy val cats: Seq[ModuleID] = Seq(catsCore, catsKernel, catsMacros, catsFree)
 
 //https://github.com/typelevel/cats-effect
-lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "1.2.0" withSources ()
+lazy val catsEffectVersion: String = "1.2.0"
+
+lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion withSources ()
 
 //https://github.com/monix/monix
-lazy val monix: ModuleID = "io.monix" %% "monix" % "3.0.0-RC2" withSources ()
+lazy val monixVersion: String = "3.0.0-RC2"
+
+lazy val monix: ModuleID = "io.monix" %% "monix" % monixVersion withSources ()
 
 //https://github.com/functional-streams-for-scala/fs2
-lazy val fs2: ModuleID = "co.fs2" %% "fs2-core" % "1.0.4" withSources ()
+lazy val fs2Version: String = "1.0.4"
+
+lazy val fs2Core: ModuleID = "co.fs2" %% "fs2-core" % fs2Version withSources ()
+lazy val fs2IO:   ModuleID = "co.fs2" %% "fs2-io"   % fs2Version withSources ()
+
+lazy val fs2: Seq[ModuleID] = Seq(fs2Core, fs2IO)
 
 //https://circe.github.io/circe/
 lazy val circeVersion: String = "0.11.1"
@@ -467,22 +488,32 @@ lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % c
 lazy val circeGenericExtras: ModuleID = "io.circe" %% "circe-generic-extras" % circeVersion
 
 //https://github.com/http4s/http4s
-lazy val Http4sVersion = "0.20.0-M7"
+lazy val Http4sVersion: String = "0.20.0-M7"
 
 lazy val http4sBlazeServer: ModuleID = "org.http4s" %% "http4s-blaze-server" % Http4sVersion withSources ()
 lazy val http4sCirce:       ModuleID = "org.http4s" %% "http4s-circe"        % Http4sVersion withSources ()
 lazy val http4sDSL:         ModuleID = "org.http4s" %% "http4s-dsl"          % Http4sVersion withSources ()
 
+lazy val http4s: Seq[ModuleID] = Seq(http4sBlazeServer, http4sCirce, http4sDSL)
+
 //https://github.com/tpolecat/doobie
 lazy val doobieVersion = "0.7.0-M2"
 
-lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"   % doobieVersion withSources () // HikariCP transactor.
-lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres" % doobieVersion withSources () // Postgres driver 42.2.2 + type mappings.
-lazy val doobieTK       = "org.tpolecat" %% "doobie-specs2"   % doobieVersion % Test withSources () // specs2 support for typechecking statements.
+lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"   % doobieVersion withSources ()
+lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres" % doobieVersion withSources ()
+lazy val doobieTK       = "org.tpolecat" %% "doobie-specs2"   % doobieVersion % Test withSources ()
 
-lazy val flyway = "org.flywaydb" % "flyway-core" % "5.2.4" withSources ()
+lazy val doobie: Seq[ModuleID] = Seq(doobieHikari, doobiePostgres)
 
-lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % "2.3.3" withSources ()
+//https://github.com/milessabin/shapeless
+lazy val shapelessVersion: String = "2.3.3"
+
+lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % shapelessVersion withSources ()
+
+//https://github.com/flyway/flyway
+lazy val flywayVersion: String = "5.2.4"
+
+lazy val flyway = "org.flywaydb" % "flyway-core" % flywayVersion withSources ()
 
 //============================================================================================
 //==========================================  math ===========================================
@@ -542,3 +573,25 @@ lazy val specs2: ModuleID = "org.specs2" %% "specs2-core" % "4.3.6" % Test withS
 
 //https://github.com/pureconfig/pureconfig
 lazy val pureConfig: ModuleID = "com.github.pureconfig" %% "pureconfig" % "0.10.1" withSources ()
+
+//============================================================================================
+//=======================================  transitive ========================================
+//============================================================================================
+//these are transitive dependencies that are brought in by other libraries, and here we
+//list the ones that tend to come with conflicting version so that we can override them
+//so as to remove the annoying eviction warning of older version. This list will have to
+//be curated with great care from time to time.
+lazy val transitive = Seq(
+  //---------------------------
+  //https://commons.apache.org/proper/commons-codec/
+  //tsec, and http4s depend on this
+  "commons-codec" % "commons-codec" % "1.12" withSources (),
+  //---------------------------
+  //https://github.com/Log4s/log4s
+  //different http4s modules depend on different versions
+  "org.log4s" %% "log4s" % "1.7.0" withSources (),
+  //---------------------------
+  //https://github.com/typelevel/machinist
+  //spire and cats core depend on this
+  "org.typelevel" %% "machinist" % "0.6.6" withSources ()
+)
