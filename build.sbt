@@ -14,6 +14,7 @@ lazy val server = project
     mainClass := Option("pms.server.PureMovieServerApp")
   )
   .dependsOn(
+    `pms-logger`,
     `pms-effects`,
     `pms-config`,
     `pms-db-config`,
@@ -23,6 +24,7 @@ lazy val server = project
     `server-bootstrap`,
   )
   .aggregate(
+    `pms-logger`,
     `pms-effects`,
     `pms-config`,
     `pms-db-config`,
@@ -37,6 +39,7 @@ lazy val `server-bootstrap` = project
   .settings(sbtAssemblySettings)
   .settings()
   .dependsOn(
+    `pms-logger`,
     `pms-effects`,
     `pms-config`,
     `pms-db-config`,
@@ -44,6 +47,7 @@ lazy val `server-bootstrap` = project
     `algebra-user`,
   )
   .aggregate(
+    `pms-logger`,
     `pms-effects`,
     `pms-config`,
     `pms-db-config`,
@@ -59,6 +63,7 @@ lazy val `service-user` = project
     `algebra-http-sec`,
     `pms-email`,
     `pms-config`,
+    `pms-logger`,
     `pms-effects`,
     `pms-core`,
     `pms-json`,
@@ -69,6 +74,7 @@ lazy val `service-user` = project
     `algebra-http-sec`,
     `pms-email`,
     `pms-config`,
+    `pms-logger`,
     `pms-effects`,
     `pms-core`,
     `pms-json`,
@@ -84,6 +90,7 @@ lazy val `service-movie` = project
     `algebra-movie`,
     `algebra-http-sec`,
     `pms-config`,
+    `pms-logger`,
     `pms-effects`,
     `pms-core`,
     `pms-json`,
@@ -95,6 +102,7 @@ lazy val `service-movie` = project
     `algebra-movie`,
     `algebra-http-sec`,
     `pms-config`,
+    `pms-logger`,
     `pms-effects`,
     `pms-core`,
     `pms-json`,
@@ -124,11 +132,13 @@ lazy val `algreba-imdb` = project
   .settings(sbtAssemblySettings)
   .dependsOn(
     `pms-config`,
+    `pms-logger`,
     `pms-effects`,
     `pms-core`,
   )
   .aggregate(
     `pms-config`,
+    `pms-logger`,
     `pms-effects`,
     `pms-core`,
   )
@@ -144,7 +154,6 @@ lazy val `algebra-movie` = project
     `pms-db-config`,
     `service-user`,
     `server-bootstrap`
-    
   )
   .aggregate(
     `algebra-user`,
@@ -174,6 +183,13 @@ lazy val `pms-email` = project
   .settings(sbtAssemblySettings)
   .dependsOn(
     `pms-core`,
+    `pms-logger`,
+    `pms-effects`,
+    `pms-config`,
+  )
+  .aggregate(
+    `pms-core`,
+    `pms-logger`,
     `pms-effects`,
     `pms-config`,
   )
@@ -186,11 +202,20 @@ lazy val `pms-http` = project
     `pms-effects`,
     `pms-json`,
   )
+  .aggregate(
+    `pms-core`,
+    `pms-effects`,
+    `pms-json`,
+  )
 
 lazy val `pms-json` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .dependsOn(
+    `pms-core`,
+    `pms-effects`,
+  )
+  .aggregate(
     `pms-core`,
     `pms-effects`,
   )
@@ -206,12 +231,18 @@ lazy val `pms-core` = project
   .dependsOn(
     `pms-effects`
   )
+  .aggregate(
+    `pms-effects`,
+  )
 
 lazy val `pms-config` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .dependsOn(
-    `pms-effects`
+    `pms-effects`,
+  )
+  .aggregate(
+    `pms-effects`,
   )
 
 lazy val `pms-db-config` = project
@@ -219,6 +250,20 @@ lazy val `pms-db-config` = project
   .settings(sbtAssemblySettings)
   .dependsOn(
     `pms-config`,
+    `pms-effects`,
+  )
+  .aggregate(
+    `pms-config`,
+    `pms-effects`,
+  )
+
+lazy val `pms-logger` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .dependsOn(
+    `pms-effects`
+  )
+  .aggregate(
     `pms-effects`
   )
 
