@@ -414,7 +414,6 @@ def commonSettings: Seq[Setting[_]] = Seq(
   dependencyOverrides += catsEffect,
   dependencyOverrides ++= fs2,
   dependencyOverrides ++= transitive,
-  resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
 def sbtAssemblySettings: Seq[Setting[_]] = {
