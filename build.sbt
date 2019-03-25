@@ -368,7 +368,8 @@ lazy val `pms-effects` = project
     libraryDependencies ++= cats ++ Seq(
       catsEffect,
       monix,
-      bmcEffects
+      bmcEffects,
+      specs2Test,
     )
   )
 
