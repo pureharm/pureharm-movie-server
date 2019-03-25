@@ -2,13 +2,11 @@ package pms.email.impl
 
 import java.util.Properties
 
-import io.chrisdavenport.log4cats.SelfAwareStructuredLogger
-import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
-
 import javax.mail._
 import javax.mail.internet._
 
 import pms.effects._
+import pms.logger._
 import pms.core._
 import pms.email._
 
@@ -29,8 +27,7 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
   import cats.implicits._
   private val F: Async[F] = Async.apply[F]
 
-  private val logger: SelfAwareStructuredLogger[F] =
-    Slf4jLogger.unsafeCreate[F]
+  private val logger: PMSLogger[F] = PMSLogger.getLogger[F]
 
   override def sendEmail(to: Email, subject: Subject, content: Content): F[Unit] = {
     val mimaMessage = F.pure {

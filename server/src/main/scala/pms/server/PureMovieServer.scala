@@ -3,10 +3,11 @@ package pms.server
 import cats.effect.{ContextShift, Timer}
 import cats.implicits._
 import pms.effects._
+import pms.logger._
 import pms.email._
 import pms.db.config._
 import pms.algebra.imdb.IMDBAlgebraConfig
-import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+
 import doobie.util.transactor.Transactor
 
 /**
@@ -21,7 +22,7 @@ final class PureMovieServer[F[_]] private (
 )(
   implicit private val F: Concurrent[F],
 ) {
-  private val logger = Slf4jLogger.unsafeCreate[F]
+  private val logger: PMSLogger[F] = PMSLogger.getLogger[F]
 
   def init: F[(PureMovieServerConfig, ModulePureMovieServer[F])] = {
     for {
