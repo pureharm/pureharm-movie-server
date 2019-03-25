@@ -108,7 +108,7 @@ lazy val `service-movie` = project
   )
   .dependsOn(
     `algebra-user`,
-    `algreba-imdb`,
+    `algebra-imdb`,
     `algebra-movie`,
     `algebra-http-sec`,
     `pms-config`,
@@ -120,7 +120,7 @@ lazy val `service-movie` = project
   )
   .aggregate(
     `algebra-user`,
-    `algreba-imdb`,
+    `algebra-imdb`,
     `algebra-movie`,
     `algebra-http-sec`,
     `pms-config`,
@@ -154,7 +154,7 @@ lazy val `algebra-http-sec` = project
     `algebra-user`,
   )
 
-lazy val `algreba-imdb` = project
+lazy val `algebra-imdb` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
