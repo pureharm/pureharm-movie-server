@@ -13,21 +13,28 @@ lazy val server = project
   .settings(
     mainClass := Option("pms.server.PureMovieServerApp")
   )
+  .settings(
+    libraryDependencies ++= Seq(
+      specs2Test,
+    )
+  )
   .dependsOn(
-    `pms-logger`,
     `pms-effects`,
+    `pms-logger`,
     `pms-config`,
     `pms-db-config`,
+    `pms-http`,
     `pms-core`,
     `service-user`,
     `service-movie`,
     `server-bootstrap`,
   )
   .aggregate(
-    `pms-logger`,
     `pms-effects`,
+    `pms-logger`,
     `pms-config`,
     `pms-db-config`,
+    `pms-http`,
     `pms-core`,
     `service-user`,
     `service-movie`,
@@ -37,13 +44,17 @@ lazy val server = project
 lazy val `server-bootstrap` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
-  .settings()
+  .settings(
+    libraryDependencies ++= Seq(
+      specs2Test,
+    )
+  )
   .dependsOn(
     `pms-logger`,
     `pms-effects`,
     `pms-config`,
-    `pms-db-config`,
     `pms-core`,
+    `pms-db-config`,
     `algebra-user`,
   )
   .aggregate(
@@ -58,6 +69,11 @@ lazy val `server-bootstrap` = project
 lazy val `service-user` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      specs2Test,
+    )
+  )
   .dependsOn(
     `algebra-user`,
     `algebra-http-sec`,
@@ -84,6 +100,12 @@ lazy val `service-user` = project
 lazy val `service-movie` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      spire,
+      specs2Test,
+    )
+  )
   .dependsOn(
     `algebra-user`,
     `algreba-imdb`,
@@ -112,6 +134,11 @@ lazy val `service-movie` = project
 lazy val `algebra-http-sec` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      specs2Test,
+    )
+  )
   .dependsOn(
     `pms-config`,
     `pms-effects`,
@@ -130,6 +157,12 @@ lazy val `algebra-http-sec` = project
 lazy val `algreba-imdb` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      scalaScrapper,
+      specs2Test,
+    )
+  )
   .dependsOn(
     `pms-config`,
     `pms-logger`,
@@ -146,41 +179,73 @@ lazy val `algreba-imdb` = project
 lazy val `algebra-movie` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      spire,
+      specs2Test,
+    )
+  )
   .dependsOn(
     `algebra-user`,
     `pms-config`,
     `pms-effects`,
     `pms-core`,
-    `pms-db-config`,
-    `service-user`,
-    `server-bootstrap`
+    `pms-db`,
   )
   .aggregate(
     `algebra-user`,
     `pms-config`,
     `pms-effects`,
     `pms-core`,
+    `pms-db`,
   )
 
 lazy val `algebra-user` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      specs2Test,
+    ) ++ tsec
+  )
   .dependsOn(
     `pms-config`,
     `pms-effects`,
     `pms-core`,
     `pms-email`,
-    `pms-db-config`,
+    `pms-db`,
   )
   .aggregate(
     `pms-config`,
     `pms-effects`,
     `pms-core`,
+    `pms-email`,
+    `pms-db`,
   )
 
+lazy val `pms-db` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      specs2Test,
+    ) ++ doobie ++ fs2
+  )
+  .dependsOn(
+    `pms-effects`,
+  )
+  .aggregate(
+    `pms-effects`,
+  )
 lazy val `pms-email` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      javaxMail,
+      specs2Test,
+    )
+  )
   .dependsOn(
     `pms-core`,
     `pms-logger`,
@@ -197,6 +262,11 @@ lazy val `pms-email` = project
 lazy val `pms-http` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      specs2Test,
+    ) ++ http4s ++ fs2
+  )
   .dependsOn(
     `pms-core`,
     `pms-effects`,
@@ -211,6 +281,11 @@ lazy val `pms-http` = project
 lazy val `pms-json` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      bmcJson,
+    ) ++ circe
+  )
   .dependsOn(
     `pms-core`,
     `pms-effects`,
@@ -220,12 +295,63 @@ lazy val `pms-json` = project
     `pms-effects`,
   )
 
+lazy val `pms-db-config` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      doobieCore,
+      flyway,
+    ) ++ fs2
+  )
+  .dependsOn(
+    `pms-config`,
+    `pms-effects`,
+  )
+  .aggregate(
+    `pms-config`,
+    `pms-effects`,
+  )
+
+lazy val `pms-config` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      pureConfig,
+    )
+  )
+  .dependsOn(
+    `pms-effects`,
+  )
+  .aggregate(
+    `pms-effects`,
+  )
+
+lazy val `pms-logger` = project
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      log4cats,
+    )
+  )
+  .dependsOn(
+    `pms-effects`
+  )
+  .aggregate(
+    `pms-effects`
+  )
+
 lazy val `pms-core` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
     libraryDependencies ++= Seq(
-      shapeless
+      shapeless,
+      bmcCore,
+      bmcDuration,
+      specs2Test,
     )
   )
   .dependsOn(
@@ -235,81 +361,22 @@ lazy val `pms-core` = project
     `pms-effects`,
   )
 
-lazy val `pms-config` = project
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
-  .dependsOn(
-    `pms-effects`,
-  )
-  .aggregate(
-    `pms-effects`,
-  )
-
-lazy val `pms-db-config` = project
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
-  .dependsOn(
-    `pms-config`,
-    `pms-effects`,
-  )
-  .aggregate(
-    `pms-config`,
-    `pms-effects`,
-  )
-
-lazy val `pms-logger` = project
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
-  .dependsOn(
-    `pms-effects`
-  )
-  .aggregate(
-    `pms-effects`
-  )
-
 lazy val `pms-effects` = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
+  .settings(
+    libraryDependencies ++= cats ++ Seq(
+      catsEffect,
+      monix,
+      bmcEffects
+    )
+  )
 
 //=============================================================================
 //=============================================================================
 
 def commonSettings: Seq[Setting[_]] = Seq(
   scalaVersion := "2.12.8",
-  libraryDependencies ++= cats ++ Seq(
-    //utils
-    bmcCore,
-    bmcDuration,
-    //effects + streams
-    catsEffect,
-    monix,
-    fs2Core,
-    bmcEffects,
-    //JSON stuff
-    circeCore,
-    circeGeneric,
-    circeGenericExtras,
-    bmcJson,
-    //http4s
-    http4sBlazeServer,
-    http4sCirce,
-    http4sDSL,
-    //doobie
-    doobieHikari,
-    doobiePostgres,
-    //logging
-    log4cats,
-    logbackClassic,
-    //email
-    javaxMail,
-    //test stuff
-    doobieTK,
-    //misc
-    flyway,
-    pureConfig,
-    spire,
-    scalaScrapper,
-  ) ++ tsec,
   /*
    * Eliminates useless, unintuitive, and sometimes broken additions of `withFilter`
    * when using generator arrows in for comprehensions. e.g.
@@ -439,13 +506,10 @@ def customScalaCompileFlags: Seq[String] = Seq(
 lazy val bmCommonsVersion: String = "0.3.0-RC9"
 def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$m" % bmCommonsVersion
 
-lazy val bmcCore:         ModuleID = bmCommons("core")              withSources ()
-lazy val bmcDuration:     ModuleID = bmCommons("duration")          withSources ()
-lazy val bmcEffects:      ModuleID = bmCommons("effects")           withSources ()
-lazy val bmcEffectsSync:  ModuleID = bmCommons("effects-sync")      withSources ()
-lazy val bmcEffectsSyncC: ModuleID = bmCommons("effects-sync-cats") withSources ()
-lazy val bmcEffectsAsync: ModuleID = bmCommons("effects-async")     withSources ()
-lazy val bmcJson:         ModuleID = bmCommons("json")              withSources ()
+lazy val bmcCore:     ModuleID = bmCommons("core")     withSources ()
+lazy val bmcDuration: ModuleID = bmCommons("duration") withSources ()
+lazy val bmcEffects:  ModuleID = bmCommons("effects")  withSources ()
+lazy val bmcJson:     ModuleID = bmCommons("json")     withSources ()
 
 //============================================================================================
 //================================= http://typelevel.org/scala/ ==============================
@@ -487,6 +551,8 @@ lazy val circeCore:          ModuleID = "io.circe" %% "circe-core"           % c
 lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % circeVersion
 lazy val circeGenericExtras: ModuleID = "io.circe" %% "circe-generic-extras" % circeVersion
 
+lazy val circe: Seq[ModuleID] = Seq(circeCore, circeGeneric, circeGenericExtras)
+
 //https://github.com/http4s/http4s
 lazy val Http4sVersion: String = "0.20.0-M7"
 
@@ -499,11 +565,12 @@ lazy val http4s: Seq[ModuleID] = Seq(http4sBlazeServer, http4sCirce, http4sDSL)
 //https://github.com/tpolecat/doobie
 lazy val doobieVersion = "0.7.0-M2"
 
+lazy val doobieCore     = "org.tpolecat" %% "doobie-core"     % doobieVersion withSources ()
 lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"   % doobieVersion withSources ()
 lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres" % doobieVersion withSources ()
 lazy val doobieTK       = "org.tpolecat" %% "doobie-specs2"   % doobieVersion % Test withSources ()
 
-lazy val doobie: Seq[ModuleID] = Seq(doobieHikari, doobiePostgres)
+lazy val doobie: Seq[ModuleID] = Seq(doobieCore, doobieHikari, doobiePostgres, doobieTK)
 
 //https://github.com/milessabin/shapeless
 lazy val shapelessVersion: String = "2.3.3"
@@ -527,13 +594,13 @@ lazy val spire: ModuleID = "org.typelevel" %% "spire" % "0.16.0" withSources ()
 //============================================================================================
 
 //https://github.com/jmcardon/tsec
-lazy val tsecV = "0.1.0-M3"
+lazy val tsecVersion = "0.1.0-M3"
 
-lazy val tsec = Seq(
-  "io.github.jmcardon" %% "tsec-common"   % tsecV withSources (),
-  "io.github.jmcardon" %% "tsec-password" % tsecV withSources (),
-  "io.github.jmcardon" %% "tsec-mac"      % tsecV withSources (),
-  "io.github.jmcardon" %% "tsec-jwt-mac"  % tsecV withSources (),
+lazy val tsec: Seq[ModuleID] = Seq(
+  "io.github.jmcardon" %% "tsec-common"   % tsecVersion withSources (),
+  "io.github.jmcardon" %% "tsec-password" % tsecVersion withSources (),
+  "io.github.jmcardon" %% "tsec-mac"      % tsecVersion withSources (),
+  "io.github.jmcardon" %% "tsec-jwt-mac"  % tsecVersion withSources (),
 )
 
 //============================================================================================
@@ -565,7 +632,9 @@ lazy val scalaScrapper = "net.ruippeixotog" %% "scala-scraper" % "2.1.0" withSou
 //============================================================================================
 
 //https://github.com/etorreborre/specs2
-lazy val specs2: ModuleID = "org.specs2" %% "specs2-core" % "4.3.6" % Test withSources ()
+lazy val specs2: ModuleID = "org.specs2" %% "specs2-core" % "4.3.6" withSources ()
+
+lazy val specs2Test: ModuleID = specs2 % Test
 
 //============================================================================================
 //=========================================== misc ===========================================
