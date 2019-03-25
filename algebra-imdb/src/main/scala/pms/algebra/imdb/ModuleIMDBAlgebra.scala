@@ -2,9 +2,9 @@ package pms.algebra.imdb
 
 import cats.effect.Timer
 import net.ruippeixotog.scalascraper.model.Document
-import pms.algebra.imdb.extra.RateLimiter
 import cats.implicits._
 import pms.core.Module
+import pms.effects.EffectThrottler
 
 /**
   *
@@ -21,14 +21,14 @@ trait ModuleIMDBAlgebra[F[_]] { this: Module[F] =>
 
   private lazy val _imdbAlgebra: F[IMDBAlgebra[F]] = singleton {
     for {
-      rl <- rateLimiter
+      rl <- effectThrottler
     } yield new impl.AsyncIMDBAlgebraImpl[F](rl)
   }
 
-  private lazy val rateLimiter: F[RateLimiter[F, Document]] = singleton {
-    RateLimiter.async[F, Document](
+  private lazy val effectThrottler: F[EffectThrottler[F, Document]] = singleton {
+    EffectThrottler.concurrent[F, Document](
       interval = imdbAlgebraConfig.requestsInterval,
-      size     = imdbAlgebraConfig.requestsNumber
+      amount   = imdbAlgebraConfig.requestsNumber
     )
   }
 

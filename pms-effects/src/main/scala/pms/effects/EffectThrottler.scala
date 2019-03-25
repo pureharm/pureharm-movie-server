@@ -1,26 +1,30 @@
-package pms.algebra.imdb.extra
+package pms.effects
 
+import cats.effect._
 import cats.effect.concurrent.Semaphore
 import cats.implicits._
 
 import scala.concurrent.duration._
-import cats.effect.{Concurrent, Timer}
 
 /**
   *
-  * Used to control the rate of network requests by limiting the requests ratio per unit of time.
-  * Implemented using a queue of outgoing requests which are scheduled to execute.
+  * Used to control the rate at which Fs are computed by fixing the amount of Fs
+  * to be executed in the given time interval.
   *
   * @param interval  time unit between `size` consecutive requests
-  * @param semaphore bounded by the number of requests allowed to be sent in the configured `interval`
-  * @tparam F type used to initialize Rate Limiter.
-  * @tparam T type of expected response
+  * @param semaphore bounded by the number of Fs allowed to be executed in the configured `interval`
   */
-final private[imdb] class RateLimiter[F[_]: Timer: Concurrent, T] private (
-  val interval:  FiniteDuration,
-  val semaphore: Semaphore[F]
+final class EffectThrottler[F[_]: Timer: Concurrent, T] private (
+  private val interval:  FiniteDuration,
+  private val semaphore: Semaphore[F]
 ) {
 
+  private val F = Concurrent.apply[F]
+
+  /**
+    * Returns an F that will be "slowed" time to the configured rate
+    * of execution.
+    */
   def throttle(f: F[T]): F[T] =
     for {
       acquireTime <- acquireSemaphore
@@ -40,7 +44,7 @@ final private[imdb] class RateLimiter[F[_]: Timer: Concurrent, T] private (
       _ <- if (isWithinInterval(acquireTime, now))
             Timer[F].sleep(acquireTime.max(now) - acquireTime.min(now))
           else
-            Concurrent[F].unit
+            F.unit
       _ <- semaphore.release
     } yield ()
 
@@ -52,16 +56,16 @@ final private[imdb] class RateLimiter[F[_]: Timer: Concurrent, T] private (
 
 }
 
-object RateLimiter {
+object EffectThrottler {
 
-  def async[F[_]: Timer: Concurrent, T](
+  def concurrent[F[_]: Timer: Concurrent, T](
     interval: FiniteDuration,
-    size:     Long
-  ): F[RateLimiter[F, T]] = {
+    amount:   Long
+  ): F[EffectThrottler[F, T]] = {
     for {
-      sem <- Semaphore(size)
+      sem <- Semaphore(amount)
     } yield
-      new RateLimiter[F, T](
+      new EffectThrottler[F, T](
         interval  = interval,
         semaphore = sem
       )

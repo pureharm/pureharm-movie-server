@@ -3,13 +3,12 @@ package pms.algebra.imdb.impl
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
-import pms.effects._
+import pms.effects.{EffectThrottler, _}
 import pms.algebra.imdb._
 import cats.implicits._
 import java.time.Year
 
 import net.ruippeixotog.scalascraper.model.Document
-import pms.algebra.imdb.extra.RateLimiter
 
 /**
   *
@@ -17,14 +16,16 @@ import pms.algebra.imdb.extra.RateLimiter
   * @since 25 Jun 2018
   *
   */
-final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](val rateLimiter: RateLimiter[F, Document])(
-  implicit val F:                                                     Async[F],
+final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](
+  val throttler: EffectThrottler[F, Document]
+)(
+  implicit val F: Async[F],
 ) extends IMDBAlgebra[F] {
 
   override def scrapeMovieByTitle(title: TitleQuery): F[Option[IMDBMovie]] = {
     val browser = JsoupBrowser()
     for {
-      doc <- rateLimiter.throttle {
+      doc <- throttler.throttle {
               F.delay[Document](browser.get(s"https://imdb.com/find?q=$title&s=tt"))
             }
       imdbMovie <- F.delay(parseIMDBDocument(doc))
