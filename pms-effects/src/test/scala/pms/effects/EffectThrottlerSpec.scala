@@ -25,7 +25,7 @@ final class EffectThrottlerSpec extends Specification {
   private val stuffDuration = 75 millis
 
   "throttle effects at 1F/100ms" >> {
-    val throttler: EffectThrottler[IO, Unit] = EffectThrottler.concurrent[IO, Unit](interval, 1).unsafeRunSync()
+    val throttler: EffectThrottler[IO] = EffectThrottler.concurrent[IO](interval, 1).unsafeRunSync()
     val minWaitTime = computeMinWaitTime(runs.length, interval, 1)
 
     val eff: IO[Unit] = runs.parTraverse(i => throttler.throttle(doStuff(i))).void
@@ -34,7 +34,7 @@ final class EffectThrottlerSpec extends Specification {
   }
 
   "throttle effects at 2F/100ms" >> {
-    val throttler: EffectThrottler[IO, Unit] = EffectThrottler.concurrent[IO, Unit](interval, 2).unsafeRunSync()
+    val throttler: EffectThrottler[IO] = EffectThrottler.concurrent[IO](interval, 2).unsafeRunSync()
     val minWaitTime = computeMinWaitTime(runs.length, interval, 2)
 
     val eff: IO[Unit] = runs.parTraverse(i => throttler.throttle(doStuff(i))).void

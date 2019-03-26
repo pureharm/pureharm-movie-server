@@ -14,7 +14,7 @@ import scala.concurrent.duration._
   * @param interval  time unit between `size` consecutive requests
   * @param semaphore bounded by the number of Fs allowed to be executed in the configured `interval`
   */
-final class EffectThrottler[F[_]: Timer: Concurrent, T] private (
+final class EffectThrottler[F[_]: Timer: Concurrent] private (
   private val interval:  FiniteDuration,
   private val semaphore: Semaphore[F]
 ) {
@@ -25,7 +25,7 @@ final class EffectThrottler[F[_]: Timer: Concurrent, T] private (
     * Returns an F that will be "slowed" time to the configured rate
     * of execution.
     */
-  def throttle(f: F[T]): F[T] =
+  def throttle[T](f: F[T]): F[T] =
     for {
       acquireTime <- acquireSemaphore
       res         <- f.onError { case _ => delayLogic(acquireTime) }
@@ -58,14 +58,14 @@ final class EffectThrottler[F[_]: Timer: Concurrent, T] private (
 
 object EffectThrottler {
 
-  def concurrent[F[_]: Timer: Concurrent, T](
+  def concurrent[F[_]: Timer: Concurrent](
     interval: FiniteDuration,
     amount:   Long
-  ): F[EffectThrottler[F, T]] = {
+  ): F[EffectThrottler[F]] = {
     for {
       sem <- Semaphore(amount)
     } yield
-      new EffectThrottler[F, T](
+      new EffectThrottler[F](
         interval  = interval,
         semaphore = sem
       )
