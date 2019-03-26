@@ -334,6 +334,7 @@ lazy val `pms-logger` = project
   .settings(
     libraryDependencies ++= Seq(
       log4cats,
+      logbackClassic,
     )
   )
   .dependsOn(
