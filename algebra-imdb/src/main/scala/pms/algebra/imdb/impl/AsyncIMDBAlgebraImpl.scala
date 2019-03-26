@@ -17,7 +17,7 @@ import net.ruippeixotog.scalascraper.model.Document
   *
   */
 final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](
-  val throttler: EffectThrottler[F, Document]
+  val throttler: EffectThrottler[F]
 )(
   implicit val F: Async[F],
 ) extends IMDBAlgebra[F] {
@@ -25,7 +25,7 @@ final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](
   override def scrapeMovieByTitle(title: TitleQuery): F[Option[IMDBMovie]] = {
     val browser = JsoupBrowser()
     for {
-      doc <- throttler.throttle {
+      doc <- throttler.throttle[Document] {
               F.delay[Document](browser.get(s"https://imdb.com/find?q=$title&s=tt"))
             }
       imdbMovie <- F.delay(parseIMDBDocument(doc))

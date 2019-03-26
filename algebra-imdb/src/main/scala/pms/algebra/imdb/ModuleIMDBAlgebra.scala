@@ -1,7 +1,6 @@
 package pms.algebra.imdb
 
 import cats.effect.Timer
-import net.ruippeixotog.scalascraper.model.Document
 import cats.implicits._
 import pms.core.Module
 import pms.effects.EffectThrottler
@@ -25,8 +24,8 @@ trait ModuleIMDBAlgebra[F[_]] { this: Module[F] =>
     } yield new impl.AsyncIMDBAlgebraImpl[F](rl)
   }
 
-  private lazy val effectThrottler: F[EffectThrottler[F, Document]] = singleton {
-    EffectThrottler.concurrent[F, Document](
+  private lazy val effectThrottler: F[EffectThrottler[F]] = singleton {
+    EffectThrottler.concurrent[F](
       interval = imdbAlgebraConfig.requestsInterval,
       amount   = imdbAlgebraConfig.requestsNumber
     )
