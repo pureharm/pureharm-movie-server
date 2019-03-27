@@ -20,3 +20,4 @@ Stay tuned for a proper web-site.
 2. install jdk8 [https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 3. install SBT [https://www.scala-sbt.org/download.html](https://www.scala-sbt.org/download.html)
 4. install IntelliJ [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/)
+5. install Docker [https://www.docker.com/get-started](https://www.docker.com/get-started)
