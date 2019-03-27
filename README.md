@@ -19,3 +19,4 @@ Stay tuned for a proper web-site.
 1. install git [https://git-scm.com/book/en/v2/Getting-Started-Installing-Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 2. install jdk8 [https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 3. install SBT [https://www.scala-sbt.org/download.html](https://www.scala-sbt.org/download.html)
+4. install IntelliJ [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/)
