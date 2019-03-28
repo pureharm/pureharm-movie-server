@@ -152,6 +152,9 @@ project/plugins/project/
 
 ### Scala ###
 
+### Metals ###
+.metals
+
 ### Vim ###
 # Swap
 [._]*.s[a-v][a-z]
