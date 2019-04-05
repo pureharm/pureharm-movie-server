@@ -1,9 +1,15 @@
+//=============================================================================
+//=============================================================================
+
 /**
   * The best thing since sliced bread.
   *
   * https://github.com/scalameta/scalafmt
   */
 addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.5.1")
+
+//=============================================================================
+//=============================================================================
 
 /**
   * Refactoring/linting tool for scala.
@@ -28,12 +34,18 @@ addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.5.1")
   */
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.1")
 
+//=============================================================================
+//=============================================================================
+
 /**
   * Used to create one big fat jar which contains all dependencies of this application
   *
   * https://github.com/sbt/sbt-assembly
   */
 addSbtPlugin("com.eed3si9n" %% "sbt-assembly" % "0.14.9")
+
+//=============================================================================
+//=============================================================================
 
 /**
   * neat way of visualizing the dependency graph both in the sbt repl, and to export
@@ -51,3 +63,27 @@ addSbtPlugin("net.virtual-void" %% "sbt-dependency-graph" % "0.9.2")
   * https://github.com/non/kind-projector
   */
 // addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.8")
+
+//=============================================================================
+//=============================================================================
+
+/**
+  * Used to build the documentation.
+  *
+  * https://github.com/47deg/sbt-microsites
+  */
+addSbtPlugin("com.47deg" % "sbt-microsites" % "0.7.18")
+
+//=============================================================================
+//=============================================================================
+
+/**
+  *
+  * Used by sbt-microsites
+  *
+  * https://github.com/sbt/sbt-ghpages
+  */
+addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.6.2")
+
+//=============================================================================
+//=============================================================================
