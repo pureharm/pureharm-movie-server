@@ -23,16 +23,16 @@ private[impl] object UserAlgebraSQL {
   )
 
   /*_*/
-  implicit val userIDMeta: Meta[UserID] = Meta[Long].imap(UserID.haunt)(UserID.exorcise)
+  implicit val userIDMeta: Meta[UserID] = Meta[Long].imap(UserID.spook)(UserID.despook)
 
   implicit val authenticationTokenMeta: Meta[AuthenticationToken] =
-    Meta[String].imap(AuthenticationToken.haunt)(AuthenticationToken.exorcise)
+    Meta[String].imap(AuthenticationToken.spook)(AuthenticationToken.despook)
 
   implicit val userRegistrationTokenMeta: Meta[UserRegistrationToken] =
-    Meta[String].imap(UserRegistrationToken.haunt)(UserRegistrationToken.exorcise)
+    Meta[String].imap(UserRegistrationToken.spook)(UserRegistrationToken.despook)
 
   implicit val passwordResetTokenMeta: Meta[PasswordResetToken] =
-    Meta[String].imap(PasswordResetToken.haunt)(PasswordResetToken.exorcise)
+    Meta[String].imap(PasswordResetToken.spook)(PasswordResetToken.despook)
 
   implicit val emailMeta: Meta[Email] =
     Meta[String].imap(Email.apply(_).unsafeGet())(_.plainTextEmail)

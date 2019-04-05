@@ -40,9 +40,9 @@ final class IMDBService[F[_]] private (
     * Sometimes by poor design, sometimes by physical reality. This time intentionally ;)
     */
   private def imdbMovieToMovieCreation(imdb: IMDBMovie): MovieCreation = MovieCreation(
-    name = MovieTitle(IMDBTitle.exorcise(imdb.title)),
+    name = MovieTitle(IMDBTitle.despook(imdb.title)),
     date = imdb.year.map { y =>
-      val year = ReleaseYear.exorcise(y)
+      val year = ReleaseYear.despook(y)
       val ld   = LocalDate.of(year.getValue, 1, 1)
       ReleaseDate(ld)
     },

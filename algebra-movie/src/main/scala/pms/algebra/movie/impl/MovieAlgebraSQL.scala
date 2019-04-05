@@ -19,13 +19,13 @@ private[movie] object MovieAlgebraSQL {
   private val ME: MonadErrorThr[ConnectionIO] = MonadError.apply[ConnectionIO, Throwable]
 
   implicit protected val movieIDMeta: Meta[MovieID] =
-    Meta[Long].imap(MovieID.haunt)(MovieID.exorcise)
+    Meta[Long].imap(MovieID.spook)(MovieID.despook)
 
   implicit protected val movieTitleMeta: Meta[MovieTitle] =
-    Meta[String].imap(MovieTitle.haunt)(MovieTitle.exorcise)
+    Meta[String].imap(MovieTitle.spook)(MovieTitle.despook)
 
   implicit protected val releaseDateMeta: Meta[ReleaseDate] =
-    Meta[LocalDate].imap(ReleaseDate.haunt)(ReleaseDate.exorcise)
+    Meta[LocalDate].imap(ReleaseDate.spook)(ReleaseDate.despook)
 
   private def insertQuery(mc: MovieCreation): ConnectionIO[MovieID] =
     sql"""INSERT INTO movies(name, date) VALUES(${mc.name}, ${mc.date})""".update.withUniqueGeneratedKeys[MovieID]("id")
