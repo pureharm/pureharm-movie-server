@@ -12,6 +12,7 @@ import pms.effects._
 trait Module[F[_]] {
   implicit def F: Concurrent[F]
 
+  //FIXME: this is broken, does not work properly.
   final protected def singleton[T](f: F[T]): F[T] = Module.memoize(f)
 
   implicit final def concurrentModuleOps[T](fa: F[T]): Module.ModuleOps[F, T] =

@@ -22,8 +22,8 @@ package object movie {
 
   implicit val releaseDateOrder: spire.algebra.Order[ReleaseDate] = new spire.algebra.Order[ReleaseDate] {
     override def compare(x: ReleaseDate, y: ReleaseDate): Int = {
-      val dateX = ReleaseDate.exorcise(x)
-      val dateY = ReleaseDate.exorcise(y)
+      val dateX = ReleaseDate.despook(x)
+      val dateY = ReleaseDate.despook(y)
       dateX.compareTo(dateY)
     }
   }
