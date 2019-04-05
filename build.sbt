@@ -351,6 +351,7 @@ lazy val `pms-core` = project
     libraryDependencies ++= Seq(
       shapeless,
       bmcCore,
+      phCore,
       bmcDuration,
       specs2Test,
     )
@@ -505,12 +506,18 @@ def customScalaCompileFlags: Seq[String] = Seq(
 
 //https://github.com/busymachines/busymachines-commons
 lazy val bmCommonsVersion: String = "0.3.0-RC9"
-def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$m" % bmCommonsVersion
+def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$m" % bmCommonsVersion withSources ()
 
-lazy val bmcCore:     ModuleID = bmCommons("core")     withSources ()
-lazy val bmcDuration: ModuleID = bmCommons("duration") withSources ()
-lazy val bmcEffects:  ModuleID = bmCommons("effects")  withSources ()
-lazy val bmcJson:     ModuleID = bmCommons("json")     withSources ()
+lazy val bmcCore:     ModuleID = bmCommons("core")
+lazy val bmcDuration: ModuleID = bmCommons("duration")
+lazy val bmcEffects:  ModuleID = bmCommons("effects")
+lazy val bmcJson:     ModuleID = bmCommons("json")
+
+//https://github.com/busymachines/pureharm
+lazy val pureHarmVersion: String = "0.0.1"
+def pureharm(m: String): ModuleID = "com.busymachines" %% s"pureharm-$m" % pureHarmVersion withSources ()
+
+lazy val phCore: ModuleID = pureharm("core")
 
 //============================================================================================
 //================================= http://typelevel.org/scala/ ==============================
