@@ -15,7 +15,7 @@ import org.http4s.dsl._
   *
   */
 final class UserRoutes[F[_]](
-  private val userAlgebra: UserAlgebra[F]
+  private val userAlgebra: UserAlgebra[F],
 )(
   implicit val F: Async[F],
 ) extends Http4sDsl[F] with UserRoutesJSON {

@@ -26,13 +26,13 @@ object ModulePureMovieServerBootstrap {
 
   def concurrent[F[_]](
     gConfig:           GmailConfig,
-    imbdAlgebraConfig: IMDBAlgebraConfig
+    imbdAlgebraConfig: IMDBAlgebraConfig,
   )(
     implicit
     c:  Concurrent[F],
     t:  Transactor[F],
     ti: Timer[F],
-  ): ModulePureMovieServerBootstrap[F] =
+  ): F[ModulePureMovieServerBootstrap[F]] = c.delay {
     new ModulePureMovieServerBootstrap[F] {
       implicit override def F: Concurrent[F] = c
 
@@ -45,4 +45,6 @@ object ModulePureMovieServerBootstrap {
       implicit override def transactor: Transactor[F] = t
 
     }
+  }
+
 }

@@ -22,7 +22,7 @@ trait ModuleMovieService[F[_]] { this: Module[F] with ModuleMovieAlgebra[F] with
     } yield
       IMDBService.async(
         movieAlgebra = malb,
-        imdbAlgebra  = imbd
+        imdbAlgebra  = imbd,
       )
   }
 

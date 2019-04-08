@@ -13,7 +13,7 @@ final case class PureMovieServerConfig(
   port:      Int,
   host:      String,
   apiRoot:   String,
-  bootstrap: Boolean
+  bootstrap: Boolean,
 )
 
 object PureMovieServerConfig extends ConfigLoader[PureMovieServerConfig] {

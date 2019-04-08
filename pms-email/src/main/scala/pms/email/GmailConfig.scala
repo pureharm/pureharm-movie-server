@@ -16,7 +16,7 @@ final case class GmailConfig(
   host:     SmtpHost,
   port:     Int,
   auth:     Boolean,
-  startTLS: Boolean
+  startTLS: Boolean,
 )
 
 object GmailConfig extends ConfigLoader[GmailConfig] {

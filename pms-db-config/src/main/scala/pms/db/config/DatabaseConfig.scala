@@ -12,7 +12,7 @@ final case class DatabaseConfig(
   url:      String,
   user:     String,
   password: String,
-  clean:    Boolean
+  clean:    Boolean,
 )
 
 object DatabaseConfig extends ConfigLoader[DatabaseConfig] {

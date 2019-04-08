@@ -18,21 +18,21 @@ final class UserAccountService[F[_]] private (
   private val userAuth:     UserAuthAlgebra[F],
   private val userAccount:  UserAccountAlgebra[F],
   private val userAlgebra:  UserAlgebra[F],
-  private val emailAlgebra: EmailAlgebra[F]
+  private val emailAlgebra: EmailAlgebra[F],
 )(
-  implicit private val F: Concurrent[F]
+  implicit private val F: Concurrent[F],
 ) {
 
   def registrationStep1(reg: UserRegistration)(implicit authCtx: AuthCtx): F[Unit] =
     for {
       regToken <- userAccount.registrationStep1(reg)
       _ <- forkAndForget {
-            emailAlgebra.sendEmail(
-              to      = reg.email,
-              subject = "User Registration on Pure Movie Server",
-              content = s"Please click this link to finish registration: [link_to_frontend]/$regToken"
-            )
-          }
+        emailAlgebra.sendEmail(
+          to      = reg.email,
+          subject = "User Registration on Pure Movie Server",
+          content = s"Please click this link to finish registration: [link_to_frontend]/$regToken",
+        )
+      }
     } yield ()
 
   def registrationStep2(token: UserRegistrationToken): F[User] =
@@ -44,12 +44,12 @@ final class UserAccountService[F[_]] private (
     for {
       resetToken <- userAccount.resetPasswordStep1(email)
       _ <- forkAndForget {
-            emailAlgebra.sendEmail(
-              to      = email,
-              subject = "Password reset for Pure Movie Server",
-              content = s"Please click the following link to reset your account password: [link_to_FE]$resetToken"
-            )
-          }
+        emailAlgebra.sendEmail(
+          to      = email,
+          subject = "Password reset for Pure Movie Server",
+          content = s"Please click the following link to reset your account password: [link_to_FE]$resetToken",
+        )
+      }
     } yield ()
 
   def resetPasswordStep2(pwr: PasswordResetCompletion): F[Unit] =
@@ -69,11 +69,11 @@ object UserAccountService {
     userAuth:     UserAuthAlgebra[F],
     userAccount:  UserAccountAlgebra[F],
     userAlgebra:  UserAlgebra[F],
-    emailAlgebra: EmailAlgebra[F]
+    emailAlgebra: EmailAlgebra[F],
   ): UserAccountService[F] = new UserAccountService[F](
     userAuth,
     userAccount,
     userAlgebra,
-    emailAlgebra
+    emailAlgebra,
   )
 }

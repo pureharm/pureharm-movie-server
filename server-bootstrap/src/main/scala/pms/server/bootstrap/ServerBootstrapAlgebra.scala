@@ -18,9 +18,9 @@ import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
   */
 sealed abstract class ServerBootstrapAlgebra[F[_]](
   private val uca: UserAccountAlgebra[F],
-  private val uba: UserAccountBootstrapAlgebra[F]
+  private val uba: UserAccountBootstrapAlgebra[F],
 )(
-  implicit val F: Sync[F]
+  implicit val F: Sync[F],
 ) {
 
   private val logger = Slf4jLogger.unsafeCreate[F]
@@ -36,8 +36,8 @@ sealed abstract class ServerBootstrapAlgebra[F[_]](
       token <- uba.bootstrapUser(reg)
       user  <- uca.registrationStep2(token)
       _ <- logger.info(
-            s"BOOTSTRAP — inserting user: role=${reg.role.productPrefix} email=${reg.email.plainTextEmail} pw=${reg.pw.plainText}"
-          )
+        s"BOOTSTRAP — inserting user: role=${reg.role.productPrefix} email=${reg.email.plainTextEmail} pw=${reg.pw.plainText}",
+      )
     } yield user
 }
 

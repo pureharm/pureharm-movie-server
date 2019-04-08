@@ -42,11 +42,11 @@ final class UserLoginRoutes[F[_]](
     val r: Result[BasicCredentials] = for {
       auth <- hs.get(headers.Authorization).asResult(UnauthorizedFailure("Missing Authorization header"))
       basic <- auth.credentials match {
-                case Credentials.Token(AuthScheme.Basic, token) =>
-                  Result.pure(BasicCredentials(token))
-                case credentials =>
-                  Result.fail(UnauthorizedFailure(s"Unsupported credentials w/ AuthScheme ${credentials.authScheme}"))
-              }
+        case Credentials.Token(AuthScheme.Basic, token) =>
+          Result.pure(BasicCredentials(token))
+        case credentials =>
+          Result.fail(UnauthorizedFailure(s"Unsupported credentials w/ AuthScheme ${credentials.authScheme}"))
+      }
     } yield basic
 
     rtof(r)

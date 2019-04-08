@@ -19,26 +19,26 @@ import pms.effects._
 final private[user] class UserAlgebraImpl[F[_]] private (
   implicit
   val F:          Async[F],
-  val transactor: Transactor[F]
+  val transactor: Transactor[F],
 ) extends UserAuthAlgebra[F]()(F) with UserAccountAlgebra[F] with UserAlgebra[F] {
 
   import UserAlgebraSQL._
 
   override protected def monadError:  MonadError[F, Throwable] = F
-  override protected def authAlgebra: UserAuthAlgebra[F] = this
+  override protected def authAlgebra: UserAuthAlgebra[F]       = this
 
   private val invalidEmailOrPW: Throwable = UnauthorizedFailure("Invalid email or password")
 
   override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] =
     for {
       userRepr <- findRepr(email).transact(transactor).flatMap {
-                   case None    => F.raiseError[UserRepr](invalidEmailOrPW)
-                   case Some(v) => F.pure[UserRepr](v)
-                 }
+        case None    => F.raiseError[UserRepr](invalidEmailOrPW)
+        case Some(v) => F.pure[UserRepr](v)
+      }
       auth <- UserCrypto.checkUserPassword[F](pw.plainText, userRepr.pw).flatMap {
-               case true  => storeAuth(find(email))
-               case false => F.raiseError[AuthCtx](invalidEmailOrPW)
-             }
+        case true  => storeAuth(find(email))
+        case false => F.raiseError[AuthCtx](invalidEmailOrPW)
+      }
 
     } yield auth
 
@@ -49,7 +49,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (
     updateRole(id, newRole).transact(transactor).map(_ => ())
 
   override protected[user] def registrationStep1OP(
-    reg: UserRegistration
+    reg: UserRegistration,
   ): F[UserRegistrationToken] =
     for {
       token      <- UserCrypto.generateToken(F)

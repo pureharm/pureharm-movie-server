@@ -34,10 +34,10 @@ final class PureMovieServer[F[_]] private (
       nrOfMigs          <- DatabaseConfigAlgebra.initializeSQLDb[F](dbConfig)
       _                 <- logger.info(s"Successfully ran #$nrOfMigs migrations")
       pmsModule <- moduleInit(
-                    gmailConfig,
-                    imdbAlgebraConfig,
-                    bootstrap = serverConfig.bootstrap
-                  )(transactor, timer)
+        gmailConfig,
+        imdbAlgebraConfig,
+        bootstrap = serverConfig.bootstrap,
+      )(transactor, timer)
       _ <- logger.info(s"Successfully initialized pure-movie-server")
     } yield (serverConfig, pmsModule)
   }
@@ -45,7 +45,7 @@ final class PureMovieServer[F[_]] private (
   private def moduleInit(
     gmailConfig:      GmailConfig,
     imdblgebraConfig: IMDBAlgebraConfig,
-    bootstrap:        Boolean
+    bootstrap:        Boolean,
   )(
     implicit
     transactor: Transactor[F],
@@ -53,16 +53,13 @@ final class PureMovieServer[F[_]] private (
   ): F[ModulePureMovieServer[F]] = {
     if (bootstrap) {
       logger.warn(
-        "BOOTSTRAP — initializing server in bootstrap mode — if this is on prod, you seriously botched this one"
-      ) *>
-        F.delay(ModulePureMovieServerBootstrap.concurrent(gmailConfig, imdblgebraConfig)).flatMap { module =>
-          module.bootstrap >> F.pure(module)
-        }
+        "BOOTSTRAP — initializing server in bootstrap mode — if this is on prod, you seriously botched this one",
+      ) >> ModulePureMovieServerBootstrap
+        .concurrent(gmailConfig, imdblgebraConfig)
+        .flatTap(_.bootstrap)
+        .widen[ModulePureMovieServer[F]]
     }
-    else {
-      F.delay(ModulePureMovieServer.concurrent(gmailConfig, imdblgebraConfig))
-    }
-
+    else ModulePureMovieServer.concurrent(gmailConfig, imdblgebraConfig)
   }
 
 }

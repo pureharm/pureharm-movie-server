@@ -27,7 +27,7 @@ trait ModuleIMDBAlgebra[F[_]] { this: Module[F] =>
   private lazy val effectThrottler: F[EffectThrottler[F]] = singleton {
     EffectThrottler.concurrent[F](
       interval = imdbAlgebraConfig.requestsInterval,
-      amount   = imdbAlgebraConfig.requestsNumber
+      amount   = imdbAlgebraConfig.requestsNumber,
     )
   }
 

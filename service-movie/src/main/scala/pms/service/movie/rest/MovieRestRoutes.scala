@@ -22,9 +22,9 @@ import org.http4s.dsl._
   * @since 25 Jun 2018
   *
   */
-private[rest]final class MovieRestRoutes[F[_]](
+final private[rest] class MovieRestRoutes[F[_]](
   private val imdbService:  IMDBService[F],
-  private val movieAlgebra: MovieAlgebra[F]
+  private val movieAlgebra: MovieAlgebra[F],
 )(
   implicit val F: Async[F],
 ) extends Http4sDsl[F] with MovieRoutesJSON {

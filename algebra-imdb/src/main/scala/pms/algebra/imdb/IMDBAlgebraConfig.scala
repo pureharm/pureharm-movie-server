@@ -7,7 +7,7 @@ import scala.concurrent.duration._
 
 final case class IMDBAlgebraConfig(
   requestsInterval: FiniteDuration,
-  requestsNumber:   Long
+  requestsNumber:   Long,
 )
 
 object IMDBAlgebraConfig extends ConfigLoader[IMDBAlgebraConfig] {
@@ -19,7 +19,7 @@ object IMDBAlgebraConfig extends ConfigLoader[IMDBAlgebraConfig] {
 
   private case class IMDBAlgebraConfigRepr(
     requestsInterval: Long,
-    requestsNumber:   Long
+    requestsNumber:   Long,
   )
 
   private object IMDBAlgebraConfigLoaderRepr extends ConfigLoader[IMDBAlgebraConfigRepr] {

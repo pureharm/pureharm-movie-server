@@ -16,7 +16,7 @@ final case class ConfigReadingAnomaly(c: ConfigReaderFailure)
 
   override def parameters: Anomaly.Parameters = {
     val orig: Anomaly.Parameters = Anomaly.Parameters(
-      "reason" -> c.description
+      "reason" -> c.description,
     )
     val loc = c.location.map(l => ("location" -> l.description): (String, Anomaly.Parameter))
     orig.++(loc.toMap: Anomaly.Parameters)

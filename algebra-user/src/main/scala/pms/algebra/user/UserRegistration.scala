@@ -11,5 +11,5 @@ import pms.core._
 final case class UserRegistration(
   email: Email,
   pw:    PlainTextPassword,
-  role:  UserRole
+  role:  UserRole,
 )
