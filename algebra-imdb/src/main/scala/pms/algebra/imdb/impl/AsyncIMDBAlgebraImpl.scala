@@ -17,7 +17,7 @@ import net.ruippeixotog.scalascraper.model.Document
   *
   */
 final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](
-  val throttler: EffectThrottler[F]
+  val throttler: EffectThrottler[F],
 )(
   implicit val F: Async[F],
 ) extends IMDBAlgebra[F] {
@@ -26,8 +26,8 @@ final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](
     val browser = JsoupBrowser()
     for {
       doc <- throttler.throttle[Document] {
-              F.delay[Document](browser.get(s"https://imdb.com/find?q=$title&s=tt"))
-            }
+        F.delay[Document](browser.get(s"https://imdb.com/find?q=$title&s=tt"))
+      }
       imdbMovie <- F.delay(parseIMDBDocument(doc))
     } yield imdbMovie
   }
@@ -40,10 +40,14 @@ final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](
       titleElement <- resultText tryExtract element("a")
       title         = IMDBTitle(titleElement.text)
       resultTextStr = resultText.text
-      yearStartPos  = resultTextStr.indexOf("(")
-      year = if (yearStartPos > 0)
-        Option(ReleaseYear(Year.parse(resultTextStr.substring(yearStartPos + 1, yearStartPos + 5))))
-      else None
+      year          = parseYear(resultTextStr)
     } yield IMDBMovie(title, year)
+  }
+
+  private def parseYear(resultTextStr: String): Option[ReleaseYear] = {
+    val yearStartPos = resultTextStr.indexOf("(")
+    if (yearStartPos > 0)
+      Result[ReleaseYear](ReleaseYear(Year.parse(resultTextStr.substring(yearStartPos + 1, yearStartPos + 5)))).toOption
+    else None
   }
 }

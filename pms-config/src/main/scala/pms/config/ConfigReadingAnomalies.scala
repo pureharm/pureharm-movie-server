@@ -15,7 +15,7 @@ final case class ConfigReadingAnomalies(cs: ConfigReaderFailures)
       id              = ConfigReadingAnomalies.ID,
       message         = s"Failed to read config file. ${cs.toList.map(_.description).mkString(",")}",
       firstAnomaly    = ConfigReadingAnomaly(cs.head),
-      restOfAnomalies = cs.tail.map(ConfigReadingAnomaly.apply)
+      restOfAnomalies = cs.tail.map(ConfigReadingAnomaly.apply),
     )
 
 object ConfigReadingAnomalies {

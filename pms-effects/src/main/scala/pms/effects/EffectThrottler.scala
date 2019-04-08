@@ -16,7 +16,7 @@ import scala.concurrent.duration._
   */
 final class EffectThrottler[F[_]: Timer: Concurrent] private (
   private val interval:  FiniteDuration,
-  private val semaphore: Semaphore[F]
+  private val semaphore: Semaphore[F],
 ) {
 
   private val F = Concurrent.apply[F]
@@ -42,9 +42,9 @@ final class EffectThrottler[F[_]: Timer: Concurrent] private (
     for {
       now <- timeNow
       _ <- if (isWithinInterval(acquireTime, now))
-            Timer[F].sleep(acquireTime.max(now) - acquireTime.min(now))
-          else
-            F.unit
+        Timer[F].sleep(acquireTime.max(now) - acquireTime.min(now))
+      else
+        F.unit
       _ <- semaphore.release
     } yield ()
 
@@ -60,14 +60,14 @@ object EffectThrottler {
 
   def concurrent[F[_]: Timer: Concurrent](
     interval: FiniteDuration,
-    amount:   Long
+    amount:   Long,
   ): F[EffectThrottler[F]] = {
     for {
       sem <- Semaphore(amount)
     } yield
       new EffectThrottler[F](
         interval  = interval,
-        semaphore = sem
+        semaphore = sem,
       )
   }
 

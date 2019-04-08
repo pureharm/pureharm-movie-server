@@ -15,5 +15,5 @@ final case class PasswordResetRequest(
 
 final case class PasswordResetCompletion(
   token:  PasswordResetToken,
-  newPws: PlainTextPassword
+  newPws: PlainTextPassword,
 )

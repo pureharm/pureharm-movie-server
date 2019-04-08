@@ -15,22 +15,22 @@ trait UserRoutesJSON extends PMSJson {
 
   implicit val userRoleCirceCodec: Codec[UserRole] = Codec.instance(
     encode = Encoder.apply[String].contramap(ur => ur.productPrefix),
-    decode = Decoder.apply[String].emap(s => UserRole.fromName(s).left.map(_.message))
+    decode = Decoder.apply[String].emap(s => UserRole.fromName(s).left.map(_.message)),
   )
 
   implicit val userIDCirceCodec: Codec[UserID] = Codec.instance[UserID](
     encode = Encoder.apply[Long].contramap(UserID.despook),
-    decode = Decoder.apply[Long].map(UserID.spook)
+    decode = Decoder.apply[Long].map(UserID.spook),
   )
 
   implicit val passwordResetTokenCirceCodec: Codec[PasswordResetToken] = Codec.instance[PasswordResetToken](
     encode = Encoder.apply[String].contramap(PasswordResetToken.despook),
-    decode = Decoder.apply[String].map(PasswordResetToken.spook)
+    decode = Decoder.apply[String].map(PasswordResetToken.spook),
   )
 
   implicit val authenticationTokenCirceCodec: Codec[AuthenticationToken] = Codec.instance(
     encode = Encoder.apply[String].contramap(AuthenticationToken.despook),
-    decode = Decoder.apply[String].map(AuthenticationToken.spook)
+    decode = Decoder.apply[String].map(AuthenticationToken.spook),
   )
 
   implicit val userRegistrationCirceCodec: Codec[UserRegistration] = derive.codec[UserRegistration]

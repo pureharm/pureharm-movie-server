@@ -1,6 +1,6 @@
 import sbt._
 
-addCommandAlias("mkSite",        ";docs/clean;docs/makeMicrosite")
+addCommandAlias("mkSite", ";docs/clean;docs/makeMicrosite")
 addCommandAlias("doSitePublish", ";docs/clean;docs/publishMicrosite")
 
 //=============================================================================
@@ -10,19 +10,19 @@ lazy val root =
   Project(id = "pure-movie-server", base = file("."))
     .settings(commonSettings)
     .aggregate(
-      server
+      server,
     )
 
 lazy val server = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
-    mainClass := Option("pms.server.PureMovieServerApp")
+    mainClass := Option("pms.server.PureMovieServerApp"),
   )
   .settings(
     libraryDependencies ++= Seq(
       specs2Test,
-    )
+    ),
   )
   .dependsOn(
     `pms-effects`,
@@ -53,7 +53,7 @@ lazy val `server-bootstrap` = project
   .settings(
     libraryDependencies ++= Seq(
       specs2Test,
-    )
+    ),
   )
   .dependsOn(
     `pms-logger`,
@@ -78,7 +78,7 @@ lazy val `service-user` = project
   .settings(
     libraryDependencies ++= Seq(
       specs2Test,
-    )
+    ),
   )
   .dependsOn(
     `algebra-user`,
@@ -110,7 +110,7 @@ lazy val `service-movie` = project
     libraryDependencies ++= Seq(
       spire,
       specs2Test,
-    )
+    ),
   )
   .dependsOn(
     `algebra-user`,
@@ -143,7 +143,7 @@ lazy val `algebra-http-sec` = project
   .settings(
     libraryDependencies ++= Seq(
       specs2Test,
-    )
+    ),
   )
   .dependsOn(
     `pms-config`,
@@ -167,7 +167,7 @@ lazy val `algebra-imdb` = project
     libraryDependencies ++= Seq(
       scalaScrapper,
       specs2Test,
-    )
+    ),
   )
   .dependsOn(
     `pms-config`,
@@ -189,7 +189,7 @@ lazy val `algebra-movie` = project
     libraryDependencies ++= Seq(
       spire,
       specs2Test,
-    )
+    ),
   )
   .dependsOn(
     `algebra-user`,
@@ -212,7 +212,7 @@ lazy val `algebra-user` = project
   .settings(
     libraryDependencies ++= Seq(
       specs2Test,
-    ) ++ tsec
+    ) ++ tsec,
   )
   .dependsOn(
     `pms-config`,
@@ -235,7 +235,7 @@ lazy val `pms-db` = project
   .settings(
     libraryDependencies ++= Seq(
       specs2Test,
-    ) ++ doobie ++ fs2
+    ) ++ doobie ++ fs2,
   )
   .dependsOn(
     `pms-effects`,
@@ -250,7 +250,7 @@ lazy val `pms-email` = project
     libraryDependencies ++= Seq(
       javaxMail,
       specs2Test,
-    )
+    ),
   )
   .dependsOn(
     `pms-core`,
@@ -271,7 +271,7 @@ lazy val `pms-http` = project
   .settings(
     libraryDependencies ++= Seq(
       specs2Test,
-    ) ++ http4s ++ fs2
+    ) ++ http4s ++ fs2,
   )
   .dependsOn(
     `pms-core`,
@@ -290,7 +290,7 @@ lazy val `pms-json` = project
   .settings(
     libraryDependencies ++= Seq(
       bmcJson,
-    ) ++ circe
+    ) ++ circe,
   )
   .dependsOn(
     `pms-core`,
@@ -308,7 +308,7 @@ lazy val `pms-db-config` = project
     libraryDependencies ++= Seq(
       doobieCore,
       flyway,
-    ) ++ fs2
+    ) ++ fs2,
   )
   .dependsOn(
     `pms-config`,
@@ -325,7 +325,7 @@ lazy val `pms-config` = project
   .settings(
     libraryDependencies ++= Seq(
       pureConfig,
-    )
+    ),
   )
   .dependsOn(
     `pms-effects`,
@@ -341,13 +341,13 @@ lazy val `pms-logger` = project
     libraryDependencies ++= Seq(
       log4cats,
       logbackClassic,
-    )
+    ),
   )
   .dependsOn(
-    `pms-effects`
+    `pms-effects`,
   )
   .aggregate(
-    `pms-effects`
+    `pms-effects`,
   )
 
 lazy val `pms-core` = project
@@ -360,10 +360,10 @@ lazy val `pms-core` = project
       phCore,
       bmcDuration,
       specs2Test,
-    )
+    ),
   )
   .dependsOn(
-    `pms-effects`
+    `pms-effects`,
   )
   .aggregate(
     `pms-effects`,
@@ -378,7 +378,7 @@ lazy val `pms-effects` = project
       monix,
       bmcEffects,
       specs2Test,
-    )
+    ),
   )
 
 lazy val docs = project
@@ -409,7 +409,7 @@ lazy val docs = project
       "gray"            -> "#837F84",
       "gray-light"      -> "#E3E2E3",
       "gray-lighter"    -> "#F4F3F4",
-      "white-color"     -> "#FFFFFF"
+      "white-color"     -> "#FFFFFF",
     ),
     //micrositeFavicons := Seq(
     //  MicrositeFavicon("favicon16x16.png", "16x16"),
@@ -418,7 +418,7 @@ lazy val docs = project
     micrositeFooterText := Some("""Ⓒ 2019 <a href="https://www.busymachines.com/">BusyMachines</a>"""),
     //------ same as default settings --------
     micrositePushSiteWith      := GHPagesPlugin,
-    micrositeGitHostingService := GitHub
+    micrositeGitHostingService := GitHub,
   )
   .dependsOn()
 
@@ -476,14 +476,14 @@ def sbtAssemblySettings: Seq[Setting[_]] = {
       test in assembly := {},
       assemblyMergeStrategy in assembly := {
         case PathList("application.conf", _ @_*) => MergeStrategy.concat
-        case "application.conf" => MergeStrategy.concat
-        case PathList("reference.conf", _ @_*) => MergeStrategy.concat
-        case "reference.conf" => MergeStrategy.concat
-        case x                => (assemblyMergeStrategy in assembly).value(x)
+        case "application.conf"                  => MergeStrategy.concat
+        case PathList("reference.conf", _ @_*)   => MergeStrategy.concat
+        case "reference.conf"                    => MergeStrategy.concat
+        case x                                   => (assemblyMergeStrategy in assembly).value(x)
       },
       //this is to avoid propagation of the assembly task to all subprojects.
       //changing this makes assembly incredibly slow
-      aggregate in assembly := false
+      aggregate in assembly := false,
     )
 }
 
@@ -534,7 +534,7 @@ def customScalaCompileFlags: Seq[String] = Seq(
   "-Ywarn-unused:params", // Warn if a value parameter is unused.
   "-Ywarn-unused:patvars", // Warn if a variable bound in a pattern is unused.
   "-Ywarn-unused:privates", // Warn if a private member is unused.
-  "-Ywarn-value-discard",  // Warn when non-Unit expression results are unused.
+  "-Ywarn-value-discard", // Warn when non-Unit expression results are unused.
   "-Ypartial-unification", // Enable partial unification in type constructor inference
 
   //"-Xfatal-warnings",                  // Fail the compilation if there are any warnings.
@@ -545,7 +545,7 @@ def customScalaCompileFlags: Seq[String] = Seq(
   "-P:bm4:no-filtering:y",
   "-P:bm4:no-map-id:y",
   "-P:bm4:no-tupling:y",
-  "-P:bm4:implicit-patterns:y"
+  "-P:bm4:implicit-patterns:y",
 )
 
 //============================================================================================
@@ -724,5 +724,5 @@ lazy val transitive = Seq(
   //---------------------------
   //https://github.com/typelevel/machinist
   //spire and cats core depend on this
-  "org.typelevel" %% "machinist" % "0.6.6" withSources ()
+  "org.typelevel" %% "machinist" % "0.6.6" withSources (),
 )

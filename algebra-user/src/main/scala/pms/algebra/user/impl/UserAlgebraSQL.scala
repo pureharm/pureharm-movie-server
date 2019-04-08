@@ -19,7 +19,7 @@ private[impl] object UserAlgebraSQL {
   private[impl] case class UserRepr(
     email: Email,
     pw:    UserCrypto.BcryptPW,
-    role:  UserRole
+    role:  UserRole,
   )
 
   /*_*/
@@ -50,7 +50,7 @@ private[impl] object UserAlgebraSQL {
   implicit val userReprComposite: Read[UserRepr] =
     Read[(Email, String, UserRole)]
       .imap((t: (Email, String, UserRole)) => UserRepr(t._1, UserCrypto.BcryptPW(t._2), t._3))(
-        (u: UserRepr) => (u.email, u.pw.toString, u.role)
+        (u: UserRepr) => (u.email, u.pw.toString, u.role),
       )
   /*_*/
 
@@ -99,9 +99,9 @@ private[impl] object UserAlgebraSQL {
     for {
       userId <- findByAuthToken(token)
       user <- userId match {
-               case Some(value) => find(UserID(value))
-               case None        => throw new Exception("Unauthorized") //FIXME: replace with proper error
-             }
+        case Some(value) => find(UserID(value))
+        case None        => throw new Exception("Unauthorized") //FIXME: replace with proper error
+      }
     } yield user
 
   def updateRegToken(token: UserRegistrationToken): ConnectionIO[Option[User]] =
@@ -114,9 +114,9 @@ private[impl] object UserAlgebraSQL {
     for {
       user <- findUser
       _ <- user match {
-            case Some(value) => insertAuthenticationToken(value.id, token)
-            case None        => throw new Exception("Unauthorized")
-          }
+        case Some(value) => insertAuthenticationToken(value.id, token)
+        case None        => throw new Exception("Unauthorized")
+      }
     } yield user
 
   def updatePwdToken(email: Email, token: PasswordResetToken): ConnectionIO[Option[User]] =
@@ -129,8 +129,8 @@ private[impl] object UserAlgebraSQL {
     for {
       user <- findByPwdToken(token)
       _ <- user match {
-            case Some(value) => updatePassword(value.id, newPassword)
-            case None        => throw new Exception("User not found")
-          }
+        case Some(value) => updatePassword(value.id, newPassword)
+        case None        => throw new Exception("User not found")
+      }
     } yield ()
 }

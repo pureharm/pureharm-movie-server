@@ -69,7 +69,7 @@ object ModulePureMovieServer {
     c:  Concurrent[F],
     t:  Transactor[F],
     ti: Timer[F],
-  ): ModulePureMovieServer[F] =
+  ): F[ModulePureMovieServer[F]] = c.delay {
     new ModulePureMovieServer[F] {
       override def F: Concurrent[F] = c
 
@@ -82,4 +82,6 @@ object ModulePureMovieServer {
       implicit override def transactor: Transactor[F] = t
 
     }
+  }
+
 }

@@ -8,5 +8,5 @@ package pms.algebra.user
   */
 final case class AuthCtx(
   token: AuthenticationToken,
-  user:  User
+  user:  User,
 )

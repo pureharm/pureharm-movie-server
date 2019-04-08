@@ -33,7 +33,7 @@ object AuthedHttp4s {
     Challenge(
       scheme = "Basic",
       realm  = "Go to POST /pms/api/user/login to get valid token",
-    )
+    ),
   )
 
   private val wwwHeader = headers.`WWW-Authenticate`(challenges)
@@ -46,17 +46,13 @@ object AuthedHttp4s {
 
   private def verifyToken[F[_]: Async](authAlgebra: UserAuthAlgebra[F]): Kleisli[F, Request[F], Result[AuthCtx]] =
     Kleisli { req: Request[F] =>
-      val F         = Async.apply[F]
       val optHeader = req.headers.get(`X-Auth-Token`)
       optHeader match {
-        case None =>
-          F.pure(Result.fail(UnauthorizedFailure(s"No ${`X-Auth-Token`} provided")))
+        case None => Result.fail[AuthCtx](UnauthorizedFailure(s"No ${`X-Auth-Token`} provided")).pure[F]
         case Some(header) =>
           authAlgebra.authenticate(AuthenticationToken(header.value)).map(Result.pure).recover {
-            case NonFatal(a: Anomaly) =>
-              Result.fail(a)
-            case NonFatal(a) =>
-              Result.failThr(a)
+            case NonFatal(a: Anomaly) => Result.fail(a)
+            case NonFatal(a) => Result.failThr(a)
           }
       }
     }

@@ -21,7 +21,7 @@ import pms.email._
   *
   */
 private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
-  private val config: GmailConfig
+  private val config: GmailConfig,
 ) extends EmailAlgebra[F] {
 
   import cats.implicits._
@@ -78,12 +78,12 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
 
     props.setProperty("mail.smtp.from", config.from)
 
-    props.put("mail.smtp.host",            config.host)
-    props.put("mail.smtp.port",            config.port.toString)
-    props.put("mail.smtp.user",            config.user)
-    props.put("mail.smtp.password",        config.password)
+    props.put("mail.smtp.host", config.host)
+    props.put("mail.smtp.port", config.port.toString)
+    props.put("mail.smtp.user", config.user)
+    props.put("mail.smtp.password", config.password)
     props.put("mail.smtp.starttls.enable", config.startTLS.toString)
-    props.put("mail.smtps.auth",           config.auth.toString)
+    props.put("mail.smtps.auth", config.auth.toString)
 
     Session.getInstance(props, null)
   }

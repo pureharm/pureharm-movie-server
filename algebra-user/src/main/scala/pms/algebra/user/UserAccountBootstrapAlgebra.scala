@@ -9,7 +9,7 @@ import cats.Applicative
   *
   */
 final class UserAccountBootstrapAlgebra[F[_]] private (
-  private val uca: UserAccountAlgebra[F]
+  private val uca: UserAccountAlgebra[F],
 ) {
 
   def bootstrapUser(reg: UserRegistration): F[UserRegistrationToken] =

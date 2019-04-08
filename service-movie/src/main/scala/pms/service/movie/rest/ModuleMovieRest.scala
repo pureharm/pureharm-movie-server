@@ -23,7 +23,7 @@ trait ModuleMovieRest[F[_]] { this: Module[F] with ModuleMovieService[F] with Mo
     } yield
       new MovieRestRoutes[F](
         imdbService  = imdb,
-        movieAlgebra = malb
+        movieAlgebra = malb,
       )
   }
 

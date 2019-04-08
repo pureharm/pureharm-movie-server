@@ -19,9 +19,9 @@ import org.http4s.dsl._
   *
   */
 final class UserAccountRoutes[F[_]](
-  private val userService: UserAccountService[F]
+  private val userService: UserAccountService[F],
 )(
-  implicit val F: Async[F]
+  implicit val F: Async[F],
 ) extends Http4sDsl[F] with UserRoutesJSON {
 
   private object RegistrationTokenMatcher extends QueryParamDecoderMatcher[String]("registrationToken")
@@ -63,7 +63,7 @@ final class UserAccountRoutes[F[_]](
     NonEmptyList
       .of[HttpRoutes[F]](
         userRegistrationStep2Routes,
-        userPasswordResetRoutes
+        userPasswordResetRoutes,
       )
       .reduceK
 

@@ -61,7 +61,7 @@ object UserRole {
     Newbie,
     Member,
     Curator,
-    SuperAdmin
+    SuperAdmin,
   )
 
   private lazy val nameToRole: Map[String, UserRole] =

@@ -24,6 +24,7 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
   /**
     * Lowest level of authorization, essentially anyone
     * who is logged in can perform the given op.
+    *
     * @param op
     *   The operation that we want to guard with
     *   certain user priviliges.
@@ -66,7 +67,7 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
   final protected[user] def authorizeGTERole[A](minRole: UserRole)(op: => F[A])(implicit auth: AuthCtx): F[A] =
     for {
       _ <- if (auth.user.role >= minRole) op
-          else monadError.raiseError(UnauthorizedFailure("User not authorized to perform this action"))
+      else monadError.raiseError(UnauthorizedFailure("User not authorized to perform this action"))
       result <- op
     } yield result
 }
