@@ -38,3 +38,4 @@ See this [tutorial]() on how to import the `pure-movie-server` once you cloned i
 install Docker [https://www.docker.com/get-started](https://www.docker.com/get-started)
 
 After installing docker, you can simply start a PostgreSQL server by running the script `./docker-postgresql.sh` from the root project folder. Once you start the server, it will connect to this database.
+

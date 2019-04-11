@@ -1,3 +1,9 @@
 options:
   - title: Getting Started
     url: docs/index.html
+
+  - title: Learning Scala
+    url: docs/scala.html
+
+  - title: Pure FP
+    url: docs/pure-fp.html
