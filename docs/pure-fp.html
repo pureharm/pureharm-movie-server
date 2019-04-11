@@ -1,0 +1,70 @@
+<html><head><title>pure-movie-server: Pure FP</title><meta charset="utf-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="docs" /><meta name="description" content="Example web server written in a pure functional programming style" /><meta name="og:image" content="/pure-movie-server/img/poster.png" /><meta name="og:title" content="pure-movie-server: Pure FP" /><meta name="og:site_name" content="pure-movie-server" /><meta name="og:url" content="http://busymachines.github.io/pure-movie-server/" /><meta name="og:type" content="website" /><meta name="og:description" content="Example web server written in a pure functional programming style" /><link rel="icon" type="image/png" href="/pure-movie-server/img/favicon.png" /><meta name="twitter:title" content="pure-movie-server: Pure FP" /><meta name="twitter:image" content="http://busymachines.github.io/pure-movie-server/img/poster.png" /><meta name="twitter:description" content="Example web server written in a pure functional programming style" /><meta name="twitter:card" content="summary_large_image" /><link rel="icon" type="image/png" sizes="16x16" href="/pure-movie-server/img/favicon16x16.png" /><link rel="icon" type="image/png" sizes="24x24" href="/pure-movie-server/img/favicon24x24.png" /><link rel="icon" type="image/png" sizes="32x32" href="/pure-movie-server/img/favicon32x32.png" /><link rel="icon" type="image/png" sizes="48x48" href="/pure-movie-server/img/favicon48x48.png" /><link rel="icon" type="image/png" sizes="57x57" href="/pure-movie-server/img/favicon57x57.png" /><link rel="icon" type="image/png" sizes="60x60" href="/pure-movie-server/img/favicon60x60.png" /><link rel="icon" type="image/png" sizes="64x64" href="/pure-movie-server/img/favicon64x64.png" /><link rel="icon" type="image/png" sizes="70x70" href="/pure-movie-server/img/favicon70x70.png" /><link rel="icon" type="image/png" sizes="72x72" href="/pure-movie-server/img/favicon72x72.png" /><link rel="icon" type="image/png" sizes="76x76" href="/pure-movie-server/img/favicon76x76.png" /><link rel="icon" type="image/png" sizes="96x96" href="/pure-movie-server/img/favicon96x96.png" /><link rel="icon" type="image/png" sizes="114x114" href="/pure-movie-server/img/favicon114x114.png" /><link rel="icon" type="image/png" sizes="120x120" href="/pure-movie-server/img/favicon120x120.png" /><link rel="icon" type="image/png" sizes="128x128" href="/pure-movie-server/img/favicon128x128.png" /><link rel="icon" type="image/png" sizes="144x144" href="/pure-movie-server/img/favicon144x144.png" /><link rel="icon" type="image/png" sizes="150x150" href="/pure-movie-server/img/favicon150x150.png" /><link rel="icon" type="image/png" sizes="152x152" href="/pure-movie-server/img/favicon152x152.png" /><link rel="icon" type="image/png" sizes="196x196" href="/pure-movie-server/img/favicon196x196.png" /><link rel="icon" type="image/png" sizes="310x310" href="/pure-movie-server/img/favicon310x310.png" /><link rel="icon" type="image/png" sizes="310x150" href="/pure-movie-server/img/favicon310x150.png" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /><link rel="stylesheet" href="/pure-movie-server/highlight/styles/atom-one-light.css" /><link rel="stylesheet" href="/pure-movie-server/css/style.css" /><link rel="stylesheet" href="/pure-movie-server/css/palette.css" /><link rel="stylesheet" href="/pure-movie-server/css/codemirror.css" /></head><body class="docs"><div id="wrapper"><div id="sidebar-wrapper"><ul id="sidebar" class="sidebar-nav"><li class="sidebar-brand"><a href="/pure-movie-server/" class="brand"><div class="brand-wrapper"><span>pure-movie-server</span></div></a></li> <li><a href="/pure-movie-server/docs/index.html" class="">Getting Started</a></li> <li><a href="/pure-movie-server/docs/scala.html" class="">Learning Scala</a></li> <li><a href="/pure-movie-server/docs/pure-fp.html" class=" active ">Pure FP</a></li></ul></div><div id="page-content-wrapper"><div class="nav"><div class="container-fluid"><div class="row"><div class="col-lg-12"><div class="action-menu pull-left clearfix"><a href="#menu-toggle" id="menu-toggle"><i class="fa fa-bars" aria-hidden="true"></i></a></div><ul class="pull-right"><li id="gh-eyes-item" class="hidden-xs"><a href="https://github.com/busymachines/pure-movie-server"><i class="fa fa-eye"></i><span>WATCH<span id="eyes" class="label label-default">--</span></span></a></li><li id="gh-stars-item" class="hidden-xs"><a href="https://github.com/busymachines/pure-movie-server"><i class="fa fa-star-o"></i><span>STARS<span id="stars" class="label label-default">--</span></span></a></li><li><a href="#" onclick="shareSiteTwitter('pure-movie-server Example web server written in a pure functional programming style');"><i class="fa fa-twitter"></i></a></li><li><a href="#" onclick="shareSiteFacebook('pure-movie-server Example web server written in a pure functional programming style');"><i class="fa fa-facebook"></i></a></li><li><a href="#" onclick="shareSiteGoogle();"><i class="fa fa-google-plus"></i></a></li></ul></div></div></div></div><div id="content" data-github-owner="busymachines" data-github-repo="pure-movie-server"><div class="content-wrapper"><section><h1 id="pure-fp-functional-programming">Pure FP (Functional Programming)</h1>
+
+<p>Once you’ve read the section on <a href="scala.html">Scala</a>, it’s time to better understand how the language can be used to actually do pure functional programming. For that, I guess, we need to start to understand what pure FP is.</p>
+
+<p>As a great introduction (of this short length) I highly recommend Alexandru Nedelcu’s s blog post <a href="https://alexn.org/blog/2017/10/15/functional-programming.html">“What is Functional Programming?”</a>.</p>
+
+<h2 id="some-concepts">Some concepts</h2>
+
+<p>There is some nomenclature that we keep using while talking about pure functional programming, and it’s important that you understand it.</p>
+
+<h3 id="referential-transparency">referential transparency</h3>
+<ul>
+  <li><a href="https://wiki.haskell.org/Referential_transparency">referential transparency</a> is one of the cornerstones of functional programming</li>
+  <li><a href="https://en.wikipedia.org/wiki/Pure_function#Pure_functions">purity</a> is sometimes used interchangeably with “referentially transparent” — justifiably so</li>
+</ul>
+
+<h3 id="effects">effects</h3>
+<ul>
+  <li>“effects are good, side-effects are bugs”, piece of wisdom from Rob Norris’s <a href="https://www.youtube.com/watch?v=po3wmq4S15A">scale.bythebay.io 2017 talk</a> ~min 17</li>
+</ul>
+
+<h3 id="side-effects">side-effects</h3>
+<ul>
+  <li>the very definition of necessary evil. They do not compose, they can quickly degenerate into spaghetti code that is ridiculously hard to reason about, but we need them because otherwise we’d just be using CPU power for nothing</li>
+  <li>the point is to contain them as much as possible, and rely on the good old trick “create a program that describes the side-effects” and then have an “interpreter” apply them</li>
+  <li>in the context of web-apps with some sort of HTTP api this means that for your entire request you just build up a program representing what to do in said request, and then, only once, interpret the program to yield the result and send it back over the network</li>
+</ul>
+
+<h3 id="typeclasses">typeclasses</h3>
+<ul>
+  <li><a href="https://blog.scalac.io/2017/04/19/typeclasses-in-scala.html">typeclasses</a> this is the way to encode typeclasses in Scala.</li>
+  <li><a href="https://github.com/circe/circe">circe</a>, the <code class="highlighter-rouge">json</code> serialization library. could not work beautifully without it, or serialization/deserialization in general, for that matter</li>
+</ul>
+
+<h3 id="cats">cats</h3>
+<ul>
+  <li><a href="https://github.com/typelevel/cats">cats</a> stands for “categories”</li>
+  <li>we rely on the extended <a href="https://github.com/typelevel">typelevel</a> ecosystem, of which <code class="highlighter-rouge">cats</code> is the core</li>
+  <li>you should definitely read the book <a href="https://underscore.io/training/courses/advanced-scala/">“Scala with Cats”</a> by Noel Walsh and David Gurnell</li>
+</ul>
+
+<h3 id="typeclass-derivation">typeclass derivation</h3>
+<ul>
+  <li>as a user of this library you don’t need to know how to do type-class derivation yourself. But it helps with debugging and avoiding hour-long blocks because you can’t get your code to compile</li>
+  <li>the de-facto way to do this in Scala is to use <a href="https://github.com/milessabin/shapeless">shapeless</a></li>
+  <li>an excellent book on shapeless is Dave Gurnell’s book <a href="https://underscore.io/training/courses/advanced-shapeless/">“The Type Astronaut’s Guide to Shapeless”</a></li>
+  <li>boiler-plate-less derivation is also routinely done via <a href="https://docs.scala-lang.org/overviews/macros/overview.html">def macros</a>. But the future of this language feature is as of yet slightly uncertain, and should be tracked within the <a href="http://scalameta.org/">scalameta</a> project. The future de-facto way of doing meta-programming in Scala.</li>
+</ul>
+
+<h2 id="things-to-avoid">Things to avoid</h2>
+
+<h3 id="scalas-standard-future">Scala’s standard ‘Future’</h3>
+
+<p>For modeling any computation that does side-effects, like database-access and so on. Which, unfortunately, in very popular libraries like <code class="highlighter-rouge">slick</code> is being done. A great shame too, because its pure <code class="highlighter-rouge">DBIOAction</code> could be easily interpreted into a pure effect instead of <code class="highlighter-rouge">Future</code>.</p>
+
+<p>To understand why you should avoid <code class="highlighter-rouge">Future</code>, see:</p>
+<ul>
+  <li><a href="https://www.reddit.com/r/scala/comments/3zofjl/why_is_future_totally_unusable/cyns21h/">@tpolecat’s answer why</a>!</li>
+  <li>while you can build decent applications that are almost pure using <code class="highlighter-rouge">Future</code>, you sacrifice a lot of composability and control over side-effects by doing it</li>
+  <li>you should use Scala’s <code class="highlighter-rouge">Future</code> only if you have no other choice, and are forced to by circumstance</li>
+  <li>as an alternative to <code class="highlighter-rouge">Future</code> you should consider something like <a href="https://github.com/monix/monix">monix.eval.Task</a> or <a href="https://github.com/typelevel/cats-effect">cats.effect.IO</a>. The modules <a href="/effects">effects-async</a> slightly eases the use of these</li>
+  <li><code class="highlighter-rouge">throw new Exception(...)</code> is an impure operation! Unless it is immediately captured in a <code class="highlighter-rouge">scala.util.Try</code>, <code class="highlighter-rouge">cats.effect.IO</code>, or <code class="highlighter-rouge">monix.eval.Task</code> you should not use it, and even then be skeptical of what you wrote. Prefer using <a href="/docs/result.html">Result[T]</a> to model “failure”</li>
+</ul>
+
+</section></div></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="/pure-movie-server/highlight/highlight.pack.js"></script><script>hljs.configure({
+languages:['scala','java','bash']
+});
+hljs.initHighlighting();
+             </script><script>((window.gitter = {}).chat = {}).options = {
+room: 'busymachines/pure-movie-server'};</script><script src="https://sidecar.gitter.im/dist/sidecar.v1.js"></script><script src="/pure-movie-server/js/main.js"></script></body></html>
