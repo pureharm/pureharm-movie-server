@@ -53,7 +53,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (
   ): F[UserRegistrationToken] =
     for {
       token      <- UserCrypto.generateToken(F)
-      scryptHash <- UserCrypto.hashPWWithScrypt(reg.pw)(F)
+      scryptHash <- UserCrypto.hashPWWithBcrypt(reg.pw)(F)
       repr = UserRepr(email = reg.email, pw = scryptHash, role = reg.role)
       _ <- insert(repr, UserRegistrationToken(token)).transact(transactor)
     } yield UserRegistrationToken(token)
@@ -74,7 +74,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (
 
   override def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit] =
     for {
-      hash <- UserCrypto.hashPWWithScrypt(newPassword)(F)
+      hash <- UserCrypto.hashPWWithBcrypt(newPassword)(F)
       _    <- changePassword(token, hash).transact(transactor)
     } yield ()
 
