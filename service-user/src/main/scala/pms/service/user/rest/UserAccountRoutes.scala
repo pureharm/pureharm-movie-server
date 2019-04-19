@@ -42,7 +42,6 @@ final class UserAccountRoutes[F[_]](
         user <- userService.registrationStep2(UserRegistrationToken(token))
         resp <- Ok(user)
       } yield resp
-    x
   }
 
   private val userPasswordResetRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
