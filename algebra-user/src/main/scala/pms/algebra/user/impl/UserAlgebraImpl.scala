@@ -59,11 +59,11 @@ final private[user] class UserAlgebraImpl[F[_]] private (
     } yield UserRegistrationToken(token)
 
   override def registrationStep2(token: UserRegistrationToken): F[User] =
-    updateRegToken(token)
+    updateRegToken(token) //FIXME: rework this to actually make sense.
       .transact(transactor)
       .map {
         case Some(value) => value
-        case None        => throw new Exception("User not found")
+        case None        => throw new Exception("User not found") //FIXME: flatMap + effect
       }
 
   override def resetPasswordStep1(email: Email): F[PasswordResetToken] =

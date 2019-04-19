@@ -29,9 +29,11 @@ final class UserAccountService[F[_]] private (
       _ <- forkAndForget {
         emailAlgebra.sendEmail(
           to      = reg.email,
+          //FIXME: resolve this data from an email content algebra or something
           subject = "User Registration on Pure Movie Server",
+          //FIXME: resolve this data from an email content algebra or something
           content = s"Please click this link to finish registration: [link_to_frontend]/$regToken",
-        )
+        )//FIXME: do recoverWith and at least delete the user registration if sending email fails.
       }
     } yield ()
 

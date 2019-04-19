@@ -35,6 +35,10 @@ trait ModulePureMovieServer[F[_]]
 
   override def imdbAlgebraConfig: IMDBAlgebraConfig
 
+  implicit override def timer: Timer[F]
+
+  implicit override def transactor: Transactor[F]
+
   def pureMovieServerRoutes: F[HttpRoutes[F]] = _pureMovieServerRoutes
 
   //we could delay this even more, but there is little point.
@@ -53,10 +57,9 @@ trait ModulePureMovieServer[F[_]]
       authed = NonEmptyList.of[AuthCtxRoutes[F]](umar, mmas).reduceK
 
       middleware <- authCtxMiddleware
+      toCombine: HttpRoutes[F] = middleware(authed)
     } yield {
-      /*_*/
-      routes <+> middleware(authed)
-      /*_*/
+      routes <+> toCombine
     }
 
   }
