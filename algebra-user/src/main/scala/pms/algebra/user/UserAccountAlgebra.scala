@@ -18,9 +18,9 @@ trait UserAccountAlgebra[F[_]] {
     reg: UserRegistration,
   )(
     implicit auth: AuthCtx,
-  ): F[UserRegistrationToken] = authAlgebra.authorizeGTERole(reg.role)(registrationStep1OP(reg))
+  ): F[UserRegistrationToken] = authAlgebra.authorizeGTERole(reg.role)(registrationStep1Impl(reg))
 
-  protected[user] def registrationStep1OP(reg: UserRegistration): F[UserRegistrationToken]
+  protected[user] def registrationStep1Impl(reg: UserRegistration): F[UserRegistrationToken]
 
   def registrationStep2(token: UserRegistrationToken): F[User]
 

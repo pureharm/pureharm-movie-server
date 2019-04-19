@@ -48,7 +48,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (
   override protected[user] def promoteUserOP(id: UserID, newRole: UserRole): F[Unit] =
     updateRole(id, newRole).transact(transactor).map(_ => ())
 
-  override protected[user] def registrationStep1OP(
+  override protected[user] def registrationStep1Impl(
     reg: UserRegistration,
   ): F[UserRegistrationToken] =
     for {
