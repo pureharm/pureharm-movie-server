@@ -6,7 +6,7 @@ import pms.effects._
 import pms.core._
 import pms.algebra.user._
 
-import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import pms.logger._
 
 /**
   *
@@ -23,7 +23,7 @@ sealed abstract class ServerBootstrapAlgebra[F[_]](
   implicit val F: Sync[F],
 ) {
 
-  private val logger = Slf4jLogger.unsafeCreate[F]
+  private val logger = PMSLogger.getLogger[F]
 
   final def bootStrapSuperAdmin(email: Email, pw: PlainTextPassword): F[User] =
     bootStrapUser(email, pw, UserRole.SuperAdmin)
