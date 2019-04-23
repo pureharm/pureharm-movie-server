@@ -137,7 +137,7 @@ lazy val `service-movie` = project
     `pms-http`,
   )
 
-lazy val `algebra-http-sec` = project
+lazy val `algebra-http-sec` = (project in file("algebras/http-sec"))
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -160,7 +160,7 @@ lazy val `algebra-http-sec` = project
     `algebra-user`,
   )
 
-lazy val `algebra-imdb` = project
+lazy val `algebra-imdb` = (project in file("algebras/imdb"))
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -182,7 +182,7 @@ lazy val `algebra-imdb` = project
     `pms-core`,
   )
 
-lazy val `algebra-movie` = project
+lazy val `algebra-movie` = (project in file("algebras/movie"))
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -206,7 +206,7 @@ lazy val `algebra-movie` = project
     `pms-db`,
   )
 
-lazy val `algebra-user` = project
+lazy val `algebra-user` = (project in file("algebras/user"))
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -229,7 +229,7 @@ lazy val `algebra-user` = project
     `pms-db`,
   )
 
-lazy val `pms-db` = project
+lazy val `pms-db` = (project in file("pms-utils/db"))
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -243,7 +243,7 @@ lazy val `pms-db` = project
   .aggregate(
     `pms-effects`,
   )
-lazy val `pms-email` = project
+lazy val `pms-email` = (project in file("pms-utils/email"))
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -265,7 +265,7 @@ lazy val `pms-email` = project
     `pms-config`,
   )
 
-lazy val `pms-http` = project
+lazy val `pms-http` = (project in file("pms-utils/http"))
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -284,7 +284,7 @@ lazy val `pms-http` = project
     `pms-json`,
   )
 
-lazy val `pms-json` = project
+lazy val `pms-json` = (project in file("pms-utils/json"))
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -301,7 +301,7 @@ lazy val `pms-json` = project
     `pms-effects`,
   )
 
-lazy val `pms-db-config` = project
+lazy val `pms-db-config` = (project in file("pms-utils/db-config"))
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -319,7 +319,7 @@ lazy val `pms-db-config` = project
     `pms-effects`,
   )
 
-lazy val `pms-config` = project
+lazy val `pms-config` = (project in file("pms-utils/config"))
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -334,7 +334,7 @@ lazy val `pms-config` = project
     `pms-effects`,
   )
 
-lazy val `pms-logger` = project
+lazy val `pms-logger` = (project in file("pms-utils/logger"))
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -350,7 +350,7 @@ lazy val `pms-logger` = project
     `pms-effects`,
   )
 
-lazy val `pms-core` = project
+lazy val `pms-core` = (project in file("pms-utils/core"))
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -369,7 +369,7 @@ lazy val `pms-core` = project
     `pms-effects`,
   )
 
-lazy val `pms-effects` = project
+lazy val `pms-effects` = (project in file("pms-utils/effects"))
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
