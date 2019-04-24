@@ -37,7 +37,15 @@ trait UserRoutesJSON extends PMSJson {
     decode = Decoder.apply[String].map(AuthenticationToken.spook),
   )
 
+  //FIXME: derive automatically
+  implicit val invitationTokenCirceCodec: Codec[UserRegistrationToken] = Codec.instance(
+    encode = Encoder.apply[String].contramap(UserRegistrationToken.despook),
+    decode = Decoder.apply[String].map(UserRegistrationToken.spook),
+  )
+
   implicit val userInvitationCirceCodec: Codec[UserInvitation] = derive.codec[UserInvitation]
+
+  implicit val userConfirmationCirceCodec: Codec[UserConfirmation] = derive.codec[UserConfirmation]
 
   implicit val userCirceCodec: Codec[User] = derive.codec[User]
 

@@ -80,16 +80,6 @@ private[impl] object UserAlgebraSQL {
       }
     } yield user
 
-  //FIXME: instead of None when registration token doesn't exist, return an
-  //FIXME: "InvalidRegistrationToken" or something.
-  def updateRegToken(token: UserRegistrationToken): ConnectionIO[Option[User]] = {
-    for {
-      userOpt <- findByRegToken(token)
-      user    <- userOpt.liftTo[ConnectionIO](InvalidInputFailure("Invalid registration token"))
-      _       <- updateRegistrationToken(user.id, token)
-    } yield Option(user)
-  }
-
   def insertToken(findUser: => ConnectionIO[Option[User]], token: AuthenticationToken): ConnectionIO[Option[User]] =
     for {
       user <- findUser

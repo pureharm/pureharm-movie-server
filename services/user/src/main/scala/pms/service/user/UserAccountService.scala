@@ -37,9 +37,9 @@ final class UserAccountService[F[_]] private (
       }
     } yield ()
 
-  def registrationStep2(token: UserRegistrationToken): F[User] =
+  def registrationStep2(conf: UserConfirmation): F[User] =
     for {
-      user <- userAccount.registrationStep2(token)
+      user <- userAccount.registrationStep2(conf.invitationToken, conf.plainTextPassword)
     } yield user
 
   def resetPasswordStep1(email: Email): F[Unit] =

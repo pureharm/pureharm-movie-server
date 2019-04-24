@@ -61,13 +61,14 @@ final private[user] class UserAlgebraImpl[F[_]] private (
       _ <- UserInvitationSQL.insert(toInsert).transact(transactor)
     } yield token
 
-  override def registrationStep2(token: UserRegistrationToken): F[User] =
-    updateRegToken(token) //FIXME: rework this to actually make sense.
-      .transact(transactor)
-      .map {
-        case Some(value) => value
-        case None        => throw new Exception("User not found") //FIXME: flatMap + effect
-      }
+  override def registrationStep2(token: UserRegistrationToken, pw: PlainTextPassword): F[User] =
+    ???
+//    updateRegToken(token) //FIXME: rework this to actually make sense.
+//      .transact(transactor)
+//      .map {
+//        case Some(value) => value
+//        case None        => throw new Exception("User not found") //FIXME: flatMap + effect
+//      }
 
   override def resetPasswordStep1(email: Email): F[PasswordResetToken] =
     for {

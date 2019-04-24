@@ -22,7 +22,7 @@ trait UserAccountAlgebra[F[_]] {
 
   protected[user] def registrationStep1Impl(inv: UserInvitation): F[UserRegistrationToken]
 
-  def registrationStep2(token: UserRegistrationToken): F[User]
+  def registrationStep2(token: UserRegistrationToken, pw: PlainTextPassword): F[User]
 
   def resetPasswordStep1(email: Email): F[PasswordResetToken]
 
