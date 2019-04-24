@@ -29,14 +29,14 @@ sealed abstract class ServerBootstrapAlgebra[F[_]](
     bootStrapUser(email, pw, UserRole.SuperAdmin)
 
   final def bootStrapUser(email: Email, pw: PlainTextPassword, role: UserRole): F[User] =
-    this.bootStrapUser(UserRegistration(email, pw, role))
+    this.bootStrapUser(UserInvitation(email, pw, role))
 
-  final def bootStrapUser(reg: UserRegistration): F[User] =
+  final def bootStrapUser(inv: UserInvitation): F[User] =
     for {
-      token <- uba.bootstrapUser(reg)
+      token <- uba.bootstrapUser(inv)
       user  <- uca.registrationStep2(token)
       _ <- logger.info(
-        s"BOOTSTRAP — inserting user: role=${reg.role.productPrefix} email=${reg.email.plainTextEmail} pw=${reg.pw.plainText}",
+        s"BOOTSTRAP — inserting user: role=${inv.role.productPrefix} email=${inv.email.plainTextEmail} pw=${inv.pw.plainText}",
       )
     } yield user
 }

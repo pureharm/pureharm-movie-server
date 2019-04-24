@@ -30,7 +30,7 @@ final class UserAccountRoutes[F[_]](
   private val userRegistrationStep1Routes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {
     case (req @ POST -> Root / "user_registration") as user =>
       for {
-        reg  <- req.as[UserRegistration]
+        reg  <- req.as[UserInvitation]
         _    <- userService.registrationStep1(reg)(user)
         resp <- Created()
       } yield resp

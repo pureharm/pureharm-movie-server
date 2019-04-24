@@ -49,12 +49,12 @@ final private[user] class UserAlgebraImpl[F[_]] private (
     updateRole(id, newRole).transact(transactor).map(_ => ())
 
   override protected[user] def registrationStep1Impl(
-    reg: UserRegistration,
+    inv: UserInvitation,
   ): F[UserRegistrationToken] =
     for {
       token      <- UserCrypto.generateToken(F)
-      scryptHash <- UserCrypto.hashPWWithBcrypt(reg.pw)(F)
-      repr = UserRepr(email = reg.email, pw = scryptHash, role = reg.role)
+      scryptHash <- UserCrypto.hashPWWithBcrypt(inv.pw)(F)
+      repr = UserRepr(email = inv.email, pw = scryptHash, role = inv.role)
       _ <- insert(repr, UserRegistrationToken(token)).transact(transactor)
     } yield UserRegistrationToken(token)
 

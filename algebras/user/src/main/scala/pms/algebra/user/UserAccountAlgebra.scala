@@ -15,12 +15,12 @@ trait UserAccountAlgebra[F[_]] {
   protected def authAlgebra:         UserAuthAlgebra[F]
 
   final def registrationStep1(
-    reg: UserRegistration,
+    inv: UserInvitation,
   )(
     implicit auth: AuthCtx,
-  ): F[UserRegistrationToken] = authAlgebra.authorizeGTERole(reg.role)(registrationStep1Impl(reg))
+  ): F[UserRegistrationToken] = authAlgebra.authorizeGTERole(inv.role)(registrationStep1Impl(inv))
 
-  protected[user] def registrationStep1Impl(reg: UserRegistration): F[UserRegistrationToken]
+  protected[user] def registrationStep1Impl(inv: UserInvitation): F[UserRegistrationToken]
 
   def registrationStep2(token: UserRegistrationToken): F[User]
 

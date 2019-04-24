@@ -37,7 +37,7 @@ trait UserRoutesJSON extends PMSJson {
     decode = Decoder.apply[String].map(AuthenticationToken.spook),
   )
 
-  implicit val userRegistrationCirceCodec: Codec[UserRegistration] = derive.codec[UserRegistration]
+  implicit val userInvitationCirceCodec: Codec[UserInvitation] = derive.codec[UserInvitation]
 
   implicit val userCirceCodec: Codec[User] = derive.codec[User]
 
