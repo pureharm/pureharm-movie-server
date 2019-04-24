@@ -72,7 +72,7 @@ lazy val `server-bootstrap` = project
     `algebra-user`,
   )
 
-lazy val `service-user` = project
+lazy val `service-user` = serviceProject("user")
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -103,7 +103,7 @@ lazy val `service-user` = project
     `pms-http`,
   )
 
-lazy val `service-movie` = project
+lazy val `service-movie` = serviceProject("movie")
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
@@ -137,9 +137,7 @@ lazy val `service-movie` = project
     `pms-http`,
   )
 
-lazy val `algebra-http-sec` = (project in file("algebras/http-sec"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
+lazy val `algebra-http-sec` = algebraProject("http-sec")
   .settings(
     libraryDependencies ++= Seq(
       specs2Test,
@@ -160,9 +158,7 @@ lazy val `algebra-http-sec` = (project in file("algebras/http-sec"))
     `algebra-user`,
   )
 
-lazy val `algebra-imdb` = (project in file("algebras/imdb"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
+lazy val `algebra-imdb` = algebraProject("imdb")
   .settings(
     libraryDependencies ++= Seq(
       scalaScrapper,
@@ -182,9 +178,7 @@ lazy val `algebra-imdb` = (project in file("algebras/imdb"))
     `pms-core`,
   )
 
-lazy val `algebra-movie` = (project in file("algebras/movie"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
+lazy val `algebra-movie` = algebraProject("movie")
   .settings(
     libraryDependencies ++= Seq(
       spire,
@@ -206,9 +200,7 @@ lazy val `algebra-movie` = (project in file("algebras/movie"))
     `pms-db`,
   )
 
-lazy val `algebra-user` = (project in file("algebras/user"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
+lazy val `algebra-user` = algebraProject("user")
   .settings(
     libraryDependencies ++= Seq(
       specs2Test,
@@ -229,9 +221,7 @@ lazy val `algebra-user` = (project in file("algebras/user"))
     `pms-db`,
   )
 
-lazy val `pms-db` = (project in file("pms-utils/db"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
+lazy val `pms-db` = utilProject("db")
   .settings(
     libraryDependencies ++= Seq(
       specs2Test,
@@ -243,9 +233,7 @@ lazy val `pms-db` = (project in file("pms-utils/db"))
   .aggregate(
     `pms-effects`,
   )
-lazy val `pms-email` = (project in file("pms-utils/email"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
+lazy val `pms-email` = utilProject("email")
   .settings(
     libraryDependencies ++= Seq(
       javaxMail,
@@ -265,9 +253,7 @@ lazy val `pms-email` = (project in file("pms-utils/email"))
     `pms-config`,
   )
 
-lazy val `pms-http` = (project in file("pms-utils/http"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
+lazy val `pms-http` = utilProject("http")
   .settings(
     libraryDependencies ++= Seq(
       specs2Test,
@@ -284,9 +270,7 @@ lazy val `pms-http` = (project in file("pms-utils/http"))
     `pms-json`,
   )
 
-lazy val `pms-json` = (project in file("pms-utils/json"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
+lazy val `pms-json` = utilProject("json")
   .settings(
     libraryDependencies ++= Seq(
       bmcJson,
@@ -301,9 +285,7 @@ lazy val `pms-json` = (project in file("pms-utils/json"))
     `pms-effects`,
   )
 
-lazy val `pms-db-config` = (project in file("pms-utils/db-config"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
+lazy val `pms-db-config` = utilProject("db-config")
   .settings(
     libraryDependencies ++= Seq(
       doobieCore,
@@ -319,9 +301,7 @@ lazy val `pms-db-config` = (project in file("pms-utils/db-config"))
     `pms-effects`,
   )
 
-lazy val `pms-config` = (project in file("pms-utils/config"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
+lazy val `pms-config` = utilProject("config")
   .settings(
     libraryDependencies ++= Seq(
       pureConfig,
@@ -334,9 +314,7 @@ lazy val `pms-config` = (project in file("pms-utils/config"))
     `pms-effects`,
   )
 
-lazy val `pms-logger` = (project in file("pms-utils/logger"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
+lazy val `pms-logger` = utilProject("logger")
   .settings(
     libraryDependencies ++= Seq(
       log4cats,
@@ -350,9 +328,7 @@ lazy val `pms-logger` = (project in file("pms-utils/logger"))
     `pms-effects`,
   )
 
-lazy val `pms-core` = (project in file("pms-utils/core"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
+lazy val `pms-core` = utilProject("core")
   .settings(
     libraryDependencies ++= Seq(
       shapeless,
@@ -369,9 +345,7 @@ lazy val `pms-core` = (project in file("pms-utils/core"))
     `pms-effects`,
   )
 
-lazy val `pms-effects` = (project in file("pms-utils/effects"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
+lazy val `pms-effects` = utilProject("effects")
   .settings(
     libraryDependencies ++= cats ++ Seq(
       catsEffect,
@@ -424,6 +398,16 @@ lazy val docs = project
 
 //=============================================================================
 //=============================================================================
+
+
+def genericProject(id: String,folder: String, name:String): Project =
+  Project(s"$id-$name",file(s"$folder/$name"))
+  .settings(commonSettings)
+  .settings(sbtAssemblySettings)
+
+def algebraProject(name: String): Project = genericProject("algebra","algebras",name)
+def utilProject(name:String): Project = genericProject("pms","pms-utils",name)
+def serviceProject(name:String) :Project = genericProject("service","services",name)
 
 def commonSettings: Seq[Setting[_]] = Seq(
   scalaVersion := "2.12.8",
