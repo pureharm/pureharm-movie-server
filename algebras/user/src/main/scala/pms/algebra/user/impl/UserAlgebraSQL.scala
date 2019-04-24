@@ -1,9 +1,9 @@
 package pms.algebra.user.impl
 
+import busymachines.core.InvalidInputFailure
 import doobie._
 import doobie.implicits._
 import cats.implicits._
-
 import pms.algebra.user._
 import pms.core._
 import pms.effects._
@@ -100,22 +100,26 @@ private[impl] object UserAlgebraSQL {
       userId <- findByAuthToken(token)
       user <- userId match {
         case Some(value) => find(UserID(value))
-        case None        => throw new Exception("Unauthorized") //FIXME: replace with proper error
+        case None        => throw new Exception("Unauthorized") //FIXME: replace with proper error, DO NOT THROW!
       }
     } yield user
 
-  def updateRegToken(token: UserRegistrationToken): ConnectionIO[Option[User]] =
+  //FIXME: instead of None when registration token doesn't exist, return an
+  //FIXME: "InvalidRegistrationToken" or something.
+  def updateRegToken(token: UserRegistrationToken): ConnectionIO[Option[User]] = {
     for {
-      user <- findByRegToken(token)
-      _    <- updateRegistrationToken(user.get.id, token)
-    } yield user
+      userOpt <- findByRegToken(token)
+      user    <- userOpt.liftTo[ConnectionIO](InvalidInputFailure("Invalid registration token"))
+      _       <- updateRegistrationToken(user.id, token)
+    } yield Option(user)
+  }
 
   def insertToken(findUser: => ConnectionIO[Option[User]], token: AuthenticationToken): ConnectionIO[Option[User]] =
     for {
       user <- findUser
       _ <- user match {
         case Some(value) => insertAuthenticationToken(value.id, token)
-        case None        => throw new Exception("Unauthorized")
+        case None        => throw new Exception("Unauthorized") //FIXME: replace with proper error, DO NOT THROW!
       }
     } yield user
 

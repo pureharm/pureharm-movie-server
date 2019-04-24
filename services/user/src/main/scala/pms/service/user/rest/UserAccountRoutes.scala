@@ -26,6 +26,7 @@ final class UserAccountRoutes[F[_]](
 
   private object RegistrationTokenMatcher extends QueryParamDecoderMatcher[String]("registrationToken")
 
+  //FIXME: rename this to UserInvitation, all the way down
   private val userRegistrationStep1Routes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {
     case (req @ POST -> Root / "user_registration") as user =>
       for {

@@ -13,7 +13,7 @@ final class UserAccountBootstrapAlgebra[F[_]] private (
 ) {
 
   def bootstrapUser(reg: UserRegistration): F[UserRegistrationToken] =
-    uca.registrationStep1OP(reg)
+    uca.registrationStep1Impl(reg)
 }
 
 object UserAccountBootstrapAlgebra {

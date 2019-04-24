@@ -48,22 +48,22 @@ final private[user] class UserAlgebraImpl[F[_]] private (
   override protected[user] def promoteUserOP(id: UserID, newRole: UserRole): F[Unit] =
     updateRole(id, newRole).transact(transactor).map(_ => ())
 
-  override protected[user] def registrationStep1OP(
+  override protected[user] def registrationStep1Impl(
     reg: UserRegistration,
   ): F[UserRegistrationToken] =
     for {
       token      <- UserCrypto.generateToken(F)
-      scryptHash <- UserCrypto.hashPWWithScrypt(reg.pw)(F)
+      scryptHash <- UserCrypto.hashPWWithBcrypt(reg.pw)(F)
       repr = UserRepr(email = reg.email, pw = scryptHash, role = reg.role)
       _ <- insert(repr, UserRegistrationToken(token)).transact(transactor)
     } yield UserRegistrationToken(token)
 
   override def registrationStep2(token: UserRegistrationToken): F[User] =
-    updateRegToken(token)
+    updateRegToken(token) //FIXME: rework this to actually make sense.
       .transact(transactor)
       .map {
         case Some(value) => value
-        case None        => throw new Exception("User not found")
+        case None        => throw new Exception("User not found") //FIXME: flatMap + effect
       }
 
   override def resetPasswordStep1(email: Email): F[PasswordResetToken] =
@@ -74,7 +74,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (
 
   override def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit] =
     for {
-      hash <- UserCrypto.hashPWWithScrypt(newPassword)(F)
+      hash <- UserCrypto.hashPWWithBcrypt(newPassword)(F)
       _    <- changePassword(token, hash).transact(transactor)
     } yield ()
 

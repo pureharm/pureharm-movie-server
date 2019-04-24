@@ -32,7 +32,7 @@ private[impl] object UserCrypto {
       token  <- JWTMac.buildToString[F, HMACSHA256](claims, key)
     } yield token
 
-  private[impl] def hashPWWithScrypt[F[_]: Sync](ptpw: PlainTextPassword): F[BcryptPW] =
+  private[impl] def hashPWWithBcrypt[F[_]: Sync](ptpw: PlainTextPassword): F[BcryptPW] =
     BCrypt.hashpw[F](ptpw.plainText)
 
   private[impl] def checkUserPassword[F[_]: Sync](p: String, hash: UserCrypto.BcryptPW): F[Boolean] = {

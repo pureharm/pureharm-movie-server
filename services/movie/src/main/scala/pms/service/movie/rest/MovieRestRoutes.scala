@@ -61,7 +61,6 @@ final private[rest] class MovieRestRoutes[F[_]](
     }
   }
 
-  /*_*/
   val authedRoutes: AuthCtxRoutes[F] = imdbImportRoutes <+> movieRoutes
-  /*_*/
+
 }
