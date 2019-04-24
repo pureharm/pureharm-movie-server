@@ -25,6 +25,14 @@ private[impl] object UserCrypto {
   type BcryptPW = PasswordHash[BCrypt]
   def BcryptPW(pt: String): BcryptPW = PasswordHash[BCrypt](pt)
 
+  //FIXME: modify this to be able to tell it to generate one of the three specific tokens
+  /**
+    * Ideally, I'd want to write something like this:
+    * {{{
+    *   UserCrypto.generateToken[F, AuthenticationToken]
+    * }}}
+    *
+    */
   private[impl] def generateToken[F[_]: Sync]: F[String] =
     for {
       key    <- HMACSHA256.generateKey[F]
