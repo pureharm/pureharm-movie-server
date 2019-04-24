@@ -19,24 +19,23 @@ private[impl] object UserInvitationSQL {
   /*_*/
 
   final case class UserInvitationRepr(
-    email:           Email,
-    role:            UserRole,
-    invitationToken: UserRegistrationToken,
+                                       email:           Email,
+                                       role:            UserRole,
+                                       invitationToken: UserInviteToken,
   )
 
   implicit val userReprComposite: Read[UserInvitationRepr] =
-    Read[(Email, UserRole, UserRegistrationToken)]
-      .map((t: (Email, UserRole, UserRegistrationToken)) => UserInvitationRepr.tupled.apply(t): UserInvitationRepr)
+    Read[(Email, UserRole, UserInviteToken)]
+      .map((t: (Email, UserRole, UserInviteToken)) => UserInvitationRepr.tupled.apply(t): UserInvitationRepr)
 
   def insert(repr: UserInvitationRepr): ConnectionIO[Unit] =
     sql"""INSERT INTO user_invitation(email, role, registration) VALUES (${repr.email}, ${repr.role}, ${repr.invitationToken})""".update.run.void
 
-  def findByToken(token: UserRegistrationToken): ConnectionIO[Option[UserInvitationRepr]] =
+  def findByToken(token: UserInviteToken): ConnectionIO[Option[UserInvitationRepr]] =
     sql"""SELECT email, role, registration FROM user_invitation WHERE registration=$token"""
       .query[UserInvitationRepr]
       .option
 
-  def deleteByToken(tok: UserRegistrationToken): ConnectionIO[Unit] =
-    sql"""DELETE * FROM user_invitation WHERE registration=$tok""".update.run.void
-
+  def deleteByToken(tok: UserInviteToken): ConnectionIO[Unit] =
+    sql"""DELETE FROM user_invitation WHERE registration=$tok""".update.run.void
 }

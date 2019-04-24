@@ -1,6 +1,6 @@
 package pms.service.user
 
-import pms.algebra.user.UserRegistrationToken
+import pms.algebra.user.UserInviteToken
 import pms.core.PlainTextPassword
 
 /**
@@ -10,6 +10,6 @@ import pms.core.PlainTextPassword
   *
   */
 final case class UserConfirmation(
-  invitationToken:   UserRegistrationToken,
-  plainTextPassword: PlainTextPassword,
+                                   invitationToken:   UserInviteToken,
+                                   plainTextPassword: PlainTextPassword,
 )

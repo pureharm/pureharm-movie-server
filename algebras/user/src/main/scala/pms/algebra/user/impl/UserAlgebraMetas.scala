@@ -19,7 +19,7 @@ private[impl] object UserAlgebraMetas {
   implicit val authenticationTokenMeta: Meta[AuthenticationToken] =
     Meta[String].imap(AuthenticationToken.spook)(AuthenticationToken.despook)
 
-  implicit val userRegistrationTokenMeta: Meta[UserRegistrationToken] =
+  implicit val userRegistrationTokenMeta: Meta[UserInviteToken] =
     Meta[String].imap(UserRegistrationToken.spook)(UserRegistrationToken.despook)
 
   implicit val passwordResetTokenMeta: Meta[PasswordResetToken] =

@@ -50,7 +50,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (
 
   override protected[user] def registrationStep1Impl(
     inv: UserInvitation,
-  ): F[UserRegistrationToken] =
+  ): F[UserInviteToken] =
     for {
       token <- UserCrypto.generateToken(F).map(UserRegistrationToken.spook)
       toInsert = UserInvitationSQL.UserInvitationRepr(
@@ -61,7 +61,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (
       _ <- UserInvitationSQL.insert(toInsert).transact(transactor)
     } yield token
 
-  override def registrationStep2(token: UserRegistrationToken, pw: PlainTextPassword): F[User] = {
+  override def registrationStep2(token: UserInviteToken, pw: PlainTextPassword): F[User] = {
     val cio: ConnectionIO[User] = for {
       invite <- UserInvitationSQL.findByToken(token).flatMap { opt =>
         opt.liftTo[ConnectionIO](new RuntimeException("No user invitation found"))

@@ -13,7 +13,7 @@ package object user {
   type UserID = UserID.Type
 
   object UserRegistrationToken extends PhantomType[String]
-  type UserRegistrationToken = UserRegistrationToken.Type
+  type UserInviteToken = UserRegistrationToken.Type
 
   object PasswordResetToken extends PhantomType[String]
   type PasswordResetToken = PasswordResetToken.Type

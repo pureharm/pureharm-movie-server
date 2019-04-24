@@ -12,7 +12,7 @@ final class UserAccountBootstrapAlgebra[F[_]] private (
   private val uca: UserAccountAlgebra[F],
 ) {
 
-  def bootstrapUser(inv: UserInvitation): F[UserRegistrationToken] =
+  def bootstrapUser(inv: UserInvitation): F[UserInviteToken] =
     uca.registrationStep1Impl(inv)
 }
 
