@@ -399,15 +399,14 @@ lazy val docs = project
 //=============================================================================
 //=============================================================================
 
+def genericProject(id: String, folder: String, name: String): Project =
+  Project(s"$id-$name", file(s"$folder/$name"))
+    .settings(commonSettings)
+    .settings(sbtAssemblySettings)
 
-def genericProject(id: String,folder: String, name:String): Project =
-  Project(s"$id-$name",file(s"$folder/$name"))
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
-
-def algebraProject(name: String): Project = genericProject("algebra","algebras",name)
-def utilProject(name:String): Project = genericProject("pms","pms-utils",name)
-def serviceProject(name:String) :Project = genericProject("service","services",name)
+def algebraProject(name: String): Project = genericProject("algebra", "algebras", name)
+def utilProject(name:    String): Project = genericProject("pms", "pms-utils", name)
+def serviceProject(name: String): Project = genericProject("service", "services", name)
 
 def commonSettings: Seq[Setting[_]] = Seq(
   scalaVersion := "2.12.8",
