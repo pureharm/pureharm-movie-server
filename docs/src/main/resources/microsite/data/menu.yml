@@ -7,3 +7,6 @@ options:
 
   - title: Pure FP
     url: docs/pure-fp.html
+
+  - title: Contributors
+    url: docs/contributors.html
