@@ -5,7 +5,6 @@ import doobie.implicits._
 import cats.implicits._
 import pms.algebra.user._
 import pms.core._
-import pms.effects._
 
 /**
   *
