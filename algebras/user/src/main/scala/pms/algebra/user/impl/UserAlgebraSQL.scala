@@ -1,6 +1,5 @@
 package pms.algebra.user.impl
 
-import busymachines.core.InvalidInputFailure
 import doobie._
 import doobie.implicits._
 import cats.implicits._
@@ -63,9 +62,10 @@ private[impl] object UserAlgebraSQL {
   def findByPwdToken(token: PasswordResetToken): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE passwordReset=$token""".query[User].option
 
-  def insert(repr: UserRepr, token: UserRegistrationToken): ConnectionIO[Long] = {
-    sql"""INSERT INTO users(email, password, role, registration) VALUES (${repr.email}, ${repr.pw.toString}, ${repr.role}, $token)""".update
+  def insert(repr: UserRepr): ConnectionIO[UserID] = {
+    sql"""INSERT INTO users(email, password, role) VALUES (${repr.email}, ${repr.pw.toString}, ${repr.role})""".update
       .withUniqueGeneratedKeys[Long]("id")
+      .map(UserID.spook)
   }
 
   def insertAuthenticationToken(id: UserID, token: AuthenticationToken): ConnectionIO[Long] =

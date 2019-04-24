@@ -18,4 +18,8 @@ private[impl] object UserInvitationSQL {
   )
   def insert(inv: UserInvitationRepr): ConnectionIO[Unit] = ???
 
+  def findByToken(tok: UserRegistrationToken): ConnectionIO[Option[UserInvitationRepr]] = ???
+
+  def deleteByToken(tok: UserRegistrationToken): ConnectionIO[Unit] = ???
+
 }
