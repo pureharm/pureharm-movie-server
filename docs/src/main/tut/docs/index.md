@@ -5,7 +5,7 @@ title: Getting Started
 
 # Getting Started
 
-### 1. grabing the code
+### 1. grabbing the code
 
 install `git`  by following:
 [https://git-scm.com/book/en/v2/Getting-Started-Installing-Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
