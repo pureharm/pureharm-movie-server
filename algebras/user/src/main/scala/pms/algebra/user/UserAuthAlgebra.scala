@@ -29,7 +29,7 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
     *   The operation that we want to guard with
     *   certain user priviliges.
     */
-  final def authorize[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
+  final def authorizeNewbie[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
     authorizeGTERole(UserRole.Newbie)(op)
 
   /**
