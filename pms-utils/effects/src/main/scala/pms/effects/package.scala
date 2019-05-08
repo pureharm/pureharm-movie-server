@@ -16,7 +16,7 @@ package object effects
     with TrySyntax.Implicits with TrySyntaxAsync.Implcits with EitherSyntax.Implicits with EitherSyntaxAsync.Implcits
     with ResultTypeDefinitions with ResultCompanionAliases with ResultSyntax.Implicits with ResultSyntaxAsync.Implcits
     with FutureTypeDefinitions with FutureSyntax.Implicits with IOTypeDefinitions with IOSyntax.Implicits
-    with TaskTypeDefinitions with TaskSyntax.Implicits {
+    with TaskTypeDefinitions with TaskSyntax.Implicits with EffectsSyntax.Implicits {
 
   type NonEmptyList[A] = cats.data.NonEmptyList[A]
   @inline def NonEmptyList: cats.data.NonEmptyList.type = cats.data.NonEmptyList
@@ -53,5 +53,4 @@ package object effects
   @inline def Applicative: cats.Applicative.type = cats.Applicative
 
   object validated extends ValidatedTypeDefinitions with ValidatedSyntax.Implicits with ValidatedSyntaxAsync.Implcits
-
 }
