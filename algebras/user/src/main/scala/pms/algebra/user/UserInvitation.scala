@@ -8,8 +8,7 @@ import pms.core._
   * @since 26 Jun 2018
   *
   */
-final case class UserRegistration(
+final case class UserInvitation(
   email: Email,
-  pw:    PlainTextPassword,
   role:  UserRole,
 )

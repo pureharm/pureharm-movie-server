@@ -23,23 +23,23 @@ final class UserAccountService[F[_]] private (
   implicit private val F: Concurrent[F],
 ) {
 
-  def registrationStep1(reg: UserRegistration)(implicit authCtx: AuthCtx): F[Unit] =
+  def registrationStep1(inv: UserInvitation)(implicit authCtx: AuthCtx): F[Unit] =
     for {
-      regToken <- userAccount.registrationStep1(reg)
+      regToken <- userAccount.registrationStep1(inv)
       _ <- forkAndForget {
         emailAlgebra.sendEmail(
-          to      = reg.email,
+          to = inv.email,
           //FIXME: resolve this data from an email content algebra or something
-          subject = "User Registration on Pure Movie Server",
+          subject = s"You have been invited to join Pure Movie Server as a :${inv.role.productPrefix}",
           //FIXME: resolve this data from an email content algebra or something
           content = s"Please click this link to finish registration: [link_to_frontend]/$regToken",
-        )//FIXME: do recoverWith and at least delete the user registration if sending email fails.
+        ) //FIXME: do recoverWith and at least delete the user registration if sending email fails.
       }
     } yield ()
 
-  def registrationStep2(token: UserRegistrationToken): F[User] =
+  def registrationStep2(conf: UserConfirmation): F[User] =
     for {
-      user <- userAccount.registrationStep2(token)
+      user <- userAccount.registrationStep2(conf.invitationToken, conf.plainTextPassword)
     } yield user
 
   def resetPasswordStep1(email: Email): F[Unit] =

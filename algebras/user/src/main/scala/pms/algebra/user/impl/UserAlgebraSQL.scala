@@ -1,12 +1,10 @@
 package pms.algebra.user.impl
 
-import busymachines.core.InvalidInputFailure
 import doobie._
 import doobie.implicits._
 import cats.implicits._
 import pms.algebra.user._
 import pms.core._
-import pms.effects._
 
 /**
   *
@@ -16,48 +14,24 @@ import pms.effects._
   */
 private[impl] object UserAlgebraSQL {
 
+  import UserAlgebraMetas._
+
   private[impl] case class UserRepr(
     email: Email,
     pw:    UserCrypto.BcryptPW,
     role:  UserRole,
   )
 
-  /*_*/
-  implicit val userIDMeta: Meta[UserID] = Meta[Long].imap(UserID.spook)(UserID.despook)
-
-  implicit val authenticationTokenMeta: Meta[AuthenticationToken] =
-    Meta[String].imap(AuthenticationToken.spook)(AuthenticationToken.despook)
-
-  implicit val userRegistrationTokenMeta: Meta[UserRegistrationToken] =
-    Meta[String].imap(UserRegistrationToken.spook)(UserRegistrationToken.despook)
-
-  implicit val passwordResetTokenMeta: Meta[PasswordResetToken] =
-    Meta[String].imap(PasswordResetToken.spook)(PasswordResetToken.despook)
-
-  implicit val emailMeta: Meta[Email] =
-    Meta[String].imap(Email.apply(_).unsafeGet())(_.plainTextEmail)
-
-  implicit val pwdMeta: Meta[PlainTextPassword] =
-    Meta[String].imap(PlainTextPassword.apply(_).unsafeGet())(_.plainText)
-
-  implicit val userRoleMeta: Meta[UserRole] =
-    Meta[String].imap(UserRole.fromName(_).unsafeGet())(_.toString)
-
-  implicit val userComposite: Read[User] =
-    Read[(UserID, Email, UserRole)]
-      .imap((t: (UserID, Email, UserRole)) => User(t._1, t._2, t._3))((u: User) => (u.id, u.email, u.role))
-
   implicit val userReprComposite: Read[UserRepr] =
     Read[(Email, String, UserRole)]
       .imap((t: (Email, String, UserRole)) => UserRepr(t._1, UserCrypto.BcryptPW(t._2), t._3))(
         (u: UserRepr) => (u.email, u.pw.toString, u.role),
       )
-  /*_*/
 
   def updateRole(id: UserID, role: UserRole): ConnectionIO[Int] =
     sql"""UPDATE users SET role=$role WHERE id=$id""".update.run
 
-  def updateRegistrationToken(id: UserID, token: UserRegistrationToken): ConnectionIO[Int] =
+  def updateRegistrationToken(id: UserID, token: UserInviteToken): ConnectionIO[Int] =
     sql"""UPDATE users SET registration=$token WHERE id=$id""".update.run
 
   def updatePasswordToken(id: UserID, token: PasswordResetToken): ConnectionIO[Int] =
@@ -81,15 +55,16 @@ private[impl] object UserAlgebraSQL {
   def findByAuthToken(token: AuthenticationToken): ConnectionIO[Option[Long]] =
     sql"""SELECT userId FROM authentications WHERE token=$token""".query[Long].option
 
-  def findByRegToken(token: UserRegistrationToken): ConnectionIO[Option[User]] =
+  def findByRegToken(token: UserInviteToken): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE registration=$token""".query[User].option
 
   def findByPwdToken(token: PasswordResetToken): ConnectionIO[Option[User]] =
     sql"""SELECT id, email, role FROM users WHERE passwordReset=$token""".query[User].option
 
-  def insert(repr: UserRepr, token: UserRegistrationToken): ConnectionIO[Long] = {
-    sql"""INSERT INTO users(email, password, role, registration) VALUES (${repr.email}, ${repr.pw.toString}, ${repr.role}, $token)""".update
+  def insert(repr: UserRepr): ConnectionIO[UserID] = {
+    sql"""INSERT INTO users(email, password, role) VALUES (${repr.email}, ${repr.pw.toString}, ${repr.role})""".update
       .withUniqueGeneratedKeys[Long]("id")
+      .map(UserID.spook)
   }
 
   def insertAuthenticationToken(id: UserID, token: AuthenticationToken): ConnectionIO[Long] =
@@ -103,16 +78,6 @@ private[impl] object UserAlgebraSQL {
         case None        => throw new Exception("Unauthorized") //FIXME: replace with proper error, DO NOT THROW!
       }
     } yield user
-
-  //FIXME: instead of None when registration token doesn't exist, return an
-  //FIXME: "InvalidRegistrationToken" or something.
-  def updateRegToken(token: UserRegistrationToken): ConnectionIO[Option[User]] = {
-    for {
-      userOpt <- findByRegToken(token)
-      user    <- userOpt.liftTo[ConnectionIO](InvalidInputFailure("Invalid registration token"))
-      _       <- updateRegistrationToken(user.id, token)
-    } yield Option(user)
-  }
 
   def insertToken(findUser: => ConnectionIO[Option[User]], token: AuthenticationToken): ConnectionIO[Option[User]] =
     for {

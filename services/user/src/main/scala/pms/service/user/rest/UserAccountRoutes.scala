@@ -24,22 +24,21 @@ final class UserAccountRoutes[F[_]](
   implicit val F: Async[F],
 ) extends Http4sDsl[F] with UserRoutesJSON {
 
-  private object RegistrationTokenMatcher extends QueryParamDecoderMatcher[String]("registrationToken")
-
   //FIXME: rename this to UserInvitation, all the way down
   private val userRegistrationStep1Routes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {
     case (req @ POST -> Root / "user_registration") as user =>
       for {
-        reg  <- req.as[UserRegistration]
+        reg  <- req.as[UserInvitation]
         _    <- userService.registrationStep1(reg)(user)
         resp <- Created()
       } yield resp
   }
 
   private val userRegistrationStep2Routes: HttpRoutes[F] = HttpRoutes.of[F] {
-    case PUT -> Root / "user_registration" / "confirmation" :? RegistrationTokenMatcher(token) =>
+    case req @ PUT -> Root / "user_registration" / "confirmation" =>
       for {
-        user <- userService.registrationStep2(UserRegistrationToken(token))
+        conf <- req.as[UserConfirmation]
+        user <- userService.registrationStep2(conf)
         resp <- Ok(user)
       } yield resp
   }

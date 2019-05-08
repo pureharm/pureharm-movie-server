@@ -49,22 +49,38 @@ final private[user] class UserAlgebraImpl[F[_]] private (
     updateRole(id, newRole).transact(transactor).map(_ => ())
 
   override protected[user] def registrationStep1Impl(
-    reg: UserRegistration,
-  ): F[UserRegistrationToken] =
+    inv: UserInvitation,
+  ): F[UserInviteToken] =
     for {
-      token      <- UserCrypto.generateToken(F)
-      scryptHash <- UserCrypto.hashPWWithBcrypt(reg.pw)(F)
-      repr = UserRepr(email = reg.email, pw = scryptHash, role = reg.role)
-      _ <- insert(repr, UserRegistrationToken(token)).transact(transactor)
-    } yield UserRegistrationToken(token)
+      token <- UserCrypto.generateToken(F).map(UserRegistrationToken.spook)
+      toInsert = UserInvitationSQL.UserInvitationRepr(
+        email           = inv.email,
+        role            = inv.role,
+        invitationToken = token,
+      )
+      _ <- UserInvitationSQL.insert(toInsert).transact(transactor)
+    } yield token
 
-  override def registrationStep2(token: UserRegistrationToken): F[User] =
-    updateRegToken(token) //FIXME: rework this to actually make sense.
-      .transact(transactor)
-      .map {
-        case Some(value) => value
-        case None        => throw new Exception("User not found") //FIXME: flatMap + effect
+  override def registrationStep2(token: UserInviteToken, pw: PlainTextPassword): F[User] = {
+    val cio: ConnectionIO[User] = for {
+      invite <- UserInvitationSQL.findByToken(token).flatMap { opt =>
+        opt.liftTo[ConnectionIO](new RuntimeException("No user invitation found"))
       }
+      hashed <- UserCrypto.hashPWWithBcrypt[ConnectionIO](pw)
+      userRepr = UserRepr(
+        email = invite.email,
+        pw    = hashed,
+        role  = invite.role,
+      )
+      userId <- UserAlgebraSQL.insert(userRepr)
+      _      <- UserInvitationSQL.deleteByToken(token)
+      newlyCreatedUser <- UserAlgebraSQL.find(userId).flatMap { opt =>
+        opt.liftTo[ConnectionIO](new Error("No user found even after we created them. WTF? This is a bug"))
+      }
+    } yield newlyCreatedUser
+
+    cio.transact(transactor)
+  }
 
   override def resetPasswordStep1(email: Email): F[PasswordResetToken] =
     for {
