@@ -19,11 +19,10 @@ trait ModuleMovieService[F[_]] { this: Module[F] with ModuleMovieAlgebra[F] with
     for {
       imbd <- imdbAlgebra
       malb <- movieAlgebra
-    } yield
-      IMDBService.async(
-        movieAlgebra = malb,
-        imdbAlgebra  = imbd,
-      )
+    } yield IMDBService.async(
+      movieAlgebra = malb,
+      imdbAlgebra  = imbd,
+    )
   }
 
 }

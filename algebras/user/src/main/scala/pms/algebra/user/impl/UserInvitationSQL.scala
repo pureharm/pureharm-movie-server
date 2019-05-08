@@ -19,9 +19,9 @@ private[impl] object UserInvitationSQL {
   /*_*/
 
   final case class UserInvitationRepr(
-                                       email:           Email,
-                                       role:            UserRole,
-                                       invitationToken: UserInviteToken,
+    email:           Email,
+    role:            UserRole,
+    invitationToken: UserInviteToken,
   )
 
   implicit val userReprComposite: Read[UserInvitationRepr] =

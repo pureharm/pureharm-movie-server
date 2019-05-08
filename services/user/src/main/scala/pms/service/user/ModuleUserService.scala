@@ -21,13 +21,12 @@ trait ModuleUserService[F[_]] { this: Module[F] with ModuleUserAlgebra[F] with M
       uacc <- userAccountAlgebra
       ua   <- userAlgebra
       ea   <- emailAlgebra
-    } yield
-      UserAccountService.concurrent[F](
-        userAuth     = uaa,
-        userAccount  = uacc,
-        userAlgebra  = ua,
-        emailAlgebra = ea,
-      )
+    } yield UserAccountService.concurrent[F](
+      userAuth     = uaa,
+      userAccount  = uacc,
+      userAlgebra  = ua,
+      emailAlgebra = ea,
+    )
   }
 
 }

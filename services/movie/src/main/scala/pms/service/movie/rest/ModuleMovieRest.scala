@@ -20,11 +20,10 @@ trait ModuleMovieRest[F[_]] { this: Module[F] with ModuleMovieService[F] with Mo
     for {
       imdb <- imdbService
       malb <- movieAlgebra
-    } yield
-      new MovieRestRoutes[F](
-        imdbService  = imdb,
-        movieAlgebra = malb,
-      )
+    } yield new MovieRestRoutes[F](
+      imdbService  = imdb,
+      movieAlgebra = malb,
+    )
   }
 
 }

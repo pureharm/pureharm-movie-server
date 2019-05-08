@@ -64,11 +64,10 @@ object EffectThrottler {
   ): F[EffectThrottler[F]] = {
     for {
       sem <- Semaphore(amount)
-    } yield
-      new EffectThrottler[F](
-        interval  = interval,
-        semaphore = sem,
-      )
+    } yield new EffectThrottler[F](
+      interval  = interval,
+      semaphore = sem,
+    )
   }
 
 }

@@ -38,6 +38,4 @@ private[impl] object UserAlgebraMetas {
     Read[(UserID, Email, UserRole)]
       .imap((t: (UserID, Email, UserRole)) => User(t._1, t._2, t._3))((u: User) => (u.id, u.email, u.role))
 
-
-
 }
