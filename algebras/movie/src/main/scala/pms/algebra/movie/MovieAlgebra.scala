@@ -21,7 +21,12 @@ abstract class MovieAlgebra[F[_]] {
   def findMoviesBetween(interval: QueryInterval)(implicit auth: AuthCtx): F[List[Movie]] =
     userAuth.authorizeNewbie(findMoviesBetweenImpl(interval))
 
+  def fetchMovie(mid: MovieID)(implicit auth: AuthCtx): F[Movie] =
+    userAuth.authorizeNewbie(findMovieImpl(mid))
+
   protected def findMoviesBetweenImpl(interval: QueryInterval): F[List[Movie]]
+
+  protected def findMovieImpl(mid: MovieID): F[Movie]
 }
 
 object MovieAlgebra {

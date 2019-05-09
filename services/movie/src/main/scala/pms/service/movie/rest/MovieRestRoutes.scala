@@ -35,6 +35,16 @@ final private[rest] class MovieRestRoutes[F[_]](
   private object StartReleaseDateQueryMatcher extends QueryParamDecoderMatcher[ReleaseDate]("start")
   private object EndReleaseDateQueryMatcher   extends QueryParamDecoderMatcher[ReleaseDate]("end")
 
+  private object MovieIDMatcher {
+
+    def unapply(str: String): Option[MovieID] = {
+      if (!str.isEmpty)
+        Try(MovieID(str.toLong)).toOption
+      else
+        None
+    }
+  }
+
   implicit private val titleQueryParamDecoder: QueryParamDecoder[TitleQuery] =
     QueryParamDecoder[String].map(TitleQuery.apply)
 
@@ -54,6 +64,9 @@ final private[rest] class MovieRestRoutes[F[_]](
           mc   <- req.as[MovieCreation]
           resp <- Created(movieAlgebra.createMovie(mc)(user))
         } yield resp
+
+      case GET -> Root / "movie" / MovieIDMatcher(mid) as user =>
+        Ok(movieAlgebra.fetchMovie(mid)(user))
 
       case GET -> Root / "movie" :? StartReleaseDateQueryMatcher(start) :? EndReleaseDateQueryMatcher(end) as user =>
         val interval = Interval.closed(start, end)
