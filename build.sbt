@@ -571,7 +571,7 @@ lazy val catsFree:   ModuleID = "org.typelevel" %% "cats-free"   % catsCoreVersi
 lazy val cats: Seq[ModuleID] = Seq(catsCore, catsKernel, catsMacros, catsFree)
 
 //https://github.com/typelevel/cats-effect
-lazy val catsEffectVersion: String = "1.2.0"
+lazy val catsEffectVersion: String = "1.3.0"
 
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion withSources ()
 
