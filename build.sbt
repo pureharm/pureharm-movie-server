@@ -598,7 +598,7 @@ lazy val circeGenericExtras: ModuleID = "io.circe" %% "circe-generic-extras" % c
 lazy val circe: Seq[ModuleID] = Seq(circeCore, circeGeneric, circeGenericExtras)
 
 //https://github.com/http4s/http4s
-lazy val Http4sVersion: String = "0.20.0-M7"
+lazy val Http4sVersion: String = "0.20.0"
 
 lazy val http4sBlazeServer: ModuleID = "org.http4s" %% "http4s-blaze-server" % Http4sVersion withSources ()
 lazy val http4sCirce:       ModuleID = "org.http4s" %% "http4s-circe"        % Http4sVersion withSources ()
