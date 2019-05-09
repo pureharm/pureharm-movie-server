@@ -541,7 +541,7 @@ def customScalaCompileFlags: Seq[String] = Seq(
 //============================================================================================
 
 //https://github.com/busymachines/busymachines-commons
-lazy val bmCommonsVersion: String = "0.3.0-RC9"
+lazy val bmCommonsVersion: String = "0.3.0-RC10"
 def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$m" % bmCommonsVersion withSources ()
 
 lazy val bmcCore:     ModuleID = bmCommons("core")
