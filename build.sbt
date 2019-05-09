@@ -607,7 +607,7 @@ lazy val http4sDSL:         ModuleID = "org.http4s" %% "http4s-dsl"          % H
 lazy val http4s: Seq[ModuleID] = Seq(http4sBlazeServer, http4sCirce, http4sDSL)
 
 //https://github.com/tpolecat/doobie
-lazy val doobieVersion = "0.7.0-M3"
+lazy val doobieVersion = "0.7.0-M5"
 
 lazy val doobieCore     = "org.tpolecat" %% "doobie-core"     % doobieVersion withSources ()
 lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"   % doobieVersion withSources ()
