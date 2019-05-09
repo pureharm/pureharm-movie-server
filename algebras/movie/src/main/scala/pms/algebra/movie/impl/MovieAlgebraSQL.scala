@@ -2,12 +2,14 @@ package pms.algebra.movie.impl
 
 import java.time.LocalDate
 
+import pms.core._
 import doobie._
 import doobie.implicits._
-
+import cats.implicits._
 import pms.algebra.movie._
-import pms.effects._
 import spire.math._
+
+import scala.util.control.NonFatal
 
 /**
   *
@@ -16,7 +18,6 @@ import spire.math._
   *
   */
 private[movie] object MovieAlgebraSQL {
-  private val ME: MonadErrorThr[ConnectionIO] = MonadError.apply[ConnectionIO, Throwable]
 
   implicit protected val movieIDMeta: Meta[MovieID] =
     Meta[Long].imap(MovieID.spook)(MovieID.despook)
@@ -27,11 +28,14 @@ private[movie] object MovieAlgebraSQL {
   implicit protected val releaseDateMeta: Meta[ReleaseDate] =
     Meta[LocalDate].imap(ReleaseDate.spook)(ReleaseDate.despook)
 
+  def findByIDQuery(id: MovieID): ConnectionIO[Option[Movie]] =
+    sql"""SELECT id, name, date FROM movies WHERE id=$id""".query[Movie].option
+
+  def fetchByIDQuery(id: MovieID): ConnectionIO[Movie] =
+    findByIDQuery(id).flatMap(_.liftTo[ConnectionIO](MovieNotFoundAnomaly(id)))
+
   private def insertQuery(mc: MovieCreation): ConnectionIO[MovieID] =
     sql"""INSERT INTO movies(name, date) VALUES(${mc.name}, ${mc.date})""".update.withUniqueGeneratedKeys[MovieID]("id")
-
-  private def findByIdQuery(id: MovieID): ConnectionIO[Movie] =
-    sql"""SELECT id, name, date FROM movies WHERE id=$id""".query[Movie].unique
 
   private def allQuery: ConnectionIO[List[Movie]] =
     sql"""SELECT id, name, date FROM movies""".query[Movie].to[List]
@@ -57,15 +61,17 @@ private[movie] object MovieAlgebraSQL {
 
     case Point(date) => onDateQuery(date)
 
-    case Empty() => ME.pure(List.empty[Movie])
+    case Empty() => List.empty[Movie].pure[ConnectionIO]
   }
 
   private[movie] def insertMovie(mc: MovieCreation): ConnectionIO[Movie] =
     for {
-      id    <- insertQuery(mc)
-      movie <- findByIdQuery(id)
+      id <- insertQuery(mc)
+      movie <- fetchByIDQuery(id).adaptError {
+        case NonFatal(e) => Iscata(what = "Failed to fetch movie after insert", where = "insertMovie", Option(e))
+      }
     } yield movie
 
   private def unimplementedInterval[T](str: String): ConnectionIO[T] =
-    ME.raiseError[T](new RuntimeException(s"Unimplemented interval: $str query range"))
+    Fail.nicata(s"Unimplemented interval: $str query range").raiseError[ConnectionIO, T]
 }

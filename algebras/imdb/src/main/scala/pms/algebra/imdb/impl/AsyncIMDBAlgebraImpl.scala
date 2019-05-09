@@ -3,7 +3,7 @@ package pms.algebra.imdb.impl
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
-import pms.effects.{EffectThrottler, _}
+import pms.effects._
 import pms.algebra.imdb._
 import cats.implicits._
 import java.time.Year

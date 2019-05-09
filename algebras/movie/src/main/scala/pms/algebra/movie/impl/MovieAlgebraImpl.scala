@@ -22,9 +22,11 @@ final private[movie] class MovieAlgebraImpl[F[_]: BracketThr] private (
   override protected def createMovieImpl(mc: MovieCreation): F[Movie] =
     MovieAlgebraSQL.insertMovie(mc).transact(transactor)
 
-  override def findMoviesBetweenImpl(interval: QueryInterval): F[List[Movie]] =
+  override protected def findMoviesBetweenImpl(interval: QueryInterval): F[List[Movie]] =
     MovieAlgebraSQL.findBetween(interval).transact(transactor)
 
+  override protected def findMovieImpl(mid: MovieID): F[Movie] =
+    MovieAlgebraSQL.fetchByIDQuery(mid).transact(transactor)
 }
 
 private[movie] object MovieAlgebraImpl {
