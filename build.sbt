@@ -427,7 +427,7 @@ def commonSettings: Seq[Setting[_]] = Seq(
    *
    * https://github.com/oleg-py/better-monadic-for
    */
-  addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0-M4"),
+  addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0"),
   scalacOptions ++= customScalaCompileFlags,
   /**
     * This is here to eliminate eviction warnings from SBT.
@@ -541,7 +541,7 @@ def customScalaCompileFlags: Seq[String] = Seq(
 //============================================================================================
 
 //https://github.com/busymachines/busymachines-commons
-lazy val bmCommonsVersion: String = "0.3.0-RC9"
+lazy val bmCommonsVersion: String = "0.3.0-RC10"
 def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$m" % bmCommonsVersion withSources ()
 
 lazy val bmcCore:     ModuleID = bmCommons("core")
@@ -571,7 +571,7 @@ lazy val catsFree:   ModuleID = "org.typelevel" %% "cats-free"   % catsCoreVersi
 lazy val cats: Seq[ModuleID] = Seq(catsCore, catsKernel, catsMacros, catsFree)
 
 //https://github.com/typelevel/cats-effect
-lazy val catsEffectVersion: String = "1.2.0"
+lazy val catsEffectVersion: String = "1.3.0"
 
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion withSources ()
 
@@ -598,7 +598,7 @@ lazy val circeGenericExtras: ModuleID = "io.circe" %% "circe-generic-extras" % c
 lazy val circe: Seq[ModuleID] = Seq(circeCore, circeGeneric, circeGenericExtras)
 
 //https://github.com/http4s/http4s
-lazy val Http4sVersion: String = "0.20.0-M7"
+lazy val Http4sVersion: String = "0.20.0"
 
 lazy val http4sBlazeServer: ModuleID = "org.http4s" %% "http4s-blaze-server" % Http4sVersion withSources ()
 lazy val http4sCirce:       ModuleID = "org.http4s" %% "http4s-circe"        % Http4sVersion withSources ()
@@ -607,7 +607,7 @@ lazy val http4sDSL:         ModuleID = "org.http4s" %% "http4s-dsl"          % H
 lazy val http4s: Seq[ModuleID] = Seq(http4sBlazeServer, http4sCirce, http4sDSL)
 
 //https://github.com/tpolecat/doobie
-lazy val doobieVersion = "0.7.0-M3"
+lazy val doobieVersion = "0.7.0-M5"
 
 lazy val doobieCore     = "org.tpolecat" %% "doobie-core"     % doobieVersion withSources ()
 lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"   % doobieVersion withSources ()
@@ -638,7 +638,7 @@ lazy val spire: ModuleID = "org.typelevel" %% "spire" % "0.16.0" withSources ()
 //============================================================================================
 
 //https://github.com/jmcardon/tsec
-lazy val tsecVersion = "0.1.0-M3"
+lazy val tsecVersion = "0.1.0"
 
 lazy val tsec: Seq[ModuleID] = Seq(
   "io.github.jmcardon" %% "tsec-common"   % tsecVersion withSources (),
