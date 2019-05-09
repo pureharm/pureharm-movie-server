@@ -638,7 +638,7 @@ lazy val spire: ModuleID = "org.typelevel" %% "spire" % "0.16.0" withSources ()
 //============================================================================================
 
 //https://github.com/jmcardon/tsec
-lazy val tsecVersion = "0.1.0-M3"
+lazy val tsecVersion = "0.1.0"
 
 lazy val tsec: Seq[ModuleID] = Seq(
   "io.github.jmcardon" %% "tsec-common"   % tsecVersion withSources (),
