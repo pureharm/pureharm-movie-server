@@ -1,12 +1,8 @@
 package pms.effects
 
+import pms.effects.implicits._
 import java.util.concurrent.TimeUnit
-
-import cats.implicits._
-import cats.effect.{ContextShift, Timer}
-import monix.execution.Scheduler.Implicits.global
 import org.specs2.mutable.Specification
-
 import scala.concurrent.duration._
 
 /**
@@ -16,7 +12,7 @@ import scala.concurrent.duration._
   *
   */
 final class EffectThrottlerSpec extends Specification {
-  implicit private val timer: Timer[IO]        = IO.timer(global)
+  implicit private val timer: Timer[IO]        = IO.timer(ExecutionContext.global)
   implicit private val cs:    ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   private val runs = List(0, 1, 2, 3, 4, 5, 6)

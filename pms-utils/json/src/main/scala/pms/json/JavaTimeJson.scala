@@ -14,8 +14,12 @@ object JavaTimeJson extends JavaTimeJson
 trait JavaTimeJson {
 
   implicit val localDateCirceCodec: Codec[LocalDate] = Codec.instance(
-    Encoder.apply[String].contramap(m => m.format(TimeFormatters.LocalDateFormatter)),
-    Decoder.apply[String].map(s => LocalDate.parse(s, TimeFormatters.LocalDateFormatter)),
+    Encoder
+      .apply[String]
+      .contramap(m => m.format(TimeFormatters.LocalDateFormatter)),
+    Decoder
+      .apply[String]
+      .map(s => LocalDate.parse(s, TimeFormatters.LocalDateFormatter)),
   )
 
 }

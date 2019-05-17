@@ -1,7 +1,6 @@
 package pms.algebra.http
 
-import cats.Applicative
-
+import pms.effects._
 import pms.algebra.user.AuthCtx
 
 import org.http4s.{AuthedRequest, AuthedService, Response}

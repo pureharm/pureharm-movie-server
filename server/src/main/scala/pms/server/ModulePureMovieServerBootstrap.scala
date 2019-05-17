@@ -1,14 +1,13 @@
 package pms.server
 
-import cats.effect.Timer
 import pms.effects._
+import pms.effects.implicits._
 import pms.email._
 import pms.algebra.user._
 import pms.algebra.imdb.IMDBAlgebraConfig
 import pms.server.bootstrap._
 import doobie.util.transactor.Transactor
 import pms.core.Module
-import cats.implicits._
 
 /**
   *
@@ -19,7 +18,8 @@ import cats.implicits._
 trait ModulePureMovieServerBootstrap[F[_]]
     extends Module[F] with ModulePureMovieServer[F] with ModuleServerBootstrap[F] with ModuleUserBootstrap[F] {
 
-  def bootstrap: F[Unit] = serverBootstrapAlgebra.flatMap(sba => Bootstrap.bootstrap(sba))
+  def bootstrap: F[Unit] =
+    serverBootstrapAlgebra.flatMap(sba => Bootstrap.bootstrap(sba))
 }
 
 object ModulePureMovieServerBootstrap {

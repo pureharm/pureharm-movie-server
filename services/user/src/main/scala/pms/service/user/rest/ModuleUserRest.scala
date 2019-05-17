@@ -2,11 +2,11 @@ package pms.service.user.rest
 
 import org.http4s._
 import pms.effects._
+import pms.effects.implicits._
 import pms.algebra.user._
 import pms.algebra.http._
 import pms.core.Module
 import pms.service.user._
-import cats.implicits._
 
 /**
   *

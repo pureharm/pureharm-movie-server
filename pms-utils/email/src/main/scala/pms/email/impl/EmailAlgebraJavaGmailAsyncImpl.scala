@@ -6,6 +6,7 @@ import javax.mail._
 import javax.mail.internet._
 
 import pms.effects._
+import pms.effects.implicits._
 import pms.logger._
 import pms.core._
 import pms.email._
@@ -24,7 +25,6 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
   private val config: GmailConfig,
 ) extends EmailAlgebra[F] {
 
-  import cats.implicits._
   private val F: Async[F] = Async.apply[F]
 
   private val logger: PMSLogger[F] = PMSLogger.getLogger[F]
@@ -44,11 +44,15 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
     for {
       message   <- mimaMessage
       transport <- F.delay(session.getTransport("smtp"))
-      _         <- F.delay(transport.connect(config.host, config.user, config.password)).onError(cleanupErr(transport))
-      _         <- logger.info("Connected to SMTP server")
-      _         <- F.delay(transport.sendMessage(message, message.getAllRecipients)).onError(cleanupErr(transport))
-      _         <- logger.info(s"Sent email to: ${to.plainTextEmail}")
-      _         <- cleanup(transport)
+      _ <- F
+        .delay(transport.connect(config.host, config.user, config.password))
+        .onError(cleanupErr(transport))
+      _ <- logger.info("Connected to SMTP server")
+      _ <- F
+        .delay(transport.sendMessage(message, message.getAllRecipients))
+        .onError(cleanupErr(transport))
+      _ <- logger.info(s"Sent email to: ${to.plainTextEmail}")
+      _ <- cleanup(transport)
     } yield ()
   }
 
@@ -65,7 +69,8 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
         cleanup(transport)
   }
 
-  private def cleanup(transport: Transport): F[Unit] = F.delay(transport.close())
+  private def cleanup(transport: Transport): F[Unit] =
+    F.delay(transport.close())
 
   /**
     * A complete list of session properties can be found at

@@ -1,8 +1,6 @@
 package pms.effects
 
-import cats.effect._
-import cats.effect.concurrent.Semaphore
-import cats.implicits._
+import pms.effects.implicits._
 
 import scala.concurrent.duration._
 
@@ -28,7 +26,7 @@ final class EffectThrottler[F[_]: Timer: Concurrent] private (
   def throttle[T](f: F[T]): F[T] =
     for {
       acquireTime <- acquireSemaphore
-      res         <- f.onError { case _ => delayLogic(acquireTime) }
+      res         <- f.onErrorF(delayLogic(acquireTime))
       _           <- delayLogic(acquireTime)
     } yield res
 
@@ -52,7 +50,9 @@ final class EffectThrottler[F[_]: Timer: Concurrent] private (
     acquireTime - now < interval
 
   private def timeNow: F[FiniteDuration] =
-    Timer[F].clock.monotonic(interval.unit).map(l => FiniteDuration(l, interval.unit))
+    Timer[F].clock
+      .monotonic(interval.unit)
+      .map(l => FiniteDuration(l, interval.unit))
 
 }
 

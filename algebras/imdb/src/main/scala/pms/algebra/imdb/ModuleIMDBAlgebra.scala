@@ -1,9 +1,8 @@
 package pms.algebra.imdb
 
-import cats.effect.Timer
-import cats.implicits._
+import pms.effects._
+import pms.effects.implicits._
 import pms.core.Module
-import pms.effects.EffectThrottler
 
 /**
   *
@@ -12,6 +11,7 @@ import pms.effects.EffectThrottler
   *
   */
 trait ModuleIMDBAlgebra[F[_]] { this: Module[F] =>
+
   implicit def timer: Timer[F]
 
   def imdbAlgebraConfig: IMDBAlgebraConfig

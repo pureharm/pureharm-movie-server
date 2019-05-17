@@ -47,6 +47,7 @@ trait Http4sCirceInstances {
 }
 
 object Http4sCirceInstances {
-  private val printer:        Printer        = Printer.noSpaces.copy(dropNullValues = true)
-  private val circeInstances: CirceInstances = CirceInstances.withPrinter(printer).build
+  private val printer: Printer = Printer.noSpaces.copy(dropNullValues = true)
+  private val circeInstances: CirceInstances =
+    CirceInstances.withPrinter(printer).build
 }

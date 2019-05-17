@@ -2,6 +2,7 @@ package pms.core
 
 import busymachines.core._
 import pms.effects._
+import pms.effects.implicits._
 
 /**
   *
@@ -11,11 +12,11 @@ import pms.effects._
   */
 object Email {
 
-  def apply(em: String): Result[Email] =
+  def apply(em: String): Attempt[Email] =
     if (!em.contains("@"))
-      Result.fail(InvalidInputFailure("Email must contain: @"))
+      Attempt.raiseError(InvalidInputFailure("Email must contain: @"))
     else
-      Result.pure(new Email(em))
+      Attempt.pure(new Email(em))
 
 }
 

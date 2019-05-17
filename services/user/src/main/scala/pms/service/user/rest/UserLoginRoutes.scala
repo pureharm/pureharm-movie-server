@@ -2,10 +2,9 @@ package pms.service.user.rest
 
 import busymachines.core.UnauthorizedFailure
 
-import cats.implicits._
-
 import pms.core._
 import pms.effects._
+import pms.effects.implicits._
 import pms.algebra.http._
 import pms.algebra.user._
 
@@ -33,34 +32,30 @@ final class UserLoginRoutes[F[_]](
     */
   private def logInWithUserNamePassword(bc: BasicCredentials): F[AuthCtx] =
     for {
-      email <- rtof(Email(bc.username))
-      ptpw  <- rtof(PlainTextPassword(bc.password))
+      email <- Email(bc.username).liftTo[F]
+      ptpw  <- PlainTextPassword(bc.password).liftTo[F]
       auth  <- userAuthAlgebra.authenticate(email, ptpw)
     } yield auth
 
   private def findBasicAuth(hs: Headers): F[BasicCredentials] = {
-    val r: Result[BasicCredentials] = for {
-      auth <- hs.get(headers.Authorization).asResult(UnauthorizedFailure("Missing Authorization header"))
-      basic <- auth.credentials match {
+    val r: Attempt[BasicCredentials] = for {
+      auth: headers.Authorization <- hs
+        .get(headers.Authorization)
+        .liftTo[Attempt](UnauthorizedFailure("Missing Authorization header"))
+      basic: BasicCredentials <- auth.credentials match {
         case Credentials.Token(AuthScheme.Basic, token) =>
-          Result.pure(BasicCredentials(token))
+          Attempt.pure(BasicCredentials(token))
         case credentials =>
-          Result.fail(UnauthorizedFailure(s"Unsupported credentials w/ AuthScheme ${credentials.authScheme}"))
+          Attempt.raiseError(UnauthorizedFailure(s"Unsupported credentials w/ AuthScheme ${credentials.authScheme}"))
       }
     } yield basic
 
-    rtof(r)
-  }
-
-  //TODO: write bm-commons combinators that work on typeclasses
-  private def rtof[T](r: Result[T]): F[T] = r match {
-    case Left(value)  => F.raiseError(value.asThrowable)
-    case Right(value) => F.pure(value)
+    r.liftTo[F]
   }
 
   private val loginRoutes: HttpRoutes[F] =
     HttpRoutes.of[F] {
-      case req @ (POST -> Root / "user" / "login") =>
+      case req @ POST -> Root / "user" / "login" =>
         Ok(findBasicAuth(req.headers).flatMap(logInWithUserNamePassword))
     }
 

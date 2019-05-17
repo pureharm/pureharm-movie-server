@@ -6,7 +6,7 @@
   *
   * https://github.com/scalameta/scalafmt
   */
-addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.5.1")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.0.0")
 
 //=============================================================================
 //=============================================================================
@@ -32,7 +32,7 @@ addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.5.1")
   *
   * }}}
   */
-addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.1")
+addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.5")
 
 //=============================================================================
 //=============================================================================

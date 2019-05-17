@@ -17,7 +17,7 @@ trait ModuleMovieAlgebra[F[_]] { this: Module[F] with ModuleUserAlgebra[F] =>
   def movieAlgebra: F[MovieAlgebra[F]] = _movieAlgebra
 
   private lazy val _movieAlgebra = singleton {
-    import cats.implicits._
+    import pms.effects.implicits._
     userAuthAlgebra.flatMap(uaa => MovieAlgebra.async[F](uaa)(F, transactor))
   }
 }

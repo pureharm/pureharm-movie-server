@@ -24,5 +24,7 @@ final case class ConfigReadingAnomaly(c: ConfigReaderFailure)
 }
 
 object ConfigReadingAnomaly {
-  case object ID extends AnomalyID { override val name: String = "pms_config_002" }
+  case object ID extends AnomalyID {
+    override val name: String = "pms_config_002"
+  }
 }

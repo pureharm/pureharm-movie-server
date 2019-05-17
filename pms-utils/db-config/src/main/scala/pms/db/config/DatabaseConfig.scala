@@ -1,6 +1,6 @@
 package pms.db.config
 
-import cats.effect.Sync
+import pms.effects.Sync
 import pms.config.ConfigLoader
 
 /**

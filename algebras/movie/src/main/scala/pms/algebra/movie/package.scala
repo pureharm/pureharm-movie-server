@@ -20,13 +20,14 @@ package object movie {
   object ReleaseDate extends PhantomType[LocalDate]
   type ReleaseDate = ReleaseDate.Type
 
-  implicit val releaseDateOrder: spire.algebra.Order[ReleaseDate] = new spire.algebra.Order[ReleaseDate] {
-    override def compare(x: ReleaseDate, y: ReleaseDate): Int = {
-      val dateX = ReleaseDate.despook(x)
-      val dateY = ReleaseDate.despook(y)
-      dateX.compareTo(dateY)
+  implicit val releaseDateOrder: spire.algebra.Order[ReleaseDate] =
+    new spire.algebra.Order[ReleaseDate] {
+      override def compare(x: ReleaseDate, y: ReleaseDate): Int = {
+        val dateX = ReleaseDate.despook(x)
+        val dateY = ReleaseDate.despook(y)
+        dateX.compareTo(dateY)
+      }
     }
-  }
 
   type QueryInterval = Interval[ReleaseDate]
 }

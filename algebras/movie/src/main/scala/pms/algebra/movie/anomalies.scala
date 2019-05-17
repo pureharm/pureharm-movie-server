@@ -9,7 +9,6 @@ import pms.core.AnomalyIDS
   * @since 09 May 2019
   *
   */
-
 final case class MovieNotFoundAnomaly(mid: MovieID) extends NotFoundFailure(s"Movie with id '$mid' not found") {
   override val id: AnomalyID = AnomalyIDS.MovieNotFoundID
 

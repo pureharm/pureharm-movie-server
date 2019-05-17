@@ -4,11 +4,11 @@ import busymachines.core.UnauthorizedFailure
 
 import doobie._
 import doobie.implicits._
-import cats.implicits._
 
 import pms.algebra.user._
 import pms.core._
 import pms.effects._
+import pms.effects.implicits._
 
 /**
   *
@@ -35,10 +35,12 @@ final private[user] class UserAlgebraImpl[F[_]] private (
         case None    => F.raiseError[UserRepr](invalidEmailOrPW)
         case Some(v) => F.pure[UserRepr](v)
       }
-      auth <- UserCrypto.checkUserPassword[F](pw.plainText, userRepr.pw).flatMap {
-        case true  => storeAuth(find(email))
-        case false => F.raiseError[AuthCtx](invalidEmailOrPW)
-      }
+      auth <- UserCrypto
+        .checkUserPassword[F](pw.plainText, userRepr.pw)
+        .flatMap {
+          case true  => storeAuth(find(email))
+          case false => F.raiseError[AuthCtx](invalidEmailOrPW)
+        }
 
     } yield auth
 
@@ -100,10 +102,13 @@ final private[user] class UserAlgebraImpl[F[_]] private (
   private def storeAuth(findUser: => ConnectionIO[Option[User]]): F[AuthCtx] =
     for {
       token <- UserCrypto.generateToken(F)
-      user  <- insertToken(findUser, AuthenticationToken(token)).transact(transactor)
+      user <- insertToken(findUser, AuthenticationToken(token))
+        .transact(transactor)
     } yield AuthCtx(AuthenticationToken(token), user.get)
 }
 
 private[user] object UserAlgebraImpl {
-  def async[F[_]: Async: Transactor]: F[UserAlgebraImpl[F]] = Async.apply[F].pure(new UserAlgebraImpl[F]())
+
+  def async[F[_]: Async: Transactor]: F[UserAlgebraImpl[F]] =
+    Async.apply[F].pure(new UserAlgebraImpl[F]())
 }

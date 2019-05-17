@@ -1,8 +1,9 @@
 package pms.algebra.user.impl
 
+import pms.effects.implicits._
+
 import doobie._
 import doobie.implicits._
-import cats.implicits._
 import pms.algebra.user._
 import pms.core._
 
@@ -44,22 +45,34 @@ private[impl] object UserAlgebraSQL {
     sql"""SELECT id, email, role FROM users WHERE id=$id""".query[User].option
 
   def find(email: Email, pwd: UserCrypto.BcryptPW): ConnectionIO[Option[User]] =
-    sql"""SELECT id, email, role FROM users WHERE email=$email AND password=${pwd.toString}""".query[User].option
+    sql"""SELECT id, email, role FROM users WHERE email=$email AND password=${pwd.toString}"""
+      .query[User]
+      .option
 
   def find(email: Email): ConnectionIO[Option[User]] =
-    sql"""SELECT id, email, role FROM users WHERE email=$email""".query[User].option
+    sql"""SELECT id, email, role FROM users WHERE email=$email"""
+      .query[User]
+      .option
 
   def findRepr(email: Email): ConnectionIO[Option[UserRepr]] =
-    sql"""SELECT email, password, role FROM users WHERE email=$email""".query[UserRepr].option
+    sql"""SELECT email, password, role FROM users WHERE email=$email"""
+      .query[UserRepr]
+      .option
 
   def findByAuthToken(token: AuthenticationToken): ConnectionIO[Option[Long]] =
-    sql"""SELECT userId FROM authentications WHERE token=$token""".query[Long].option
+    sql"""SELECT userId FROM authentications WHERE token=$token"""
+      .query[Long]
+      .option
 
   def findByRegToken(token: UserInviteToken): ConnectionIO[Option[User]] =
-    sql"""SELECT id, email, role FROM users WHERE registration=$token""".query[User].option
+    sql"""SELECT id, email, role FROM users WHERE registration=$token"""
+      .query[User]
+      .option
 
   def findByPwdToken(token: PasswordResetToken): ConnectionIO[Option[User]] =
-    sql"""SELECT id, email, role FROM users WHERE passwordReset=$token""".query[User].option
+    sql"""SELECT id, email, role FROM users WHERE passwordReset=$token"""
+      .query[User]
+      .option
 
   def insert(repr: UserRepr): ConnectionIO[UserID] = {
     sql"""INSERT INTO users(email, password, role) VALUES (${repr.email}, ${repr.pw.toString}, ${repr.role})""".update
@@ -68,14 +81,16 @@ private[impl] object UserAlgebraSQL {
   }
 
   def insertAuthenticationToken(id: UserID, token: AuthenticationToken): ConnectionIO[Long] =
-    sql"""INSERT INTO authentications(userId, token) VALUES($id, $token)""".update.withUniqueGeneratedKeys[Long]("id")
+    sql"""INSERT INTO authentications(userId, token) VALUES($id, $token)""".update
+      .withUniqueGeneratedKeys[Long]("id")
 
   def findUserByAuthToken(token: AuthenticationToken): ConnectionIO[Option[User]] =
     for {
       userId <- findByAuthToken(token)
       user <- userId match {
         case Some(value) => find(UserID(value))
-        case None        => throw new Exception("Unauthorized") //FIXME: replace with proper error, DO NOT THROW!
+        case None =>
+          throw new Exception("Unauthorized") //FIXME: replace with proper error, DO NOT THROW!
       }
     } yield user
 
@@ -84,7 +99,8 @@ private[impl] object UserAlgebraSQL {
       user <- findUser
       _ <- user match {
         case Some(value) => insertAuthenticationToken(value.id, token)
-        case None        => throw new Exception("Unauthorized") //FIXME: replace with proper error, DO NOT THROW!
+        case None =>
+          throw new Exception("Unauthorized") //FIXME: replace with proper error, DO NOT THROW!
       }
     } yield user
 

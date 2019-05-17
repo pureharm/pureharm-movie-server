@@ -1,14 +1,15 @@
 package pms.algebra.imdb.impl
 
+import pms.effects._
+import pms.effects.implicits._
+
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
-import pms.effects._
-import pms.algebra.imdb._
-import cats.implicits._
-import java.time.Year
-
 import net.ruippeixotog.scalascraper.model.Document
+
+import pms.algebra.imdb._
+import java.time.Year
 
 /**
   *
@@ -47,7 +48,9 @@ final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](
   private def parseYear(resultTextStr: String): Option[ReleaseYear] = {
     val yearStartPos = resultTextStr.indexOf("(")
     if (yearStartPos > 0)
-      Result[ReleaseYear](ReleaseYear(Year.parse(resultTextStr.substring(yearStartPos + 1, yearStartPos + 5)))).toOption
+      Attempt
+        .catchNonFatal(ReleaseYear(Year.parse(resultTextStr.substring(yearStartPos + 1, yearStartPos + 5))))
+        .toOption
     else None
   }
 }

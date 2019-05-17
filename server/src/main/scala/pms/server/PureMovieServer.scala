@@ -1,8 +1,7 @@
 package pms.server
 
-import cats.effect.{ContextShift, Timer}
-import cats.implicits._
 import pms.effects._
+import pms.effects.implicits._
 import pms.logger._
 import pms.email._
 import pms.db.config._

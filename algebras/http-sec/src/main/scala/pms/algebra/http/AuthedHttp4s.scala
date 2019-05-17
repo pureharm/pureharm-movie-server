@@ -1,21 +1,15 @@
 package pms.algebra.http
 
-import cats.data.{Kleisli, OptionT}
-import cats.implicits._
-
-import busymachines.core.Anomaly
-import busymachines.core.UnauthorizedFailure
+import busymachines.core._
 
 import pms.effects._
+import pms.effects.implicits._
 import pms.algebra.user._
 
 import org.http4s._
 import org.http4s.dsl._
 import org.http4s.server._
-
 import org.http4s.util.CaseInsensitiveString
-
-import scala.util.control.NonFatal
 
 /**
   *
@@ -38,22 +32,25 @@ object AuthedHttp4s {
 
   private val wwwHeader = headers.`WWW-Authenticate`(challenges)
 
-  private def onFailure[F[_]: Async]: AuthedService[Anomaly, F] = Kleisli { _: AuthedRequest[F, Anomaly] =>
+  private def onFailure[F[_]: Async]: AuthedService[Throwable, F] = Kleisli { _: AuthedRequest[F, Throwable] =>
     val fdsl = Http4sDsl[F]
     import fdsl._
     OptionT.liftF(Unauthorized(wwwHeader))
   }
 
-  private def verifyToken[F[_]: Async](authAlgebra: UserAuthAlgebra[F]): Kleisli[F, Request[F], Result[AuthCtx]] =
+  private def verifyToken[F[_]: Async](authAlgebra: UserAuthAlgebra[F]): Kleisli[F, Request[F], Attempt[AuthCtx]] =
     Kleisli { req: Request[F] =>
       val optHeader = req.headers.get(`X-Auth-Token`)
       optHeader match {
-        case None => Result.fail[AuthCtx](UnauthorizedFailure(s"No ${`X-Auth-Token`} provided")).pure[F]
+        case None =>
+          Attempt
+            .raiseError[AuthCtx](UnauthorizedFailure(s"No ${`X-Auth-Token`} provided"))
+            .pure[F]
         case Some(header) =>
-          authAlgebra.authenticate(AuthenticationToken(header.value)).map(Result.pure).recover {
-            case NonFatal(a: Anomaly) => Result.fail(a)
-            case NonFatal(a) => Result.failThr(a)
-          }
+          authAlgebra
+            .authenticate(AuthenticationToken(header.value))
+            .map(Attempt.pure)
+            .handleError(Attempt.raiseError)
       }
     }
 }

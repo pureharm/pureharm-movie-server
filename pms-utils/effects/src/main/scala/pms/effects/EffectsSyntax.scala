@@ -9,12 +9,13 @@ package pms.effects
 object EffectsSyntax {
 
   trait Implicits {
-    implicit def transformFAIntoFAWithSyntax[F[_] : Concurrent, A](fa: F[A]): ConcurrentFAOps[F, A] =
+    implicit def transformFAIntoFAWithSyntax[F[_]: Concurrent, A](fa: F[A]): ConcurrentFAOps[F, A] =
       new ConcurrentFAOps(fa)
   }
 
   class ConcurrentFAOps[F[_], A](fa: F[A])(implicit F: Concurrent[F]) {
-    import cats.implicits._
+    import pms.effects.implicits._
+
     def forkAndForget: F[Unit] =
       F.start(fa).void
   }

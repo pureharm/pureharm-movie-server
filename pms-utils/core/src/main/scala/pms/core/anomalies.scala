@@ -9,11 +9,17 @@ import busymachines.core._
   *
   */
 object AnomalyIDS {
-  case object NicataAnomalyID extends AnomalyID { override val name: String = "NICATA" }
-  case object IscataAnomalyID extends AnomalyID { override val name: String = "ISCATA" }
+  case object NicataAnomalyID extends AnomalyID {
+    override val name: String = "NICATA"
+  }
+  case object IscataAnomalyID extends AnomalyID {
+    override val name: String = "ISCATA"
+  }
 
   //--------- movies
-  case object MovieNotFoundID extends AnomalyID { override val name: String = "m_001" }
+  case object MovieNotFoundID extends AnomalyID {
+    override val name: String = "m_001"
+  }
   //---------
 }
 
@@ -21,7 +27,6 @@ object AnomalyIDS {
   *
   *
   */
-
 object Fail {
 
   def nicata(what: String): Throwable = Nicata(what)
@@ -57,7 +62,8 @@ final case class Nicata(what: String)
     ) {
   override val id: AnomalyID = AnomalyIDS.NicataAnomalyID
 
-  override val parameters: Anomaly.Parameters = Anomaly.Parameters("what" -> what)
+  override val parameters: Anomaly.Parameters =
+    Anomaly.Parameters("what" -> what)
 }
 
 /**

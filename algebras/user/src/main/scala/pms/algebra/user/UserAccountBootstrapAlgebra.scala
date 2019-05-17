@@ -1,6 +1,6 @@
 package pms.algebra.user
 
-import cats.Applicative
+import pms.effects.Applicative
 
 /**
   *

@@ -3,9 +3,9 @@ package pms.service.movie.rest
 import java.time._
 
 import spire.math.Interval
-import cats.implicits._
 
 import pms.effects._
+import pms.effects.implicits._
 
 import pms.algebra.http._
 import pms.algebra.imdb._

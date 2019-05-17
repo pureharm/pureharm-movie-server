@@ -1,12 +1,11 @@
 package pms.server
 
-import cats.implicits._
-import cats.effect.Timer
 import doobie.util.transactor.Transactor
 import org.http4s._
 
 import pms.core.Module
 import pms.effects._
+import pms.effects.implicits._
 import pms.email._
 import pms.algebra.user._
 import pms.algebra.imdb._
@@ -47,7 +46,6 @@ trait ModulePureMovieServer[F[_]]
   }
 
   private lazy val _pureMovieServerRoutes: F[HttpRoutes[F]] = singleton {
-    import cats.implicits._
     for {
       umr <- userModuleRoutes
       routes = NonEmptyList.of[HttpRoutes[F]](umr).reduceK

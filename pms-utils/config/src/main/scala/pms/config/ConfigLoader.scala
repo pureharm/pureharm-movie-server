@@ -27,7 +27,8 @@ import scala.language.experimental.macros
   */
 trait ConfigLoader[Config] {
 
-  implicit def exportReader[A]: Exported[ConfigReader[A]] = macro ExportMacros.exportDerivedReader[A]
+  implicit def exportReader[A]: Exported[ConfigReader[A]] =
+    macro ExportMacros.exportDerivedReader[A]
   implicit def exportedReader[A](implicit ex: Exported[ConfigReader[A]]): ConfigReader[A] = ex.instance
 
   def default[F[_]: Sync]: F[Config]

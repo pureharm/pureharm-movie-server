@@ -1,6 +1,6 @@
 package pms.db.config
 
-import cats.effect.{Async, ContextShift, Sync}
+import pms.effects._
 import doobie.util.transactor.Transactor
 import org.flywaydb.core.Flyway
 

@@ -1,8 +1,7 @@
 package pms.service.user.rest
 
-import cats.implicits._
-
 import pms.effects._
+import pms.effects.implicits._
 
 import pms.algebra.user._
 import pms.algebra.http._
