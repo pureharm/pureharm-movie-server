@@ -1,8 +1,8 @@
 package pms.server.bootstrap
 
-import cats.implicits._
 import pms.core._
 import pms.effects._
+import pms.effects.implicits._
 
 /**
   *
@@ -13,11 +13,13 @@ import pms.effects._
 object Bootstrap {
 
   object superAdmin {
-    val email: Email             = Email("murray.bookchin@socialecology.fecund").unsafeGet()
-    val passw: PlainTextPassword = PlainTextPassword("OldManYellsAtAnarchism").unsafeGet()
+    val email: Email = Email("murray.bookchin@socialecology.fecund").right.get
+    val passw
+      : PlainTextPassword = PlainTextPassword("OldManYellsAtAnarchism").right.get
 
     //the concatenated base64($email:$passw) string, on hand, in case needed
-    val BasicAuthEncoding: String = "bXVycmF5LmJvb2tjaGluQHNvY2lhbGVjb2xvZ3kuZmVjdW5kOk9sZE1hblllbGxzQXRBbmFyY2hpc20="
+    val BasicAuthEncoding: String =
+      "bXVycmF5LmJvb2tjaGluQHNvY2lhbGVjb2xvZ3kuZmVjdW5kOk9sZE1hblllbGxzQXRBbmFyY2hpc20="
   }
 
   def bootstrap[F[_]: Concurrent](usb: ServerBootstrapAlgebra[F]): F[Unit] =

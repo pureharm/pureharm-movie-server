@@ -6,6 +6,7 @@ import javax.mail._
 import javax.mail.internet._
 
 import pms.effects._
+import pms.effects.implicits._
 import pms.logger._
 import pms.core._
 import pms.email._
@@ -21,20 +22,22 @@ import pms.email._
   *
   */
 private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
-  private val config: GmailConfig,
+    private val config: GmailConfig,
 ) extends EmailAlgebra[F] {
 
-  import cats.implicits._
   private val F: Async[F] = Async.apply[F]
 
   private val logger: PMSLogger[F] = PMSLogger.getLogger[F]
 
-  override def sendEmail(to: Email, subject: Subject, content: Content): F[Unit] = {
+  override def sendEmail(to: Email,
+                         subject: Subject,
+                         content: Content): F[Unit] = {
     val mimaMessage = F.pure {
       val message: MimeMessage = new MimeMessage(session)
 
       message.setFrom(new InternetAddress(config.from))
-      message.addRecipient(Message.RecipientType.TO, new InternetAddress(to.plainTextEmail))
+      message.addRecipient(Message.RecipientType.TO,
+                           new InternetAddress(to.plainTextEmail))
       message.setSubject(subject)
       message.setText(content)
       message.saveChanges()
@@ -42,13 +45,17 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
     }
 
     for {
-      message   <- mimaMessage
+      message <- mimaMessage
       transport <- F.delay(session.getTransport("smtp"))
-      _         <- F.delay(transport.connect(config.host, config.user, config.password)).onError(cleanupErr(transport))
-      _         <- logger.info("Connected to SMTP server")
-      _         <- F.delay(transport.sendMessage(message, message.getAllRecipients)).onError(cleanupErr(transport))
-      _         <- logger.info(s"Sent email to: ${to.plainTextEmail}")
-      _         <- cleanup(transport)
+      _ <- F
+        .delay(transport.connect(config.host, config.user, config.password))
+        .onError(cleanupErr(transport))
+      _ <- logger.info("Connected to SMTP server")
+      _ <- F
+        .delay(transport.sendMessage(message, message.getAllRecipients))
+        .onError(cleanupErr(transport))
+      _ <- logger.info(s"Sent email to: ${to.plainTextEmail}")
+      _ <- cleanup(transport)
     } yield ()
   }
 
@@ -59,13 +66,15 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
     * https://typelevel.org/cats-effect/typeclasses/bracket.html
     * This would make this whole thing super trivial.
     */
-  private def cleanupErr(transport: Transport): PartialFunction[Throwable, F[Unit]] = {
+  private def cleanupErr(
+      transport: Transport): PartialFunction[Throwable, F[Unit]] = {
     case scala.util.control.NonFatal(e) =>
       logger.warn(e)("Failed to send email.") >>
         cleanup(transport)
   }
 
-  private def cleanup(transport: Transport): F[Unit] = F.delay(transport.close())
+  private def cleanup(transport: Transport): F[Unit] =
+    F.delay(transport.close())
 
   /**
     * A complete list of session properties can be found at

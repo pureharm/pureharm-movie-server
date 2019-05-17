@@ -9,6 +9,6 @@ import pms.core._
   *
   */
 final case class UserInvitation(
-  email: Email,
-  role:  UserRole,
+    email: Email,
+    role: UserRole,
 )

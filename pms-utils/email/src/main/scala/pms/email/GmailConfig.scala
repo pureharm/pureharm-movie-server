@@ -10,13 +10,13 @@ import pms.effects.Sync
   *
   */
 final case class GmailConfig(
-  from:     Sender,
-  user:     EmailUser,
-  password: EmailPassword,
-  host:     SmtpHost,
-  port:     Int,
-  auth:     Boolean,
-  startTLS: Boolean,
+    from: Sender,
+    user: EmailUser,
+    password: EmailPassword,
+    host: SmtpHost,
+    port: Int,
+    auth: Boolean,
+    startTLS: Boolean,
 )
 
 object GmailConfig extends ConfigLoader[GmailConfig] {

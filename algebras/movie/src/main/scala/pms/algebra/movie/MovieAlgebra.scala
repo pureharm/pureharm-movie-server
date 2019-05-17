@@ -18,7 +18,8 @@ abstract class MovieAlgebra[F[_]] {
 
   protected def createMovieImpl(mc: MovieCreation): F[Movie]
 
-  def findMoviesBetween(interval: QueryInterval)(implicit auth: AuthCtx): F[List[Movie]] =
+  def findMoviesBetween(interval: QueryInterval)(
+      implicit auth: AuthCtx): F[List[Movie]] =
     userAuth.authorizeNewbie(findMoviesBetweenImpl(interval))
 
   def fetchMovie(mid: MovieID)(implicit auth: AuthCtx): F[Movie] =
@@ -33,6 +34,7 @@ object MovieAlgebra {
   import pms.algebra.movie.impl.MovieAlgebraImpl
   import pms.effects._
 
-  def async[F[_]: Async](userAuth: UserAuthAlgebra[F])(implicit transactor: Transactor[F]): F[MovieAlgebra[F]] =
+  def async[F[_]: Async](userAuth: UserAuthAlgebra[F])(
+      implicit transactor: Transactor[F]): F[MovieAlgebra[F]] =
     Async.apply[F].delay(MovieAlgebraImpl.bracket(userAuth, transactor))
 }

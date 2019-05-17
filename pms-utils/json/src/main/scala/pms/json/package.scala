@@ -11,7 +11,9 @@ import busymachines.{json => bj}
   * @since 25 Jun 2018
   *
   */
-package object json extends bj.JsonTypeDefinitions with bj.DefaultTypeDiscriminatorConfig {
+package object json
+    extends bj.JsonTypeDefinitions
+    with bj.DefaultTypeDiscriminatorConfig {
   type Codec[A] = bj.Codec[A]
   @inline def Codec: bj.Codec.type = bj.Codec
 }

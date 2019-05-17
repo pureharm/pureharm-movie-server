@@ -10,6 +10,6 @@ package pms.algebra.movie
   *
   */
 final case class MovieCreation(
-  name: MovieTitle,
-  date: Option[ReleaseDate],
+    name: MovieTitle,
+    date: Option[ReleaseDate],
 )

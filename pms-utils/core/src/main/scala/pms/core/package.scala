@@ -7,6 +7,4 @@ import busymachines.pureharm
   * @since 05 Apr 2019
   *
   */
-package object core {
-  type PhantomType[T] = pureharm.core.PhantomType[T]
-}
+package object core extends pureharm.PureharmCoreTypeDefinitions

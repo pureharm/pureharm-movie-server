@@ -2,6 +2,7 @@ package pms.algebra.user
 
 import busymachines.core.InvalidInputFailure
 import pms.effects._
+import pms.effects.implicits._
 
 /**
   *
@@ -13,12 +14,14 @@ sealed trait UserRole extends Product with Serializable with Ordered[UserRole]
 
 object UserRole {
 
-  def fromName(s: String): Result[UserRole] =
+  def fromName(s: String): Attempt[UserRole] =
     nameToRole
       .get(s)
-      .asResult(InvalidInputFailure(s"UserRole has to be one of $allString, but was: $s"))
+      .liftTo[Attempt](InvalidInputFailure(
+        s"UserRole has to be one of $allString, but was: $s"))
 
-  implicit val userRoleOrdering: Ordering[UserRole] = (x: UserRole, y: UserRole) => x.compare(y)
+  implicit val userRoleOrdering: Ordering[UserRole] =
+    (x: UserRole, y: UserRole) => x.compare(y)
 
   private val LT = -1
   private val EQ = 0

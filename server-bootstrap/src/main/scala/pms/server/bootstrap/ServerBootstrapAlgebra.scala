@@ -1,8 +1,7 @@
 package pms.server.bootstrap
 
-import cats.implicits._
-
 import pms.effects._
+import pms.effects.implicits._
 import pms.core._
 import pms.algebra.user._
 
@@ -17,10 +16,10 @@ import pms.logger._
   *
   */
 sealed abstract class ServerBootstrapAlgebra[F[_]](
-  private val uca: UserAccountAlgebra[F],
-  private val uba: UserAccountBootstrapAlgebra[F],
+    private val uca: UserAccountAlgebra[F],
+    private val uba: UserAccountBootstrapAlgebra[F],
 )(
-  implicit val F: Sync[F],
+    implicit val F: Sync[F],
 ) {
 
   private val logger = PMSLogger.getLogger[F]
@@ -28,13 +27,15 @@ sealed abstract class ServerBootstrapAlgebra[F[_]](
   final def bootStrapSuperAdmin(email: Email, pw: PlainTextPassword): F[User] =
     bootStrapUser(email, pw, UserRole.SuperAdmin)
 
-  final def bootStrapUser(email: Email, pw: PlainTextPassword, role: UserRole): F[User] =
+  final def bootStrapUser(email: Email,
+                          pw: PlainTextPassword,
+                          role: UserRole): F[User] =
     this.bootStrapUser(UserInvitation(email, role), pw)
 
   final def bootStrapUser(inv: UserInvitation, pw: PlainTextPassword): F[User] =
     for {
       token <- uba.bootstrapUser(inv)
-      user  <- uca.registrationStep2(token, pw)
+      user <- uca.registrationStep2(token, pw)
       _ <- logger.info(
         s"BOOTSTRAP — inserting user: role=${inv.role.productPrefix} email=${inv.email.plainTextEmail} pw=${pw.plainText}",
       )
@@ -43,7 +44,9 @@ sealed abstract class ServerBootstrapAlgebra[F[_]](
 
 object ServerBootstrapAlgebra {
 
-  def async[F[_]: Async](uca: UserAccountAlgebra[F], uba: UserAccountBootstrapAlgebra[F]): ServerBootstrapAlgebra[F] =
+  def async[F[_]: Async](
+      uca: UserAccountAlgebra[F],
+      uba: UserAccountBootstrapAlgebra[F]): ServerBootstrapAlgebra[F] =
     new ServerBootstrapAlgebra(uca, uba) {}
 
 }

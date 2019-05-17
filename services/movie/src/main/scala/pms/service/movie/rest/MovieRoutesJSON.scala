@@ -35,5 +35,6 @@ trait MovieRoutesJSON extends PMSJson {
 
   implicit val movieCirceCodec: Codec[Movie] = derive.codec[Movie]
 
-  implicit val movieCreationCirceCodec: Codec[MovieCreation] = derive.codec[MovieCreation]
+  implicit val movieCreationCirceCodec: Codec[MovieCreation] =
+    derive.codec[MovieCreation]
 }

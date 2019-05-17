@@ -18,9 +18,11 @@ trait ModuleUserAlgebra[F[_]] { this: Module[F] =>
 
   def userAlgebra: F[UserAlgebra[F]] = _moduleAlgebra.covary[UserAlgebra[F]]
 
-  def userAccountAlgebra: F[UserAccountAlgebra[F]] = _moduleAlgebra.covary[UserAccountAlgebra[F]]
+  def userAccountAlgebra: F[UserAccountAlgebra[F]] =
+    _moduleAlgebra.covary[UserAccountAlgebra[F]]
 
-  def userAuthAlgebra: F[UserAuthAlgebra[F]] = _moduleAlgebra.covary[UserAuthAlgebra[F]]
+  def userAuthAlgebra: F[UserAuthAlgebra[F]] =
+    _moduleAlgebra.covary[UserAuthAlgebra[F]]
 
   def userModuleAlgebra: F[UserModuleAlgebra[F]] = _moduleAlgebra
 

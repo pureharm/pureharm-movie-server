@@ -1,6 +1,6 @@
 package pms.algebra.user
 
-import cats.Applicative
+import pms.effects.Applicative
 
 /**
   *
@@ -9,7 +9,7 @@ import cats.Applicative
   *
   */
 final class UserAccountBootstrapAlgebra[F[_]] private (
-  private val uca: UserAccountAlgebra[F],
+    private val uca: UserAccountAlgebra[F],
 ) {
 
   def bootstrapUser(inv: UserInvitation): F[UserInviteToken] =
@@ -18,6 +18,7 @@ final class UserAccountBootstrapAlgebra[F[_]] private (
 
 object UserAccountBootstrapAlgebra {
 
-  def impl[F[_]: Applicative](uca: UserAccountAlgebra[F]): F[UserAccountBootstrapAlgebra[F]] =
+  def impl[F[_]: Applicative](
+      uca: UserAccountAlgebra[F]): F[UserAccountBootstrapAlgebra[F]] =
     Applicative[F].pure(new UserAccountBootstrapAlgebra[F](uca))
 }

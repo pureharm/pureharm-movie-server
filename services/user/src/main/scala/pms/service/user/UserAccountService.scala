@@ -1,9 +1,9 @@
 package pms.service.user
 
-import cats.implicits._
-
 import pms.core._
 import pms.effects._
+import pms.effects.implicits._
+
 import pms.email._
 
 import pms.algebra.user._
@@ -15,29 +15,35 @@ import pms.algebra.user._
   *
   */
 final class UserAccountService[F[_]] private (
-  private val userAuth:     UserAuthAlgebra[F],
-  private val userAccount:  UserAccountAlgebra[F],
-  private val userAlgebra:  UserAlgebra[F],
-  private val emailAlgebra: EmailAlgebra[F],
+    private val userAuth: UserAuthAlgebra[F],
+    private val userAccount: UserAccountAlgebra[F],
+    private val userAlgebra: UserAlgebra[F],
+    private val emailAlgebra: EmailAlgebra[F],
 )(
-  implicit private val F: Concurrent[F],
+    implicit private val F: Concurrent[F],
 ) {
 
-  def registrationStep1(inv: UserInvitation)(implicit authCtx: AuthCtx): F[Unit] =
+  def registrationStep1(inv: UserInvitation)(
+      implicit authCtx: AuthCtx): F[Unit] =
     for {
       regToken <- userAccount.registrationStep1(inv)
-      _ <- emailAlgebra.sendEmail(
-        to = inv.email,
-        //FIXME: resolve this data from an email content algebra or something
-        subject = s"You have been invited to join Pure Movie Server as a :${inv.role.productPrefix}",
-        //FIXME: resolve this data from an email content algebra or something
-        content = s"Please click this link to finish registration: [link_to_frontend]/$regToken",
-      ).forkAndForget //FIXME: do recoverWith and at least delete the user registration if sending email fails.
+      _ <- emailAlgebra
+        .sendEmail(
+          to = inv.email,
+          //FIXME: resolve this data from an email content algebra or something
+          subject =
+            s"You have been invited to join Pure Movie Server as a :${inv.role.productPrefix}",
+          //FIXME: resolve this data from an email content algebra or something
+          content =
+            s"Please click this link to finish registration: [link_to_frontend]/$regToken",
+        )
+        .forkAndForget //FIXME: do recoverWith and at least delete the user registration if sending email fails.
     } yield ()
 
   def registrationStep2(conf: UserConfirmation): F[User] =
     for {
-      user <- userAccount.registrationStep2(conf.invitationToken, conf.plainTextPassword)
+      user <- userAccount.registrationStep2(conf.invitationToken,
+                                            conf.plainTextPassword)
     } yield user
 
   def resetPasswordStep1(email: Email): F[Unit] =
@@ -45,10 +51,12 @@ final class UserAccountService[F[_]] private (
       resetToken <- userAccount.resetPasswordStep1(email)
       _ <- emailAlgebra
         .sendEmail(
-          to      = email,
+          to = email,
           subject = "Password reset for Pure Movie Server",
-          content = s"Please click the following link to reset your account password: [link_to_FE]$resetToken",
-        ).forkAndForget
+          content =
+            s"Please click the following link to reset your account password: [link_to_FE]$resetToken",
+        )
+        .forkAndForget
     } yield ()
 
   def resetPasswordStep2(pwr: PasswordResetCompletion): F[Unit] =
@@ -59,10 +67,10 @@ final class UserAccountService[F[_]] private (
 object UserAccountService {
 
   def concurrent[F[_]: Concurrent](
-    userAuth:     UserAuthAlgebra[F],
-    userAccount:  UserAccountAlgebra[F],
-    userAlgebra:  UserAlgebra[F],
-    emailAlgebra: EmailAlgebra[F],
+      userAuth: UserAuthAlgebra[F],
+      userAccount: UserAccountAlgebra[F],
+      userAlgebra: UserAlgebra[F],
+      emailAlgebra: EmailAlgebra[F],
   ): UserAccountService[F] = new UserAccountService[F](
     userAuth,
     userAccount,

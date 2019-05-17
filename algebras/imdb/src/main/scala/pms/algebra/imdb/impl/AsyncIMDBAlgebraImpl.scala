@@ -1,14 +1,15 @@
 package pms.algebra.imdb.impl
 
+import pms.effects._
+import pms.effects.implicits._
+
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
-import pms.effects._
-import pms.algebra.imdb._
-import cats.implicits._
-import java.time.Year
-
 import net.ruippeixotog.scalascraper.model.Document
+
+import pms.algebra.imdb._
+import java.time.Year
 
 /**
   *
@@ -17,9 +18,9 @@ import net.ruippeixotog.scalascraper.model.Document
   *
   */
 final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](
-  val throttler: EffectThrottler[F],
+    val throttler: EffectThrottler[F],
 )(
-  implicit val F: Async[F],
+    implicit val F: Async[F],
 ) extends IMDBAlgebra[F] {
 
   override def scrapeMovieByTitle(title: TitleQuery): F[Option[IMDBMovie]] = {
@@ -34,20 +35,24 @@ final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](
 
   private def parseIMDBDocument(imdbDocument: Document): Option[IMDBMovie] = {
     for {
-      findList     <- imdbDocument tryExtract elementList(".findList tr")
+      findList <- imdbDocument tryExtract elementList(".findList tr")
       firstElement <- findList.headOption
-      resultText   <- firstElement tryExtract element(".result_text")
+      resultText <- firstElement tryExtract element(".result_text")
       titleElement <- resultText tryExtract element("a")
-      title         = IMDBTitle(titleElement.text)
+      title = IMDBTitle(titleElement.text)
       resultTextStr = resultText.text
-      year          = parseYear(resultTextStr)
+      year = parseYear(resultTextStr)
     } yield IMDBMovie(title, year)
   }
 
   private def parseYear(resultTextStr: String): Option[ReleaseYear] = {
     val yearStartPos = resultTextStr.indexOf("(")
     if (yearStartPos > 0)
-      Result[ReleaseYear](ReleaseYear(Year.parse(resultTextStr.substring(yearStartPos + 1, yearStartPos + 5)))).toOption
+      Attempt
+        .catchNonFatal(
+          ReleaseYear(Year.parse(
+            resultTextStr.substring(yearStartPos + 1, yearStartPos + 5))))
+        .toOption
     else None
   }
 }

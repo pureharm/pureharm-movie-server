@@ -14,15 +14,16 @@ import pms.algebra.user.UserAuthAlgebra
   * @since 25 Jun 2018
   *
   */
-final private[movie] class MovieAlgebraImpl[F[_]: BracketThr] private (
-  private val transactor:          Transactor[F],
-  override protected val userAuth: UserAuthAlgebra[F],
+final private[movie] class MovieAlgebraImpl[F[_]: BracketAttempt] private (
+    private val transactor: Transactor[F],
+    override protected val userAuth: UserAuthAlgebra[F],
 ) extends MovieAlgebra[F] {
 
   override protected def createMovieImpl(mc: MovieCreation): F[Movie] =
     MovieAlgebraSQL.insertMovie(mc).transact(transactor)
 
-  override protected def findMoviesBetweenImpl(interval: QueryInterval): F[List[Movie]] =
+  override protected def findMoviesBetweenImpl(
+      interval: QueryInterval): F[List[Movie]] =
     MovieAlgebraSQL.findBetween(interval).transact(transactor)
 
   override protected def findMovieImpl(mid: MovieID): F[Movie] =
@@ -31,6 +32,7 @@ final private[movie] class MovieAlgebraImpl[F[_]: BracketThr] private (
 
 private[movie] object MovieAlgebraImpl {
 
-  def bracket[F[_]: BracketThr](userAuth: UserAuthAlgebra[F], transactor: Transactor[F]) =
+  def bracket[F[_]: BracketAttempt](userAuth: UserAuthAlgebra[F],
+                                    transactor: Transactor[F]) =
     new MovieAlgebraImpl(transactor, userAuth)
 }

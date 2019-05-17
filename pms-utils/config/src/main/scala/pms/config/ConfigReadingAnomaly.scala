@@ -10,7 +10,8 @@ import pureconfig.error.ConfigReaderFailure
   *
   */
 final case class ConfigReadingAnomaly(c: ConfigReaderFailure)
-    extends InvalidInputFailure(s"Failed to read config because: ${c.description}") {
+    extends InvalidInputFailure(
+      s"Failed to read config because: ${c.description}") {
 
   override def id: AnomalyID = ConfigReadingAnomaly.ID
 
@@ -18,11 +19,14 @@ final case class ConfigReadingAnomaly(c: ConfigReaderFailure)
     val orig: Anomaly.Parameters = Anomaly.Parameters(
       "reason" -> c.description,
     )
-    val loc = c.location.map(l => ("location" -> l.description): (String, Anomaly.Parameter))
+    val loc = c.location.map(l =>
+      ("location" -> l.description): (String, Anomaly.Parameter))
     orig.++(loc.toMap: Anomaly.Parameters)
   }
 }
 
 object ConfigReadingAnomaly {
-  case object ID extends AnomalyID { override val name: String = "pms_config_002" }
+  case object ID extends AnomalyID {
+    override val name: String = "pms_config_002"
+  }
 }

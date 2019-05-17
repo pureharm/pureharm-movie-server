@@ -21,5 +21,7 @@ package object user {
   object AuthenticationToken extends PhantomType[String]
   type AuthenticationToken = AuthenticationToken.Type
 
-  type UserModuleAlgebra[F[_]] = UserAuthAlgebra[F] with UserAlgebra[F] with UserAccountAlgebra[F]
+  type UserModuleAlgebra[F[_]] = UserAuthAlgebra[F]
+    with UserAlgebra[F]
+    with UserAccountAlgebra[F]
 }

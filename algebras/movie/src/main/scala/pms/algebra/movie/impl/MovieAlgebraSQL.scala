@@ -3,13 +3,12 @@ package pms.algebra.movie.impl
 import java.time.LocalDate
 
 import pms.core._
+import pms.effects._
+import pms.effects.implicits._
 import doobie._
 import doobie.implicits._
-import cats.implicits._
 import pms.algebra.movie._
 import spire.math._
-
-import scala.util.control.NonFatal
 
 /**
   *
@@ -35,18 +34,25 @@ private[movie] object MovieAlgebraSQL {
     findByIDQuery(id).flatMap(_.liftTo[ConnectionIO](MovieNotFoundAnomaly(id)))
 
   private def insertQuery(mc: MovieCreation): ConnectionIO[MovieID] =
-    sql"""INSERT INTO movies(name, date) VALUES(${mc.name}, ${mc.date})""".update.withUniqueGeneratedKeys[MovieID]("id")
+    sql"""INSERT INTO movies(name, date) VALUES(${mc.name}, ${mc.date})""".update
+      .withUniqueGeneratedKeys[MovieID]("id")
 
   private def allQuery: ConnectionIO[List[Movie]] =
     sql"""SELECT id, name, date FROM movies""".query[Movie].to[List]
 
-  private def betweenQuery(lower: ReleaseDate, upper: ReleaseDate): ConnectionIO[List[Movie]] =
-    sql"""SELECT id, name, date FROM movies WHERE date>=$lower AND date<=$upper""".query[Movie].to[List]
+  private def betweenQuery(lower: ReleaseDate,
+                           upper: ReleaseDate): ConnectionIO[List[Movie]] =
+    sql"""SELECT id, name, date FROM movies WHERE date>=$lower AND date<=$upper"""
+      .query[Movie]
+      .to[List]
 
   private def onDateQuery(rd: ReleaseDate): ConnectionIO[List[Movie]] =
-    sql"""SELECT id, name, date FROM movies WHERE date=$rd AND date=$rd""".query[Movie].to[List]
+    sql"""SELECT id, name, date FROM movies WHERE date=$rd AND date=$rd"""
+      .query[Movie]
+      .to[List]
 
-  private[movie] def findBetween(interval: QueryInterval): ConnectionIO[List[Movie]] = interval match {
+  private[movie] def findBetween(
+      interval: QueryInterval): ConnectionIO[List[Movie]] = interval match {
     case All() => allQuery
 
     case Above(_, _) => unimplementedInterval("Above")
@@ -68,10 +74,15 @@ private[movie] object MovieAlgebraSQL {
     for {
       id <- insertQuery(mc)
       movie <- fetchByIDQuery(id).adaptError {
-        case NonFatal(e) => Iscata(what = "Failed to fetch movie after insert", where = "insertMovie", Option(e))
+        case NonFatal(e) =>
+          Iscata(what = "Failed to fetch movie after insert",
+                 where = "insertMovie",
+                 Option(e))
       }
     } yield movie
 
   private def unimplementedInterval[T](str: String): ConnectionIO[T] =
-    Fail.nicata(s"Unimplemented interval: $str query range").raiseError[ConnectionIO, T]
+    Fail
+      .nicata(s"Unimplemented interval: $str query range")
+      .raiseError[ConnectionIO, T]
 }

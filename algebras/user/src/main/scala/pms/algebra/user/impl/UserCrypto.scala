@@ -1,7 +1,7 @@
 package pms.algebra.user.impl
 
-import cats.implicits._
 import pms.effects._
+import pms.effects.implicits._
 
 import scala.concurrent.duration._
 
@@ -35,15 +35,18 @@ private[impl] object UserCrypto {
     */
   private[impl] def generateToken[F[_]: Sync]: F[String] =
     for {
-      key    <- HMACSHA256.generateKey[F]
+      key <- HMACSHA256.generateKey[F]
       claims <- JWTClaims.withDuration[F](expiration = Some(10.minutes)) //FIXME: make this configurable
-      token  <- JWTMac.buildToString[F, HMACSHA256](claims, key)
+      token <- JWTMac.buildToString[F, HMACSHA256](claims, key)
     } yield token
 
-  private[impl] def hashPWWithBcrypt[F[_]: Sync](ptpw: PlainTextPassword): F[BcryptPW] =
+  private[impl] def hashPWWithBcrypt[F[_]: Sync](
+      ptpw: PlainTextPassword): F[BcryptPW] =
     BCrypt.hashpw[F](ptpw.plainText)
 
-  private[impl] def checkUserPassword[F[_]: Sync](p: String, hash: UserCrypto.BcryptPW): F[Boolean] = {
+  private[impl] def checkUserPassword[F[_]: Sync](
+      p: String,
+      hash: UserCrypto.BcryptPW): F[Boolean] = {
     BCrypt.checkpw[F](p, hash).map {
       case tsec.common.Verified           => true
       case tsec.common.VerificationFailed => false

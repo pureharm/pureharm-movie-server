@@ -12,19 +12,22 @@ import pms.core._
 trait UserAccountAlgebra[F[_]] {
 
   implicit protected def monadError: MonadError[F, Throwable]
-  protected def authAlgebra:         UserAuthAlgebra[F]
+  protected def authAlgebra: UserAuthAlgebra[F]
 
   final def registrationStep1(
-    inv: UserInvitation,
+      inv: UserInvitation,
   )(
-    implicit auth: AuthCtx,
-  ): F[UserInviteToken] = authAlgebra.authorizeGTERole(inv.role)(registrationStep1Impl(inv))
+      implicit auth: AuthCtx,
+  ): F[UserInviteToken] =
+    authAlgebra.authorizeGTERole(inv.role)(registrationStep1Impl(inv))
 
-  protected[user] def registrationStep1Impl(inv: UserInvitation): F[UserInviteToken]
+  protected[user] def registrationStep1Impl(
+      inv: UserInvitation): F[UserInviteToken]
 
   def registrationStep2(token: UserInviteToken, pw: PlainTextPassword): F[User]
 
   def resetPasswordStep1(email: Email): F[PasswordResetToken]
 
-  def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit]
+  def resetPasswordStep2(token: PasswordResetToken,
+                         newPassword: PlainTextPassword): F[Unit]
 }

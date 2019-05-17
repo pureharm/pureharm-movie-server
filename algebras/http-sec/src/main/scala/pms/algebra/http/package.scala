@@ -11,7 +11,9 @@ import pms.http.{Http4sCirceInstances, JavaTimeQueryParameterDecoders}
   * @since 26 Jun 2018
   *
   */
-package object http extends Http4sCirceInstances with JavaTimeQueryParameterDecoders {
+package object http
+    extends Http4sCirceInstances
+    with JavaTimeQueryParameterDecoders {
   type AuthCtxMiddleware[F[_]] = AuthMiddleware[F, AuthCtx]
-  type AuthCtxRoutes[F[_]]     = AuthedService[AuthCtx, F]
+  type AuthCtxRoutes[F[_]] = AuthedService[AuthCtx, F]
 }

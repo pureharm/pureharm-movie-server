@@ -1,7 +1,7 @@
 package pms.algebra.user
 
 import pms.core.Module
-import cats.implicits._
+import pms.effects.implicits._
 
 /**
   *
@@ -13,9 +13,11 @@ import cats.implicits._
   */
 trait ModuleUserBootstrap[F[_]] { this: Module[F] with ModuleUserAlgebra[F] =>
 
-  def userBootstrapAlgebra: F[UserAccountBootstrapAlgebra[F]] = _userBootstrapAlgebra
+  def userBootstrapAlgebra: F[UserAccountBootstrapAlgebra[F]] =
+    _userBootstrapAlgebra
 
-  private lazy val _userBootstrapAlgebra: F[UserAccountBootstrapAlgebra[F]] = singleton {
-    userAccountAlgebra.flatMap(a => UserAccountBootstrapAlgebra.impl(a))
-  }
+  private lazy val _userBootstrapAlgebra: F[UserAccountBootstrapAlgebra[F]] =
+    singleton {
+      userAccountAlgebra.flatMap(a => UserAccountBootstrapAlgebra.impl(a))
+    }
 }

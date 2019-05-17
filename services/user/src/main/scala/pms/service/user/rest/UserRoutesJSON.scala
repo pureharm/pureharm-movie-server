@@ -16,7 +16,9 @@ trait UserRoutesJSON extends PMSJson {
   //FIXME: derive automatically
   implicit val userRoleCirceCodec: Codec[UserRole] = Codec.instance(
     encode = Encoder.apply[String].contramap(ur => ur.productPrefix),
-    decode = Decoder.apply[String].emap(s => UserRole.fromName(s).left.map(_.message)),
+    decode = Decoder
+      .apply[String]
+      .emap(s => UserRole.fromName(s).left.map(_.getMessage)),
   )
 
   //FIXME: derive automatically
@@ -26,32 +28,39 @@ trait UserRoutesJSON extends PMSJson {
   )
 
   //FIXME: derive automatically
-  implicit val passwordResetTokenCirceCodec: Codec[PasswordResetToken] = Codec.instance[PasswordResetToken](
-    encode = Encoder.apply[String].contramap(PasswordResetToken.despook),
-    decode = Decoder.apply[String].map(PasswordResetToken.spook),
-  )
+  implicit val passwordResetTokenCirceCodec: Codec[PasswordResetToken] =
+    Codec.instance[PasswordResetToken](
+      encode = Encoder.apply[String].contramap(PasswordResetToken.despook),
+      decode = Decoder.apply[String].map(PasswordResetToken.spook),
+    )
 
   //FIXME: derive automatically
-  implicit val authenticationTokenCirceCodec: Codec[AuthenticationToken] = Codec.instance(
-    encode = Encoder.apply[String].contramap(AuthenticationToken.despook),
-    decode = Decoder.apply[String].map(AuthenticationToken.spook),
-  )
+  implicit val authenticationTokenCirceCodec: Codec[AuthenticationToken] =
+    Codec.instance(
+      encode = Encoder.apply[String].contramap(AuthenticationToken.despook),
+      decode = Decoder.apply[String].map(AuthenticationToken.spook),
+    )
 
   //FIXME: derive automatically
-  implicit val invitationTokenCirceCodec: Codec[UserInviteToken] = Codec.instance(
-    encode = Encoder.apply[String].contramap(UserRegistrationToken.despook),
-    decode = Decoder.apply[String].map(UserRegistrationToken.spook),
-  )
+  implicit val invitationTokenCirceCodec: Codec[UserInviteToken] =
+    Codec.instance(
+      encode = Encoder.apply[String].contramap(UserRegistrationToken.despook),
+      decode = Decoder.apply[String].map(UserRegistrationToken.spook),
+    )
 
-  implicit val userInvitationCirceCodec: Codec[UserInvitation] = derive.codec[UserInvitation]
+  implicit val userInvitationCirceCodec: Codec[UserInvitation] =
+    derive.codec[UserInvitation]
 
-  implicit val userConfirmationCirceCodec: Codec[UserConfirmation] = derive.codec[UserConfirmation]
+  implicit val userConfirmationCirceCodec: Codec[UserConfirmation] =
+    derive.codec[UserConfirmation]
 
   implicit val userCirceCodec: Codec[User] = derive.codec[User]
 
-  implicit val pwResetReqCirceCodec: Codec[PasswordResetRequest] = derive.codec[PasswordResetRequest]
+  implicit val pwResetReqCirceCodec: Codec[PasswordResetRequest] =
+    derive.codec[PasswordResetRequest]
 
-  implicit val pwResetComCirceCodec: Codec[PasswordResetCompletion] = derive.codec[PasswordResetCompletion]
+  implicit val pwResetComCirceCodec: Codec[PasswordResetCompletion] =
+    derive.codec[PasswordResetCompletion]
 
   implicit val authCtxCirceCodec: Codec[AuthCtx] = derive.codec[AuthCtx]
 }

@@ -2,11 +2,11 @@ package pms.service.user.rest
 
 import org.http4s._
 import pms.effects._
+import pms.effects.implicits._
 import pms.algebra.user._
 import pms.algebra.http._
 import pms.core.Module
 import pms.service.user._
-import cats.implicits._
 
 /**
   *
@@ -14,7 +14,8 @@ import cats.implicits._
   * @since 27 Jun 2018
   *
   */
-trait ModuleUserRest[F[_]] { this: Module[F] with ModuleUserService[F] with ModuleUserAlgebra[F] =>
+trait ModuleUserRest[F[_]] {
+  this: Module[F] with ModuleUserService[F] with ModuleUserAlgebra[F] =>
 
   def userRestService: F[UserRoutes[F]] = _userRoutes
 

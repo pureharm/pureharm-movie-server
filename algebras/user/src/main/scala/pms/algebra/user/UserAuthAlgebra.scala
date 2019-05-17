@@ -2,6 +2,7 @@ package pms.algebra.user
 
 import pms.core._
 import pms.effects._
+import pms.effects.implicits._
 import busymachines.core.UnauthorizedFailure
 
 /**
@@ -10,15 +11,15 @@ import busymachines.core.UnauthorizedFailure
   * @since 20 Jun 2018
   *
   */
-abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError[F, Throwable]) {
+abstract class UserAuthAlgebra[F[_]](
+    implicit private val monadError: MonadError[F, Throwable]) {
 
   def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx]
 
   def authenticate(token: AuthenticationToken): F[AuthCtx]
 
-  import cats.implicits._
-
-  final def promoteUser(id: UserID, newRole: UserRole)(implicit auth: AuthCtx): F[Unit] =
+  final def promoteUser(id: UserID, newRole: UserRole)(
+      implicit auth: AuthCtx): F[Unit] =
     authorizeGTERole(newRole)(promoteUserOP(id, newRole))
 
   /**
@@ -64,10 +65,13 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
 
   protected[user] def promoteUserOP(id: UserID, newRole: UserRole): F[Unit]
 
-  final protected[user] def authorizeGTERole[A](minRole: UserRole)(op: => F[A])(implicit auth: AuthCtx): F[A] =
+  final protected[user] def authorizeGTERole[A](minRole: UserRole)(op: => F[A])(
+      implicit auth: AuthCtx): F[A] =
     for {
       _ <- if (auth.user.role >= minRole) op
-      else monadError.raiseError(UnauthorizedFailure("User not authorized to perform this action"))
+      else
+        monadError.raiseError(
+          UnauthorizedFailure("User not authorized to perform this action"))
       result <- op
     } yield result
 }
