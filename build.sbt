@@ -304,6 +304,7 @@ lazy val `pms-db-config` = utilProject("db-config")
 lazy val `pms-config` = utilProject("config")
   .settings(
     libraryDependencies ++= Seq(
+      bmcCore,
       pureConfig,
     ),
   )
@@ -349,8 +350,7 @@ lazy val `pms-effects` = utilProject("effects")
   .settings(
     libraryDependencies ++= cats ++ Seq(
       catsEffect,
-      monix,
-      bmcEffects,
+      phEffects,
       specs2Test,
     ),
   )
@@ -546,14 +546,14 @@ def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-common
 
 lazy val bmcCore:     ModuleID = bmCommons("core")
 lazy val bmcDuration: ModuleID = bmCommons("duration")
-lazy val bmcEffects:  ModuleID = bmCommons("effects")
 lazy val bmcJson:     ModuleID = bmCommons("json")
 
 //https://github.com/busymachines/pureharm
-lazy val pureHarmVersion: String = "0.0.1"
+lazy val pureHarmVersion: String = "0.0.2-M8"
 def pureharm(m: String): ModuleID = "com.busymachines" %% s"pureharm-$m" % pureHarmVersion withSources ()
 
-lazy val phCore: ModuleID = pureharm("core")
+lazy val phCore:    ModuleID = pureharm("core")
+lazy val phEffects: ModuleID = pureharm("effects-cats")
 
 //============================================================================================
 //================================= http://typelevel.org/scala/ ==============================
@@ -574,11 +574,6 @@ lazy val cats: Seq[ModuleID] = Seq(catsCore, catsKernel, catsMacros, catsFree)
 lazy val catsEffectVersion: String = "1.3.0"
 
 lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion withSources ()
-
-//https://github.com/monix/monix
-lazy val monixVersion: String = "3.0.0-RC2"
-
-lazy val monix: ModuleID = "io.monix" %% "monix" % monixVersion withSources ()
 
 //https://github.com/functional-streams-for-scala/fs2
 lazy val fs2Version: String = "1.0.4"
