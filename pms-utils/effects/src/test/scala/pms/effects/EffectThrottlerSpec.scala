@@ -2,8 +2,11 @@ package pms.effects
 
 import pms.effects.implicits._
 import java.util.concurrent.TimeUnit
+
 import org.specs2.mutable.Specification
+
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
   *
