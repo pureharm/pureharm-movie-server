@@ -40,8 +40,7 @@ private[movie] object MovieAlgebraSQL {
   private def allQuery: ConnectionIO[List[Movie]] =
     sql"""SELECT id, name, date FROM movies""".query[Movie].to[List]
 
-  private def betweenQuery(lower: ReleaseDate,
-                           upper: ReleaseDate): ConnectionIO[List[Movie]] =
+  private def betweenQuery(lower: ReleaseDate, upper: ReleaseDate): ConnectionIO[List[Movie]] =
     sql"""SELECT id, name, date FROM movies WHERE date>=$lower AND date<=$upper"""
       .query[Movie]
       .to[List]
@@ -51,8 +50,7 @@ private[movie] object MovieAlgebraSQL {
       .query[Movie]
       .to[List]
 
-  private[movie] def findBetween(
-      interval: QueryInterval): ConnectionIO[List[Movie]] = interval match {
+  private[movie] def findBetween(interval: QueryInterval): ConnectionIO[List[Movie]] = interval match {
     case All() => allQuery
 
     case Above(_, _) => unimplementedInterval("Above")
@@ -75,9 +73,7 @@ private[movie] object MovieAlgebraSQL {
       id <- insertQuery(mc)
       movie <- fetchByIDQuery(id).adaptError {
         case NonFatal(e) =>
-          Iscata(what = "Failed to fetch movie after insert",
-                 where = "insertMovie",
-                 Option(e))
+          Iscata(what = "Failed to fetch movie after insert", where = "insertMovie", Option(e))
       }
     } yield movie
 

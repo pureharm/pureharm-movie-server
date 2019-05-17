@@ -22,11 +22,10 @@ trait ModuleMovieRest[F[_]] {
     for {
       imdb <- imdbService
       malb <- movieAlgebra
-    } yield
-      new MovieRestRoutes[F](
-        imdbService = imdb,
-        movieAlgebra = malb,
-      )
+    } yield new MovieRestRoutes[F](
+      imdbService  = imdb,
+      movieAlgebra = malb,
+    )
   }
 
 }

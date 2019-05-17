@@ -10,6 +10,6 @@ import pms.core.PlainTextPassword
   *
   */
 final case class UserConfirmation(
-    invitationToken: UserInviteToken,
-    plainTextPassword: PlainTextPassword,
+  invitationToken:   UserInviteToken,
+  plainTextPassword: PlainTextPassword,
 )

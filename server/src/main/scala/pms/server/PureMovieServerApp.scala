@@ -20,7 +20,7 @@ object PureMovieServerApp extends IOApp {
       server <- PureMovieServer
         .concurrent[IO](timer, contextShift) //FIXME: pass in proper context shift to do DB IO
       (serverConfig, pmsModule) <- server.init
-      routes <- pmsModule.pureMovieServerRoutes
+      routes                    <- pmsModule.pureMovieServerRoutes
       exitCode <- serverStream[IO](
         config = serverConfig,
         routes = routes,
@@ -29,8 +29,8 @@ object PureMovieServerApp extends IOApp {
   }
 
   private def serverStream[F[_]: ConcurrentEffect: Timer](
-      config: PureMovieServerConfig,
-      routes: HttpRoutes[F],
+    config: PureMovieServerConfig,
+    routes: HttpRoutes[F],
   ): Stream[F, ExitCode] = {
     val httpApp = Router(config.apiRoot -> routes).orNotFound
     BlazeServerBuilder[F]

@@ -16,24 +16,22 @@ import doobie.util.transactor.Transactor
   *
   */
 final class PureMovieServer[F[_]] private (
-    private val timer: Timer[F],
-    private val dbContextShift: ContextShift[F],
+  private val timer:          Timer[F],
+  private val dbContextShift: ContextShift[F],
 )(
-    implicit private val F: Concurrent[F],
+  implicit private val F: Concurrent[F],
 ) {
   private val logger: PMSLogger[F] = PMSLogger.getLogger[F]
 
   def init: F[(PureMovieServerConfig, ModulePureMovieServer[F])] = {
     for {
-      serverConfig <- PureMovieServerConfig.default[F]
-      gmailConfig <- GmailConfig.default[F]
+      serverConfig      <- PureMovieServerConfig.default[F]
+      gmailConfig       <- GmailConfig.default[F]
       imdbAlgebraConfig <- IMDBAlgebraConfig.default[F]
-      dbConfig <- DatabaseConfig.default[F]
-      transactor <- DatabaseConfigAlgebra.transactor[F](dbConfig)(
-        F,
-        dbContextShift)
-      nrOfMigs <- DatabaseConfigAlgebra.initializeSQLDb[F](dbConfig)
-      _ <- logger.info(s"Successfully ran #$nrOfMigs migrations")
+      dbConfig          <- DatabaseConfig.default[F]
+      transactor        <- DatabaseConfigAlgebra.transactor[F](dbConfig)(F, dbContextShift)
+      nrOfMigs          <- DatabaseConfigAlgebra.initializeSQLDb[F](dbConfig)
+      _                 <- logger.info(s"Successfully ran #$nrOfMigs migrations")
       pmsModule <- moduleInit(
         gmailConfig,
         imdbAlgebraConfig,
@@ -44,13 +42,13 @@ final class PureMovieServer[F[_]] private (
   }
 
   private def moduleInit(
-      gmailConfig: GmailConfig,
-      imdblgebraConfig: IMDBAlgebraConfig,
-      bootstrap: Boolean,
+    gmailConfig:      GmailConfig,
+    imdblgebraConfig: IMDBAlgebraConfig,
+    bootstrap:        Boolean,
   )(
-      implicit
-      transactor: Transactor[F],
-      timer: Timer[F],
+    implicit
+    transactor: Transactor[F],
+    timer:      Timer[F],
   ): F[ModulePureMovieServer[F]] = {
     if (bootstrap) {
       logger.warn(
@@ -59,15 +57,14 @@ final class PureMovieServer[F[_]] private (
         .concurrent(gmailConfig, imdblgebraConfig)
         .flatTap(_.bootstrap)
         .widen[ModulePureMovieServer[F]]
-    } else ModulePureMovieServer.concurrent(gmailConfig, imdblgebraConfig)
+    }
+    else ModulePureMovieServer.concurrent(gmailConfig, imdblgebraConfig)
   }
 
 }
 
 object PureMovieServer {
 
-  def concurrent[F[_]: Concurrent](
-      timer: Timer[F],
-      dbContextShift: ContextShift[F]): F[PureMovieServer[F]] =
+  def concurrent[F[_]: Concurrent](timer: Timer[F], dbContextShift: ContextShift[F]): F[PureMovieServer[F]] =
     Concurrent.apply[F].delay(new PureMovieServer[F](timer, dbContextShift))
 }

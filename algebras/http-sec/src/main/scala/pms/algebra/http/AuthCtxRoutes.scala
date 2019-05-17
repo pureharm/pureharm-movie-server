@@ -14,7 +14,7 @@ import org.http4s.{AuthedRequest, AuthedService, Response}
 object AuthCtxRoutes {
 
   def apply[F[_]](
-      pf: PartialFunction[AuthedRequest[F, AuthCtx], F[Response[F]]],
+    pf:         PartialFunction[AuthedRequest[F, AuthCtx], F[Response[F]]],
   )(implicit F: Applicative[F]): AuthedService[AuthCtx, F] =
     AuthedService.apply(pf)
 }

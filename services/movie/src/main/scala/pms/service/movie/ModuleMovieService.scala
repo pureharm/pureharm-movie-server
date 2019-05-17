@@ -20,11 +20,10 @@ trait ModuleMovieService[F[_]] {
     for {
       imbd <- imdbAlgebra
       malb <- movieAlgebra
-    } yield
-      IMDBService.async(
-        movieAlgebra = malb,
-        imdbAlgebra = imbd,
-      )
+    } yield IMDBService.async(
+      movieAlgebra = malb,
+      imdbAlgebra  = imbd,
+    )
   }
 
 }

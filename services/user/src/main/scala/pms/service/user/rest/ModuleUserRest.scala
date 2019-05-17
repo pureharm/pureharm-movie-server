@@ -14,8 +14,7 @@ import pms.service.user._
   * @since 27 Jun 2018
   *
   */
-trait ModuleUserRest[F[_]] {
-  this: Module[F] with ModuleUserService[F] with ModuleUserAlgebra[F] =>
+trait ModuleUserRest[F[_]] { this: Module[F] with ModuleUserService[F] with ModuleUserAlgebra[F] =>
 
   def userRestService: F[UserRoutes[F]] = _userRoutes
 

@@ -21,21 +21,19 @@ private[impl] object UserInvitationSQL {
   /*_*/
 
   final case class UserInvitationRepr(
-      email: Email,
-      role: UserRole,
-      invitationToken: UserInviteToken,
+    email:           Email,
+    role:            UserRole,
+    invitationToken: UserInviteToken,
   )
 
   implicit val userReprComposite: Read[UserInvitationRepr] =
     Read[(Email, UserRole, UserInviteToken)]
-      .map((t: (Email, UserRole, UserInviteToken)) =>
-        UserInvitationRepr.tupled.apply(t): UserInvitationRepr)
+      .map((t: (Email, UserRole, UserInviteToken)) => UserInvitationRepr.tupled.apply(t): UserInvitationRepr)
 
   def insert(repr: UserInvitationRepr): ConnectionIO[Unit] =
     sql"""INSERT INTO user_invitation(email, role, registration) VALUES (${repr.email}, ${repr.role}, ${repr.invitationToken})""".update.run.void
 
-  def findByToken(
-      token: UserInviteToken): ConnectionIO[Option[UserInvitationRepr]] =
+  def findByToken(token: UserInviteToken): ConnectionIO[Option[UserInvitationRepr]] =
     sql"""SELECT email, role, registration FROM user_invitation WHERE registration=$token"""
       .query[UserInvitationRepr]
       .option

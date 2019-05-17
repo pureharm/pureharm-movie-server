@@ -12,10 +12,9 @@ import pureconfig.error.ConfigReaderFailures
   */
 final case class ConfigReadingAnomalies(cs: ConfigReaderFailures)
     extends AnomalousFailures(
-      id = ConfigReadingAnomalies.ID,
-      message =
-        s"Failed to read config file. ${cs.toList.map(_.description).mkString(",")}",
-      firstAnomaly = ConfigReadingAnomaly(cs.head),
+      id              = ConfigReadingAnomalies.ID,
+      message         = s"Failed to read config file. ${cs.toList.map(_.description).mkString(",")}",
+      firstAnomaly    = ConfigReadingAnomaly(cs.head),
       restOfAnomalies = cs.tail.map(ConfigReadingAnomaly.apply),
     )
 

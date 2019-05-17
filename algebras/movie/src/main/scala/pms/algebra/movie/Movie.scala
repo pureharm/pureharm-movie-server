@@ -7,7 +7,7 @@ package pms.algebra.movie
   *
   */
 final case class Movie(
-    id: MovieID,
-    name: MovieTitle,
-    date: Option[ReleaseDate] = None,
+  id:   MovieID,
+  name: MovieTitle,
+  date: Option[ReleaseDate] = None,
 )

@@ -18,17 +18,16 @@ trait ModuleUserService[F[_]] {
   private lazy val _userService: F[UserAccountService[F]] = singleton {
     import pms.effects.implicits._
     for {
-      uaa <- userAuthAlgebra
+      uaa  <- userAuthAlgebra
       uacc <- userAccountAlgebra
-      ua <- userAlgebra
-      ea <- emailAlgebra
-    } yield
-      UserAccountService.concurrent[F](
-        userAuth = uaa,
-        userAccount = uacc,
-        userAlgebra = ua,
-        emailAlgebra = ea,
-      )
+      ua   <- userAlgebra
+      ea   <- emailAlgebra
+    } yield UserAccountService.concurrent[F](
+      userAuth     = uaa,
+      userAccount  = uacc,
+      userAlgebra  = ua,
+      emailAlgebra = ea,
+    )
   }
 
 }

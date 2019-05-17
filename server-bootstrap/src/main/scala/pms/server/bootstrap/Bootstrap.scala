@@ -13,9 +13,8 @@ import pms.effects.implicits._
 object Bootstrap {
 
   object superAdmin {
-    val email: Email = Email("murray.bookchin@socialecology.fecund").right.get
-    val passw
-      : PlainTextPassword = PlainTextPassword("OldManYellsAtAnarchism").right.get
+    val email: Email             = Email("murray.bookchin@socialecology.fecund").right.get
+    val passw: PlainTextPassword = PlainTextPassword("OldManYellsAtAnarchism").right.get
 
     //the concatenated base64($email:$passw) string, on hand, in case needed
     val BasicAuthEncoding: String =

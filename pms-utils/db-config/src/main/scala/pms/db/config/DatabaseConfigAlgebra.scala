@@ -10,12 +10,8 @@ import org.flywaydb.core.Flyway
   */
 object DatabaseConfigAlgebra {
 
-  def transactor[F[_]: Async: ContextShift](
-      config: DatabaseConfig): F[Transactor[F]] = Async[F].delay {
-    Transactor.fromDriverManager[F](config.driver,
-                                    config.url,
-                                    config.user,
-                                    config.password)
+  def transactor[F[_]: Async: ContextShift](config: DatabaseConfig): F[Transactor[F]] = Async[F].delay {
+    Transactor.fromDriverManager[F](config.driver, config.url, config.user, config.password)
   }
 
   /**

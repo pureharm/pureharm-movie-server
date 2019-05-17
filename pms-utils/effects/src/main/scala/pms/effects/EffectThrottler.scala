@@ -13,8 +13,8 @@ import scala.concurrent.duration._
   * @param semaphore bounded by the number of Fs allowed to be executed in the configured `interval`
   */
 final class EffectThrottler[F[_]: Timer: Concurrent] private (
-    private val interval: FiniteDuration,
-    private val semaphore: Semaphore[F],
+  private val interval:  FiniteDuration,
+  private val semaphore: Semaphore[F],
 ) {
 
   private val F = Concurrent.apply[F]
@@ -26,13 +26,13 @@ final class EffectThrottler[F[_]: Timer: Concurrent] private (
   def throttle[T](f: F[T]): F[T] =
     for {
       acquireTime <- acquireSemaphore
-      res <- f.onErrorF(delayLogic(acquireTime))
-      _ <- delayLogic(acquireTime)
+      res         <- f.onErrorF(delayLogic(acquireTime))
+      _           <- delayLogic(acquireTime)
     } yield res
 
   private def acquireSemaphore: F[FiniteDuration] =
     for {
-      _ <- semaphore.acquire
+      _   <- semaphore.acquire
       now <- timeNow
     } yield now
 
@@ -46,8 +46,7 @@ final class EffectThrottler[F[_]: Timer: Concurrent] private (
       _ <- semaphore.release
     } yield ()
 
-  private def isWithinInterval(acquireTime: FiniteDuration,
-                               now: FiniteDuration): Boolean =
+  private def isWithinInterval(acquireTime: FiniteDuration, now: FiniteDuration): Boolean =
     acquireTime - now < interval
 
   private def timeNow: F[FiniteDuration] =
@@ -60,16 +59,15 @@ final class EffectThrottler[F[_]: Timer: Concurrent] private (
 object EffectThrottler {
 
   def concurrent[F[_]: Timer: Concurrent](
-      interval: FiniteDuration,
-      amount: Long,
+    interval: FiniteDuration,
+    amount:   Long,
   ): F[EffectThrottler[F]] = {
     for {
       sem <- Semaphore(amount)
-    } yield
-      new EffectThrottler[F](
-        interval = interval,
-        semaphore = sem,
-      )
+    } yield new EffectThrottler[F](
+      interval  = interval,
+      semaphore = sem,
+    )
   }
 
 }

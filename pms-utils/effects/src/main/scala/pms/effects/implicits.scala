@@ -24,6 +24,4 @@ import busymachines.pureharm
   * @since 17 May 2019
   *
   */
-object implicits
-    extends EffectsSyntax.Implicits
-    with pureharm.effects.PureharmEffectsAndCatsImplicits
+object implicits extends EffectsSyntax.Implicits with pureharm.effects.PureharmEffectsAndCatsImplicits

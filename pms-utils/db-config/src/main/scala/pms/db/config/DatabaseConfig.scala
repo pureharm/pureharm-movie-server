@@ -8,11 +8,11 @@ import pms.config.ConfigLoader
   * @since 28/06/2018
   */
 final case class DatabaseConfig(
-    driver: String,
-    url: String,
-    user: String,
-    password: String,
-    clean: Boolean,
+  driver:   String,
+  url:      String,
+  user:     String,
+  password: String,
+  clean:    Boolean,
 )
 
 object DatabaseConfig extends ConfigLoader[DatabaseConfig] {

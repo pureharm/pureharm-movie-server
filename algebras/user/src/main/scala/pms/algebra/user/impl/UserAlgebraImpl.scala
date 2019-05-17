@@ -17,20 +17,17 @@ import pms.effects.implicits._
   *
   */
 final private[user] class UserAlgebraImpl[F[_]] private (
-    implicit
-    val F: Async[F],
-    val transactor: Transactor[F],
-) extends UserAuthAlgebra[F]()(F)
-    with UserAccountAlgebra[F]
-    with UserAlgebra[F] {
+  implicit
+  val F:          Async[F],
+  val transactor: Transactor[F],
+) extends UserAuthAlgebra[F]()(F) with UserAccountAlgebra[F] with UserAlgebra[F] {
 
   import UserAlgebraSQL._
 
-  override protected def monadError: MonadError[F, Throwable] = F
-  override protected def authAlgebra: UserAuthAlgebra[F] = this
+  override protected def monadError:  MonadError[F, Throwable] = F
+  override protected def authAlgebra: UserAuthAlgebra[F]       = this
 
-  private val invalidEmailOrPW: Throwable = UnauthorizedFailure(
-    "Invalid email or password")
+  private val invalidEmailOrPW: Throwable = UnauthorizedFailure("Invalid email or password")
 
   override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] =
     for {
@@ -50,42 +47,37 @@ final private[user] class UserAlgebraImpl[F[_]] private (
   override def authenticate(token: AuthenticationToken): F[AuthCtx] =
     storeAuth(findUserByAuthToken(token))
 
-  override protected[user] def promoteUserOP(id: UserID,
-                                             newRole: UserRole): F[Unit] =
+  override protected[user] def promoteUserOP(id: UserID, newRole: UserRole): F[Unit] =
     updateRole(id, newRole).transact(transactor).map(_ => ())
 
   override protected[user] def registrationStep1Impl(
-      inv: UserInvitation,
+    inv: UserInvitation,
   ): F[UserInviteToken] =
     for {
       token <- UserCrypto.generateToken(F).map(UserRegistrationToken.spook)
       toInsert = UserInvitationSQL.UserInvitationRepr(
-        email = inv.email,
-        role = inv.role,
+        email           = inv.email,
+        role            = inv.role,
         invitationToken = token,
       )
       _ <- UserInvitationSQL.insert(toInsert).transact(transactor)
     } yield token
 
-  override def registrationStep2(token: UserInviteToken,
-                                 pw: PlainTextPassword): F[User] = {
+  override def registrationStep2(token: UserInviteToken, pw: PlainTextPassword): F[User] = {
     val cio: ConnectionIO[User] = for {
       invite <- UserInvitationSQL.findByToken(token).flatMap { opt =>
-        opt.liftTo[ConnectionIO](
-          new RuntimeException("No user invitation found"))
+        opt.liftTo[ConnectionIO](new RuntimeException("No user invitation found"))
       }
       hashed <- UserCrypto.hashPWWithBcrypt[ConnectionIO](pw)
       userRepr = UserRepr(
         email = invite.email,
-        pw = hashed,
-        role = invite.role,
+        pw    = hashed,
+        role  = invite.role,
       )
       userId <- UserAlgebraSQL.insert(userRepr)
-      _ <- UserInvitationSQL.deleteByToken(token)
+      _      <- UserInvitationSQL.deleteByToken(token)
       newlyCreatedUser <- UserAlgebraSQL.find(userId).flatMap { opt =>
-        opt.liftTo[ConnectionIO](
-          new Error(
-            "No user found even after we created them. WTF? This is a bug"))
+        opt.liftTo[ConnectionIO](new Error("No user found even after we created them. WTF? This is a bug"))
       }
     } yield newlyCreatedUser
 
@@ -95,14 +87,13 @@ final private[user] class UserAlgebraImpl[F[_]] private (
   override def resetPasswordStep1(email: Email): F[PasswordResetToken] =
     for {
       token <- UserCrypto.generateToken(F)
-      _ <- updatePwdToken(email, PasswordResetToken(token)).transact(transactor)
+      _     <- updatePwdToken(email, PasswordResetToken(token)).transact(transactor)
     } yield PasswordResetToken(token)
 
-  override def resetPasswordStep2(token: PasswordResetToken,
-                                  newPassword: PlainTextPassword): F[Unit] =
+  override def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit] =
     for {
       hash <- UserCrypto.hashPWWithBcrypt(newPassword)(F)
-      _ <- changePassword(token, hash).transact(transactor)
+      _    <- changePassword(token, hash).transact(transactor)
     } yield ()
 
   override def findUser(id: UserID)(implicit auth: AuthCtx): F[Option[User]] =
@@ -117,6 +108,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (
 }
 
 private[user] object UserAlgebraImpl {
+
   def async[F[_]: Async: Transactor]: F[UserAlgebraImpl[F]] =
     Async.apply[F].pure(new UserAlgebraImpl[F]())
 }

@@ -16,10 +16,7 @@ import pms.core.Module
   *
   */
 trait ModulePureMovieServerBootstrap[F[_]]
-    extends Module[F]
-    with ModulePureMovieServer[F]
-    with ModuleServerBootstrap[F]
-    with ModuleUserBootstrap[F] {
+    extends Module[F] with ModulePureMovieServer[F] with ModuleServerBootstrap[F] with ModuleUserBootstrap[F] {
 
   def bootstrap: F[Unit] =
     serverBootstrapAlgebra.flatMap(sba => Bootstrap.bootstrap(sba))
@@ -28,13 +25,13 @@ trait ModulePureMovieServerBootstrap[F[_]]
 object ModulePureMovieServerBootstrap {
 
   def concurrent[F[_]](
-      gConfig: GmailConfig,
-      imbdAlgebraConfig: IMDBAlgebraConfig,
+    gConfig:           GmailConfig,
+    imbdAlgebraConfig: IMDBAlgebraConfig,
   )(
-      implicit
-      c: Concurrent[F],
-      t: Transactor[F],
-      ti: Timer[F],
+    implicit
+    c:  Concurrent[F],
+    t:  Transactor[F],
+    ti: Timer[F],
   ): F[ModulePureMovieServerBootstrap[F]] = c.delay {
     new ModulePureMovieServerBootstrap[F] {
       implicit override def F: Concurrent[F] = c

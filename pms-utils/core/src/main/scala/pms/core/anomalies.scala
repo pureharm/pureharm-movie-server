@@ -75,9 +75,7 @@ final case class Nicata(what: String)
   * @since 09 May 2019
   *
   */
-final case class Iscata(what: String,
-                        where: String,
-                        causedBy: Option[Throwable] = None)
+final case class Iscata(what: String, where: String, causedBy: Option[Throwable] = None)
     extends CatastrophicError(
       s"We have reached some inconsistent state, this is definitely a bug. Where: '$where'. What: '$what'",
       causedBy = causedBy,
@@ -85,7 +83,7 @@ final case class Iscata(what: String,
   override val id: AnomalyID = AnomalyIDS.IscataAnomalyID
 
   override val parameters: Anomaly.Parameters = Anomaly.Parameters(
-    "what" -> what,
+    "what"  -> what,
     "where" -> where,
   )
 }

@@ -16,22 +16,19 @@ import pms.effects.implicits._
   *
   */
 final class IMDBService[F[_]] private (
-    protected val movieAlgebra: MovieAlgebra[F],
-    protected val imdbAlgebra: IMDBAlgebra[F],
+  protected val movieAlgebra: MovieAlgebra[F],
+  protected val imdbAlgebra:  IMDBAlgebra[F],
 )(
-    implicit F: MonadError[F, Throwable],
+  implicit F: MonadError[F, Throwable],
 ) {
 
-  def scrapeIMDBForTitle(title: TitleQuery)(
-      implicit authCtx: AuthCtx): F[Movie] =
+  def scrapeIMDBForTitle(title: TitleQuery)(implicit authCtx: AuthCtx): F[Movie] =
     for {
       maybe <- imdbAlgebra.scrapeMovieByTitle(title)
       //TODO: write abstract combinators
       toCreate <- maybe match {
         case None =>
-          F.raiseError(
-            InvalidInputFailure(
-              s"Could not find imdb movie with title: $title"))
+          F.raiseError(InvalidInputFailure(s"Could not find imdb movie with title: $title"))
         case Some(value) => F.pure(imdbMovieToMovieCreation(value))
       }
       movie <- movieAlgebra.createMovie(toCreate)
@@ -48,7 +45,7 @@ final class IMDBService[F[_]] private (
       name = MovieTitle(IMDBTitle.despook(imdb.title)),
       date = imdb.year.map { y =>
         val year = ReleaseYear.despook(y)
-        val ld = LocalDate.of(year.getValue, 1, 1)
+        val ld   = LocalDate.of(year.getValue, 1, 1)
         ReleaseDate(ld)
       },
     )
@@ -56,7 +53,6 @@ final class IMDBService[F[_]] private (
 
 object IMDBService {
 
-  def async[F[_]: Async](movieAlgebra: MovieAlgebra[F],
-                         imdbAlgebra: IMDBAlgebra[F]): IMDBService[F] =
+  def async[F[_]: Async](movieAlgebra: MovieAlgebra[F], imdbAlgebra: IMDBAlgebra[F]): IMDBService[F] =
     new IMDBService[F](movieAlgebra, imdbAlgebra)
 }

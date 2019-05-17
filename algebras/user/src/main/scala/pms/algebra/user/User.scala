@@ -9,7 +9,7 @@ import pms.core._
   *
   */
 final case class User(
-    id: UserID,
-    email: Email,
-    role: UserRole,
+  id:    UserID,
+  email: Email,
+  role:  UserRole,
 )

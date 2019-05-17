@@ -19,11 +19,10 @@ import org.http4s.headers
   *
   */
 final class UserLoginRoutes[F[_]](
-    private val userAuthAlgebra: UserAuthAlgebra[F],
+  private val userAuthAlgebra: UserAuthAlgebra[F],
 )(
-    implicit val F: Async[F],
-) extends Http4sDsl[F]
-    with UserRoutesJSON {
+  implicit val F: Async[F],
+) extends Http4sDsl[F] with UserRoutesJSON {
 
   /**
     * User/password gets transimited in the ``Authorization``
@@ -34,8 +33,8 @@ final class UserLoginRoutes[F[_]](
   private def logInWithUserNamePassword(bc: BasicCredentials): F[AuthCtx] =
     for {
       email <- Email(bc.username).liftTo[F]
-      ptpw <- PlainTextPassword(bc.password).liftTo[F]
-      auth <- userAuthAlgebra.authenticate(email, ptpw)
+      ptpw  <- PlainTextPassword(bc.password).liftTo[F]
+      auth  <- userAuthAlgebra.authenticate(email, ptpw)
     } yield auth
 
   private def findBasicAuth(hs: Headers): F[BasicCredentials] = {
@@ -47,8 +46,7 @@ final class UserLoginRoutes[F[_]](
         case Credentials.Token(AuthScheme.Basic, token) =>
           Attempt.pure(BasicCredentials(token))
         case credentials =>
-          Attempt.raiseError(UnauthorizedFailure(
-            s"Unsupported credentials w/ AuthScheme ${credentials.authScheme}"))
+          Attempt.raiseError(UnauthorizedFailure(s"Unsupported credentials w/ AuthScheme ${credentials.authScheme}"))
       }
     } yield basic
 

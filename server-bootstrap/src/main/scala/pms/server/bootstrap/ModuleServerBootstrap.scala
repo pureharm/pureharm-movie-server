@@ -11,6 +11,7 @@ import pms.core.Module
   */
 trait ModuleServerBootstrap[F[_]] {
   this: Module[F] with ModuleUserAlgebra[F] with ModuleUserBootstrap[F] =>
+
   def serverBootstrapAlgebra: F[ServerBootstrapAlgebra[F]] =
     _serverBootstrapAlgebra
 

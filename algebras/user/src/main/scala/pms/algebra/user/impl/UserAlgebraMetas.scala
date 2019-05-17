@@ -21,8 +21,7 @@ private[impl] object UserAlgebraMetas {
     Meta[String].imap(AuthenticationToken.spook)(AuthenticationToken.despook)
 
   implicit val userRegistrationTokenMeta: Meta[UserInviteToken] =
-    Meta[String].imap(UserRegistrationToken.spook)(
-      UserRegistrationToken.despook)
+    Meta[String].imap(UserRegistrationToken.spook)(UserRegistrationToken.despook)
 
   implicit val passwordResetTokenMeta: Meta[PasswordResetToken] =
     Meta[String].imap(PasswordResetToken.spook)(PasswordResetToken.despook)
@@ -38,7 +37,6 @@ private[impl] object UserAlgebraMetas {
 
   implicit val userComposite: Read[User] =
     Read[(UserID, Email, UserRole)]
-      .imap((t: (UserID, Email, UserRole)) => User(t._1, t._2, t._3))(
-        (u: User) => (u.id, u.email, u.role))
+      .imap((t: (UserID, Email, UserRole)) => User(t._1, t._2, t._3))((u: User) => (u.id, u.email, u.role))
 
 }

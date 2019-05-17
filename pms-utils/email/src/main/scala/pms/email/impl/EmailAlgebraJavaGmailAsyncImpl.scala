@@ -22,22 +22,19 @@ import pms.email._
   *
   */
 private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
-    private val config: GmailConfig,
+  private val config: GmailConfig,
 ) extends EmailAlgebra[F] {
 
   private val F: Async[F] = Async.apply[F]
 
   private val logger: PMSLogger[F] = PMSLogger.getLogger[F]
 
-  override def sendEmail(to: Email,
-                         subject: Subject,
-                         content: Content): F[Unit] = {
+  override def sendEmail(to: Email, subject: Subject, content: Content): F[Unit] = {
     val mimaMessage = F.pure {
       val message: MimeMessage = new MimeMessage(session)
 
       message.setFrom(new InternetAddress(config.from))
-      message.addRecipient(Message.RecipientType.TO,
-                           new InternetAddress(to.plainTextEmail))
+      message.addRecipient(Message.RecipientType.TO, new InternetAddress(to.plainTextEmail))
       message.setSubject(subject)
       message.setText(content)
       message.saveChanges()
@@ -45,7 +42,7 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
     }
 
     for {
-      message <- mimaMessage
+      message   <- mimaMessage
       transport <- F.delay(session.getTransport("smtp"))
       _ <- F
         .delay(transport.connect(config.host, config.user, config.password))
@@ -66,8 +63,7 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
     * https://typelevel.org/cats-effect/typeclasses/bracket.html
     * This would make this whole thing super trivial.
     */
-  private def cleanupErr(
-      transport: Transport): PartialFunction[Throwable, F[Unit]] = {
+  private def cleanupErr(transport: Transport): PartialFunction[Throwable, F[Unit]] = {
     case scala.util.control.NonFatal(e) =>
       logger.warn(e)("Failed to send email.") >>
         cleanup(transport)

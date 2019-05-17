@@ -29,8 +29,7 @@ trait ConfigLoader[Config] {
 
   implicit def exportReader[A]: Exported[ConfigReader[A]] =
     macro ExportMacros.exportDerivedReader[A]
-  implicit def exportedReader[A](
-      implicit ex: Exported[ConfigReader[A]]): ConfigReader[A] = ex.instance
+  implicit def exportedReader[A](implicit ex: Exported[ConfigReader[A]]): ConfigReader[A] = ex.instance
 
   def default[F[_]: Sync]: F[Config]
 
@@ -38,14 +37,11 @@ trait ConfigLoader[Config] {
     suspendInF(pureconfig.loadConfig[Config](Derivation.Successful(reader)))
   }
 
-  def load[F[_]: Sync](namespace: String)(
-      implicit reader: ConfigReader[Config]): F[Config] = {
-    suspendInF(
-      pureconfig.loadConfig[Config](namespace)(Derivation.Successful(reader)))
+  def load[F[_]: Sync](namespace: String)(implicit reader: ConfigReader[Config]): F[Config] = {
+    suspendInF(pureconfig.loadConfig[Config](namespace)(Derivation.Successful(reader)))
   }
 
-  private def suspendInF[F[_]: Sync](
-      thunk: => Either[ConfigReaderFailures, Config]): F[Config] = {
+  private def suspendInF[F[_]: Sync](thunk: => Either[ConfigReaderFailures, Config]): F[Config] = {
     val F = Sync.apply[F]
     F.flatMap(F.delay(thunk)) {
       case Left(err) => F.raiseError(ConfigReadingAnomalies(err))
