@@ -63,7 +63,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (
       _ <- UserInvitationSQL.insert(toInsert).transact(transactor)
     } yield token
 
-  override def registrationStep2(token: UserInviteToken, pw: PlainTextPassword): F[User] = {
+  override def invitationStep2(token: UserInviteToken, pw: PlainTextPassword): F[User] = {
     val cio: ConnectionIO[User] = for {
       invite <- UserInvitationSQL.findByToken(token).flatMap { opt =>
         opt.liftTo[ConnectionIO](new RuntimeException("No user invitation found"))

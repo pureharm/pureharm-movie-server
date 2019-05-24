@@ -23,9 +23,9 @@ final class UserAccountService[F[_]] private (
   implicit private val F: Concurrent[F],
 ) {
 
-  def registrationStep1(inv: UserInvitation)(implicit authCtx: AuthCtx): F[Unit] =
+  def invitationStep1(inv: UserInvitation)(implicit authCtx: AuthCtx): F[Unit] =
     for {
-      regToken <- userAccount.registrationStep1(inv)
+      regToken <- userAccount.invitationStep1(inv)
       _ <- emailAlgebra
         .sendEmail(
           to = inv.email,
@@ -37,9 +37,9 @@ final class UserAccountService[F[_]] private (
         .forkAndForget //FIXME: do recoverWith and at least delete the user registration if sending email fails.
     } yield ()
 
-  def registrationStep2(conf: UserConfirmation): F[User] =
+  def invitationStep2(conf: UserConfirmation): F[User] =
     for {
-      user <- userAccount.registrationStep2(conf.invitationToken, conf.plainTextPassword)
+      user <- userAccount.invitationStep2(conf.invitationToken, conf.plainTextPassword)
     } yield user
 
   def resetPasswordStep1(email: Email): F[Unit] =

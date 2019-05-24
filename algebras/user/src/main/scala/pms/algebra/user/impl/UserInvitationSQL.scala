@@ -16,9 +16,7 @@ import pms.effects.implicits._
   */
 private[impl] object UserInvitationSQL {
 
-  /*_*/
   import UserAlgebraMetas._
-  /*_*/
 
   final case class UserInvitationRepr(
     email:           Email,
@@ -31,13 +29,13 @@ private[impl] object UserInvitationSQL {
       .map((t: (Email, UserRole, UserInviteToken)) => UserInvitationRepr.tupled.apply(t): UserInvitationRepr)
 
   def insert(repr: UserInvitationRepr): ConnectionIO[Unit] =
-    sql"""INSERT INTO user_invitation(email, role, registration) VALUES (${repr.email}, ${repr.role}, ${repr.invitationToken})""".update.run.void
+    sql"""INSERT INTO user_invitation(email, role, invitation_token) VALUES (${repr.email}, ${repr.role}, ${repr.invitationToken})""".update.run.void
 
   def findByToken(token: UserInviteToken): ConnectionIO[Option[UserInvitationRepr]] =
-    sql"""SELECT email, role, registration FROM user_invitation WHERE registration=$token"""
+    sql"""SELECT email, role, invitation_token FROM user_invitation WHERE invitation_token=$token"""
       .query[UserInvitationRepr]
       .option
 
   def deleteByToken(tok: UserInviteToken): ConnectionIO[Unit] =
-    sql"""DELETE FROM user_invitation WHERE registration=$tok""".update.run.void
+    sql"""DELETE FROM user_invitation WHERE invitation_token=$tok""".update.run.void
 }

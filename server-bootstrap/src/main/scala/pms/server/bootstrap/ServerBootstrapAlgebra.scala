@@ -33,7 +33,7 @@ sealed abstract class ServerBootstrapAlgebra[F[_]](
   final def bootStrapUser(inv: UserInvitation, pw: PlainTextPassword): F[User] =
     for {
       token <- uba.bootstrapUser(inv)
-      user  <- uca.registrationStep2(token, pw)
+      user  <- uca.invitationStep2(token, pw)
       _ <- logger.info(
         s"BOOTSTRAP — inserting user: role=${inv.role.productPrefix} email=${inv.email.plainTextEmail} pw=${pw.plainText}",
       )
