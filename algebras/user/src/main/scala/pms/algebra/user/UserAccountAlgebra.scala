@@ -14,16 +14,16 @@ trait UserAccountAlgebra[F[_]] {
   implicit protected def monadError: MonadError[F, Throwable]
   protected def authAlgebra:         UserAuthAlgebra[F]
 
-  final def registrationStep1(
+  final def invitationStep1(
     inv: UserInvitation,
   )(
     implicit auth: AuthCtx,
   ): F[UserInviteToken] =
-    authAlgebra.authorizeGTERole(inv.role)(registrationStep1Impl(inv))
+    authAlgebra.authorizeGTERoleThan(inv.role)(registrationStep1Impl(inv))
 
   protected[user] def registrationStep1Impl(inv: UserInvitation): F[UserInviteToken]
 
-  def registrationStep2(token: UserInviteToken, pw: PlainTextPassword): F[User]
+  def invitationStep2(token: UserInviteToken, pw: PlainTextPassword): F[User]
 
   def resetPasswordStep1(email: Email): F[PasswordResetToken]
 

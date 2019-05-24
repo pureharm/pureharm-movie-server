@@ -18,7 +18,7 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
   def authenticate(token: AuthenticationToken): F[AuthCtx]
 
   final def promoteUser(id: UserID, newRole: UserRole)(implicit auth: AuthCtx): F[Unit] =
-    authorizeGTERole(newRole)(promoteUserOP(id, newRole))
+    authorizeGTERoleThan(newRole)(promoteUserOP(id, newRole))
 
   /**
     * Lowest level of authorization, essentially anyone
@@ -29,7 +29,7 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
     *   certain user priviliges.
     */
   final def authorizeNewbie[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
-    authorizeGTERole(UserRole.Newbie)(op)
+    authorizeGTERoleThan(UserRole.Newbie)(op)
 
   /**
     * Requires member to have priviliges from [[UserRole.Member]] upwards
@@ -39,7 +39,7 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
     *   certain user priviliges.
     */
   final def authorizeMember[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
-    authorizeGTERole(UserRole.Member)(op)
+    authorizeGTERoleThan(UserRole.Member)(op)
 
   /**
     * Requires member to have priviliges from [[UserRole.Curator]] upwards
@@ -49,7 +49,7 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
     *   certain user priviliges.
     */
   final def authorizeCurator[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
-    authorizeGTERole(UserRole.Curator)(op)
+    authorizeGTERoleThan(UserRole.Curator)(op)
 
   /**
     * Requires member to have priviliges from [[UserRole.SuperAdmin]] upwards
@@ -59,15 +59,13 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
     *   certain user priviliges.
     */
   final def authorizeSuperAdmin[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
-    authorizeGTERole(UserRole.SuperAdmin)(op)
+    authorizeGTERoleThan(UserRole.SuperAdmin)(op)
 
   protected[user] def promoteUserOP(id: UserID, newRole: UserRole): F[Unit]
 
-  final protected[user] def authorizeGTERole[A](minRole: UserRole)(op: => F[A])(implicit auth: AuthCtx): F[A] =
-    for {
-      _ <- if (auth.user.role >= minRole) op
-      else
-        monadError.raiseError(UnauthorizedFailure("User not authorized to perform this action"))
-      result <- op
-    } yield result
+  final protected[user] def authorizeGTERoleThan[A](minRole: UserRole)(op: => F[A])(implicit auth: AuthCtx): F[A] =
+    if (auth.user.role >= minRole)
+      op
+    else
+      UnauthorizedFailure("User not authorized to perform this action").raiseError[F, A]
 }

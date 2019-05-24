@@ -82,6 +82,161 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "INVITE STEP1 — POST user_invitation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0bbb4262-49ac-4cd2-91db-c914e604f90c",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-AUTH-TOKEN",
+								"value": "{{murrayToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"lorand.szakacs+pure-movie-server-test@busymachines.com\",\n\t\"role\": \"Curator\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:21034/pms/api/user_invitation",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "21034",
+							"path": [
+								"pms",
+								"api",
+								"user_invitation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "INVITE STEP2 — user_invitation/confirm",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0bbb4262-49ac-4cd2-91db-c914e604f90c",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var newUser = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"lastInvitedUserEmail\", newUser.email);",
+									"postman.setEnvironmentVariable(\"lastInvitedUserID\", newUser.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-AUTH-TOKEN",
+								"value": "{{murrayToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"invitationToken\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NTg2OTk1NDIsImp0aSI6ImM4NWZkOWZiMmZjNmVlY2NjYTUzNmViOTJjZGU2M2RhIn0.d1www6nYKVvkOIlyTeKGAM03SG9TagQhNwebWLsgUE4\",\n\t\"plainTextPassword\": \"SomeNewPassword\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:21034/pms/api/user_invitation/confirmation",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "21034",
+							"path": [
+								"pms",
+								"api",
+								"user_invitation",
+								"confirmation"
+							]
+						},
+						"description": "You have to get token from your email.\n\nOr go hack the code and print it out to the console, lol. Don't leave it for \"production\" though :)"
+					},
+					"response": []
+				},
+				{
+					"name": "INVITE STEP3 — login with new user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0bbb4262-49ac-4cd2-91db-c914e604f90c",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var loginData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"newUserToken\", loginData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic bG9yYW5kLnN6YWthY3MrcHVyZS1tb3ZpZS1zZXJ2ZXItdGVzdEBidXN5bWFjaGluZXMuY29tOlNvbWVOZXdQYXNzd29yZA=="
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://localhost:21034/pms/api/user/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "21034",
+							"path": [
+								"pms",
+								"api",
+								"user",
+								"login"
+							]
+						},
+						"description": "This hardcodes the Authorization Basic header for\nusername: lorand.szakacs+pure-movie-server@busymachines.com\npassword: SomeNewPassword\n\nBasic bG9yYW5kLnN6YWthY3MrcHVyZS1tb3ZpZS1zZXJ2ZXItdGVzdEBidXN5bWFjaGluZXMuY29tOlNvbWVOZXdQYXNzd29yZA=="
+					},
+					"response": []
 				}
 			]
 		},

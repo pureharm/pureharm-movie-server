@@ -32,9 +32,6 @@ private[impl] object UserAlgebraSQL {
   def updateRole(id: UserID, role: UserRole): ConnectionIO[Int] =
     sql"""UPDATE users SET role=$role WHERE id=$id""".update.run
 
-  def updateRegistrationToken(id: UserID, token: UserInviteToken): ConnectionIO[Int] =
-    sql"""UPDATE users SET registration=$token WHERE id=$id""".update.run
-
   def updatePasswordToken(id: UserID, token: PasswordResetToken): ConnectionIO[Int] =
     sql"""UPDATE users SET passwordReset=$token WHERE id=$id""".update.run
 
@@ -62,11 +59,6 @@ private[impl] object UserAlgebraSQL {
   def findByAuthToken(token: AuthenticationToken): ConnectionIO[Option[Long]] =
     sql"""SELECT userId FROM authentications WHERE token=$token"""
       .query[Long]
-      .option
-
-  def findByRegToken(token: UserInviteToken): ConnectionIO[Option[User]] =
-    sql"""SELECT id, email, role FROM users WHERE registration=$token"""
-      .query[User]
       .option
 
   def findByPwdToken(token: PasswordResetToken): ConnectionIO[Option[User]] =

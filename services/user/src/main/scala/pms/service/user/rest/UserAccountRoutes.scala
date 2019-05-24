@@ -23,21 +23,20 @@ final class UserAccountRoutes[F[_]](
   implicit val F: Async[F],
 ) extends Http4sDsl[F] with UserRoutesJSON {
 
-  //FIXME: rename this to UserInvitation, all the way down
-  private val userRegistrationStep1Routes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {
-    case (req @ POST -> Root / "user_registration") as user =>
+  private val userInvitationStep1Routes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {
+    case (req @ POST -> Root / "user_invitation") as user =>
       for {
         reg  <- req.as[UserInvitation]
-        _    <- userService.registrationStep1(reg)(user)
+        _    <- userService.invitationStep1(reg)(user)
         resp <- Created()
       } yield resp
   }
 
-  private val userRegistrationStep2Routes: HttpRoutes[F] = HttpRoutes.of[F] {
-    case req @ PUT -> Root / "user_registration" / "confirmation" =>
+  private val userInvitationStep2Routes: HttpRoutes[F] = HttpRoutes.of[F] {
+    case req @ PUT -> Root / "user_invitation" / "confirmation" =>
       for {
         conf <- req.as[UserConfirmation]
-        user <- userService.registrationStep2(conf)
+        user <- userService.invitationStep2(conf)
         resp <- Ok(user)
       } yield resp
   }
@@ -61,12 +60,12 @@ final class UserAccountRoutes[F[_]](
   val routes: HttpRoutes[F] =
     NonEmptyList
       .of[HttpRoutes[F]](
-        userRegistrationStep2Routes,
+        userInvitationStep2Routes,
         userPasswordResetRoutes,
       )
       .reduceK
 
   val authedRoutes: AuthCtxRoutes[F] =
-    userRegistrationStep1Routes
+    userInvitationStep1Routes
 
 }
