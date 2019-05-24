@@ -112,6 +112,95 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "GET — movie/ by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-AUTH-TOKEN",
+						"value": "{{murrayToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:21034/pms/api/movie/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "21034",
+					"path": [
+						"pms",
+						"api",
+						"movie",
+						"1"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET — movie/ by date query",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ee879290-8409-40a6-93b9-fea55e90830c",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-AUTH-TOKEN",
+						"type": "text",
+						"value": "{{murrayToken}}"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:21034/pms/api/movie?start=1940-01-01&end=2025-01-02",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "21034",
+					"path": [
+						"pms",
+						"api",
+						"movie"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "start",
+							"value": "1940-01-01"
+						},
+						{
+							"key": "end",
+							"value": "2025-01-02"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
