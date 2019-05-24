@@ -19,7 +19,7 @@ trait UserAccountAlgebra[F[_]] {
   )(
     implicit auth: AuthCtx,
   ): F[UserInviteToken] =
-    authAlgebra.authorizeGTERole(inv.role)(registrationStep1Impl(inv))
+    authAlgebra.authorizeGTERoleThan(inv.role)(registrationStep1Impl(inv))
 
   protected[user] def registrationStep1Impl(inv: UserInvitation): F[UserInviteToken]
 
