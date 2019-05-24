@@ -2,6 +2,7 @@ import sbt._
 
 addCommandAlias("mkSite", ";docs/clean;docs/makeMicrosite")
 addCommandAlias("doSitePublish", ";docs/clean;docs/publishMicrosite")
+addCommandAlias("mkJar", ";clean;update;compile;server/assembly")
 
 //=============================================================================
 //=============================================================================
@@ -17,7 +18,9 @@ lazy val server = project
   .settings(commonSettings)
   .settings(sbtAssemblySettings)
   .settings(
-    mainClass := Option("pms.server.PureMovieServerApp"),
+    mainClass                   := Option("pms.server.PureMovieServerApp"),
+    mainClass in assembly       := Option("pms.server.PureMovieServerApp"),
+    assemblyJarName in assembly := s"pure-movie-server.jar",
   )
   .settings(
     libraryDependencies ++= Seq(
@@ -73,8 +76,6 @@ lazy val `server-bootstrap` = project
   )
 
 lazy val `service-user` = serviceProject("user")
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
   .settings(
     libraryDependencies ++= Seq(
       specs2Test,
@@ -104,8 +105,6 @@ lazy val `service-user` = serviceProject("user")
   )
 
 lazy val `service-movie` = serviceProject("movie")
-  .settings(commonSettings)
-  .settings(sbtAssemblySettings)
   .settings(
     libraryDependencies ++= Seq(
       spire,
