@@ -625,7 +625,7 @@ lazy val flyway = "org.flywaydb" % "flyway-core" % flywayVersion withSources ()
 //============================================================================================
 
 //https://github.com/non/spire
-lazy val spire: ModuleID = "org.typelevel" %% "spire" % "0.16.0" withSources ()
+lazy val spire: ModuleID = "org.typelevel" %% "spire" % "0.16.1" withSources ()
 
 //============================================================================================
 //========================================  security  ========================================
