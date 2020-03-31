@@ -408,7 +408,8 @@ def utilProject(name:    String): Project = genericProject("pms", "pms-utils", n
 def serviceProject(name: String): Project = genericProject("service", "services", name)
 
 def commonSettings: Seq[Setting[_]] = Seq(
-  scalaVersion := "2.12.8",
+  //https://github.com/scala/scala/releases
+  scalaVersion := "2.12.11",
   /*
    * Eliminates useless, unintuitive, and sometimes broken additions of `withFilter`
    * when using generator arrows in for comprehensions. e.g.
