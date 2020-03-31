@@ -16,7 +16,7 @@ Head over to the github page [https://github.com/busymachines/pure-movie-server]
 ### 2. Runtime environment Java JDK8
 
 The safest is to just ensure that you have the Java 8 JDK installed. Technically it should run on newer versions of the java virtual machine, but it wasn't properly tested.
-Download [jdk8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+Download [adoptopenjdk 8](https://adoptopenjdk.net/)
 
 ### 3. Build tool
 install SBT [https://www.scala-sbt.org/download.html](https://www.scala-sbt.org/download.html)
@@ -31,7 +31,7 @@ install IntelliJ [https://www.jetbrains.com/idea/download/](https://www.jetbrain
 
 One of the easiest tools for editing and navigating Scala code is IntelliJ. While it has its bugs, it is rather user friendly.
 
-See this [tutorial]() on how to import the `pure-movie-server` once you cloned it from github (see first section).
+See this [tutorial](https://github.com/busymachines/busylabs/blob/master/importing-a-project.md) on how to import the `pure-movie-server` once you cloned it from github (see first section).
 
 ### 5. Run a PostgresSQL database server
 

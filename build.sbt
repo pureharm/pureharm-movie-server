@@ -388,7 +388,7 @@ lazy val docs = project
     //  MicrositeFavicon("favicon16x16.png", "16x16"),
     //  MicrositeFavicon("favicon32x32.png", "32x32")
     //),
-    micrositeFooterText := Some("""Ⓒ 2019 <a href="https://www.busymachines.com/">BusyMachines</a>"""),
+    micrositeFooterText := Some("""Ⓒ 2020 <a href="https://www.busymachines.com/">BusyMachines</a>"""),
     //------ same as default settings --------
     micrositePushSiteWith      := GHPagesPlugin,
     micrositeGitHostingService := GitHub,
