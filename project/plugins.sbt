@@ -6,7 +6,7 @@
   *
   * https://github.com/scalameta/scalafmt
   */
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.0.0")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.4") //https://github.com/scalameta/sbt-scalafmt/releases
 
 //=============================================================================
 //=============================================================================
@@ -32,7 +32,7 @@ addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.0.0")
   *
   * }}}
   */
-addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.5")
+//addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.5")
 
 //=============================================================================
 //=============================================================================
@@ -42,7 +42,7 @@ addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.5")
   *
   * https://github.com/sbt/sbt-assembly
   */
-addSbtPlugin("com.eed3si9n" %% "sbt-assembly" % "0.14.9")
+addSbtPlugin("com.eed3si9n" %% "sbt-assembly" % "0.14.10") //https://github.com/sbt/sbt-assembly
 
 //=============================================================================
 //=============================================================================
@@ -54,15 +54,7 @@ addSbtPlugin("com.eed3si9n" %% "sbt-assembly" % "0.14.9")
   * https://github.com/jrudolph/sbt-dependency-graph
   *
   */
-addSbtPlugin("net.virtual-void" %% "sbt-dependency-graph" % "0.9.2")
-
-/**
-  *
-  * Allows to specify anonymous higher kinded types with easy syntax
-  *
-  * https://github.com/non/kind-projector
-  */
-// addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.8")
+//addSbtPlugin("net.virtual-void" %% "sbt-dependency-graph" % "0.9.2")
 
 //=============================================================================
 //=============================================================================
