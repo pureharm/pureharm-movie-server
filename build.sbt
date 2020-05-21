@@ -11,7 +11,7 @@ lazy val root =
   Project(id = "pure-movie-server", base = file("."))
     .settings(commonSettings)
     .aggregate(
-      server,
+      server
     )
 
 lazy val server = project
@@ -24,8 +24,8 @@ lazy val server = project
   )
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test,
-    ),
+      specs2Test
+    )
   )
   .dependsOn(
     `pms-effects`,
@@ -55,8 +55,8 @@ lazy val `server-bootstrap` = project
   .settings(sbtAssemblySettings)
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test,
-    ),
+      specs2Test
+    )
   )
   .dependsOn(
     `pms-logger`,
@@ -78,8 +78,8 @@ lazy val `server-bootstrap` = project
 lazy val `service-user` = serviceProject("user")
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test,
-    ),
+      specs2Test
+    )
   )
   .dependsOn(
     `algebra-user`,
@@ -109,7 +109,7 @@ lazy val `service-movie` = serviceProject("movie")
     libraryDependencies ++= Seq(
       spire,
       specs2Test,
-    ),
+    )
   )
   .dependsOn(
     `algebra-user`,
@@ -139,8 +139,8 @@ lazy val `service-movie` = serviceProject("movie")
 lazy val `algebra-http-sec` = algebraProject("http-sec")
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test,
-    ),
+      specs2Test
+    )
   )
   .dependsOn(
     `pms-config`,
@@ -162,7 +162,7 @@ lazy val `algebra-imdb` = algebraProject("imdb")
     libraryDependencies ++= Seq(
       scalaScrapper,
       specs2Test,
-    ),
+    )
   )
   .dependsOn(
     `pms-config`,
@@ -182,7 +182,7 @@ lazy val `algebra-movie` = algebraProject("movie")
     libraryDependencies ++= Seq(
       spire,
       specs2Test,
-    ),
+    )
   )
   .dependsOn(
     `algebra-user`,
@@ -202,8 +202,8 @@ lazy val `algebra-movie` = algebraProject("movie")
 lazy val `algebra-user` = algebraProject("user")
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test,
-    ) ++ tsec,
+      specs2Test
+    ) ++ tsec
   )
   .dependsOn(
     `pms-config`,
@@ -223,21 +223,22 @@ lazy val `algebra-user` = algebraProject("user")
 lazy val `pms-db` = utilProject("db")
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test,
-    ) ++ doobie ++ fs2,
+      specs2Test
+    ) ++ doobie ++ fs2
   )
   .dependsOn(
-    `pms-effects`,
+    `pms-effects`
   )
   .aggregate(
-    `pms-effects`,
+    `pms-effects`
   )
+
 lazy val `pms-email` = utilProject("email")
   .settings(
     libraryDependencies ++= Seq(
       javaxMail,
       specs2Test,
-    ),
+    )
   )
   .dependsOn(
     `pms-core`,
@@ -255,8 +256,8 @@ lazy val `pms-email` = utilProject("email")
 lazy val `pms-http` = utilProject("http")
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test,
-    ) ++ http4s ++ fs2,
+      specs2Test
+    ) ++ http4s ++ fs2
   )
   .dependsOn(
     `pms-core`,
@@ -272,8 +273,8 @@ lazy val `pms-http` = utilProject("http")
 lazy val `pms-json` = utilProject("json")
   .settings(
     libraryDependencies ++= Seq(
-      bmcJson,
-    ) ++ circe,
+      bmcJson
+    ) ++ circe
   )
   .dependsOn(
     `pms-core`,
@@ -289,7 +290,7 @@ lazy val `pms-db-config` = utilProject("db-config")
     libraryDependencies ++= Seq(
       doobieCore,
       flyway,
-    ) ++ fs2,
+    ) ++ fs2
   )
   .dependsOn(
     `pms-config`,
@@ -305,13 +306,13 @@ lazy val `pms-config` = utilProject("config")
     libraryDependencies ++= Seq(
       bmcCore,
       pureConfig,
-    ),
+    )
   )
   .dependsOn(
-    `pms-effects`,
+    `pms-effects`
   )
   .aggregate(
-    `pms-effects`,
+    `pms-effects`
   )
 
 lazy val `pms-logger` = utilProject("logger")
@@ -319,13 +320,13 @@ lazy val `pms-logger` = utilProject("logger")
     libraryDependencies ++= Seq(
       log4cats,
       logbackClassic,
-    ),
+    )
   )
   .dependsOn(
-    `pms-effects`,
+    `pms-effects`
   )
   .aggregate(
-    `pms-effects`,
+    `pms-effects`
   )
 
 lazy val `pms-core` = utilProject("core")
@@ -336,13 +337,13 @@ lazy val `pms-core` = utilProject("core")
       phCore,
       bmcDuration,
       specs2Test,
-    ),
+    )
   )
   .dependsOn(
-    `pms-effects`,
+    `pms-effects`
   )
   .aggregate(
-    `pms-effects`,
+    `pms-effects`
   )
 
 lazy val `pms-effects` = utilProject("effects")
@@ -351,7 +352,7 @@ lazy val `pms-effects` = utilProject("effects")
       catsEffect,
       phEffects,
       specs2Test,
-    ),
+    )
   )
 
 lazy val docs = project
@@ -362,19 +363,19 @@ lazy val docs = project
   .settings(commonSettings)
   .settings(micrositeTasksSettings)
   .settings(
-    micrositeName             := "pure-movie-server",
-    micrositeDescription      := "Example web server written in a pure functional programming style",
-    micrositeBaseUrl          := "/pure-movie-server",
-    micrositeDocumentationUrl := "/pure-movie-server/docs/",
-    micrositeHomepage         := "http://busymachines.github.io/pure-movie-server/",
-    micrositeGithubOwner      := "busymachines",
-    micrositeGithubRepo       := "pure-movie-server",
-    micrositeHighlightTheme   := "atom-one-light",
+    micrositeName              := "pure-movie-server",
+    micrositeDescription       := "Example web server written in a pure functional programming style",
+    micrositeBaseUrl           := "/pure-movie-server",
+    micrositeDocumentationUrl  := "/pure-movie-server/docs/",
+    micrositeHomepage          := "http://busymachines.github.io/pure-movie-server/",
+    micrositeGithubOwner       := "busymachines",
+    micrositeGithubRepo        := "pure-movie-server",
+    micrositeHighlightTheme    := "atom-one-light",
     //-------------- docs project ------------
     //micrositeImgDirectory := (resourceDirectory in Compile).value / "microsite" / "images",
     //micrositeCssDirectory := (resourceDirectory in Compile).value / "microsite" / "styles"
     //micrositeJsDirectory := (resourceDirectory in Compile).value / "microsite" / "scripts"
-    micrositePalette := Map(
+    micrositePalette           := Map(
       "brand-primary"   -> "#E05236",
       "brand-secondary" -> "#3F3242",
       "brand-tertiary"  -> "#2D232F",
@@ -388,7 +389,7 @@ lazy val docs = project
     //  MicrositeFavicon("favicon16x16.png", "16x16"),
     //  MicrositeFavicon("favicon32x32.png", "32x32")
     //),
-    micrositeFooterText := Some("""Ⓒ 2020 <a href="https://www.busymachines.com/">BusyMachines</a>"""),
+    micrositeFooterText        := Some("""Ⓒ 2020 <a href="https://www.busymachines.com/">BusyMachines</a>"""),
     //------ same as default settings --------
     micrositePushSiteWith      := GHPagesPlugin,
     micrositeGitHostingService := GitHub,
@@ -409,7 +410,7 @@ def serviceProject(name: String): Project = genericProject("service", "services"
 
 def commonSettings: Seq[Setting[_]] = Seq(
   //https://github.com/scala/scala/releases
-  scalaVersion := "2.12.11",
+  scalaVersion                       := "2.12.11",
   /*
    * Eliminates useless, unintuitive, and sometimes broken additions of `withFilter`
    * when using generator arrows in for comprehensions. e.g.
@@ -427,26 +428,22 @@ def commonSettings: Seq[Setting[_]] = Seq(
    *
    * https://github.com/oleg-py/better-monadic-for
    */
-  addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0"),
-  scalacOptions ++= customScalaCompileFlags,
-  /**
-    * This is here to eliminate eviction warnings from SBT.
-    *
-    * WARNING:
-    * This is quite dangerous, please make sure that all downstream
-    * dependencies are actually binary compatible with these version
-    * explicitely declared here.
-    *
-    * See more on binary compatability:
-    * https://docs.oracle.com/javase/specs/jls/se7/html/jls-13.html
-    *
-    * It is an important issue that you need to keep track of if
-    * you build apps on the JVM.
-    */
-  dependencyOverrides ++= cats,
-  dependencyOverrides += catsEffect,
-  dependencyOverrides ++= fs2,
-  dependencyOverrides ++= transitive,
+  addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
+  /*
+   * Kind projector brings a much needed feature to Scala, namely:
+   * partially applied higher kinded types. For instance, if we
+   * want to partially apply an Either[L, R], to fix the type
+   * for L, we can't do that in vanilla scala (easily).
+   *
+   * But with kind projector we can simply do:
+   * Either[*, R], which create an anonymous higher kinded
+   * type which then takes the remaining type parameter
+   * for the right hand side.
+   *
+   * https://github.com/typelevel/kind-projector
+   */
+  addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.11.0").cross(CrossVersion.full)),
+  scalacOptions ++= scala2_13Flags ++ betterForPluginCompilerFlags,
 )
 
 def sbtAssemblySettings: Seq[Setting[_]] = {
@@ -456,7 +453,7 @@ def sbtAssemblySettings: Seq[Setting[_]] = {
   baseAssemblySettings ++
     Seq(
       // Skip tests during while running the assembly task
-      test in assembly := {},
+      test in assembly                  := {},
       assemblyMergeStrategy in assembly := {
         case PathList("application.conf", _ @_*) => MergeStrategy.concat
         case "application.conf"                  => MergeStrategy.concat
@@ -466,69 +463,61 @@ def sbtAssemblySettings: Seq[Setting[_]] = {
       },
       //this is to avoid propagation of the assembly task to all subprojects.
       //changing this makes assembly incredibly slow
-      aggregate in assembly := false,
+      aggregate in assembly             := false,
     )
 }
 
 /**
-  * tpolecat's glorious compile flag list:
+  * tpolecat's glorious compile flag list adapted for scala 2.13 (fewer flags):
   * https://tpolecat.github.io/2017/04/25/scalac-flags.html
   */
-def customScalaCompileFlags: Seq[String] = Seq(
-  "-deprecation", // Emit warning and location for usages of deprecated APIs.
-  "-encoding",
-  "utf-8", // Specify character encoding used by source files.
-  "-Yrangepos",
-  "-explaintypes", // Explain type errors in more detail.
-  "-feature", // Emit warning and location for usages of features that should be imported explicitly.
-  "-language:existentials", // Existential types (besides wildcard types) can be written and inferred
-  "-language:higherKinds", // Allow higher-kinded types
+def scala2_13Flags: Seq[String] = Seq(
+  //"-Xfatal-warnings",            // Fail the compilation if there are any warnings.
+  "-deprecation",                  // Emit warning and location for usages of deprecated APIs.
+  "-encoding",                     // yeah, it's part of the "utf-8" thing, two flags
+  "utf-8",                         // Specify character encoding used by source files.
+  "-explaintypes",                 // Explain type errors in more detail.
+  "-feature",                      // Emit warning and location for usages of features that should be imported explicitly.
+  "-language:existentials",        // Existential types (besides wildcard types) can be written and inferred
+  "-language:higherKinds",         // Allow higher-kinded types
   "-language:implicitConversions", // Allow definition of implicit functions called views
-  "-unchecked", // Enable additional warnings where generated code depends on assumptions.
-  "-Xcheckinit", // Wrap field accessors to throw an exception on uninitialized access.
-  "-Xfuture", // Turn on future language features.
-  "-Xlint:adapted-args", // Warn if an argument list is modified to match the receiver.
-  "-Xlint:by-name-right-associative", // By-name parameter of right associative operator.
-  "-Xlint:constant", // Evaluation of a constant arithmetic expression results in an error.
-  "-Xlint:delayedinit-select", // Selecting member of DelayedInit.
-  "-Xlint:doc-detached", // A Scaladoc comment appears to be detached from its element.
-  "-Xlint:inaccessible", // Warn about inaccessible types in method signatures.
-  "-Xlint:infer-any", // Warn when a type argument is inferred to be `Any`.
-  "-Xlint:missing-interpolator", // A string literal appears to be missing an interpolator id.
-  "-Xlint:nullary-override", // Warn when non-nullary `def f()' overrides nullary `def f'.
-  "-Xlint:nullary-unit", // Warn when nullary methods return Unit.
-  "-Xlint:option-implicit", // Option.apply used implicit view.
+  "-unchecked",                    // Enable additional warnings where generated code depends on assumptions.
+  "-Xcheckinit",                   // Wrap field accessors to throw an exception on uninitialized access.
+  "-Xlint:adapted-args",           // Warn if an argument list is modified to match the receiver.
+  "-Xlint:constant",               // Evaluation of a constant arithmetic expression results in an error.
+  "-Xlint:delayedinit-select",     // Selecting member of DelayedInit.
+  "-Xlint:doc-detached",           // A Scaladoc comment appears to be detached from its element.
+  "-Xlint:inaccessible",           // Warn about inaccessible types in method signatures.
+  "-Xlint:infer-any",              // Warn when a type argument is inferred to be `Any`.
+  "-Xlint:missing-interpolator",   // A string literal appears to be missing an interpolator id.
+  "-Xlint:nullary-override",       // Warn when non-nullary `def f()' overrides nullary `def f'.
+  "-Xlint:nullary-unit",           // Warn when nullary methods return Unit.
+  "-Xlint:option-implicit",        // Option.apply used implicit view.
   "-Xlint:package-object-classes", // Class or object defined in package object.
   "-Xlint:poly-implicit-overload", // Parameterized overloaded implicit methods are not visible as view bounds.
-  "-Xlint:private-shadow", // A private field (or class parameter) shadows a superclass field.
-  "-Xlint:stars-align", // Pattern sequence wildcard must align with sequence component.
-  "-Xlint:type-parameter-shadow", // A local type parameter shadows a type already in scope.
-  "-Xlint:unsound-match", // Pattern match may not be typesafe.
-  "-Yno-adapted-args", // Do not adapt an argument list (either by inserting () or creating a tuple) to match the receiver.
-  "-Ywarn-extra-implicit", // Warn when more than one implicit parameter section is defined.
-  "-Ywarn-inaccessible", // Warn about inaccessible types in method signatures.
-  "-Ywarn-infer-any", // Warn when a type argument is inferred to be `Any`.
-  "-Ywarn-nullary-override", // Warn when non-nullary `def f()' overrides nullary `def f'.
-  "-Ywarn-nullary-unit", // Warn when nullary methods return Unit.
-  "-Ywarn-numeric-widen", // Warn when numerics are widened.
-  "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
-  "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
-  "-Ywarn-unused:locals", // Warn if a local definition is unused.
-  "-Ywarn-unused:params", // Warn if a value parameter is unused.
-  "-Ywarn-unused:patvars", // Warn if a variable bound in a pattern is unused.
-  "-Ywarn-unused:privates", // Warn if a private member is unused.
-  "-Ywarn-value-discard", // Warn when non-Unit expression results are unused.
-  "-Ypartial-unification", // Enable partial unification in type constructor inference
+  "-Xlint:private-shadow",         // A private field (or class parameter) shadows a superclass field.
+  "-Xlint:stars-align",            // Pattern sequence wildcard must align with sequence component.
+  "-Xlint:type-parameter-shadow",  // A local type parameter shadows a type already in scope.
+  "-Ywarn-extra-implicit",         // Warn when more than one implicit parameter section is defined.
+  "-Ywarn-numeric-widen",          // Warn when numerics are widened.
+  "-Ywarn-unused:implicits",       // Warn if an implicit parameter is unused.
+  "-Ywarn-unused:imports",         // Warn if an import selector is not referenced.
+  "-Ywarn-unused:locals",          // Warn if a local definition is unused.
+  "-Ywarn-unused:params",          // Warn if a value parameter is unused.
+  "-Ywarn-unused:patvars",         // Warn if a variable bound in a pattern is unused.
+  "-Ywarn-unused:privates",        // Warn if a private member is unused.
+  "-Ywarn-value-discard",          // Warn when non-Unit expression results are unused.
+)
 
-  //"-Xfatal-warnings",                  // Fail the compilation if there are any warnings.
-  /*
-   * These are flags specific to the "better-monadic-for" plugin:
-   * https://github.com/oleg-py/better-monadic-for
-   */
-  "-P:bm4:no-filtering:y",
-  "-P:bm4:no-map-id:y",
-  "-P:bm4:no-tupling:y",
-  "-P:bm4:implicit-patterns:y",
+/**
+  * These are flags specific to the "better-monadic-for" plugin:
+  * https://github.com/oleg-py/better-monadic-for
+  */
+def betterForPluginCompilerFlags: Seq[String] = Seq(
+  "-P:bm4:no-filtering:y",     // see https://github.com/oleg-py/better-monadic-for#desugaring-for-patterns-without-withfilters--pbm4no-filteringy
+  "-P:bm4:no-map-id:y",        // see https://github.com/oleg-py/better-monadic-for#final-map-optimization--pbm4no-map-idy
+  "-P:bm4:no-tupling:y",       // see https://github.com/oleg-py/better-monadic-for#desugar-bindings-as-vals-instead-of-tuples--pbm4no-tuplingy
+  "-P:bm4:implicit-patterns:y",//see https://github.com/oleg-py/better-monadic-for#define-implicits-in-for-comprehensions-or-matches
 )
 
 //============================================================================================
@@ -607,7 +596,7 @@ lazy val doobieVersion = "0.7.0-M5"
 lazy val doobieCore     = "org.tpolecat" %% "doobie-core"     % doobieVersion withSources ()
 lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"   % doobieVersion withSources ()
 lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres" % doobieVersion withSources ()
-lazy val doobieTK       = "org.tpolecat" %% "doobie-specs2"   % doobieVersion % Test withSources ()
+lazy val doobieTK       = "org.tpolecat" %% "doobie-specs2"   % doobieVersion           % Test withSources ()
 
 lazy val doobie: Seq[ModuleID] = Seq(doobieCore, doobieHikari, doobiePostgres, doobieTK)
 
@@ -694,13 +683,13 @@ lazy val transitive = Seq(
   //---------------------------
   //https://commons.apache.org/proper/commons-codec/
   //tsec, and http4s depend on this
-  "commons-codec" % "commons-codec" % "1.12" withSources (),
+  "commons-codec"  % "commons-codec" % "1.12"  withSources (),
   //---------------------------
   //https://github.com/Log4s/log4s
   //different http4s modules depend on different versions
-  "org.log4s" %% "log4s" % "1.7.0" withSources (),
+  "org.log4s"     %% "log4s"         % "1.7.0" withSources (),
   //---------------------------
   //https://github.com/typelevel/machinist
   //spire and cats core depend on this
-  "org.typelevel" %% "machinist" % "0.6.6" withSources (),
+  "org.typelevel" %% "machinist"     % "0.6.6" withSources (),
 )
