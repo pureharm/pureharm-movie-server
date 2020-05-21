@@ -9,8 +9,6 @@ import pms.core._
   * @since 25 Jun 2018
   *
   */
-object JavaTimeJson extends JavaTimeJson
-
 trait JavaTimeJson {
 
   implicit val localDateCirceCodec: Codec[LocalDate] = Codec.from(

@@ -8,8 +8,6 @@ import pms.core._
   * @since 25 Jun 2018
   *
   */
-object PMSCoreJson extends PMSCoreJson
-
 trait PMSCoreJson {
 
   implicit val emailCirceCodec: Codec[Email] = Codec.from(

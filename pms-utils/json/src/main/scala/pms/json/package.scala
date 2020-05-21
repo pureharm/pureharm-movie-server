@@ -12,7 +12,7 @@ import busymachines.pureharm.{json => phjson}
   *
   */
 package object json extends phjson.PureharmJsonTypeDefinitions with phjson.DefaultTypeDiscriminatorConfig {
-  object implicits extends phjson.PureharmJsonImplicits with busymachines.pureharm.internals.json.AnomalyJsonCodec
+  object implicits extends phjson.PureharmJsonImplicits with busymachines.pureharm.internals.json.AnomalyJsonCodec with JavaTimeJson with PMSCoreJson
   object derive    extends phjson.SemiAutoDerivation
 
 }
