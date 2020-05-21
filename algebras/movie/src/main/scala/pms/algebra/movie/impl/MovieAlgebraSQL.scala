@@ -7,6 +7,7 @@ import pms.effects._
 import pms.effects.implicits._
 import doobie._
 import doobie.implicits._
+import doobie.implicits.javatime._
 import pms.algebra.movie._
 import spire.math._
 
