@@ -3,7 +3,6 @@ package pms.algebra.user
 import pms.core._
 import pms.effects._
 import pms.effects.implicits._
-import busymachines.core.UnauthorizedFailure
 
 /**
   *
@@ -67,5 +66,5 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
     if (auth.user.role >= minRole)
       op
     else
-      UnauthorizedFailure("User not authorized to perform this action").raiseError[F, A]
+      Fail.unauthorized("User not authorized to perform this action").raiseError[F, A]
 }

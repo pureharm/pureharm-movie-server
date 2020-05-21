@@ -1,6 +1,6 @@
 package pms.core
 
-import busymachines.core._
+import busymachines.pureharm.anomaly._
 
 /**
   *
@@ -35,19 +35,19 @@ object Fail {
 
   def iscata(what: String, where: String): Throwable = Iscata(what, where)
 
-  def notFound(msg: String): Throwable = NotFoundFailure(msg)
+  def notFound(msg: String): Throwable = NotFoundAnomaly(msg)
 
-  def unauthorized(msg: String): Throwable = UnauthorizedFailure(msg)
+  def unauthorized(msg: String): Throwable = UnauthorizedAnomaly(msg)
 
-  def forbidden(msg: String): Throwable = ForbiddenFailure(msg)
+  def forbidden(msg: String): Throwable = ForbiddenAnomaly(msg)
 
-  def denied(msg: String): Throwable = DeniedFailure(msg)
+  def denied(msg: String): Throwable = DeniedAnomaly(msg)
 
-  def invalid(msg: String): Throwable = InvalidInputFailure(msg)
+  def invalid(msg: String): Throwable = InvalidInputAnomaly(msg)
 
-  def conflict(msg: String): Throwable = ConflictFailure(msg)
+  def conflict(msg: String): Throwable = ConflictAnomaly(msg)
 
-  def error(msg: String): Throwable = CatastrophicError(msg)
+  def error(msg: String): Throwable = Catastrophe(msg)
 }
 
 /**
@@ -59,7 +59,7 @@ object Fail {
   *
   */
 final case class Nicata(what: String)
-  extends CatastrophicError(
+  extends Catastrophe(
     s"Something is unimplemented: '$what'. Section either in development or it's a complete oversight"
   ) {
   override val id: AnomalyID = AnomalyIDS.NicataAnomalyID
@@ -77,8 +77,8 @@ final case class Nicata(what: String)
   * @since 09 May 2019
   *
   */
-final case class Iscata(what: String, where: String, causedBy: Option[Throwable] = None)
-  extends CatastrophicError(
+final case class Iscata(what: String, where: String, override val causedBy: Option[Throwable] = None)
+  extends Catastrophe(
     s"We have reached some inconsistent state, this is definitely a bug. Where: '$where'. What: '$what'",
     causedBy = causedBy,
   ) {

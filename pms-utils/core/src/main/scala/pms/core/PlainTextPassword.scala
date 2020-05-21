@@ -1,6 +1,5 @@
 package pms.core
 
-import busymachines.core.InvalidInputFailure
 import pms.effects._
 import pms.effects.implicits._
 
@@ -15,7 +14,7 @@ object PlainTextPassword {
   //TODO: make these restrictions configurable
   def apply(pw: String): Attempt[PlainTextPassword] =
     if (pw.length < 6)
-      Attempt.raiseError(InvalidInputFailure("Password needs to have at least 6 characters"))
+      Attempt.raiseError(Fail.invalid("Password needs to have at least 6 characters"))
     else Attempt.pure(new PlainTextPassword(pw))
 
 }

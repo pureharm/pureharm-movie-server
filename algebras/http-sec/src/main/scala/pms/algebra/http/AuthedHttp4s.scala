@@ -1,14 +1,12 @@
 package pms.algebra.http
 
-import busymachines.core._
-
+import pms.core.Fail
 import pms.effects._
 import pms.effects.implicits._
 import pms.algebra.user._
 
 import org.http4s._
 import org.http4s.dsl._
-import org.http4s.implicits._
 import org.http4s.server._
 import org.http4s.util.CaseInsensitiveString
 
@@ -49,7 +47,7 @@ object AuthedHttp4s {
       optHeader match {
         case None         =>
           Attempt
-            .raiseError[AuthCtx](UnauthorizedFailure(s"No ${`X-Auth-Token`} provided"))
+            .raiseError[AuthCtx](Fail.unauthorized(s"No ${`X-Auth-Token`} provided"))
             .pure[F]
         case Some(header) =>
           authAlgebra

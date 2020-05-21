@@ -2,10 +2,10 @@ package pms.service.movie
 
 import java.time.LocalDate
 
-import busymachines.core._
 import pms.algebra.imdb._
 import pms.algebra.movie._
 import pms.algebra.user._
+import pms.core.Fail
 import pms.effects._
 import pms.effects.implicits._
 
@@ -28,7 +28,7 @@ final class IMDBService[F[_]] private (
       //TODO: write abstract combinators
       toCreate <- maybe match {
         case None        =>
-          F.raiseError(InvalidInputFailure(s"Could not find imdb movie with title: $title"))
+          F.raiseError(Fail.invalid(s"Could not find imdb movie with title: $title"))
         case Some(value) => F.pure(imdbMovieToMovieCreation(value))
       }
       movie    <- movieAlgebra.createMovie(toCreate)

@@ -273,7 +273,7 @@ lazy val `pms-http` = utilProject("http")
 lazy val `pms-json` = utilProject("json")
   .settings(
     libraryDependencies ++= Seq(
-      bmcJson
+      phJson
     ) ++ circe
   )
   .dependsOn(
@@ -333,9 +333,7 @@ lazy val `pms-core` = utilProject("core")
   .settings(
     libraryDependencies ++= Seq(
       shapeless,
-      bmcCore,
       phCore,
-      bmcDuration,
       specs2Test,
     )
   )
@@ -577,7 +575,6 @@ def betterForPluginCompilerFlags: Seq[String] = Seq(
 //============================================================================================
 //============================================================================================
 
-lazy val bmCommonsVersion      = "0.3.0"   //https://github.com/busymachines/busymachines-commons/releases
 lazy val pureHarmVersion       = "0.0.5"   //https://github.com/busymachines/pureharm/releases
 lazy val catsCoreVersion       = "2.1.1"   //https://github.com/typelevel/cats/releases
 lazy val catsEffectVersion     = "2.1.3"   //https://github.com/typelevel/cats-effect/releases
@@ -596,17 +593,12 @@ lazy val scalaScrapperVersion  = "2.2.0"   //https://github.com/ruippeixotog/sca
 lazy val pureConfigVersion     = "0.12.3"  //https://github.com/pureconfig/pureconfig/releases
 lazy val specs2Version         = "4.9.4"   //https://github.com/etorreborre/specs2/releases
 
-def bmCommons(m: String): ModuleID = "com.busymachines" %% s"busymachines-commons-$m" % bmCommonsVersion withSources ()
-
-lazy val bmcCore:     ModuleID = bmCommons("core")
-lazy val bmcDuration: ModuleID = bmCommons("duration")
-lazy val bmcJson:     ModuleID = bmCommons("json")
-
 def pureharm(m: String): ModuleID = "com.busymachines" %% s"pureharm-$m" % pureHarmVersion withSources ()
 
 lazy val phCore:    ModuleID = pureharm("core")
-lazy val phEffects: ModuleID = pureharm("effects-cats")
 lazy val phConfig:  ModuleID = pureharm("config")
+lazy val phJson:    ModuleID = pureharm("json-circe")
+lazy val phEffects: ModuleID = pureharm("effects-cats")
 
 //============================================================================================
 //================================= http://typelevel.org/scala/ ==============================

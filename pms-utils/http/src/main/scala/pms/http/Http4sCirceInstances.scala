@@ -35,7 +35,7 @@ trait Http4sCirceInstances {
   implicit def syncEntityJsonEncoder[F[_]: Applicative, T: Encoder]: EntityEncoder[F, T] =
     EntityEncoder[F, Chunk[Byte]]
       .contramap[Json] { json =>
-        val bytes = printer.prettyByteBuffer(json)
+        val bytes = printer.printToByteBuffer(json)
         Chunk.byteBuffer(bytes)
       }
       .withContentType(`Content-Type`(MediaType.application.json))

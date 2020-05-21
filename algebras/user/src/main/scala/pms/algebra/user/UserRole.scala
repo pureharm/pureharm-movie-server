@@ -1,6 +1,6 @@
 package pms.algebra.user
 
-import busymachines.core.InvalidInputFailure
+import pms.core.Fail
 import pms.effects._
 import pms.effects.implicits._
 
@@ -17,7 +17,7 @@ object UserRole {
   def fromName(s: String): Attempt[UserRole] =
     nameToRole
       .get(s)
-      .liftTo[Attempt](InvalidInputFailure(s"UserRole has to be one of $allString, but was: $s"))
+      .liftTo[Attempt](Fail.invalid(s"UserRole has to be one of $allString, but was: $s"))
 
   implicit val userRoleOrdering: Ordering[UserRole] =
     (x: UserRole, y: UserRole) => x.compare(y)

@@ -1,7 +1,5 @@
 package pms.algebra.user.impl
 
-import busymachines.core.UnauthorizedFailure
-
 import doobie._
 import doobie.implicits._
 
@@ -26,7 +24,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (implicit
   override protected def monadError:  MonadError[F, Throwable] = F
   override protected def authAlgebra: UserAuthAlgebra[F]       = this
 
-  private val invalidEmailOrPW: Throwable = UnauthorizedFailure("Invalid email or password")
+  private val invalidEmailOrPW: Throwable = Fail.unauthorized("Invalid email or password")
 
   override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] =
     for {

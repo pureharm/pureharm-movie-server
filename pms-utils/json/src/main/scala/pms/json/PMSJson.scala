@@ -1,6 +1,6 @@
 package pms.json
 
-import busymachines.json.AnomalyJsonCodec
+import busymachines.pureharm.internals.json.AnomalyJsonCodec
 
 /**
   *

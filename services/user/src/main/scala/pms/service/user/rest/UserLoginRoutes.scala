@@ -1,7 +1,5 @@
 package pms.service.user.rest
 
-import busymachines.core.UnauthorizedFailure
-
 import pms.core._
 import pms.effects._
 import pms.effects.implicits._
@@ -41,12 +39,12 @@ final class UserLoginRoutes[F[_]](
     val r: Attempt[BasicCredentials] = for {
       auth:  headers.Authorization <-
         hs.get(headers.Authorization)
-          .liftTo[Attempt](UnauthorizedFailure("Missing Authorization header"))
+          .liftTo[Attempt](Fail.unauthorized("Missing Authorization header"))
       basic: BasicCredentials <- auth.credentials match {
         case Credentials.Token(AuthScheme.Basic, token) =>
           Attempt.pure(BasicCredentials(token))
         case credentials                                =>
-          Attempt.raiseError(UnauthorizedFailure(s"Unsupported credentials w/ AuthScheme ${credentials.authScheme}"))
+          Attempt.raiseError(Fail.unauthorized(s"Unsupported credentials w/ AuthScheme ${credentials.authScheme}"))
       }
     } yield basic
 
