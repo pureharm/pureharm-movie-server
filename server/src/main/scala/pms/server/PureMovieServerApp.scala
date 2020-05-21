@@ -33,7 +33,7 @@ object PureMovieServerApp extends IOApp {
     routes: HttpRoutes[F],
   ): Stream[F, ExitCode] = {
     val httpApp = Router(config.apiRoot -> routes).orNotFound
-    BlazeServerBuilder[F]
+    BlazeServerBuilder[F](ExecutionContext.global) //FIXME: pass in proper EC
       .bindHttp(config.port, config.host)
       .withHttpApp(httpApp)
       .serve

@@ -1,6 +1,6 @@
 package pms.algebra
 
-import org.http4s.AuthedService
+import org.http4s.AuthedRoutes
 import org.http4s.server.AuthMiddleware
 import pms.algebra.user.AuthCtx
 import pms.http.{Http4sCirceInstances, JavaTimeQueryParameterDecoders}
@@ -13,5 +13,5 @@ import pms.http.{Http4sCirceInstances, JavaTimeQueryParameterDecoders}
   */
 package object http extends Http4sCirceInstances with JavaTimeQueryParameterDecoders {
   type AuthCtxMiddleware[F[_]] = AuthMiddleware[F, AuthCtx]
-  type AuthCtxRoutes[F[_]]     = AuthedService[AuthCtx, F]
+  type AuthCtxRoutes[F[_]]     = AuthedRoutes[AuthCtx, F]
 }

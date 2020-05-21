@@ -2,8 +2,7 @@ package pms.algebra.http
 
 import pms.effects._
 import pms.algebra.user.AuthCtx
-
-import org.http4s.{AuthedRequest, AuthedService, Response}
+import org.http4s.{AuthedRequest, AuthedRoutes, Response}
 
 /**
   *
@@ -13,8 +12,6 @@ import org.http4s.{AuthedRequest, AuthedService, Response}
   */
 object AuthCtxRoutes {
 
-  def apply[F[_]](
-    pf:         PartialFunction[AuthedRequest[F, AuthCtx], F[Response[F]]]
-  )(implicit F: Applicative[F]): AuthedService[AuthCtx, F] =
-    AuthedService.apply(pf)
+  def apply[F[_]: Sync](pf: PartialFunction[AuthedRequest[F, AuthCtx], F[Response[F]]]): AuthedRoutes[AuthCtx, F] =
+    AuthedRoutes.of(pf)
 }
