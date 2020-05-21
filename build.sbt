@@ -575,23 +575,23 @@ def betterForPluginCompilerFlags: Seq[String] = Seq(
 //============================================================================================
 //============================================================================================
 
-lazy val pureHarmVersion       = "0.0.5"   //https://github.com/busymachines/pureharm/releases
-lazy val catsCoreVersion       = "2.1.1"   //https://github.com/typelevel/cats/releases
-lazy val catsEffectVersion     = "2.1.3"   //https://github.com/typelevel/cats-effect/releases
-lazy val fs2Version            = "2.3.0"   //https://github.com/functional-streams-for-scala/fs2/releases
-lazy val circeVersion          = "0.13.0"  //https://github.com/circe/circe/releases
-lazy val http4sVersion         = "0.20.23" //https://github.com/http4s/http4s/releases
-lazy val tsecVersion           = "0.2.0"   //https://github.com/jmcardon/tsec/releases
-lazy val doobieVersion         = "0.7.1"   //https://github.com/tpolecat/doobie/releases
-lazy val flywayVersion         = "5.2.4"   //https://github.com/flyway/flyway/releases
-lazy val shapelessVersion      = "2.3.3"   //https://github.com/milessabin/shapeless/releases
-lazy val spireVersion          = "0.16.2"  //https://github.com/non/spire/releases
-lazy val log4catsVersion       = "1.1.1"   //https://github.com/ChristopherDavenport/log4cats/releases
-lazy val logbackClassicVersion = "1.2.3"   //https://github.com/qos-ch/logback/releases
-lazy val javaxMailVersion      = "1.6.2"   // https://github.com/javaee/javamail/releases
-lazy val scalaScrapperVersion  = "2.2.0"   //https://github.com/ruippeixotog/scala-scraper/releases
-lazy val pureConfigVersion     = "0.12.3"  //https://github.com/pureconfig/pureconfig/releases
-lazy val specs2Version         = "4.9.4"   //https://github.com/etorreborre/specs2/releases
+lazy val pureHarmVersion       = "0.0.5"  //https://github.com/busymachines/pureharm/releases
+lazy val catsCoreVersion       = "2.1.1"  //https://github.com/typelevel/cats/releases
+lazy val catsEffectVersion     = "2.1.3"  //https://github.com/typelevel/cats-effect/releases
+lazy val fs2Version            = "2.3.0"  //https://github.com/functional-streams-for-scala/fs2/releases
+lazy val circeVersion          = "0.13.0" //https://github.com/circe/circe/releases
+lazy val http4sVersion         = "0.21.4" //https://github.com/http4s/http4s/releases
+lazy val tsecVersion           = "0.2.0"  //https://github.com/jmcardon/tsec/releases
+lazy val doobieVersion         = "0.7.1"  //https://github.com/tpolecat/doobie/releases
+lazy val flywayVersion         = "5.2.4"  //https://github.com/flyway/flyway/releases
+lazy val shapelessVersion      = "2.3.3"  //https://github.com/milessabin/shapeless/releases
+lazy val spireVersion          = "0.16.2" //https://github.com/non/spire/releases
+lazy val log4catsVersion       = "1.1.1"  //https://github.com/ChristopherDavenport/log4cats/releases
+lazy val logbackClassicVersion = "1.2.3"  //https://github.com/qos-ch/logback/releases
+lazy val javaxMailVersion      = "1.6.2"  // https://github.com/javaee/javamail/releases
+lazy val scalaScrapperVersion  = "2.2.0"  //https://github.com/ruippeixotog/scala-scraper/releases
+lazy val pureConfigVersion     = "0.12.3" //https://github.com/pureconfig/pureconfig/releases
+lazy val specs2Version         = "4.9.4"  //https://github.com/etorreborre/specs2/releases
 
 def pureharm(m: String): ModuleID = "com.busymachines" %% s"pureharm-$m" % pureHarmVersion withSources ()
 
