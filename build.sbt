@@ -289,6 +289,7 @@ lazy val `pms-db-config` = utilProject("db-config")
   .settings(
     libraryDependencies ++= Seq(
       doobieCore,
+      phFlyway,
       flyway,
     ) ++ fs2
   )
@@ -583,7 +584,7 @@ lazy val circeVersion          = "0.13.0"    //https://github.com/circe/circe/re
 lazy val http4sVersion         = "0.21.4"    //https://github.com/http4s/http4s/releases
 lazy val tsecVersion           = "0.2.0"     //https://github.com/jmcardon/tsec/releases
 lazy val doobieVersion         = "0.9.0"     //https://github.com/tpolecat/doobie/releases
-lazy val flywayVersion         = "5.2.4"     //https://github.com/flyway/flyway/releases
+lazy val flywayVersion         = "6.4.1"     //https://github.com/flyway/flyway/releases
 lazy val shapelessVersion      = "2.3.3"     //https://github.com/milessabin/shapeless/releases
 lazy val spireVersion          = "0.17.0-M1" //https://github.com/non/spire/releases
 lazy val log4catsVersion       = "1.1.1"     //https://github.com/ChristopherDavenport/log4cats/releases
@@ -598,6 +599,7 @@ def pureharm(m: String): ModuleID = "com.busymachines" %% s"pureharm-$m" % pureH
 lazy val phCore:    ModuleID = pureharm("core")
 lazy val phConfig:  ModuleID = pureharm("config")
 lazy val phJson:    ModuleID = pureharm("json-circe")
+lazy val phFlyway:  ModuleID = pureharm("db-core-flyway")
 lazy val phEffects: ModuleID = pureharm("effects-cats")
 
 //============================================================================================

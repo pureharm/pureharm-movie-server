@@ -1,5 +1,7 @@
 package pms.db.config
 
+import busymachines.pureharm.db.DBConnectionConfig
+import busymachines.pureharm.db.flyway.FlywayConfig
 import pms.config._
 import pms.effects.Sync
 
@@ -8,11 +10,9 @@ import pms.effects.Sync
   * @since 28/06/2018
   */
 final case class DatabaseConfig(
-  driver:   String,
-  url:      String,
-  user:     String,
-  password: String,
-  clean:    Boolean,
+  connection: DBConnectionConfig,
+  flyway:     Option[FlywayConfig],
+  forceClean: Boolean
 )
 
 object DatabaseConfig extends ConfigLoader[DatabaseConfig] {
