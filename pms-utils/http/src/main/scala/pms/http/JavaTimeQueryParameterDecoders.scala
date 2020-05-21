@@ -13,6 +13,7 @@ import pms.core.TimeFormatters
   *
   */
 trait JavaTimeQueryParameterDecoders {
+
   implicit val localDateQueryParamDecoder: QueryParamDecoder[LocalDate] =
     QueryParamDecoder.stringQueryParamDecoder.map(s => LocalDate.parse(s, TimeFormatters.LocalDateFormatter))
 }

@@ -27,6 +27,7 @@ object UserRole {
   private val GT = 1
 
   case object Newbie extends UserRole {
+
     override def compare(that: UserRole): Int = that match {
       case Newbie => EQ
       case _      => LT
@@ -34,6 +35,7 @@ object UserRole {
   }
 
   case object Member extends UserRole {
+
     override def compare(that: UserRole): Int = that match {
       case Newbie => GT
       case Member => EQ
@@ -42,6 +44,7 @@ object UserRole {
   }
 
   case object Curator extends UserRole {
+
     override def compare(that: UserRole): Int = that match {
       case Newbie  => GT
       case Member  => GT
@@ -51,6 +54,7 @@ object UserRole {
   }
 
   case object SuperAdmin extends UserRole {
+
     override def compare(that: UserRole): Int = that match {
       case Newbie     => GT
       case Member     => GT

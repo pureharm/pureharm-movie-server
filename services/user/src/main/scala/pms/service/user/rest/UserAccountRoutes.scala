@@ -18,9 +18,9 @@ import org.http4s.dsl._
   *
   */
 final class UserAccountRoutes[F[_]](
-  private val userService: UserAccountService[F],
-)(
-  implicit val F: Async[F],
+  private val userService: UserAccountService[F]
+)(implicit
+  val F:                   Async[F]
 ) extends Http4sDsl[F] with UserRoutesJSON {
 
   private val userInvitationStep1Routes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {

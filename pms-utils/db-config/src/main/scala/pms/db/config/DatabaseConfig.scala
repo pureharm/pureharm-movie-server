@@ -16,6 +16,7 @@ final case class DatabaseConfig(
 )
 
 object DatabaseConfig extends ConfigLoader[DatabaseConfig] {
+
   override def default[F[_]: Sync]: F[DatabaseConfig] =
     this.load[F]("pms.db")
 }

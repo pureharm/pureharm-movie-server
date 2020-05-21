@@ -16,8 +16,7 @@ import pms.effects.implicits._
   * @since 21 Jun 2018
   *
   */
-final private[user] class UserAlgebraImpl[F[_]] private (
-  implicit
+final private[user] class UserAlgebraImpl[F[_]] private (implicit
   val F:          Async[F],
   val transactor: Transactor[F],
 ) extends UserAuthAlgebra[F]()(F) with UserAccountAlgebra[F] with UserAlgebra[F] {
@@ -35,12 +34,13 @@ final private[user] class UserAlgebraImpl[F[_]] private (
         case None    => F.raiseError[UserRepr](invalidEmailOrPW)
         case Some(v) => F.pure[UserRepr](v)
       }
-      auth <- UserCrypto
-        .checkUserPassword[F](pw.plainText, userRepr.pw)
-        .flatMap {
-          case true  => storeAuth(find(email))
-          case false => F.raiseError[AuthCtx](invalidEmailOrPW)
-        }
+      auth     <-
+        UserCrypto
+          .checkUserPassword[F](pw.plainText, userRepr.pw)
+          .flatMap {
+            case true  => storeAuth(find(email))
+            case false => F.raiseError[AuthCtx](invalidEmailOrPW)
+          }
 
     } yield auth
 
@@ -51,7 +51,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (
     updateRole(id, newRole).transact(transactor).map(_ => ())
 
   override protected[user] def registrationStep1Impl(
-    inv: UserInvitation,
+    inv: UserInvitation
   ): F[UserInviteToken] =
     for {
       token <- UserCrypto.generateToken(F).map(UserRegistrationToken.spook)
@@ -75,7 +75,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (
         role  = invite.role,
       )
       userId <- UserAlgebraSQL.insert(userRepr)
-      _      <- UserInvitationSQL.deleteByToken(token)
+      _                <- UserInvitationSQL.deleteByToken(token)
       newlyCreatedUser <- UserAlgebraSQL.find(userId).flatMap { opt =>
         opt.liftTo[ConnectionIO](new Error("No user found even after we created them. WTF? This is a bug"))
       }
@@ -102,7 +102,7 @@ final private[user] class UserAlgebraImpl[F[_]] private (
   private def storeAuth(findUser: => ConnectionIO[Option[User]]): F[AuthCtx] =
     for {
       token <- UserCrypto.generateToken(F)
-      user <- insertToken(findUser, AuthenticationToken(token))
+      user  <- insertToken(findUser, AuthenticationToken(token))
         .transact(transactor)
     } yield AuthCtx(AuthenticationToken(token), user.get)
 }

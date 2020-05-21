@@ -43,10 +43,9 @@ private[impl] object UserCrypto {
   private[impl] def hashPWWithBcrypt[F[_]: Sync](ptpw: PlainTextPassword): F[BcryptPW] =
     BCrypt.hashpw[F](ptpw.plainText)
 
-  private[impl] def checkUserPassword[F[_]: Sync](p: String, hash: UserCrypto.BcryptPW): F[Boolean] = {
+  private[impl] def checkUserPassword[F[_]: Sync](p: String, hash: UserCrypto.BcryptPW): F[Boolean] =
     BCrypt.checkpw[F](p, hash).map {
       case tsec.common.Verified           => true
       case tsec.common.VerificationFailed => false
     }
-  }
 }

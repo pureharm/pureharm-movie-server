@@ -18,20 +18,20 @@ import pms.effects.implicits._
 final class IMDBService[F[_]] private (
   protected val movieAlgebra: MovieAlgebra[F],
   protected val imdbAlgebra:  IMDBAlgebra[F],
-)(
-  implicit F: MonadError[F, Throwable],
+)(implicit
+  F:                          MonadError[F, Throwable]
 ) {
 
-  def scrapeIMDBForTitle(title: TitleQuery)(implicit authCtx: AuthCtx): F[Movie] =
+  def scrapeIMDBForTitle(title:              TitleQuery)(implicit authCtx: AuthCtx): F[Movie] =
     for {
-      maybe <- imdbAlgebra.scrapeMovieByTitle(title)
+      maybe    <- imdbAlgebra.scrapeMovieByTitle(title)
       //TODO: write abstract combinators
       toCreate <- maybe match {
-        case None =>
+        case None        =>
           F.raiseError(InvalidInputFailure(s"Could not find imdb movie with title: $title"))
         case Some(value) => F.pure(imdbMovieToMovieCreation(value))
       }
-      movie <- movieAlgebra.createMovie(toCreate)
+      movie    <- movieAlgebra.createMovie(toCreate)
     } yield movie
 
   /**

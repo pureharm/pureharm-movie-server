@@ -10,7 +10,7 @@ import pms.algebra.user._
   *
   */
 final case class PasswordResetRequest(
-  email: Email,
+  email: Email
 )
 
 final case class PasswordResetCompletion(

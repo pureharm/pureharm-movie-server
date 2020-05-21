@@ -39,11 +39,12 @@ final class EffectThrottler[F[_]: Timer: Concurrent] private (
   private def delayLogic(acquireTime: FiniteDuration): F[Unit] =
     for {
       now <- timeNow
-      _ <- if (isWithinInterval(acquireTime, now))
-        Timer[F].sleep(acquireTime.max(now) - acquireTime.min(now))
-      else
-        F.unit
-      _ <- semaphore.release
+      _   <-
+        if (isWithinInterval(acquireTime, now))
+          Timer[F].sleep(acquireTime.max(now) - acquireTime.min(now))
+        else
+          F.unit
+      _   <- semaphore.release
     } yield ()
 
   private def isWithinInterval(acquireTime: FiniteDuration, now: FiniteDuration): Boolean =
@@ -61,13 +62,12 @@ object EffectThrottler {
   def concurrent[F[_]: Timer: Concurrent](
     interval: FiniteDuration,
     amount:   Long,
-  ): F[EffectThrottler[F]] = {
+  ): F[EffectThrottler[F]] =
     for {
       sem <- Semaphore(amount)
     } yield new EffectThrottler[F](
       interval  = interval,
       semaphore = sem,
     )
-  }
 
 }

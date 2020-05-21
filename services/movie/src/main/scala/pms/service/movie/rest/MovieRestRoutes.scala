@@ -25,8 +25,8 @@ import org.http4s.dsl._
 final private[rest] class MovieRestRoutes[F[_]](
   private val imdbService:  IMDBService[F],
   private val movieAlgebra: MovieAlgebra[F],
-)(
-  implicit val F: Async[F],
+)(implicit
+  val F:                    Async[F]
 ) extends Http4sDsl[F] with MovieRoutesJSON {
 
   implicit private val releaseDateQueryParamDecoder: QueryParamDecoder[ReleaseDate] =
@@ -37,12 +37,11 @@ final private[rest] class MovieRestRoutes[F[_]](
 
   private object MovieIDMatcher {
 
-    def unapply(str: String): Option[MovieID] = {
+    def unapply(str: String): Option[MovieID] =
       if (!str.isEmpty)
         Try(MovieID(str.toLong)).toOption
       else
         None
-    }
   }
 
   implicit private val titleQueryParamDecoder: QueryParamDecoder[TitleQuery] =

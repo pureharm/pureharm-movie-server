@@ -70,7 +70,7 @@ private[movie] object MovieAlgebraSQL {
 
   private[movie] def insertMovie(mc: MovieCreation): ConnectionIO[Movie] =
     for {
-      id <- insertQuery(mc)
+      id    <- insertQuery(mc)
       movie <- fetchByIDQuery(id).adaptError {
         case NonFatal(e) =>
           Iscata(what = "Failed to fetch movie after insert", where = "insertMovie", Option(e))

@@ -46,7 +46,7 @@ final class EffectThrottlerSpec extends Specification {
   private def unsafeMeasureTime(thunk: => Unit): FiniteDuration = {
     val startTime = System.nanoTime()
     thunk
-    val elapsed = System.nanoTime() - startTime
+    val elapsed   = System.nanoTime() - startTime
     FiniteDuration.apply(elapsed, TimeUnit.NANOSECONDS)
   }
 

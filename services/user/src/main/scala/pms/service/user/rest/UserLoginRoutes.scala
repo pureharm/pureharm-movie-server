@@ -19,9 +19,9 @@ import org.http4s.headers
   *
   */
 final class UserLoginRoutes[F[_]](
-  private val userAuthAlgebra: UserAuthAlgebra[F],
-)(
-  implicit val F: Async[F],
+  private val userAuthAlgebra: UserAuthAlgebra[F]
+)(implicit
+  val F:                       Async[F]
 ) extends Http4sDsl[F] with UserRoutesJSON {
 
   /**
@@ -39,13 +39,13 @@ final class UserLoginRoutes[F[_]](
 
   private def findBasicAuth(hs: Headers): F[BasicCredentials] = {
     val r: Attempt[BasicCredentials] = for {
-      auth: headers.Authorization <- hs
-        .get(headers.Authorization)
-        .liftTo[Attempt](UnauthorizedFailure("Missing Authorization header"))
+      auth:  headers.Authorization <-
+        hs.get(headers.Authorization)
+          .liftTo[Attempt](UnauthorizedFailure("Missing Authorization header"))
       basic: BasicCredentials <- auth.credentials match {
         case Credentials.Token(AuthScheme.Basic, token) =>
           Attempt.pure(BasicCredentials(token))
-        case credentials =>
+        case credentials                                =>
           Attempt.raiseError(UnauthorizedFailure(s"Unsupported credentials w/ AuthScheme ${credentials.authScheme}"))
       }
     } yield basic

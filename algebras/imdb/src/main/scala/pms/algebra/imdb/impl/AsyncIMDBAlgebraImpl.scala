@@ -18,32 +18,31 @@ import java.time.Year
   *
   */
 final private[imdb] class AsyncIMDBAlgebraImpl[F[_]](
-  val throttler: EffectThrottler[F],
-)(
-  implicit val F: Async[F],
+  val throttler: EffectThrottler[F]
+)(implicit
+  val F:         Async[F]
 ) extends IMDBAlgebra[F] {
 
   override def scrapeMovieByTitle(title: TitleQuery): F[Option[IMDBMovie]] = {
     val browser = JsoupBrowser()
     for {
-      doc <- throttler.throttle[Document] {
+      doc       <- throttler.throttle[Document] {
         F.delay[Document](browser.get(s"https://imdb.com/find?q=$title&s=tt"))
       }
       imdbMovie <- F.delay(parseIMDBDocument(doc))
     } yield imdbMovie
   }
 
-  private def parseIMDBDocument(imdbDocument: Document): Option[IMDBMovie] = {
+  private def parseIMDBDocument(imdbDocument: Document): Option[IMDBMovie] =
     for {
-      findList     <- imdbDocument tryExtract elementList(".findList tr")
+      findList     <- imdbDocument.tryExtract(elementList(".findList tr"))
       firstElement <- findList.headOption
-      resultText   <- firstElement tryExtract element(".result_text")
-      titleElement <- resultText tryExtract element("a")
+      resultText   <- firstElement.tryExtract(element(".result_text"))
+      titleElement <- resultText.tryExtract(element("a"))
       title         = IMDBTitle(titleElement.text)
       resultTextStr = resultText.text
       year          = parseYear(resultTextStr)
     } yield IMDBMovie(title, year)
-  }
 
   private def parseYear(resultTextStr: String): Option[ReleaseYear] = {
     val yearStartPos = resultTextStr.indexOf("(")

@@ -25,8 +25,8 @@ import pms.service.movie.rest._
   *
   */
 trait ModulePureMovieServer[F[_]]
-    extends Module[F] with ModuleEmail[F] with ModuleUserAlgebra[F] with ModuleIMDBAlgebra[F] with ModuleMovieAlgebra[F]
-    with ModuleUserService[F] with ModuleMovieService[F] with ModuleUserRest[F] with ModuleMovieRest[F] {
+  extends Module[F] with ModuleEmail[F] with ModuleUserAlgebra[F] with ModuleIMDBAlgebra[F] with ModuleMovieAlgebra[F]
+  with ModuleUserService[F] with ModuleMovieService[F] with ModuleUserRest[F] with ModuleMovieRest[F] {
 
   implicit override def F: Concurrent[F]
 
@@ -65,11 +65,10 @@ trait ModulePureMovieServer[F[_]]
 
 object ModulePureMovieServer {
 
-  def concurrent[F[_]](gConfig: GmailConfig, imbdAlgebraConfig: IMDBAlgebraConfig)(
-    implicit
-    c:  Concurrent[F],
-    t:  Transactor[F],
-    ti: Timer[F],
+  def concurrent[F[_]](gConfig: GmailConfig, imbdAlgebraConfig: IMDBAlgebraConfig)(implicit
+    c:                          Concurrent[F],
+    t:                          Transactor[F],
+    ti:                         Timer[F],
   ): F[ModulePureMovieServer[F]] = c.delay {
     new ModulePureMovieServer[F] {
       override def F: Concurrent[F] = c

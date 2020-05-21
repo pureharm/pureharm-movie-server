@@ -9,7 +9,7 @@ import pms.effects.Applicative
   *
   */
 final class UserAccountBootstrapAlgebra[F[_]] private (
-  private val uca: UserAccountAlgebra[F],
+  private val uca: UserAccountAlgebra[F]
 ) {
 
   def bootstrapUser(inv: UserInvitation): F[UserInviteToken] =

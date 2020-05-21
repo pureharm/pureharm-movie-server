@@ -33,13 +33,11 @@ trait ConfigLoader[Config] {
 
   def default[F[_]: Sync]: F[Config]
 
-  def load[F[_]: Sync](implicit reader: ConfigReader[Config]): F[Config] = {
+  def load[F[_]: Sync](implicit reader: ConfigReader[Config]): F[Config] =
     suspendInF(pureconfig.loadConfig[Config](Derivation.Successful(reader)))
-  }
 
-  def load[F[_]: Sync](namespace: String)(implicit reader: ConfigReader[Config]): F[Config] = {
+  def load[F[_]: Sync](namespace: String)(implicit reader: ConfigReader[Config]): F[Config] =
     suspendInF(pureconfig.loadConfig[Config](namespace)(Derivation.Successful(reader)))
-  }
 
   private def suspendInF[F[_]: Sync](thunk: => Either[ConfigReaderFailures, Config]): F[Config] = {
     val F = Sync.apply[F]

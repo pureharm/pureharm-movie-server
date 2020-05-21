@@ -18,12 +18,12 @@ import doobie.util.transactor.Transactor
 final class PureMovieServer[F[_]] private (
   private val timer:          Timer[F],
   private val dbContextShift: ContextShift[F],
-)(
-  implicit private val F: Concurrent[F],
+)(implicit
+  private val F:              Concurrent[F]
 ) {
   private val logger: PMSLogger[F] = PMSLogger.getLogger[F]
 
-  def init: F[(PureMovieServerConfig, ModulePureMovieServer[F])] = {
+  def init: F[(PureMovieServerConfig, ModulePureMovieServer[F])] =
     for {
       serverConfig      <- PureMovieServerConfig.default[F]
       gmailConfig       <- GmailConfig.default[F]
@@ -32,34 +32,31 @@ final class PureMovieServer[F[_]] private (
       transactor        <- DatabaseConfigAlgebra.transactor[F](dbConfig)(F, dbContextShift)
       nrOfMigs          <- DatabaseConfigAlgebra.initializeSQLDb[F](dbConfig)
       _                 <- logger.info(s"Successfully ran #$nrOfMigs migrations")
-      pmsModule <- moduleInit(
+      pmsModule         <- moduleInit(
         gmailConfig,
         imdbAlgebraConfig,
         bootstrap = serverConfig.bootstrap,
       )(transactor, timer)
-      _ <- logger.info(s"Successfully initialized pure-movie-server")
+      _                 <- logger.info(s"Successfully initialized pure-movie-server")
     } yield (serverConfig, pmsModule)
-  }
 
   private def moduleInit(
     gmailConfig:      GmailConfig,
     imdblgebraConfig: IMDBAlgebraConfig,
     bootstrap:        Boolean,
-  )(
-    implicit
-    transactor: Transactor[F],
-    timer:      Timer[F],
-  ): F[ModulePureMovieServer[F]] = {
+  )(implicit
+    transactor:       Transactor[F],
+    timer:            Timer[F],
+  ): F[ModulePureMovieServer[F]] =
     if (bootstrap) {
       logger.warn(
-        "BOOTSTRAP — initializing server in bootstrap mode — if this is on prod, you seriously botched this one",
+        "BOOTSTRAP — initializing server in bootstrap mode — if this is on prod, you seriously botched this one"
       ) >> ModulePureMovieServerBootstrap
         .concurrent(gmailConfig, imdblgebraConfig)
         .flatTap(_.bootstrap)
         .widen[ModulePureMovieServer[F]]
     }
     else ModulePureMovieServer.concurrent(gmailConfig, imdblgebraConfig)
-  }
 
 }
 

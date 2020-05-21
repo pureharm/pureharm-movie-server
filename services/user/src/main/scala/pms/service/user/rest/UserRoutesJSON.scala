@@ -14,7 +14,7 @@ import pms.service.user._
 trait UserRoutesJSON extends PMSJson {
 
   //FIXME: derive automatically
-  implicit val userRoleCirceCodec: Codec[UserRole] = Codec.instance(
+  implicit val userRoleCirceCodec:            Codec[UserRole]            = Codec.instance(
     encode = Encoder.apply[String].contramap(ur => ur.productPrefix),
     decode = Decoder
       .apply[String]
@@ -22,13 +22,13 @@ trait UserRoutesJSON extends PMSJson {
   )
 
   //FIXME: derive automatically
-  implicit val userIDCirceCodec: Codec[UserID] = Codec.instance[UserID](
+  implicit val userIDCirceCodec:              Codec[UserID]              = Codec.instance[UserID](
     encode = Encoder.apply[Long].contramap(UserID.despook),
     decode = Decoder.apply[Long].map(UserID.spook),
   )
 
   //FIXME: derive automatically
-  implicit val passwordResetTokenCirceCodec: Codec[PasswordResetToken] =
+  implicit val passwordResetTokenCirceCodec:  Codec[PasswordResetToken]  =
     Codec.instance[PasswordResetToken](
       encode = Encoder.apply[String].contramap(PasswordResetToken.despook),
       decode = Decoder.apply[String].map(PasswordResetToken.spook),
@@ -42,7 +42,7 @@ trait UserRoutesJSON extends PMSJson {
     )
 
   //FIXME: derive automatically
-  implicit val invitationTokenCirceCodec: Codec[UserInviteToken] =
+  implicit val invitationTokenCirceCodec:     Codec[UserInviteToken]     =
     Codec.instance(
       encode = Encoder.apply[String].contramap(UserRegistrationToken.despook),
       decode = Decoder.apply[String].map(UserRegistrationToken.spook),

@@ -32,7 +32,7 @@ object DatabaseConfigAlgebra {
       val fwConfig = Flyway.configure()
       fwConfig.dataSource(config.url, config.user, config.password)
       fwConfig.table(FlywayMigrationHistory)
-      val fw = new Flyway(fwConfig)
+      val fw       = new Flyway(fwConfig)
       if (config.clean) fw.clean()
       fw.migrate()
     }

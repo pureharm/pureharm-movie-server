@@ -23,11 +23,12 @@ object AuthedHttp4s {
     AuthMiddleware(verifyToken[F](authAlgebra), onFailure)
 
   private val `X-Auth-Token` = CaseInsensitiveString("X-AUTH-TOKEN")
+
   private val challenges: NonEmptyList[Challenge] = NonEmptyList.of(
     Challenge(
       scheme = "Basic",
       realm  = "Go to POST /pms/api/user/login to get valid token",
-    ),
+    )
   )
 
   private val wwwHeader = headers.`WWW-Authenticate`(challenges)
@@ -42,7 +43,7 @@ object AuthedHttp4s {
     Kleisli { req: Request[F] =>
       val optHeader = req.headers.get(`X-Auth-Token`)
       optHeader match {
-        case None =>
+        case None         =>
           Attempt
             .raiseError[AuthCtx](UnauthorizedFailure(s"No ${`X-Auth-Token`} provided"))
             .pure[F]

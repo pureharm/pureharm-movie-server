@@ -18,8 +18,8 @@ import pms.logger._
 sealed abstract class ServerBootstrapAlgebra[F[_]](
   private val uca: UserAccountAlgebra[F],
   private val uba: UserAccountBootstrapAlgebra[F],
-)(
-  implicit val F: Sync[F],
+)(implicit
+  val F:           Sync[F]
 ) {
 
   private val logger = PMSLogger.getLogger[F]
@@ -34,8 +34,8 @@ sealed abstract class ServerBootstrapAlgebra[F[_]](
     for {
       token <- uba.bootstrapUser(inv)
       user  <- uca.invitationStep2(token, pw)
-      _ <- logger.info(
-        s"BOOTSTRAP — inserting user: role=${inv.role.productPrefix} email=${inv.email.plainTextEmail} pw=${pw.plainText}",
+      _     <- logger.info(
+        s"BOOTSTRAP — inserting user: role=${inv.role.productPrefix} email=${inv.email.plainTextEmail} pw=${pw.plainText}"
       )
     } yield user
 }

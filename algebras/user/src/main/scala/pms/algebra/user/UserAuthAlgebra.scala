@@ -17,7 +17,7 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
 
   def authenticate(token: AuthenticationToken): F[AuthCtx]
 
-  final def promoteUser(id: UserID, newRole: UserRole)(implicit auth: AuthCtx): F[Unit] =
+  final def promoteUser(id:            UserID, newRole:        UserRole)(implicit auth: AuthCtx): F[Unit] =
     authorizeGTERoleThan(newRole)(promoteUserOP(id, newRole))
 
   /**
@@ -28,7 +28,7 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
     *   The operation that we want to guard with
     *   certain user priviliges.
     */
-  final def authorizeNewbie[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
+  final def authorizeNewbie[A](op:     => F[A])(implicit auth: AuthCtx): F[A] =
     authorizeGTERoleThan(UserRole.Newbie)(op)
 
   /**
@@ -38,7 +38,7 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
     *   The operation that we want to guard with
     *   certain user priviliges.
     */
-  final def authorizeMember[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
+  final def authorizeMember[A](op:     => F[A])(implicit auth: AuthCtx): F[A] =
     authorizeGTERoleThan(UserRole.Member)(op)
 
   /**
@@ -48,7 +48,7 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
     *   The operation that we want to guard with
     *   certain user priviliges.
     */
-  final def authorizeCurator[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
+  final def authorizeCurator[A](op:    => F[A])(implicit auth: AuthCtx): F[A] =
     authorizeGTERoleThan(UserRole.Curator)(op)
 
   /**

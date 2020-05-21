@@ -13,6 +13,6 @@ final case class MovieNotFoundAnomaly(mid: MovieID) extends NotFoundFailure(s"Mo
   override val id: AnomalyID = AnomalyIDS.MovieNotFoundID
 
   override val parameters: Anomaly.Parameters = Anomaly.Parameters(
-    "movieID" -> mid.toString,
+    "movieID" -> mid.toString
   )
 }

@@ -22,14 +22,14 @@ import pms.email._
   *
   */
 private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
-  private val config: GmailConfig,
+  private val config: GmailConfig
 ) extends EmailAlgebra[F] {
 
   private val F: Async[F] = Async.apply[F]
 
   private val logger: PMSLogger[F] = PMSLogger.getLogger[F]
 
-  override def sendEmail(to: Email, subject: Subject, content: Content): F[Unit] = {
+  override def sendEmail(to:        Email, subject: Subject, content: Content): F[Unit] = {
     val mimaMessage = F.pure {
       val message: MimeMessage = new MimeMessage(session)
 
@@ -44,15 +44,15 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
     for {
       message   <- mimaMessage
       transport <- F.delay(session.getTransport("smtp"))
-      _ <- F
-        .delay(transport.connect(config.host, config.user, config.password))
-        .onError(cleanupErr(transport))
-      _ <- logger.info("Connected to SMTP server")
-      _ <- F
-        .delay(transport.sendMessage(message, message.getAllRecipients))
-        .onError(cleanupErr(transport))
-      _ <- logger.info(s"Sent email to: ${to.plainTextEmail}")
-      _ <- cleanup(transport)
+      _         <-
+        F.delay(transport.connect(config.host, config.user, config.password))
+          .onError(cleanupErr(transport))
+      _         <- logger.info("Connected to SMTP server")
+      _         <-
+        F.delay(transport.sendMessage(message, message.getAllRecipients))
+          .onError(cleanupErr(transport))
+      _         <- logger.info(s"Sent email to: ${to.plainTextEmail}")
+      _         <- cleanup(transport)
     } yield ()
   }
 

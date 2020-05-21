@@ -25,8 +25,8 @@ private[impl] object UserAlgebraSQL {
 
   implicit val userReprComposite: Read[UserRepr] =
     Read[(Email, String, UserRole)]
-      .imap((t: (Email, String, UserRole)) => UserRepr(t._1, UserCrypto.BcryptPW(t._2), t._3))(
-        (u: UserRepr) => (u.email, u.pw.toString, u.role),
+      .imap((t: (Email, String, UserRole)) => UserRepr(t._1, UserCrypto.BcryptPW(t._2), t._3))((u: UserRepr) =>
+        (u.email, u.pw.toString, u.role)
       )
 
   def updateRole(id: UserID, role: UserRole): ConnectionIO[Int] =
@@ -66,11 +66,10 @@ private[impl] object UserAlgebraSQL {
       .query[User]
       .option
 
-  def insert(repr: UserRepr): ConnectionIO[UserID] = {
+  def insert(repr: UserRepr): ConnectionIO[UserID] =
     sql"""INSERT INTO users(email, password, role) VALUES (${repr.email}, ${repr.pw.toString}, ${repr.role})""".update
       .withUniqueGeneratedKeys[Long]("id")
       .map(UserID.spook)
-  }
 
   def insertAuthenticationToken(id: UserID, token: AuthenticationToken): ConnectionIO[Long] =
     sql"""INSERT INTO authentications(userId, token) VALUES($id, $token)""".update
@@ -79,9 +78,9 @@ private[impl] object UserAlgebraSQL {
   def findUserByAuthToken(token: AuthenticationToken): ConnectionIO[Option[User]] =
     for {
       userId <- findByAuthToken(token)
-      user <- userId match {
+      user   <- userId match {
         case Some(value) => find(UserID(value))
-        case None =>
+        case None        =>
           throw new Exception("Unauthorized") //FIXME: replace with proper error, DO NOT THROW!
       }
     } yield user
@@ -89,9 +88,9 @@ private[impl] object UserAlgebraSQL {
   def insertToken(findUser: => ConnectionIO[Option[User]], token: AuthenticationToken): ConnectionIO[Option[User]] =
     for {
       user <- findUser
-      _ <- user match {
+      _    <- user match {
         case Some(value) => insertAuthenticationToken(value.id, token)
-        case None =>
+        case None        =>
           throw new Exception("Unauthorized") //FIXME: replace with proper error, DO NOT THROW!
       }
     } yield user
@@ -105,7 +104,7 @@ private[impl] object UserAlgebraSQL {
   def changePassword(token: PasswordResetToken, newPassword: UserCrypto.BcryptPW): ConnectionIO[Unit] =
     for {
       user <- findByPwdToken(token)
-      _ <- user match {
+      _    <- user match {
         case Some(value) => updatePassword(value.id, newPassword)
         case None        => throw new Exception("User not found")
       }

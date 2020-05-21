@@ -20,6 +20,7 @@ final case class GmailConfig(
 )
 
 object GmailConfig extends ConfigLoader[GmailConfig] {
+
   override def default[F[_]: Sync]: F[GmailConfig] =
     this.load[F]("pms.email.gmail")
 }

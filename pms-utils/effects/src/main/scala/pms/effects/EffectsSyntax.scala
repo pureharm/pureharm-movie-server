@@ -9,6 +9,7 @@ package pms.effects
 object EffectsSyntax {
 
   trait Implicits {
+
     implicit def transformFAIntoFAWithSyntax[F[_]: Concurrent, A](fa: F[A]): ConcurrentFAOps[F, A] =
       new ConcurrentFAOps(fa)
   }

@@ -9,9 +9,11 @@ import busymachines.core._
   *
   */
 object AnomalyIDS {
+
   case object NicataAnomalyID extends AnomalyID {
     override val name: String = "NICATA"
   }
+
   case object IscataAnomalyID extends AnomalyID {
     override val name: String = "ISCATA"
   }
@@ -57,9 +59,9 @@ object Fail {
   *
   */
 final case class Nicata(what: String)
-    extends CatastrophicError(
-      s"Something is unimplemented: '$what'. Section either in development or it's a complete oversight",
-    ) {
+  extends CatastrophicError(
+    s"Something is unimplemented: '$what'. Section either in development or it's a complete oversight"
+  ) {
   override val id: AnomalyID = AnomalyIDS.NicataAnomalyID
 
   override val parameters: Anomaly.Parameters =
@@ -76,10 +78,10 @@ final case class Nicata(what: String)
   *
   */
 final case class Iscata(what: String, where: String, causedBy: Option[Throwable] = None)
-    extends CatastrophicError(
-      s"We have reached some inconsistent state, this is definitely a bug. Where: '$where'. What: '$what'",
-      causedBy = causedBy,
-    ) {
+  extends CatastrophicError(
+    s"We have reached some inconsistent state, this is definitely a bug. Where: '$where'. What: '$what'",
+    causedBy = causedBy,
+  ) {
   override val id: AnomalyID = AnomalyIDS.IscataAnomalyID
 
   override val parameters: Anomaly.Parameters = Anomaly.Parameters(
