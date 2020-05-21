@@ -1,7 +1,7 @@
 package pms.algebra.imdb
 
 import pms.effects._
-import pms.config.ConfigLoader
+import pms.config._
 
 import scala.concurrent.duration._
 
@@ -18,12 +18,17 @@ object IMDBAlgebraConfig extends ConfigLoader[IMDBAlgebraConfig] {
       IMDBAlgebraConfig(FiniteDuration(repr.requestsInterval, MILLISECONDS), repr.requestsNumber)
     }
 
+  override def configReader: ConfigReader[IMDBAlgebraConfig] = semiauto.deriveReader[IMDBAlgebraConfig]
+
   private case class IMDBAlgebraConfigRepr(
     requestsInterval: Long,
     requestsNumber:   Long,
   )
 
   private object IMDBAlgebraConfigLoaderRepr extends ConfigLoader[IMDBAlgebraConfigRepr] {
+
+    implicit override def configReader: ConfigReader[IMDBAlgebraConfigRepr] =
+      semiauto.deriveReader[IMDBAlgebraConfigRepr]
 
     override def default[F[_]: Sync]: F[IMDBAlgebraConfigRepr] =
       this.load[F]("algebra.imdb")

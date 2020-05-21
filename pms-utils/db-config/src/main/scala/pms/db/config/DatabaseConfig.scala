@@ -1,7 +1,7 @@
 package pms.db.config
 
+import pms.config._
 import pms.effects.Sync
-import pms.config.ConfigLoader
 
 /**
   * @author Alexandru Stana, alexandru.stana@busymachines.com
@@ -16,7 +16,6 @@ final case class DatabaseConfig(
 )
 
 object DatabaseConfig extends ConfigLoader[DatabaseConfig] {
-
-  override def default[F[_]: Sync]: F[DatabaseConfig] =
-    this.load[F]("pms.db")
+  implicit override def configReader: ConfigReader[DatabaseConfig] = semiauto.deriveReader[DatabaseConfig]
+  override def default[F[_]: Sync]: F[DatabaseConfig] = this.load[F]("pms.db")
 }

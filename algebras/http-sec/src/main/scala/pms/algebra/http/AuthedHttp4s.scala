@@ -8,6 +8,7 @@ import pms.algebra.user._
 
 import org.http4s._
 import org.http4s.dsl._
+import org.http4s.implicits._
 import org.http4s.server._
 import org.http4s.util.CaseInsensitiveString
 
@@ -19,8 +20,10 @@ import org.http4s.util.CaseInsensitiveString
   */
 object AuthedHttp4s {
 
-  def userTokenAuthMiddleware[F[_]: Async](authAlgebra: UserAuthAlgebra[F]): AuthMiddleware[F, AuthCtx] =
-    AuthMiddleware(verifyToken[F](authAlgebra), onFailure)
+  def userTokenAuthMiddleware[F[_]: Async](authAlgebra: UserAuthAlgebra[F]): AuthMiddleware[F, AuthCtx] = {
+    val tokenVerification: Kleisli[F, Request[F], Attempt[AuthCtx]] = verifyToken[F](authAlgebra)
+    AuthMiddleware(tokenVerification, onFailure)
+  }
 
   private val `X-Auth-Token` = CaseInsensitiveString("X-AUTH-TOKEN")
 
@@ -33,11 +36,12 @@ object AuthedHttp4s {
 
   private val wwwHeader = headers.`WWW-Authenticate`(challenges)
 
-  private def onFailure[F[_]: Async]: AuthedService[Throwable, F] = Kleisli { _: AuthedRequest[F, Throwable] =>
-    val fdsl = Http4sDsl[F]
-    import fdsl._
-    OptionT.liftF(Unauthorized(wwwHeader))
-  }
+  private def onFailure[F[_]: Async]: AuthedRoutes[Throwable, F] =
+    Kleisli[OptionT[F, *], AuthedRequest[F, Throwable], Response[F]] { _: AuthedRequest[F, Throwable] =>
+      val fdsl = Http4sDsl[F]
+      import fdsl._
+      OptionT.liftF[F, Response[F]](Unauthorized(wwwHeader))
+    }
 
   private def verifyToken[F[_]: Async](authAlgebra: UserAuthAlgebra[F]): Kleisli[F, Request[F], Attempt[AuthCtx]] =
     Kleisli { req: Request[F] =>
