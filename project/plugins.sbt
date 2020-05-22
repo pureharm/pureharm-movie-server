@@ -64,7 +64,7 @@ addSbtPlugin("com.eed3si9n" %% "sbt-assembly" % "0.14.10") //https://github.com/
   *
   * https://github.com/47deg/sbt-microsites
   */
-addSbtPlugin("com.47deg" % "sbt-microsites" % "0.7.18")
+//addSbtPlugin("com.47deg" % "sbt-microsites" % "0.7.18")
 
 //=============================================================================
 //=============================================================================
@@ -75,7 +75,7 @@ addSbtPlugin("com.47deg" % "sbt-microsites" % "0.7.18")
   *
   * https://github.com/sbt/sbt-ghpages
   */
-addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.6.2")
+//addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.6.2")
 
 //=============================================================================
 //=============================================================================

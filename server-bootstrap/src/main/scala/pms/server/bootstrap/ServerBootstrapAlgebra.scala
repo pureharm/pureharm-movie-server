@@ -15,11 +15,9 @@ import pms.logger._
   * @since 13 Jul 2018
   *
   */
-sealed abstract class ServerBootstrapAlgebra[F[_]](
+sealed abstract class ServerBootstrapAlgebra[F[_]: Sync](
   private val uca: UserAccountAlgebra[F],
   private val uba: UserAccountBootstrapAlgebra[F],
-)(implicit
-  val F:           Sync[F]
 ) {
 
   private val logger = PMSLogger.getLogger[F]

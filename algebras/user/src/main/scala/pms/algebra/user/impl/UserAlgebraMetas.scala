@@ -26,14 +26,23 @@ private[impl] object UserAlgebraMetas {
   implicit val passwordResetTokenMeta: Meta[PasswordResetToken] =
     Meta[String].imap(PasswordResetToken.spook)(PasswordResetToken.despook)
 
-  implicit val emailMeta: Meta[Email] =
-    Meta[String].imap(Email.apply(_).right.get)(_.plainTextEmail)
+  implicit val emailGet: Get[Email] =
+    Get[String].temap(e => Email(e).leftMap(_.getMessage))
 
-  implicit val pwdMeta: Meta[PlainTextPassword] =
-    Meta[String].imap(PlainTextPassword.apply(_).right.get)(_.plainText)
+  implicit val emailPut: Put[Email] =
+    Put[String].contramap(_.plainTextEmail)
 
-  implicit val userRoleMeta: Meta[UserRole] =
-    Meta[String].imap(UserRole.fromName(_).right.get)(_.toString)
+  implicit val pwdGet: Get[PlainTextPassword] =
+    Get[String].temap(e => PlainTextPassword(e).leftMap(_.getMessage))
+
+  implicit val pwdPut: Put[PlainTextPassword] =
+    Put[String].contramap(_.plainText)
+
+  implicit val userRoleGet: Get[UserRole] =
+    Get[String].temap(n => UserRole.fromName(n).leftMap(_.getMessage))
+
+  implicit val userRolePut: Put[UserRole] =
+    Put[String].contramap(_.productPrefix)
 
   implicit val userComposite: Read[User] =
     Read[(UserID, Email, UserRole)]
