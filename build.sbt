@@ -442,6 +442,13 @@ def commonSettings: Seq[Setting[_]] = Seq(
    * https://github.com/typelevel/kind-projector
    */
   addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.11.0").cross(CrossVersion.full)),
+  /**
+    * Gives better error messages for failed implicit resolution.
+    * Absolutely amazing in general, invaluable for teaching <3
+    *
+    * https://github.com/tek/splain
+    */
+  addCompilerPlugin(("io.tryp"        % "splain"         % "0.5.6").cross(CrossVersion.patch)),
   scalacOptions ++= scala2_13Flags ++ betterForPluginCompilerFlags,
 )
 
