@@ -48,6 +48,7 @@ final class IMDBService[F[_]] private (
         val ld   = LocalDate.of(year.getValue, 1, 1)
         ReleaseDate(ld)
       },
+      coverImageURL = Option.empty // TODO: scrape from IMDB
     )
 }
 

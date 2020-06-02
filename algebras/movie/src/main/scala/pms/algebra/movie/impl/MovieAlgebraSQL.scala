@@ -22,32 +22,36 @@ private[movie] object MovieAlgebraSQL {
   implicit protected val movieIDMeta: Meta[MovieID] =
     Meta[Long].imap(MovieID.spook)(MovieID.despook)
 
+  //TODO: remove boiler plate for PhantomTypes
   implicit protected val movieTitleMeta: Meta[MovieTitle] =
     Meta[String].imap(MovieTitle.spook)(MovieTitle.despook)
 
   implicit protected val releaseDateMeta: Meta[ReleaseDate] =
     Meta[LocalDate].imap(ReleaseDate.spook)(ReleaseDate.despook)
 
+  implicit protected val coverImageURLMeta: Meta[CoverImageURL] =
+    Meta[String].imap(CoverImageURL.spook)(CoverImageURL.despook)
+
   def findByIDQuery(id: MovieID): ConnectionIO[Option[Movie]] =
-    sql"""SELECT id, name, date FROM movies WHERE id=$id""".query[Movie].option
+    sql"""SELECT id, name, date, cover_image_url FROM movies WHERE id=$id""".query[Movie].option
 
   def fetchByIDQuery(id: MovieID): ConnectionIO[Movie] =
     findByIDQuery(id).flatMap(_.liftTo[ConnectionIO](MovieNotFoundAnomaly(id)))
 
   private def insertQuery(mc: MovieCreation): ConnectionIO[MovieID] =
-    sql"""INSERT INTO movies(name, date) VALUES(${mc.name}, ${mc.date})""".update
+    sql"""INSERT INTO movies(name, date, cover_image_url) VALUES(${mc.name}, ${mc.date}, ${mc.coverImageURL})""".update
       .withUniqueGeneratedKeys[MovieID]("id")
 
   private def allQuery: ConnectionIO[List[Movie]] =
-    sql"""SELECT id, name, date FROM movies""".query[Movie].to[List]
+    sql"""SELECT id, name, date, cover_image_url FROM movies""".query[Movie].to[List]
 
   private def betweenQuery(lower: ReleaseDate, upper: ReleaseDate): ConnectionIO[List[Movie]] =
-    sql"""SELECT id, name, date FROM movies WHERE date>=$lower AND date<=$upper"""
+    sql"""SELECT id, name, date, cover_image_url FROM movies WHERE date>=$lower AND date<=$upper"""
       .query[Movie]
       .to[List]
 
   private def onDateQuery(rd: ReleaseDate): ConnectionIO[List[Movie]] =
-    sql"""SELECT id, name, date FROM movies WHERE date=$rd AND date=$rd"""
+    sql"""SELECT id, name, date, cover_image_url FROM movies WHERE date=$rd AND date=$rd"""
       .query[Movie]
       .to[List]
 

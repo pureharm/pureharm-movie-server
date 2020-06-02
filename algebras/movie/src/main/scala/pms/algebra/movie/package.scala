@@ -2,6 +2,7 @@ package pms.algebra
 
 import pms.core._
 import java.time._
+
 import spire.math._
 
 /**
@@ -19,6 +20,9 @@ package object movie {
 
   object ReleaseDate extends PhantomType[LocalDate]
   type ReleaseDate = ReleaseDate.Type
+
+  object CoverImageURL extends PhantomType[String]
+  type CoverImageURL = CoverImageURL.Type
 
   implicit val releaseDateOrder: spire.algebra.Order[ReleaseDate] =
     new spire.algebra.Order[ReleaseDate] {

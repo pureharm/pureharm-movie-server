@@ -9,5 +9,6 @@ package pms.algebra.movie
 final case class Movie(
   id:   MovieID,
   name: MovieTitle,
-  date: Option[ReleaseDate] = None,
+  date: Option[ReleaseDate],
+  coverImageURL: Option[CoverImageURL],
 )
