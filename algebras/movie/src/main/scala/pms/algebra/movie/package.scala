@@ -30,5 +30,12 @@ package object movie {
       }
     }
 
+  //TODO: spire.math.Interval is too much of an overkill for a
+  // range expressible for a an http request query.
+  // Consider alternatives that are less powerful in what they do.
+  // Spire is very good for expressing math, not the best for what's
+  // a good idea in a DB query. For instance, the specific subtype
+  // of spire.math.Bounded would be a better fit, but it's private
+  // to spire.
   type QueryInterval = Interval[ReleaseDate]
 }

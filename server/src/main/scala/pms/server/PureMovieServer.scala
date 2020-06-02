@@ -49,6 +49,10 @@ final class PureMovieServer[F[_]] private (
     timer:            Timer[F],
   ): F[ModulePureMovieServer[F]] =
     if (bootstrap) {
+      //TODO: add better logic for handling boostrap being applied twice
+      // important aspects to consider:
+      //  1) give good diagnostics of what specifically went wrong so that the developer knows what's up
+      //  2) distinguish between recoverable errors in bootstrap, and non-recoverable errors
       logger.warn(
         "BOOTSTRAP — initializing server in bootstrap mode — if this is on prod, you seriously botched this one"
       ) >> ModulePureMovieServerBootstrap
