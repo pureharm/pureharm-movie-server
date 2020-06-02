@@ -19,6 +19,12 @@ import spire.math._
   */
 private[movie] object MovieAlgebraSQL {
 
+  //TODO: these metas could be automatically derived for any PhantomType,
+  // and should be moved a pms.db module, akin to all other pms-util modules. Currently,
+  // an empty such module exists. See what else can/should be moved into that module.
+  // an example of how this can be solved, is done here, but for JSON codecs:
+  // https://github.com/busymachines/pureharm/blob/master/json-circe/src/main/scala/busymachines/pureharm/internals/json/PureharmJsonInstances.scala#L58
+  // and the above bit of code is mixed into our pms.json.implicits; That is why we don't have to do the same thing for JSON codecs.
   implicit protected val movieIDMeta: Meta[MovieID] =
     Meta[Long].imap(MovieID.spook)(MovieID.despook)
 
@@ -28,6 +34,12 @@ private[movie] object MovieAlgebraSQL {
   implicit protected val releaseDateMeta: Meta[ReleaseDate] =
     Meta[LocalDate].imap(ReleaseDate.spook)(ReleaseDate.despook)
 
+  //TODO: the columns for the entire "movies" column can be extracted
+  // in a doobie Fragment and reused. Unfortunately stitching together
+  // fragments is a bit clunky.
+  // Same thing applies for all SQL definitions, for users, authentication, etc.
+  // See doobie documentation:
+  // https://tpolecat.github.io/doobie/docs/08-Fragments.html
   def findByIDQuery(id: MovieID): ConnectionIO[Option[Movie]] =
     sql"""SELECT id, name, date FROM movies WHERE id=$id""".query[Movie].option
 

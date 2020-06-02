@@ -18,18 +18,22 @@ import pms.effects.implicits._
 final class IMDBService[F[_]] private (
   protected val movieAlgebra: MovieAlgebra[F],
   protected val imdbAlgebra:  IMDBAlgebra[F],
-)(implicit
-  F:                          MonadError[F, Throwable]
-) {
+)(implicit F:                 MonadError[F, Throwable]) {
 
+  //TODO: scraping from IMDB can be improved by scraping two pages, first page you do the
+  // search query, and then you get the link to your first search result, and gather
+  // all information from there. From there you can gather much more, at the cost
+  // of two external requests instead of just one.
   def scrapeIMDBForTitle(title:              TitleQuery)(implicit authCtx: AuthCtx): F[Movie] =
     for {
-      maybe    <- imdbAlgebra.scrapeMovieByTitle(title)
-      //TODO: write abstract combinators
+      maybe: Option[IMDBMovie] <- imdbAlgebra.scrapeMovieByTitle(title)
+      //TODO: this is a fairly common shape transformation, F[Option[A]] into F[B],
+      // with error in case of None, and a function from A => B
+      // find out of the box one, either from cats or pureharm-effects
       toCreate <- maybe match {
         case None        =>
-          F.raiseError(Fail.invalid(s"Could not find imdb movie with title: $title"))
-        case Some(value) => F.pure(imdbMovieToMovieCreation(value))
+          F.raiseError[MovieCreation](Fail.invalid(s"Could not find imdb movie with title: $title"))
+        case Some(value) => F.pure[MovieCreation](imdbMovieToMovieCreation(value))
       }
       movie    <- movieAlgebra.createMovie(toCreate)
     } yield movie
@@ -39,6 +43,8 @@ final class IMDBService[F[_]] private (
     * This is a first example of what happens when your algebras don't align.
     *
     * Sometimes by poor design, sometimes by physical reality. This time intentionally ;)
+    *
+    * TODO: Will need overhaul if the above TODOs are implemented
     */
   private def imdbMovieToMovieCreation(imdb: IMDBMovie): MovieCreation =
     MovieCreation(
