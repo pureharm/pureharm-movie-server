@@ -9,14 +9,7 @@ addCommandAlias("mkJar", ";clean;update;compile;server/assembly")
 //=============================================================================
 //=============================================================================
 
-lazy val root =
-  Project(id = "pure-movie-server", base = file("."))
-    .settings(commonSettings)
-    .aggregate(
-      server
-    )
-
-lazy val server = project
+lazy val server = Project(id = "server", file("./module/apps/pms"))
   .settings(commonSettings)
   .settings(AssemblySettings.settings)
   .settings(
@@ -38,7 +31,7 @@ lazy val server = project
     `pms-core`,
     `service-user`,
     `service-movie`,
-    `server-bootstrap`,
+    `bootstrap`,
   )
   .aggregate(
     `pms-effects`,
@@ -49,10 +42,10 @@ lazy val server = project
     `pms-core`,
     `service-user`,
     `service-movie`,
-    `server-bootstrap`,
+    `bootstrap`,
   )
 
-lazy val `server-bootstrap` = project
+lazy val `bootstrap` = project
   .settings(commonSettings)
   .settings(AssemblySettings.settings)
   .settings(
@@ -406,7 +399,6 @@ def genericProject(id: String, folder: String, name: String): Project =
     .settings(commonSettings)
     .settings(AssemblySettings.settings)
 
-def algebraProject(name: String): Project = genericProject("algebra", "algebras", name)
-def utilProject(name:    String): Project = genericProject("pms", "pms-utils", name)
-def serviceProject(name: String): Project = genericProject("service", "services", name)
-
+def algebraProject(name: String): Project = genericProject("algebra", "module/algebras", name)
+def utilProject(name:    String): Project = genericProject("pms", "module/utils", name)
+def serviceProject(name: String): Project = genericProject("service", "module/services", name)
