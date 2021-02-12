@@ -10,9 +10,10 @@ import pms.effects.Sync
   * @since 28/06/2018
   */
 final case class DatabaseConfig(
+  driver:     String,
   connection: DBConnectionConfig,
   flyway:     Option[FlywayConfig],
-  forceClean: Boolean
+  clean:      Boolean,
 )
 
 object DatabaseConfig extends ConfigLoader[DatabaseConfig] {

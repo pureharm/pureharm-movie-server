@@ -1,13 +1,16 @@
 package pms.server
 
+import cats.effect.ContextShift
+import doobie.util.transactor.Transactor
+import org.http4s.HttpApp
+import pms.algebra.imdb.IMDBAlgebraConfig
+import pms.db.config._
 import pms.effects._
 import pms.effects.implicits._
-import pms.logger._
 import pms.email._
-import pms.db.config._
-import pms.algebra.imdb.IMDBAlgebraConfig
-
-import doobie.util.transactor.Transactor
+import pms.logger._
+import pms.server.config.PureMovieServerConfig
+import scala.concurrent.ExecutionContext
 
 /**
   *
@@ -15,21 +18,20 @@ import doobie.util.transactor.Transactor
   * @since 11 Jul 2018
   *
   */
-final class PureMovieServer[F[_]] private (
-  private val timer:          Timer[F],
-  private val dbContextShift: ContextShift[F],
-)(implicit
-  private val F:              Concurrent[F]
-) {
-  private val logger: PMSLogger[F] = PMSLogger.getLogger[F]
+final class PureMovieServer[F[_]] private (logger: PMSLogger[F])(implicit private val F: Concurrent[F]) {
 
-  def init: F[(PureMovieServerConfig, ModulePureMovieServer[F])] =
+  def initialise(
+    timer:              Timer[F],
+    mainContextShift:   ContextShift[F],
+    dbExecutionContext: ExecutionContext,
+  ): Resource[F, (PureMovieServerConfig, HttpApp[F])] =
     for {
-      serverConfig      <- PureMovieServerConfig.default[F]
-      gmailConfig       <- GmailConfig.default[F]
-      imdbAlgebraConfig <- IMDBAlgebraConfig.default[F]
-      dbConfig          <- DatabaseConfig.default[F]
-      transactor        <- DatabaseConfigAlgebra.transactor[F](dbConfig)(F, dbContextShift)
+      serverConfig      <- PureMovieServerConfig.defaultR[F]
+      gmailConfig       <- GmailConfig.defaultR[F]
+      imdbAlgebraConfig <- IMDBAlgebraConfig.defaultR[F]
+      dbConfig          <- DatabaseConfig.defaultR[F]
+
+      transactor        <- DatabaseConfigAlgebra.transactor[F](dbExecutionContext, dbConfig.connection)(F, mainContextShift)
       nrOfMigs          <- DatabaseConfigAlgebra.initializeSQLDb[F](dbConfig)
       _                 <- logger.info(s"Successfully ran #$nrOfMigs migrations")
       pmsModule         <- moduleInit(
@@ -66,6 +68,7 @@ final class PureMovieServer[F[_]] private (
 
 object PureMovieServer {
 
-  def concurrent[F[_]: Concurrent](timer: Timer[F], dbContextShift: ContextShift[F]): F[PureMovieServer[F]] =
-    Concurrent.apply[F].delay(new PureMovieServer[F](timer, dbContextShift))
+  def resource[F[_]: Concurrent](logger: PMSLogger[F]): Resource[F, PureMovieServer[F]] =
+    Resource.pure(new PureMovieServer[F](logger))
+
 }

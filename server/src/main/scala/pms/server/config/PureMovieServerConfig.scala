@@ -1,7 +1,7 @@
-package pms.server
+package pms.server.config
 
-import pms.effects._
 import pms.config._
+import pms.effects._
 
 /**
   *

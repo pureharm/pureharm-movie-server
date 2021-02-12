@@ -6,6 +6,7 @@ import org.http4s._
 import org.http4s.server.blaze._
 import org.http4s.implicits._
 import org.http4s.server.Router
+import pms.server.config.PureMovieServerConfig
 
 /**
   *
@@ -13,12 +14,16 @@ import org.http4s.server.Router
   * @since 20 Jun 2018
   *
   */
-object PureMovieServerApp extends IOApp {
+object PureMovieServerApp extends PureharmIOApp {
+
+
+  override val ioRuntime: Later[(ContextShift[IO], Timer[IO])] =
+    IORuntime.defaultMainRuntime(s"main-pure-movie-server")
 
   override def run(args: List[String]): IO[ExitCode] =
     for {
       //FIXME: pass in proper context shifts and everything
-      // see scaladoc of PureharmIOApp and use that instead of IOApp to instantiate runtime explicitely:
+      // see scaladoc of PureharmIOApp and use that instead of IOApp to instantiate runtime explicitly:
       // https://github.com/busymachines/pureharm/blob/master/effects-cats/src/main/scala/busymachines/pureharm/effects/pools/IORuntime.scala#L27
       // then read the scaladoc of Pools what pool is appropriate.
       // https://github.com/busymachines/pureharm/blob/master/effects-cats/src/main/scala/busymachines/pureharm/effects/pools/Pools.scala#L29

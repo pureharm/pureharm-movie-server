@@ -1,15 +1,11 @@
-package pms.db.config
+package pms.db
 
-import busymachines.pureharm.db.DBConnectionConfig
-import busymachines.pureharm.db.flyway.Flyway
 import doobie.hikari.HikariTransactor
 import doobie.util.transactor.Transactor
-import pms.effects._
-import pms.effects.implicits._
+import pms.effects.{Async, Blocker, ContextShift, Resource}
 import scala.concurrent.ExecutionContext
 
-object DatabaseConfigAlgebra {
-
+trait Transactor {
   def transactor[F[_]](
     connectionExecutionContext: ExecutionContext,
     config:                     DBConnectionConfig,
@@ -25,13 +21,4 @@ object DatabaseConfigAlgebra {
         blocker         = blocker,
       )
     } yield xa
-
-  def applyMigrations[F[_]: Sync](config: DatabaseConfig): F[Int] = {
-    val clean =
-      if (config.clean) Flyway.clean(config.connection)
-      else Sync[F].unit
-
-    clean *> Flyway.migrate(config.connection, config.flyway)
-  }
-
 }
