@@ -1,6 +1,8 @@
 package pms
 
-import busymachines.pureharm
+import busymachines.pureharm.PureharmCoreTypeDefinitions
+import busymachines.pureharm.anomaly.PureharmAnomalyTypeDefinitions
+import busymachines.pureharm.effects.{PureharmEffectsAllImplicits, PureharmEffectsAllTypes}
 
 /**
   *
@@ -8,4 +10,6 @@ import busymachines.pureharm
   * @since 05 Apr 2019
   *
   */
-package object core extends pureharm.PureharmCoreTypeDefinitions
+package object core
+  extends PureharmCoreTypeDefinitions with PureharmAnomalyTypeDefinitions with PureharmEffectsAllTypes
+  with PureharmEffectsAllImplicits

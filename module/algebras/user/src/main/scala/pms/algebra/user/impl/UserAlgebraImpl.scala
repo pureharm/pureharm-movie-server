@@ -2,7 +2,6 @@ package pms.algebra.user.impl
 
 import doobie._
 import doobie.implicits._
-
 import pms.algebra.user._
 import pms.core._
 import pms.effects._
@@ -14,7 +13,7 @@ import pms.effects.implicits._
   * @since 21 Jun 2018
   *
   */
-final private[user] class UserAlgebraImpl[F[_]] private (implicit
+final private[user] class UserAlgebraImpl[F[_]](implicit
   val F:          Async[F],
   val transactor: Transactor[F],
 ) extends UserAuthAlgebra[F]()(F) with UserAccountAlgebra[F] with UserAlgebra[F] {
@@ -103,10 +102,4 @@ final private[user] class UserAlgebraImpl[F[_]] private (implicit
       user  <- insertToken(findUser, AuthenticationToken(token))
         .transact(transactor)
     } yield AuthCtx(AuthenticationToken(token), user.get)
-}
-
-private[user] object UserAlgebraImpl {
-
-  def async[F[_]: Async: Transactor]: F[UserAlgebraImpl[F]] =
-    Async.apply[F].pure(new UserAlgebraImpl[F]())
 }

@@ -31,6 +31,8 @@ lazy val server = Project(id = "server", file("./module/apps/pms"))
     `pms-core`,
     `service-user`,
     `service-movie`,
+    `rest-user`,
+    `rest-movie`,
     `bootstrap`,
   )
   .aggregate(
@@ -42,6 +44,8 @@ lazy val server = Project(id = "server", file("./module/apps/pms"))
     `pms-core`,
     `service-user`,
     `service-movie`,
+    `rest-user`,
+    `rest-movie`,
     `bootstrap`,
   )
 
@@ -121,6 +125,69 @@ lazy val `service-movie` = serviceProject("movie")
   .aggregate(
     `algebra-user`,
     `algebra-imdb`,
+    `algebra-movie`,
+    `algebra-http-sec`,
+    `pms-config`,
+    `pms-logger`,
+    `pms-effects`,
+    `pms-core`,
+    `pms-json`,
+    `pms-http`,
+  )
+
+lazy val `rest-user` = restProject("user")
+  .settings(
+    libraryDependencies ++= Seq(
+      specs2Test
+    )
+  )
+  .dependsOn(
+    `algebra-user`,
+    `service-user`,
+    `algebra-http-sec`,
+    `pms-email`,
+    `pms-config`,
+    `pms-logger`,
+    `pms-effects`,
+    `pms-core`,
+    `pms-json`,
+    `pms-http`,
+  )
+  .aggregate(
+    `algebra-user`,
+    `service-user`,
+    `algebra-http-sec`,
+    `pms-email`,
+    `pms-config`,
+    `pms-logger`,
+    `pms-effects`,
+    `pms-core`,
+    `pms-json`,
+    `pms-http`,
+  )
+
+lazy val `rest-movie` = restProject("movie")
+  .settings(
+    libraryDependencies ++= Seq(
+      spire,
+      specs2Test,
+    )
+  )
+  .dependsOn(
+    `algebra-user`,
+    `service-movie`,
+    `algebra-movie`,
+    `algebra-http-sec`,
+    `pms-config`,
+    `pms-logger`,
+    `pms-effects`,
+    `pms-core`,
+    `pms-json`,
+    `pms-http`,
+  )
+  .aggregate(
+    `algebra-user`,
+    `service-movie`,
     `algebra-movie`,
     `algebra-http-sec`,
     `pms-config`,
@@ -218,14 +285,21 @@ lazy val `algebra-user` = algebraProject("user")
 lazy val `pms-db` = utilProject("db")
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test
+      phFlyway,
+      specs2Test,
     ) ++ doobie ++ fs2
   )
   .dependsOn(
-    `pms-effects`
+    `pms-effects`,
+    `pms-db-config`,
+    `pms-logger`,
+    `pms-core`,
   )
   .aggregate(
-    `pms-effects`
+    `pms-effects`,
+    `pms-db-config`,
+    `pms-logger`,
+    `pms-core`,
   )
 
 lazy val `pms-email` = utilProject("email")
@@ -402,3 +476,4 @@ def genericProject(id: String, folder: String, name: String): Project =
 def algebraProject(name: String): Project = genericProject("algebra", "module/algebras", name)
 def utilProject(name:    String): Project = genericProject("pms", "module/utils", name)
 def serviceProject(name: String): Project = genericProject("service", "module/services", name)
+def restProject(name: String): Project = genericProject("rest", "module/rest", name)

@@ -1,5 +1,7 @@
 package pms.algebra.user
 
+import doobie.Transactor
+import pms.algebra.user.impl.UserAlgebraImpl
 import pms.core._
 import pms.effects._
 import pms.effects.implicits._
@@ -10,7 +12,7 @@ import pms.effects.implicits._
   * @since 20 Jun 2018
   *
   */
-abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError[F, Throwable]) {
+abstract class UserAuthAlgebra[F[_]: Sync] {
 
   def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx]
 
@@ -67,4 +69,10 @@ abstract class UserAuthAlgebra[F[_]](implicit private val monadError: MonadError
       op
     else
       Fail.unauthorized("User not authorized to perform this action").raiseError[F, A]
+}
+
+object UserAuthAlgebra {
+
+  def resource[F[_]: Async](implicit transactor: Transactor[F]): Resource[F, UserAuthAlgebra[F]] =
+    Resource.pure(new UserAlgebraImpl[F]())
 }

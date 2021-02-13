@@ -9,7 +9,7 @@ import pms.algebra.user._
   * @since 25 Jun 2018
   *
   */
-abstract class MovieAlgebra[F[_]] {
+trait MovieAlgebra[F[_]] {
 
   protected def userAuth: UserAuthAlgebra[F]
 
@@ -33,6 +33,8 @@ object MovieAlgebra {
   import pms.algebra.movie.impl.MovieAlgebraImpl
   import pms.effects._
 
-  def async[F[_]: Async](userAuth: UserAuthAlgebra[F])(implicit transactor: Transactor[F]): F[MovieAlgebra[F]] =
-    Async.apply[F].delay(MovieAlgebraImpl.bracket(userAuth, transactor))
+  def resource[F[_]: Async](
+    userAuth:            UserAuthAlgebra[F]
+  )(implicit transactor: Transactor[F]): Resource[F, MovieAlgebra[F]] =
+    Resource.pure(new MovieAlgebraImpl(userAuth, transactor))
 }

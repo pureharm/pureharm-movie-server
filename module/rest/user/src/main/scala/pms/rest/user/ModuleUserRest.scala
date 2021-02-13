@@ -1,12 +1,11 @@
-package pms.service.user.rest
+package pms.rest.user
 
-import org.http4s._
-import pms.effects._
-import pms.effects.implicits._
-import pms.algebra.user._
-import pms.algebra.http._
+import org.http4s.HttpRoutes
+import pms.algebra.http.AuthCtxRoutes
 import pms.core.Module
-import pms.service.user._
+import pms.effects.NonEmptyList
+import pms.service.user.ModuleUserService
+import pms.service.user.rest.{UserAccountRoutes, UserLoginRoutes, UserRoutes}
 
 /**
   *

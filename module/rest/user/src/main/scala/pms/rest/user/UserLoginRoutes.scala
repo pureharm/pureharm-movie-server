@@ -1,14 +1,13 @@
-package pms.service.user.rest
+package pms.rest.user
 
+import org.http4s.dsl._
+import org.http4s.{headers, _}
+import pms.algebra.http._
+import pms.algebra.user._
 import pms.core._
 import pms.effects._
 import pms.effects.implicits._
-import pms.algebra.http._
-import pms.algebra.user._
-
-import org.http4s._
-import org.http4s.dsl._
-import org.http4s.headers
+import pms.service.user.rest.UserRoutesJSON
 
 /**
   *

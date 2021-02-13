@@ -1,14 +1,13 @@
 package pms.algebra.http
 
-import pms.core.Fail
-import pms.effects._
-import pms.effects.implicits._
-import pms.algebra.user._
-
 import org.http4s._
 import org.http4s.dsl._
 import org.http4s.server._
 import org.http4s.util.CaseInsensitiveString
+import pms.algebra.user._
+import pms.core.Fail
+import pms.effects._
+import pms.effects.implicits._
 
 /**
   *
@@ -18,9 +17,9 @@ import org.http4s.util.CaseInsensitiveString
   */
 object AuthedHttp4s {
 
-  def userTokenAuthMiddleware[F[_]: Async](authAlgebra: UserAuthAlgebra[F]): AuthMiddleware[F, AuthCtx] = {
+  def userTokenAuthMiddleware[F[_]: Async](authAlgebra: UserAuthAlgebra[F]): Resource[F, AuthMiddleware[F, AuthCtx]] = {
     val tokenVerification: Kleisli[F, Request[F], Attempt[AuthCtx]] = verifyToken[F](authAlgebra)
-    AuthMiddleware(tokenVerification, onFailure)
+    AuthMiddleware(tokenVerification, onFailure).pure[Resource[F, *]]
   }
 
   private val `X-Auth-Token` = CaseInsensitiveString("X-AUTH-TOKEN")

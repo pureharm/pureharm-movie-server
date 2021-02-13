@@ -1,7 +1,6 @@
 package pms.effects
 
 import pms.effects.implicits._
-
 import scala.concurrent.duration._
 
 /**
@@ -26,24 +25,18 @@ final class EffectThrottler[F[_]: Timer: Concurrent] private (
   def throttle[T](f: F[T]): F[T] =
     for {
       acquireTime <- acquireSemaphore
-      res         <- f.onErrorF(delayLogic(acquireTime))
-      _           <- delayLogic(acquireTime)
+      res         <- f.onErrorF(delayLogic(acquireTime)).flatTap(_ => delayLogic(acquireTime))
     } yield res
 
   private def acquireSemaphore: F[FiniteDuration] =
-    for {
-      _   <- semaphore.acquire
-      now <- timeNow
-    } yield now
+    semaphore.acquire *> timeNow
 
   private def delayLogic(acquireTime: FiniteDuration): F[Unit] =
     for {
       now <- timeNow
       _   <-
-        if (isWithinInterval(acquireTime, now))
-          Timer[F].sleep(acquireTime.max(now) - acquireTime.min(now))
-        else
-          F.unit
+        if (isWithinInterval(acquireTime, now)) Timer[F].sleep(acquireTime.max(now) - acquireTime.min(now))
+        else F.unit
       _   <- semaphore.release
     } yield ()
 
@@ -59,15 +52,17 @@ final class EffectThrottler[F[_]: Timer: Concurrent] private (
 
 object EffectThrottler {
 
-  def concurrent[F[_]: Timer: Concurrent](
+  def resource[F[_]: Timer: Concurrent](
     interval: FiniteDuration,
     amount:   Long,
-  ): F[EffectThrottler[F]] =
-    for {
-      sem <- Semaphore(amount)
-    } yield new EffectThrottler[F](
-      interval  = interval,
-      semaphore = sem,
-    )
+  ): Resource[F, EffectThrottler[F]] =
+    Resource.liftF {
+      for {
+        sem <- Semaphore(amount)
+      } yield new EffectThrottler[F](
+        interval  = interval,
+        semaphore = sem,
+      )
+    }
 
 }

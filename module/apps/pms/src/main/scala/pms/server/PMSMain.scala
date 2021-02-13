@@ -15,7 +15,7 @@ import pms.server.config.PMSPoolConfig
   * @since 20 Jun 2018
   *
   */
-object PureMovieServerAppImproved extends PureharmIOApp {
+object PMSMain extends PureharmIOApp {
 
   override val ioRuntime: Later[(ContextShift[IO], Timer[IO])] = IORuntime.defaultMainRuntime(s"main-pure-movie-server")
   implicit def cs:        ContextShift[IO]                     = this.contextShift
@@ -35,9 +35,9 @@ object PureMovieServerAppImproved extends PureharmIOApp {
       httpServerExecutionContext <- Pools.fixed[F](maxThreads = poolsConfig.httpServerPool)
       dbExecutionContext         <- Pools.fixed[F](maxThreads = poolsConfig.pgSqlPool)
 
-      server <- PureMovieServer.resource[F](PMSLogger.getLogger[F])
+      server <- PMSWeave.resource[F](PMSLogger.getLogger[F])
 
-      (serverConfig, httpService) <- server.initialise(timer, contextShift, dbExecutionContext)
+      (serverConfig, httpService) <- server.initialise(contextShift, dbExecutionContext)(timer)
 
       server <- BlazeServerBuilder[F](httpServerExecutionContext)
         .bindHttp(serverConfig.port, serverConfig.host)
@@ -45,6 +45,7 @@ object PureMovieServerAppImproved extends PureharmIOApp {
         .withWebSockets(enableWebsockets = true)
         .withBanner(Seq.empty)
         .resource
+
     } yield server
 
 }

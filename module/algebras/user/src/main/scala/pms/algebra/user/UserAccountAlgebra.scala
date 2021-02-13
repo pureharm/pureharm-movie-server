@@ -1,6 +1,7 @@
 package pms.algebra.user
 
-import pms.effects._
+import doobie.util.transactor.Transactor
+import pms.algebra.user.impl.UserAlgebraImpl
 import pms.core._
 
 /**
@@ -28,4 +29,10 @@ trait UserAccountAlgebra[F[_]] {
   def resetPasswordStep1(email: Email): F[PasswordResetToken]
 
   def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit]
+}
+
+object UserAccountAlgebra {
+
+  def resource[F[_]: Async](implicit transactor: Transactor[F]): Resource[F, UserAccountAlgebra[F]] =
+    Resource.pure(new UserAlgebraImpl[F]())
 }

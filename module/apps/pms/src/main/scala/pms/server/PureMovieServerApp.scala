@@ -6,7 +6,7 @@ import org.http4s._
 import org.http4s.server.blaze._
 import org.http4s.implicits._
 import org.http4s.server.Router
-import pms.server.config.PureMovieServerConfig
+import pms.server.config.PMSConfig
 
 /**
   *
@@ -33,7 +33,7 @@ object PureMovieServerApp extends PureharmIOApp {
       // 3) thread pool for http4s BlazeServer to run requests on — should be fixed size, to add backpressure to your app.
       // 4) cached thread pool for blocking external requests, put behind a BlockingShifter: https://github.com/busymachines/pureharm/blob/master/effects-cats/src/main/scala/busymachines/pureharm/internals/effects/BlockingShifter.scala#L24
       //    which should be used to run any external calls, like scrapping IMDB, sending emails, and amazon interactions
-      server                    <- PureMovieServer.concurrent[IO](timer, contextShift)
+      server                    <- PMSWeave.concurrent[IO](timer, contextShift)
       (serverConfig, pmsModule) <- server.init
       routes                    <- pmsModule.pureMovieServerRoutes
       exitCode                  <- serverStream[IO](
@@ -43,7 +43,7 @@ object PureMovieServerApp extends PureharmIOApp {
     } yield exitCode
 
   private def serverStream[F[_]: ConcurrentEffect: Timer](
-    config: PureMovieServerConfig,
+    config: PMSConfig,
     routes: HttpRoutes[F],
   ): Stream[F, ExitCode] = {
     val httpApp = Router(config.apiRoot -> routes).orNotFound

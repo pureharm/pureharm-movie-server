@@ -2,7 +2,6 @@ package pms.server
 
 import doobie.util.transactor.Transactor
 import org.http4s._
-
 import pms.core.Module
 import pms.effects._
 import pms.effects.implicits._
@@ -11,6 +10,8 @@ import pms.algebra.user._
 import pms.algebra.imdb._
 import pms.algebra.movie._
 import pms.algebra.http._
+import pms.rest.movie.ModuleMovieRest
+import pms.rest.user
 import pms.service.user._
 import pms.service.user.rest._
 import pms.service.movie._
@@ -26,7 +27,7 @@ import pms.service.movie.rest._
   */
 trait ModulePureMovieServer[F[_]]
   extends Module[F] with ModuleEmail[F] with ModuleUserAlgebra[F] with ModuleIMDBAlgebra[F] with ModuleMovieAlgebra[F]
-  with ModuleUserService[F] with ModuleMovieService[F] with ModuleUserRest[F] with ModuleMovieRest[F] {
+  with ModuleUserService[F] with ModuleMovieService[F] with user.ModuleUserRest[F] with ModuleMovieRest[F] {
 
   implicit override def F: Concurrent[F]
 

@@ -1,20 +1,15 @@
-package pms.service.movie.rest
+package pms.rest.movie
 
 import java.time._
-
-import spire.math.Interval
-
-import pms.effects._
-import pms.effects.implicits._
-
+import org.http4s._
+import org.http4s.dsl._
 import pms.algebra.http._
 import pms.algebra.imdb._
 import pms.algebra.movie._
-
+import pms.effects._
+import pms.effects.implicits._
 import pms.service.movie._
-
-import org.http4s._
-import org.http4s.dsl._
+import spire.math.Interval
 
 /**
   *
@@ -22,7 +17,7 @@ import org.http4s.dsl._
   * @since 25 Jun 2018
   *
   */
-final private[rest] class MovieRestRoutes[F[_]](
+final class MovieRestRoutes[F[_]](
   private val imdbService:  IMDBService[F],
   private val movieAlgebra: MovieAlgebra[F],
 )(implicit

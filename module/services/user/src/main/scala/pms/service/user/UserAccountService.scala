@@ -1,12 +1,10 @@
 package pms.service.user
 
+import pms.algebra.user._
 import pms.core._
 import pms.effects._
 import pms.effects.implicits._
-
 import pms.email._
-
-import pms.algebra.user._
 
 /**
   *
@@ -15,9 +13,7 @@ import pms.algebra.user._
   *
   */
 final class UserAccountService[F[_]] private (
-  private val userAuth:     UserAuthAlgebra[F],
   private val userAccount:  UserAccountAlgebra[F],
-  private val userAlgebra:  UserAlgebra[F],
   private val emailAlgebra: EmailAlgebra[F],
 )(implicit
   private val F:            Concurrent[F]
@@ -63,15 +59,13 @@ final class UserAccountService[F[_]] private (
 
 object UserAccountService {
 
-  def concurrent[F[_]: Concurrent](
-    userAuth:     UserAuthAlgebra[F],
+  def resource[F[_]: Concurrent](
     userAccount:  UserAccountAlgebra[F],
-    userAlgebra:  UserAlgebra[F],
     emailAlgebra: EmailAlgebra[F],
-  ): UserAccountService[F] = new UserAccountService[F](
-    userAuth,
-    userAccount,
-    userAlgebra,
-    emailAlgebra,
+  ): Resource[F, UserAccountService[F]] = Resource.pure(
+    new UserAccountService[F](
+      userAccount,
+      emailAlgebra,
+    )
   )
 }

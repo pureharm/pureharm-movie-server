@@ -1,8 +1,7 @@
-package pms.service.movie.rest
+package pms.rest.movie
 
-import pms.json._
-import pms.json.implicits._
 import pms.algebra.movie._
+import pms.json._
 
 /**
   *

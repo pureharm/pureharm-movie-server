@@ -1,10 +1,8 @@
-package pms.service.user.rest
+package pms.rest.user
 
-import pms.json._
-import pms.json.implicits._
-
-import pms.algebra.user._
-import pms.service.user._
+import pms.algebra.user.{AuthCtx, User, UserInvitation, UserRole}
+import pms.json.{derive, Codec, Decoder, Encoder}
+import pms.service.user.{PasswordResetCompletion, PasswordResetRequest, UserConfirmation}
 
 /**
   *
