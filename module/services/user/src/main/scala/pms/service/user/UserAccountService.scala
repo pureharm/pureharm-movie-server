@@ -1,10 +1,10 @@
 package pms.service.user
 
 import pms.algebra.user._
-import pms.core._
+import pms.core.Email
+import pms.email._
 import pms.effects._
 import pms.effects.implicits._
-import pms.email._
 
 /**
   *
@@ -62,7 +62,7 @@ object UserAccountService {
   def resource[F[_]: Concurrent](
     userAccount:  UserAccountAlgebra[F],
     emailAlgebra: EmailAlgebra[F],
-  ): Resource[F, UserAccountService[F]] = Resource.pure(
+  ): Resource[F, UserAccountService[F]] = Resource.pure[F, UserAccountService[F]](
     new UserAccountService[F](
       userAccount,
       emailAlgebra,

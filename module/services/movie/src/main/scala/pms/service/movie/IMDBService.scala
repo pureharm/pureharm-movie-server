@@ -60,5 +60,5 @@ final class IMDBService[F[_]] private (
 object IMDBService {
 
   def resource[F[_]: Async](movieAlgebra: MovieAlgebra[F], imdbAlgebra: IMDBAlgebra[F]): Resource[F, IMDBService[F]] =
-    Resource.pure(new IMDBService[F](movieAlgebra, imdbAlgebra))
+    Resource.pure[F, IMDBService[F]](new IMDBService[F](movieAlgebra, imdbAlgebra))
 }

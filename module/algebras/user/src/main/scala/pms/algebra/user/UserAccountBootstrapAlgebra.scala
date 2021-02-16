@@ -1,7 +1,6 @@
 package pms.algebra.user
 
 import pms.core._
-import pms.effects.Applicative
 
 /**
   *
@@ -20,5 +19,5 @@ final class UserAccountBootstrapAlgebra[F[_]] private (
 object UserAccountBootstrapAlgebra {
 
   def resource[F[_]: Applicative](uca: UserAccountAlgebra[F]): Resource[F, UserAccountBootstrapAlgebra[F]] =
-    Resource.pure(new UserAccountBootstrapAlgebra[F](uca))
+    Resource.pure[F, UserAccountBootstrapAlgebra[F]](new UserAccountBootstrapAlgebra[F](uca))
 }

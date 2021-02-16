@@ -2,9 +2,8 @@ package pms.server.bootstrap
 
 import pms.effects._
 import pms.effects.implicits._
-import pms.core._
 import pms.algebra.user._
-
+import pms.core.{Email, PlainTextPassword}
 import pms.logger._
 
 /**

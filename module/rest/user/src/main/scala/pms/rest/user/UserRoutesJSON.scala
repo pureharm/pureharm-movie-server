@@ -1,8 +1,10 @@
 package pms.rest.user
 
-import pms.algebra.user.{AuthCtx, User, UserInvitation, UserRole}
-import pms.json.{derive, Codec, Decoder, Encoder}
-import pms.service.user.{PasswordResetCompletion, PasswordResetRequest, UserConfirmation}
+import pms.algebra.user._
+import pms.core._
+import pms.json._
+import pms.json.implicits._
+import pms.service.user._
 
 /**
   *
@@ -32,4 +34,5 @@ trait UserRoutesJSON {
     derive.codec[PasswordResetCompletion]
 
   implicit val authCtxCirceCodec: Codec[AuthCtx] = derive.codec[AuthCtx]
+
 }

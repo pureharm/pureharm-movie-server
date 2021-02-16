@@ -2,9 +2,7 @@ package pms.algebra.user
 
 import doobie.Transactor
 import pms.algebra.user.impl.UserAlgebraImpl
-import pms.core._
-import pms.effects._
-import pms.effects.implicits._
+import pms.core.{ Sync, Async, _ }
 
 /**
   *
@@ -73,6 +71,6 @@ abstract class UserAuthAlgebra[F[_]: Sync] {
 
 object UserAuthAlgebra {
 
-  def resource[F[_]: Async](implicit transactor: Transactor[F]): Resource[F, UserAuthAlgebra[F]] =
-    Resource.pure(new UserAlgebraImpl[F]())
+  def resource[F[_]](implicit transactor: Transactor[F], F: Async[F]): Resource[F, UserAuthAlgebra[F]] =
+    Resource.pure[F, UserAuthAlgebra[F]](new UserAlgebraImpl[F]())
 }

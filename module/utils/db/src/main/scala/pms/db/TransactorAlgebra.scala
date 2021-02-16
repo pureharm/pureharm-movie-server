@@ -8,10 +8,10 @@ import scala.concurrent.ExecutionContext
 
 object TransactorAlgebra {
 
-  def resource[F[_]: Async](
+  def resource[F[_]](
     connectionExecutionContext: ExecutionContext,
     config:                     DBConnectionConfig,
-  )(implicit cs: ContextShift[F]): Resource[F, Transactor[F]] =
+  )(implicit as:                Async[F], cs: ContextShift[F]): Resource[F, Transactor[F]] =
     for {
       blocker <- Blocker(as)
       xa      <- HikariTransactor.newHikariTransactor(

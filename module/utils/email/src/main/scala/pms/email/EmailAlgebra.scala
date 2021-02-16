@@ -1,7 +1,7 @@
 package pms.email
 
-import pms.core._
-import pms.effects.Async
+import pms.core.{Async, Email}
+import pms.effects._
 
 /**
   *
@@ -20,6 +20,6 @@ trait EmailAlgebra[F[_]] {
 
 object EmailAlgebra {
 
-  def resource[F[_]: Async](config: GmailConfig): Resource[F, EmailAlgebra[F]] =
-    Resource.pure(new impl.EmailAlgebraJavaGmailAsyncImpl(config))
+  def resource[F[_]](config: GmailConfig)(implicit async: Async[F]): Resource[F, EmailAlgebra[F]] =
+    Resource.pure[F, EmailAlgebra[F]](new impl.EmailAlgebraJavaGmailAsyncImpl[F](config))
 }

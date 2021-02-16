@@ -2,6 +2,7 @@ package pms.rest.movie
 
 import pms.algebra.movie._
 import pms.json._
+import pms.json.implicits._
 
 /**
   *

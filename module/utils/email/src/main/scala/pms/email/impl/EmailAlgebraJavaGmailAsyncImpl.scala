@@ -1,15 +1,11 @@
 package pms.email.impl
 
 import java.util.Properties
-
 import javax.mail._
 import javax.mail.internet._
-
-import pms.effects._
-import pms.effects.implicits._
-import pms.logger._
 import pms.core._
 import pms.email._
+import pms.logger._
 
 /**
   *

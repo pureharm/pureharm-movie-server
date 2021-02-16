@@ -2,7 +2,7 @@ package pms.algebra.user
 
 import doobie.util.transactor.Transactor
 import pms.algebra.user.impl.UserAlgebraImpl
-import pms.core._
+import pms.core.{ Async, Resource, _}
 
 /**
   *
@@ -33,6 +33,6 @@ trait UserAccountAlgebra[F[_]] {
 
 object UserAccountAlgebra {
 
-  def resource[F[_]: Async](implicit transactor: Transactor[F]): Resource[F, UserAccountAlgebra[F]] =
-    Resource.pure(new UserAlgebraImpl[F]())
+  def resource[F[_]](implicit transactor: Transactor[F], F: Async[F]): Resource[F, UserAccountAlgebra[F]] =
+    Resource.pure[F, UserAccountAlgebra[F]](new UserAlgebraImpl[F]())
 }

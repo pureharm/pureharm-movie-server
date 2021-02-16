@@ -1,6 +1,6 @@
 package pms.server.bootstrap
 
-import pms.core._
+import pms.core.{Email, PlainTextPassword}
 import pms.effects._
 import pms.effects.implicits._
 

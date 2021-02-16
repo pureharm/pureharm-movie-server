@@ -2,6 +2,7 @@ package pms.algebra.movie
 
 import doobie.util.transactor.Transactor
 import pms.algebra.user._
+import pms.core.{Async, Resource}
 
 /**
   *
@@ -31,10 +32,9 @@ trait MovieAlgebra[F[_]] {
 
 object MovieAlgebra {
   import pms.algebra.movie.impl.MovieAlgebraImpl
-  import pms.effects._
 
-  def resource[F[_]: Async](
+  def resource[F[_]](
     userAuth:            UserAuthAlgebra[F]
-  )(implicit transactor: Transactor[F]): Resource[F, MovieAlgebra[F]] =
+  )(implicit transactor: Transactor[F], F: Async[F]): Resource[F, MovieAlgebra[F]] =
     Resource.pure(new MovieAlgebraImpl(userAuth, transactor))
 }

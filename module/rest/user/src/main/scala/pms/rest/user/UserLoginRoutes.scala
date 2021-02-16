@@ -5,9 +5,6 @@ import org.http4s.{headers, _}
 import pms.algebra.http._
 import pms.algebra.user._
 import pms.core._
-import pms.effects._
-import pms.effects.implicits._
-import pms.service.user.rest.UserRoutesJSON
 
 /**
   *

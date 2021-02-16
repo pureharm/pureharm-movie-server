@@ -6,8 +6,6 @@ import doobie.implicits._
 import pms.algebra.user._
 import pms.core._
 
-import pms.effects.implicits._
-
 /**
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs

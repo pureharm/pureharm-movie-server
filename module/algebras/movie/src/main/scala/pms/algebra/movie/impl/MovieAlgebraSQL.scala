@@ -1,14 +1,13 @@
 package pms.algebra.movie.impl
 
 import java.time.LocalDate
-
-import pms.core._
 import pms.effects._
 import pms.effects.implicits._
 import doobie._
 import doobie.implicits._
 import doobie.implicits.javatime._
 import pms.algebra.movie._
+import pms.core.{Iscata, Fail}
 import spire.math._
 
 /**

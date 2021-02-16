@@ -4,7 +4,6 @@ import busymachines.pureharm.db.DBConnectionConfig
 import busymachines.pureharm.db.flyway._
 import io.chrisdavenport.log4cats.Logger
 import pms.core._
-import pms.effects._
 
 trait FlywayAlgebra[F[_]] {
   def runMigrations(implicit logger: Logger[F]): F[Int]
