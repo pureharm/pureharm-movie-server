@@ -11,9 +11,9 @@ import scala.concurrent.duration._
   * @param interval  time unit between `size` consecutive requests
   * @param semaphore bounded by the number of Fs allowed to be executed in the configured `interval`
   */
-final class EffectThrottler[F[_]: Timer: Concurrent] private (
-  private val interval:  FiniteDuration,
-  private val semaphore: Semaphore[F],
+final class EffectThrottler[F[_]: Timer: Concurrent](
+  private val interval: FiniteDuration,
+  val semaphore:        Semaphore[F],
 ) {
 
   private val F = Concurrent.apply[F]
@@ -22,31 +22,16 @@ final class EffectThrottler[F[_]: Timer: Concurrent] private (
     * Returns an F that will be "slowed" time to the configured rate
     * of execution.
     */
-  def throttle[T](f: F[T]): F[T] =
+  def throttle[T](f: F[T]): F[Attempt[T]] =
     for {
-      acquireTime <- acquireSemaphore
-      res         <- f.onErrorF(delayLogic(acquireTime)).flatTap(_ => delayLogic(acquireTime))
-    } yield res
+      _                   <- semaphore.acquire
+      (duration, attempt) <- f.timedAttempt()
+      _                   <- if (isWithinInterval(duration)) Timer[F].sleep(interval - duration) else F.unit
+      _                   <- semaphore.release
+    } yield attempt
 
-  private def acquireSemaphore: F[FiniteDuration] =
-    semaphore.acquire *> timeNow
-
-  private def delayLogic(acquireTime: FiniteDuration): F[Unit] =
-    for {
-      now <- timeNow
-      _   <-
-        if (isWithinInterval(acquireTime, now)) Timer[F].sleep(acquireTime.max(now) - acquireTime.min(now))
-        else F.unit
-      _   <- semaphore.release
-    } yield ()
-
-  private def isWithinInterval(acquireTime: FiniteDuration, now: FiniteDuration): Boolean =
-    acquireTime - now < interval
-
-  private def timeNow: F[FiniteDuration] =
-    Timer[F].clock
-      .monotonic(interval.unit)
-      .map(l => FiniteDuration(l, interval.unit))
+  private def isWithinInterval(duration: FiniteDuration): Boolean =
+    duration < interval
 
 }
 

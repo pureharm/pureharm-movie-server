@@ -17,19 +17,21 @@ import pms.effects.implicits._
   */
 final private[imdb] class IMDBAlgebraImpl[F[_]](
   val throttler: EffectThrottler[F],
-  val browser: JsoupBrowser
+  val browser:   JsoupBrowser,
 )(implicit
   val F:         Async[F]
 ) extends IMDBAlgebra[F] {
 
-  override def scrapeMovieByTitle(title: TitleQuery): F[Option[IMDBMovie]] = {
+  override def scrapeMovieByTitle(title: TitleQuery): F[Option[IMDBMovie]] =
     for {
       doc       <- throttler.throttle[Document] {
         F.delay[Document](browser.get(s"https://imdb.com/find?q=$title&s=tt"))
       }
-      imdbMovie <- F.delay(parseIMDBDocument(doc))
+      imdbMovie <- doc match {
+        case Left(_)      => F.pure(None)
+        case Right(value) => F.delay(parseIMDBDocument(value))
+      }
     } yield imdbMovie
-  }
 
   private def parseIMDBDocument(imdbDocument: Document): Option[IMDBMovie] =
     for {

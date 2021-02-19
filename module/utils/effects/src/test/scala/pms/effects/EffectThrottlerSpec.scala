@@ -40,6 +40,38 @@ final class EffectThrottlerSpec extends Specification {
     elapsed must be_>=(minWaitTime)
   }
 
+  "cancel throttle effects at after 100ms" >> {
+    val minWaitTime = computeMinWaitTime(runs.length, interval, 2)
+    val eff: IO[Unit] = EffectThrottler
+      .resource[IO](interval, 2)
+      .use(throttler =>
+        for {
+          fiber <- runs.parTraverse(i => throttler.throttle(doStuff(i))).void.start
+          _     <- timer.sleep(interval) *> fiber.cancel
+        } yield ()
+      )
+
+    val elapsed = unsafeMeasureTime(eff.unsafeRunSync())
+    (elapsed must be_>=(interval)) and (elapsed must be_<=(minWaitTime))
+  }
+
+  "handle throttled effects failure" >> {
+    val minWaitTime = computeMinWaitTime(runs.length, interval, 2)
+    val eff: IO[Unit] = EffectThrottler
+      .resource[IO](interval, 2)
+      .use(throttler =>
+        runs
+          .parTraverse(i =>
+            if (i % 2 == 0) throttler.throttle(doStuff(i))
+            else throttler.throttle(IO.raiseError(new Exception()))
+          )
+          .void
+      )
+
+    val elapsed = unsafeMeasureTime(eff.unsafeRunSync())
+    elapsed must be_>=(minWaitTime)
+  }
+
   private def doStuff(it: Int): IO[Unit] =
     IO.delay(println(s"starting $it")) >>
       Timer[IO].sleep(stuffDuration) >>
