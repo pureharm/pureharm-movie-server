@@ -1,8 +1,8 @@
 package pms.algebra.user
 
-import doobie.Transactor
 import pms.algebra.user.impl.UserAlgebraImpl
-import pms.core.{ Sync, Async, _ }
+import pms.core._
+import pms.db._
 
 /**
   *

@@ -1,22 +1,21 @@
 package pms.server
 
 import org.http4s.server.blaze.BlazeServerBuilder
-import org.http4s.server.{AuthMiddleware, Server}
-import org.http4s.{HttpApp, HttpRoutes}
-import pms.algebra.http.{AuthCtxRoutes, AuthedHttp4s}
-import pms.algebra.imdb.{IMDBAlgebra, IMDBAlgebraConfig}
+import org.http4s.server._
+import org.http4s._
+import pms.algebra.http._
+import pms.algebra.imdb._
 import pms.algebra.movie.MovieAlgebra
-import pms.algebra.user.{AuthCtx, UserAccountAlgebra, UserAlgebra, UserAuthAlgebra}
+import pms.algebra.user._
 import pms.config._
 import pms.db.config._
-import pms.db.{FlywayAlgebra, TransactorAlgebra}
+import pms.db._
 import pms.email._
 import pms.logger._
 import pms.core._
-import pms.random._
 import pms.rest.movie.MovieAPI
 import pms.rest.user.UserAPI
-import pms.server.config.{PMSConfig, PMSPoolConfig}
+import pms.server.config._
 import pms.service.movie.IMDBService
 import pms.service.user.UserAccountService
 
@@ -34,7 +33,7 @@ final class PMSWeave[F[_]] private (
   userAPI:              UserAPI[F],
   movieAPI:             MovieAPI[F],
   httpExecutionContext: ExecutionContext,
-)(implicit F:           ConcurrentEffect[F], timer: Timer[F]) {
+)(implicit F:           Async[F], timer: Temporal[F]) {
 
   def serverResource: Resource[F, Server] =
     BlazeServerBuilder[F](httpExecutionContext)
@@ -44,12 +43,12 @@ final class PMSWeave[F[_]] private (
       .withBanner(Seq.empty)
       .resource
 
-  private def http4sApp(implicit F: Sync[F]): HttpApp[F] = {
+  private def http4sApp: HttpApp[F] = {
     import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 
-    val routes = NonEmptyList.of[HttpRoutes[F]](userAPI.routes).reduceK
-    val authed = NonEmptyList.of[AuthCtxRoutes[F]](userAPI.authedRoutes, movieAPI.authedRoutes).reduceK
-    val pmsAPI: HttpRoutes[F] = routes <+> middleware(authed)
+//    val routes = NonEmptyList.of[HttpRoutes[F]](userAPI.routes).reduceK
+//    val authed = NonEmptyList.of[AuthCtxRoutes[F]](userAPI.authedRoutes, movieAPI.authedRoutes).reduceK
+    val pmsAPI: HttpRoutes[F] = ??? //routes <+> middleware(authed)
 
     org.http4s.server
       .Router[F](("api", pmsAPI))
@@ -62,14 +61,13 @@ object PMSWeave {
 
   @scala.annotation.nowarn
   def resource[F[_]](implicit
-    timer:            Timer[F],
-    mainContextShift: ContextShift[F],
-    C:                ConcurrentEffect[F],
+    timer:            Temporal[F],
+    mainContextShift: Async[F],
   ): Resource[F, PMSWeave[F]] =
     for {
       implicit0(config: Config[F]) <- Config.resource[F]
       implicit0(logging: Logging[F]) <- Logging.resource[F]
-      implicit0(random: Random[F]) <- Random.resource[F]
+      implicit0(random: Random[F]) <- Random.javaUtilConcurrentThreadLocalRandom[F].pure[Resource[F, *]]
       implicit0(logger: Logger[F]) = logging.of(this)
       poolsConfig       <- PMSPoolConfig.resource[F]
       serverConfig      <- PMSConfig.resource[F]
@@ -77,23 +75,23 @@ object PMSWeave {
       imdbAlgebraConfig <- IMDBAlgebraConfig.resource[F]
       dbConfig          <- DatabaseConfig.resource[F]
 
-      httpServerExecutionContext <- Pools.fixed[F](maxThreads = poolsConfig.httpServerPool)
-      dbExecutionContext         <- Pools.fixed[F](maxThreads = poolsConfig.pgSqlPool)
+      httpServerExecutionContext <-
+        PoolFixed.fixed[F]("pms-http4s", maxThreads = poolsConfig.httpServerPool, daemons = false)
 
-      transactor <- TransactorAlgebra.resource[F](dbExecutionContext, dbConfig.connection)
-      _          <-
+      implicit0(transactor: Transactor[F]) <- TransactorAlgebra.resource[F](dbConfig.connection)
+      _                          <-
         FlywayAlgebra
           .resource[F](dbConfig.connection)
-          .evalMap(flyway => if (dbConfig.forceClean) flyway.cleanDB(logger).map(_ => flyway) else Sync[F].pure(flyway))
+          .evalMap(flyway => if (dbConfig.forceClean) flyway.cleanDB(logger).map(_ => flyway) else flyway.pure[F])
           .evalMap(flyway => flyway.runMigrations(logger))
 
-      throttler  <- EffectThrottler.resource[F](imdbAlgebraConfig.requestsInterval, imdbAlgebraConfig.requestsNumber)
+      throttler                  <- EffectThrottler.resource[F](imdbAlgebraConfig.requestsInterval, imdbAlgebraConfig.requestsNumber)
 
       imdbAlgebra    <- IMDBAlgebra.resource[F](throttler)
-      authAlgebra    <- UserAuthAlgebra.resource[F](transactor, C)
-      accountAlgebra <- UserAccountAlgebra.resource[F](transactor, C)
-      userAlgebra    <- UserAlgebra.resource[F](transactor, C)
-      movieAlgebra   <- MovieAlgebra.resource[F](authAlgebra)(transactor, C)
+      authAlgebra    <- UserAuthAlgebra.resource[F]
+      accountAlgebra <- UserAccountAlgebra.resource[F]
+      userAlgebra    <- UserAlgebra.resource[F]
+      movieAlgebra   <- MovieAlgebra.resource[F](authAlgebra)
       emailAlgebra   <- EmailAlgebra.resource[F](gmailConfig)
 
       imdbService <- IMDBService.resource[F](movieAlgebra, imdbAlgebra)

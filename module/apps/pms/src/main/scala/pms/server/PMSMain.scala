@@ -1,6 +1,5 @@
 package pms.server
 
-import cats.effect.{ContextShift, IO}
 import org.http4s.server.Server
 import pms.core._
 
@@ -13,14 +12,12 @@ import pms.core._
 object PMSMain extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] =
-    runResource[IO](this.timer, this.contextShift, IO.ioConcurrentEffect(this.contextShift))
+    runResource[IO]
       .use(_ => IO.never)
       .as(ExitCode.Success)
 
   private def runResource[F[_]](implicit
-    timer: Timer[F],
-    CS:    ContextShift[F],
-    CE:    ConcurrentEffect[F],
+    CE: Async[F]
   ): Resource[F, Server] =
     for {
       weave  <- PMSWeave.resource[F]

@@ -245,14 +245,12 @@ lazy val `algebra-user` = algebraProject("user")
     `pms-config`,
     `pms-core`,
     `pms-email`,
-    `pms-random`,
     `pms-db`,
   )
   .aggregate(
     `pms-config`,
     `pms-core`,
     `pms-email`,
-    `pms-random`,
     `pms-db`,
   )
 
@@ -359,13 +357,6 @@ lazy val `pms-logger` = utilProject("logger")
   .aggregate(
     `pms-core`
   )
-
-lazy val `pms-random` = utilProject("random")
-  .settings(
-    libraryDependencies ++= Seq(
-    )
-  )
-  .dependsOn(`pms-core`)
 
 lazy val `pms-core` = utilProject("core")
   .settings(

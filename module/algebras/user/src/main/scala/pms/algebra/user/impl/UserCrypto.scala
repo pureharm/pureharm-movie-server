@@ -1,5 +1,6 @@
 package pms.algebra.user.impl
 
+import cats.effect.std.Random
 import pms.core._
 
 import scala.concurrent.duration._
@@ -33,11 +34,12 @@ private[impl] object UserCrypto {
     * }}}
     *
     */
-  private[impl] def generateToken[F[_]: Random]: F[String] = Fail.nicata("generateToken").raiseError[F, String]
+  private[impl] def generateToken[F[_]: ApplicativeThrow: Random]: F[String] =
+    Fail.nicata("generateToken").raiseError[F, String]
 
-  private[impl] def hashPWWithBcrypt[F[_]: Sync](ptpw: PlainTextPassword): F[BcryptPW] =
+  private[impl] def hashPWWithBcrypt[F[_]: ApplicativeThrow: Random](ptpw: PlainTextPassword): F[BcryptPW] =
     Fail.nicata(s"hashPWWithBcrypt").raiseError[F, BcryptPW]
 
-  private[impl] def checkUserPassword[F[_]: Sync](p: String, hash: UserCrypto.BcryptPW): F[Boolean] =
+  private[impl] def checkUserPassword[F[_]: ApplicativeThrow: Random](p: String, hash: UserCrypto.BcryptPW): F[Boolean] =
     Fail.nicata(s"checkUserPassword $p $hash").raiseError[F, Boolean]
 }

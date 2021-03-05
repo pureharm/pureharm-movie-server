@@ -1,5 +1,7 @@
 package pms.core
 
+import cats.effect.std.Semaphore
+
 import scala.concurrent.duration._
 
 /**
@@ -11,7 +13,7 @@ import scala.concurrent.duration._
   * @param semaphore bounded by the number of Fs allowed to be executed in the configured `interval`
   */
 @scala.annotation.nowarn
-final class EffectThrottler[F[_]: Timer: Concurrent](
+final class EffectThrottler[F[_]: Temporal: Concurrent](
   private val interval: FiniteDuration,
   val semaphore:        Semaphore[F],
 ) {
@@ -44,11 +46,11 @@ final class EffectThrottler[F[_]: Timer: Concurrent](
 
 object EffectThrottler {
 
-  def resource[F[_]: Timer: Concurrent](
+  def resource[F[_]: Temporal: Concurrent](
     interval: FiniteDuration,
     amount:   Long,
   ): Resource[F, EffectThrottler[F]] =
-    Resource.liftF {
+    Resource.eval {
       for {
         sem <- Semaphore(amount)
       } yield new EffectThrottler[F](

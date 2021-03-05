@@ -34,8 +34,13 @@ final class UserLoginRoutes[F[_]](
   private def findBasicAuth(hs: Headers): F[BasicCredentials] = {
     val r: Attempt[BasicCredentials] = for {
       auth:  headers.Authorization <-
-        hs.get(headers.Authorization)
-          .liftTo[Attempt](Fail.unauthorized("Missing Authorization header"))
+        Fail.nicata("""
+                      |
+                      |hs.get(headers.Authorization)
+                      |          .liftTo[Attempt](Fail.unauthorized("Missing Authorization header"))
+                      |
+                      |""".stripMargin).raiseError[Attempt, headers.Authorization]
+
       basic: BasicCredentials <- auth.credentials match {
         case Credentials.Token(AuthScheme.Basic, token) =>
           BasicCredentials(token).pure[Attempt]

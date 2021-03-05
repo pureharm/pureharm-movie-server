@@ -42,13 +42,22 @@ object AuthedHttp4s {
     Kleisli { req: Request[F] =>
       val optHeader = req.headers.get(`X-Auth-Token`)
       optHeader match {
-        case None         =>
+        case None =>
           Fail.unauthorized(s"No ${`X-Auth-Token`} provided").raiseError[Attempt, AuthCtx].pure[F]
-        case Some(header) =>
-          authAlgebra
-            .authenticate(AuthenticationToken(header.value))
-            .map(_.pure[Attempt])
-            .handleError(_.raiseError[Attempt, AuthCtx])
+        case Some(headers: NEList[Header.Raw]) =>
+          //TODO: ensure there is only one such header
+          if (headers.size != 1)
+            Fail
+              .unauthorized(s"Found multiple ${`X-Auth-Token`} headers. Please provide only one.")
+              .raiseError[Attempt, AuthCtx]
+              .pure[F]
+          else {
+            authAlgebra
+              .authenticate(AuthenticationToken(headers.head.value))
+              .map(_.pure[Attempt])
+              .handleError(_.raiseError[Attempt, AuthCtx])
+          }
+
       }
     }
 }

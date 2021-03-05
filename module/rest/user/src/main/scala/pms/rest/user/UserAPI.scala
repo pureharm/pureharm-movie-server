@@ -13,7 +13,7 @@ trait UserAPI[F[_]] {
 
 object UserAPI {
 
-  def resource[F[_]: Concurrent](
+  def resource[F[_]: Async](
     userAlgebra:     UserAlgebra[F],
     userAuthAlgebra: UserAuthAlgebra[F],
     userService:     UserAccountService[F],

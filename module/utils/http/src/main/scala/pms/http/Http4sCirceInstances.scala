@@ -32,17 +32,18 @@ trait Http4sCirceInstances {
     *
     * @return
     */
-  implicit def syncEntityJsonEncoder[F[_], T: Encoder]: EntityEncoder[F, T] =
-    EntityEncoder[F, Chunk[Byte]]
-      .contramap[Json] { json =>
-        val bytes = printer.printToByteBuffer(json)
-        Chunk.byteBuffer(bytes)
-      }
-      .withContentType(`Content-Type`(MediaType.application.json))
-      .contramap(t => Encoder.apply[T].apply(t))
+  implicit def syncEntityJsonEncoder[F[_], T: Encoder]: EntityEncoder[F, T] = throw Fail.nicata("syncEntityJsonEncoder")
+//    EntityEncoder[F, Chunk[Byte]]
+//      .contramap[Json] { json =>
+//        val bytes = printer.printToByteBuffer(json)
+//        Chunk.byteBuffer(bytes)
+//      }
+//      .withContentType(`Content-Type`(MediaType.application.json))
+//      .contramap(t => Encoder.apply[T].apply(t))
 
   implicit def syncEntityJsonDecoder[F[_]: Sync, T: Decoder]: EntityDecoder[F, T] =
-    circeInstances.jsonOf[F, T]
+    throw Fail.nicata("syncEntityJsonDecoder")
+//    circeInstances.jsonOf[F, T]
 
 }
 
