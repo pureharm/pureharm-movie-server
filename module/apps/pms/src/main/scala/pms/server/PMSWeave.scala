@@ -1,6 +1,5 @@
 package pms.server
 
-import cats.effect.ContextShift
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server.{AuthMiddleware, Server}
 import org.http4s.{HttpApp, HttpRoutes}
@@ -8,16 +7,19 @@ import pms.algebra.http.{AuthCtxRoutes, AuthedHttp4s}
 import pms.algebra.imdb.{IMDBAlgebra, IMDBAlgebraConfig}
 import pms.algebra.movie.MovieAlgebra
 import pms.algebra.user.{AuthCtx, UserAccountAlgebra, UserAlgebra, UserAuthAlgebra}
+import pms.config._
 import pms.db.config._
 import pms.db.{FlywayAlgebra, TransactorAlgebra}
 import pms.email._
 import pms.logger._
 import pms.core._
+import pms.random._
 import pms.rest.movie.MovieAPI
 import pms.rest.user.UserAPI
-import pms.server.config.PMSConfig
+import pms.server.config.{PMSConfig, PMSPoolConfig}
 import pms.service.movie.IMDBService
 import pms.service.user.UserAccountService
+
 import scala.concurrent.ExecutionContext
 
 /**
@@ -27,17 +29,14 @@ import scala.concurrent.ExecutionContext
   *
   */
 final class PMSWeave[F[_]] private (
-  serverConfig:           PMSConfig,
-  middleware:             AuthMiddleware[F, AuthCtx],
-  userAPI:                UserAPI[F],
-  movieAPI:               MovieAPI[F],
-)(implicit private val F: Concurrent[F]) {
+  serverConfig:         PMSConfig,
+  middleware:           AuthMiddleware[F, AuthCtx],
+  userAPI:              UserAPI[F],
+  movieAPI:             MovieAPI[F],
+  httpExecutionContext: ExecutionContext,
+)(implicit F:           ConcurrentEffect[F], timer: Timer[F]) {
 
-  def serverResource(implicit
-    concurrentEffect:     ConcurrentEffect[F],
-    timer:                Timer[F],
-    httpExecutionContext: ExecutionContext,
-  ): Resource[F, Server] =
+  def serverResource: Resource[F, Server] =
     BlazeServerBuilder[F](httpExecutionContext)
       .bindHttp(serverConfig.port, serverConfig.host)
       .withHttpApp(http4sApp)
@@ -61,15 +60,25 @@ final class PMSWeave[F[_]] private (
 
 object PMSWeave {
 
-  def resource[F[_]](
-    logger:             Logger[F],
-    dbExecutionContext: ExecutionContext,
-  )(implicit timer:     Timer[F], mainContextShift: ContextShift[F], C: Concurrent[F]): Resource[F, PMSWeave[F]] =
+  @scala.annotation.nowarn
+  def resource[F[_]](implicit
+    timer:            Timer[F],
+    mainContextShift: ContextShift[F],
+    C:                ConcurrentEffect[F],
+  ): Resource[F, PMSWeave[F]] =
     for {
-      serverConfig      <- PMSConfig.defaultR[F]
-      gmailConfig       <- GmailConfig.defaultR[F]
-      imdbAlgebraConfig <- IMDBAlgebraConfig.fromNamespaceR[F]("algebra.imdb")
-      dbConfig          <- DatabaseConfig.fromNamespaceR[F]("pms.db")
+      implicit0(config: Config[F]) <- Config.resource[F]
+      implicit0(logging: Logging[F]) <- Logging.resource[F]
+      implicit0(random: Random[F]) <- Random.resource[F]
+      implicit0(logger: Logger[F]) = logging.of(this)
+      poolsConfig       <- PMSPoolConfig.resource[F]
+      serverConfig      <- PMSConfig.resource[F]
+      gmailConfig       <- GmailConfig.resource[F]
+      imdbAlgebraConfig <- IMDBAlgebraConfig.resource[F]
+      dbConfig          <- DatabaseConfig.resource[F]
+
+      httpServerExecutionContext <- Pools.fixed[F](maxThreads = poolsConfig.httpServerPool)
+      dbExecutionContext         <- Pools.fixed[F](maxThreads = poolsConfig.pgSqlPool)
 
       transactor <- TransactorAlgebra.resource[F](dbExecutionContext, dbConfig.connection)
       _          <-
@@ -95,6 +104,6 @@ object PMSWeave {
       movieAPI <- MovieAPI.resource(imdbService, movieAlgebra)
       userAPI  <- UserAPI.resource(userAlgebra, authAlgebra, userService)
 
-    } yield new PMSWeave[F](serverConfig, middleware, userAPI, movieAPI)
+    } yield new PMSWeave[F](serverConfig, middleware, userAPI, movieAPI, httpServerExecutionContext)
 
 }

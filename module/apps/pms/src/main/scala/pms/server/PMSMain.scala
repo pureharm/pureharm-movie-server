@@ -1,11 +1,8 @@
 package pms.server
 
-import busymachines.pureharm.effects.pools.Pools
 import cats.effect.{ContextShift, IO}
 import org.http4s.server.Server
 import pms.core._
-import pms.logger.Logger
-import pms.server.config.PMSPoolConfig
 
 /**
   *
@@ -26,11 +23,8 @@ object PMSMain extends IOApp {
     CE:    ConcurrentEffect[F],
   ): Resource[F, Server] =
     for {
-      poolsConfig                <- PMSPoolConfig.defaultR[F]
-      httpServerExecutionContext <- Pools.fixed[F](maxThreads = poolsConfig.httpServerPool)
-      dbExecutionContext         <- Pools.fixed[F](maxThreads = poolsConfig.pgSqlPool)
-      weave                      <- PMSWeave.resource[F](Logger.getLogger[F], dbExecutionContext)
-      server                     <- weave.serverResource(CE, timer, httpServerExecutionContext)
+      weave  <- PMSWeave.resource[F]
+      server <- weave.serverResource
     } yield server
 
 }

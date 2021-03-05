@@ -19,7 +19,6 @@ final case class GmailConfig(
   startTLS: Boolean,
 )
 
-object GmailConfig extends ConfigLoader[GmailConfig] {
-  implicit override def configReader: ConfigReader[GmailConfig] = semiauto.deriveReader[GmailConfig]
-  override def default[F[_]: Sync]: F[GmailConfig] = this.load[F]("pms.email.gmail")
+object GmailConfig {
+  def resource[F[_]: Config]: Resource[F, GmailConfig] = ???
 }

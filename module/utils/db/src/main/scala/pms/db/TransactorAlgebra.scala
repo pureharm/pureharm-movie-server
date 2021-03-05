@@ -1,8 +1,8 @@
 package pms.db
 
-import busymachines.pureharm.db.DBConnectionConfig
-
 import pms.core._
+import pms.db.config.DBConnectionConfig
+
 import scala.concurrent.ExecutionContext
 
 object TransactorAlgebra {
@@ -16,9 +16,9 @@ object TransactorAlgebra {
       blocker <- Blocker(as)
       xa      <- HikariTransactor.newHikariTransactor[F](
         driverClassName = "org.postgresql.Driver",
-        url             = config.jdbcURL: String,
-        user            = config.username: String,
-        pass            = config.password: String,
+        url             = config.jdbcURL,
+        user            = config.username,
+        pass            = config.password,
         connectEC       = connectionExecutionContext,
         blocker         = blocker,
       )

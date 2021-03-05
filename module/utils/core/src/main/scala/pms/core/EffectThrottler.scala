@@ -10,12 +10,13 @@ import scala.concurrent.duration._
   * @param interval  time unit between `size` consecutive requests
   * @param semaphore bounded by the number of Fs allowed to be executed in the configured `interval`
   */
+@scala.annotation.nowarn
 final class EffectThrottler[F[_]: Timer: Concurrent](
   private val interval: FiniteDuration,
   val semaphore:        Semaphore[F],
 ) {
 
-  private val F = Concurrent.apply[F]
+//  private val F = Concurrent.apply[F]
 
   /**
     * Returns an F that will be "slowed" time to the configured rate

@@ -1,7 +1,6 @@
 package pms.db.config
 
-import busymachines.pureharm.db.DBConnectionConfig
-import busymachines.pureharm.db.flyway.FlywayConfig
+import pms.core._
 import pms.config._
 
 /**
@@ -14,6 +13,24 @@ final case class DatabaseConfig(
   forceClean: Boolean,
 )
 
-object DatabaseConfig extends ConfigLoader[DatabaseConfig] {
-  implicit override def configReader: ConfigReader[DatabaseConfig] = semiauto.deriveReader[DatabaseConfig]
+final case class DBConnectionConfig(
+  host:     String,
+  port:     Int,
+  dbName:   String,
+  username: String,
+  password: String,
+  schema:   String,
+) {
+  def jdbcURL: String = s"jdbc:postgresql://$host:$port/$dbName?currentSchema=$schema"
+}
+
+final case class FlywayConfig(
+  schemas:                 List[String] = List.empty,
+  migrationLocations:      List[String] = List.empty,
+  ignoreMissingMigrations: Boolean = false,
+  cleanOnValidationError:  Boolean = false,
+)
+
+object DatabaseConfig {
+  def resource[F[_]: Config]: Resource[F, DatabaseConfig] = ???
 }

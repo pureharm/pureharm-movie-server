@@ -1,9 +1,8 @@
 package pms.db
 
-import busymachines.pureharm.db.DBConnectionConfig
-import busymachines.pureharm.db.flyway._
 import pms.logger._
 import pms.core._
+import pms.db.config._
 
 trait FlywayAlgebra[F[_]] {
   def runMigrations(implicit logger: Logger[F]): F[Int]
@@ -32,5 +31,68 @@ object FlywayAlgebra {
       val mig = Flyway.clean[F](dbConfig = connectionConfig)
       logger.warn(s"CLEANING DB: ${connectionConfig.jdbcURL} — better make sure this isn't on prod, lol") >> mig
     }
+  }
+
+  private object Flyway {
+    import org.flywaydb.core.{Flyway => JFlyway}
+
+    def migrate[F[_]](
+      url:          String,
+      username:     String,
+      password:     String,
+      flywayConfig: Option[FlywayConfig],
+    )(implicit
+      F:            Sync[F]
+    ): F[Int] =
+      for {
+        fw   <- flywayInit[F](url, username, password, flywayConfig)
+        migs <- F.delay(fw.migrate())
+      } yield migs.migrationsExecuted
+
+    def migrate[F[_]](
+      dbConfig:     DBConnectionConfig,
+      flywayConfig: Option[FlywayConfig] = Option.empty,
+    )(implicit
+      F:            Sync[F]
+    ): F[Int] =
+      for {
+        fw   <- flywayInit[F](dbConfig.jdbcURL, dbConfig.username, dbConfig.password, flywayConfig)
+        migs <- F.delay(fw.migrate())
+      } yield migs.migrationsExecuted
+
+    def clean[F[_]: Sync](dbConfig: DBConnectionConfig): F[Unit] =
+      this.clean[F](url = dbConfig.jdbcURL, username = dbConfig.username, password = dbConfig.password)
+
+    def clean[F[_]: Sync](url:      String, username: String, password: String): F[Unit] =
+      for {
+        fw <- flywayInit[F](url, username, password, Option.empty)
+        _  <- Sync[F].delay(fw.clean())
+      } yield ()
+
+    private def flywayInit[F[_]](
+      url:        String,
+      username:   String,
+      password:   String,
+      config:     Option[FlywayConfig],
+    )(implicit F: Sync[F]): F[JFlyway] =
+      F.delay {
+        val fwConfig = JFlyway.configure()
+        fwConfig.dataSource(url, username, password)
+        fwConfig.mixed(true)
+        config match {
+          case None    => () //default everything. Do nothing, lol, java
+          case Some(c) =>
+            if (c.migrationLocations.nonEmpty) {
+              fwConfig.locations(c.migrationLocations: _*)
+            }
+            if (c.schemas.nonEmpty) {
+              fwConfig.schemas(c.schemas: _*)
+            }
+            fwConfig.ignoreMissingMigrations(c.ignoreMissingMigrations)
+            fwConfig.cleanOnValidationError(c.cleanOnValidationError)
+        }
+
+        new JFlyway(fwConfig)
+      }
   }
 }

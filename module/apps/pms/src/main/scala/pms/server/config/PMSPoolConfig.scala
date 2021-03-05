@@ -8,9 +8,6 @@ final case class PMSPoolConfig(
   httpServerPool: Int,
 )
 
-object PMSPoolConfig extends ConfigLoader[PMSPoolConfig] {
-
-  implicit override def configReader: ConfigReader[PMSPoolConfig] = semiauto.deriveReader[PMSPoolConfig]
-
-  override def default[F[_]: Sync]: F[PMSPoolConfig] = this.load[F]("pms.pools")
+object PMSPoolConfig {
+  def resource[F[_]: Config]: Resource[F, PMSPoolConfig] = ???
 }

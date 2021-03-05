@@ -9,7 +9,6 @@ import pms.algebra.movie._
 import pms.core._
 
 import pms.service.movie._
-import spire.math.Interval
 
 /**
   *
@@ -63,7 +62,7 @@ final class MovieRestRoutes[F[_]](
         Ok(movieAlgebra.fetchMovie(mid)(user))
 
       case GET -> Root / "movie" :? StartReleaseDateQueryMatcher(start) :? EndReleaseDateQueryMatcher(end) as user =>
-        val interval = Interval.closed(start, end)
+        val interval = (start, end)
         Ok(movieAlgebra.findMoviesBetween(interval)(user))
     }
   }

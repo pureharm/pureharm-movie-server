@@ -16,12 +16,9 @@ final private[movie] class MovieAlgebraImpl[F[_]: BracketThrow](
   private val transactor:          Transactor[F],
 ) extends MovieAlgebra[F] {
 
-  override protected def createMovieImpl(mc: MovieCreation): F[Movie] =
-    MovieAlgebraSQL.insertMovie(mc).transact(transactor)
+  override protected def createMovieImpl(mc: MovieCreation): F[Movie] = ???
 
-  override protected def findMoviesBetweenImpl(interval: QueryInterval): F[List[Movie]] =
-    MovieAlgebraSQL.findBetween(interval).transact(transactor)
+  override protected def findMoviesBetweenImpl(interval: QueryInterval): F[List[Movie]] = ???
 
-  override protected def findMovieImpl(mid: MovieID): F[Movie] =
-    MovieAlgebraSQL.fetchByIDQuery(mid).transact(transactor)
+  override protected def findMovieImpl(mid: MovieID): F[Movie] = ???
 }

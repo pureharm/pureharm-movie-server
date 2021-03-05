@@ -16,11 +16,6 @@ final case class PMSConfig(
   bootstrap: Boolean,
 )
 
-object PMSConfig extends ConfigLoader[PMSConfig] {
-
-  override implicit def configReader: ConfigReader[PMSConfig] =
-    semiauto.deriveReader[PMSConfig]
-
-  override def default[F[_]: Sync]: F[PMSConfig] =
-    this.load[F]("pms.server")
+object PMSConfig {
+  def resource[F[_]: Config]: Resource[F, PMSConfig] = ???
 }

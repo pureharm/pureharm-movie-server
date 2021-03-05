@@ -17,7 +17,6 @@ lazy val server = Project(id = "server", file("./module/apps/pms"))
   )
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.specs2 % Test
     )
   )
   .dependsOn(
@@ -51,7 +50,6 @@ lazy val `bootstrap` = project
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.specs2 % Test
     )
   )
   .dependsOn(
@@ -74,7 +72,6 @@ lazy val `bootstrap` = project
 lazy val `service-user` = serviceProject("user")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.specs2 % Test
     )
   )
   .dependsOn(
@@ -103,8 +100,6 @@ lazy val `service-user` = serviceProject("user")
 lazy val `service-movie` = serviceProject("movie")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.spire,
-      Libraries.specs2 % Test,
     )
   )
   .dependsOn(
@@ -135,7 +130,6 @@ lazy val `service-movie` = serviceProject("movie")
 lazy val `rest-user` = restProject("user")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.specs2 % Test
     )
   )
   .dependsOn(
@@ -164,8 +158,6 @@ lazy val `rest-user` = restProject("user")
 lazy val `rest-movie` = restProject("movie")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.spire,
-      Libraries.specs2 % Test,
     )
   )
   .dependsOn(
@@ -194,7 +186,6 @@ lazy val `rest-movie` = restProject("movie")
 lazy val `algebra-http-sec` = algebraProject("http-sec")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.specs2 % Test
     )
   )
   .dependsOn(
@@ -213,8 +204,7 @@ lazy val `algebra-http-sec` = algebraProject("http-sec")
 lazy val `algebra-imdb` = algebraProject("imdb")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.scalaScrapper,
-      Libraries.specs2 % Test,
+      Libraries.scalaScrapper
     )
   )
   .dependsOn(
@@ -231,8 +221,6 @@ lazy val `algebra-imdb` = algebraProject("imdb")
 lazy val `algebra-movie` = algebraProject("movie")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.spire,
-      Libraries.specs2 % Test,
     )
   )
   .dependsOn(
@@ -251,28 +239,28 @@ lazy val `algebra-movie` = algebraProject("movie")
 lazy val `algebra-user` = algebraProject("user")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.specs2 % Test
-    ) ++ Libraries.tsec
+    )
   )
   .dependsOn(
     `pms-config`,
     `pms-core`,
     `pms-email`,
+    `pms-random`,
     `pms-db`,
   )
   .aggregate(
     `pms-config`,
     `pms-core`,
     `pms-email`,
+    `pms-random`,
     `pms-db`,
   )
 
 lazy val `pms-db` = utilProject("db")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.phFlyway,
-      Libraries.specs2 % Test,
-    ) ++ Libraries.doobie ++ Libraries.fs2
+      Libraries.skunk
+    )
   )
   .dependsOn(
     `pms-core`,
@@ -288,8 +276,7 @@ lazy val `pms-db` = utilProject("db")
 lazy val `pms-email` = utilProject("email")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.javaxMail,
-      Libraries.specs2 % Test,
+      Libraries.javaxMail
     )
   )
   .dependsOn(
@@ -306,8 +293,7 @@ lazy val `pms-email` = utilProject("email")
 lazy val `pms-http` = utilProject("http")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.specs2 % Test
-    ) ++ Libraries.http4s ++ Libraries.fs2
+    ) ++ Libraries.http4s
   )
   .dependsOn(
     `pms-core`,
@@ -321,8 +307,9 @@ lazy val `pms-http` = utilProject("http")
 lazy val `pms-json` = utilProject("json")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.phJson
-    ) ++ Libraries.circe
+      Libraries.circeCore,
+      Libraries.circeGeneric,
+    )
   )
   .dependsOn(
     `pms-core`
@@ -334,11 +321,8 @@ lazy val `pms-json` = utilProject("json")
 lazy val `pms-db-config` = utilProject("db-config")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.doobieCore,
-      Libraries.doobieHikari,
-      Libraries.phFlyway,
-      Libraries.flyway,
-    ) ++ Libraries.fs2
+      Libraries.flyway
+    )
   )
   .dependsOn(
     `pms-config`,
@@ -352,8 +336,7 @@ lazy val `pms-db-config` = utilProject("db-config")
 lazy val `pms-config` = utilProject("config")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.pureConfig,
-      Libraries.phConfig,
+      Libraries.ciris
     )
   )
   .dependsOn(
@@ -377,6 +360,13 @@ lazy val `pms-logger` = utilProject("logger")
     `pms-core`
   )
 
+lazy val `pms-random` = utilProject("random")
+  .settings(
+    libraryDependencies ++= Seq(
+    )
+  )
+  .dependsOn(`pms-core`)
+
 lazy val `pms-core` = utilProject("core")
   .settings(
     libraryDependencies ++= Seq(
@@ -386,7 +376,6 @@ lazy val `pms-core` = utilProject("core")
       Libraries.cats,
       Libraries.catsEffect,
       Libraries.fs2Core,
-      Libraries.specs2 % Test,
     )
   )
   .dependsOn(
