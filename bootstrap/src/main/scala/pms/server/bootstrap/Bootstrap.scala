@@ -13,8 +13,8 @@ import pms.core._
 object Bootstrap {
 
   object superAdmin {
-    def email[F[_]: MonadAttempt]: F[Email]             = Email("murray.bookchin@socialecology.fecund").liftTo[F]
-    def passw[F[_]: MonadAttempt]: F[PlainTextPassword] = PlainTextPassword("OldManYellsAtAnarchism").liftTo[F]
+    def email[F[_]: MonadThrow]: F[Email]             = Email("murray.bookchin@socialecology.fecund").liftTo[F]
+    def passw[F[_]: MonadThrow]: F[PlainTextPassword] = PlainTextPassword("OldManYellsAtAnarchism").liftTo[F]
 
     //the concatenated base64($email:$passw) string, on hand, in case needed
     val BasicAuthEncoding: String =

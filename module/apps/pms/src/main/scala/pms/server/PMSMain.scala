@@ -13,9 +13,7 @@ import pms.server.config.PMSPoolConfig
   * @since 20 Jun 2018
   *
   */
-object PMSMain extends PureharmIOApp {
-
-  override val ioRuntime: Later[(ContextShift[IO], Timer[IO])] = IORuntime.defaultMainRuntime(s"main-pure-movie-server")
+object PMSMain extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] =
     runResource[IO](this.timer, this.contextShift, IO.ioConcurrentEffect(this.contextShift))

@@ -38,9 +38,11 @@ final class UserLoginRoutes[F[_]](
           .liftTo[Attempt](Fail.unauthorized("Missing Authorization header"))
       basic: BasicCredentials <- auth.credentials match {
         case Credentials.Token(AuthScheme.Basic, token) =>
-          Attempt.pure(BasicCredentials(token))
+          BasicCredentials(token).pure[Attempt]
         case credentials                                =>
-          Attempt.raiseError(Fail.unauthorized(s"Unsupported credentials w/ AuthScheme ${credentials.authScheme}"))
+          Fail
+            .unauthorized(s"Unsupported credentials w/ AuthScheme ${credentials.authScheme}")
+            .raiseError[Attempt, BasicCredentials]
       }
     } yield basic
 

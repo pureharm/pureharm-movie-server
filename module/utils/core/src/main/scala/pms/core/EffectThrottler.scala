@@ -21,16 +21,23 @@ final class EffectThrottler[F[_]: Timer: Concurrent](
     * Returns an F that will be "slowed" time to the configured rate
     * of execution.
     */
-  def throttle[T](f: F[T]): F[Attempt[T]] =
-    for {
-      _                   <- semaphore.acquire
-      (duration, attempt) <- f.timedAttempt()
-      _                   <- if (isWithinInterval(duration)) Timer[F].sleep(interval - duration) else F.unit
-      _                   <- semaphore.release
-    } yield attempt
-
-  private def isWithinInterval(duration: FiniteDuration): Boolean =
-    duration < interval
+  def throttle[T](f: F[T]): F[Attempt[T]] = Fail
+    .nicata(
+      """
+        |Effect throttler.throttle
+        |
+        |    for {
+        |      _                   <- semaphore.acquire
+        |      (duration, attempt) <- f.timedAttempt()
+        |      _                   <- if (isWithinInterval(duration)) Timer[F].sleep(interval - duration) else F.unit
+        |      _                   <- semaphore.release
+        |    } yield attempt
+        |
+        |  private def isWithinInterval(duration: FiniteDuration): Boolean =
+        |    duration < interval
+        |""".stripMargin
+    )
+    .raiseError[F, Attempt[T]]
 
 }
 

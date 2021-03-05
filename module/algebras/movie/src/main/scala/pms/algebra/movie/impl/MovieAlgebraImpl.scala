@@ -11,7 +11,7 @@ import pms.core._
   * @since 25 Jun 2018
   *
   */
-final private[movie] class MovieAlgebraImpl[F[_]: BracketAttempt](
+final private[movie] class MovieAlgebraImpl[F[_]: BracketThrow](
   override protected val userAuth: UserAuthAlgebra[F],
   private val transactor:          Transactor[F],
 ) extends MovieAlgebra[F] {

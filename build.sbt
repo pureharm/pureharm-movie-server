@@ -380,9 +380,12 @@ lazy val `pms-logger` = utilProject("logger")
 lazy val `pms-core` = utilProject("core")
   .settings(
     libraryDependencies ++= Seq(
+      Libraries.sprout,
       Libraries.shapeless,
       Libraries.phCore,
-      Libraries.phEffects,
+      Libraries.cats,
+      Libraries.catsEffect,
+      Libraries.fs2Core,
       Libraries.specs2 % Test,
     )
   )

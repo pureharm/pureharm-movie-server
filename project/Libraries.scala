@@ -7,119 +7,121 @@ object Libraries {
   //============================================================================================
   //============================================================================================
 
-  lazy val pureHarmVersion       = "0.0.7-M3"  //https://github.com/busymachines/pureharm/releases
-  lazy val catsCoreVersion       = "2.4.2"     //https://github.com/typelevel/cats/releases
-  lazy val catsEffectVersion     = "2.3.3"     //https://github.com/typelevel/cats-effect/releases
-  lazy val fs2Version            = "2.5.3"     //https://github.com/functional-streams-for-scala/fs2/releases
-  lazy val circeVersion          = "0.13.0"    //https://github.com/circe/circe/releases
-  lazy val http4sVersion         = "0.22.0-M4" //https://github.com/http4s/http4s/releases
-  lazy val tsecVersion           = "0.2.1"     //https://github.com/jmcardon/tsec/releases
-  lazy val doobieVersion         = "0.10.0"    //https://github.com/tpolecat/doobie/releases
-  lazy val flywayVersion         = "7.6.0"     //https://github.com/flyway/flyway/releases
-  lazy val shapelessVersion      = "2.3.3"     //https://github.com/milessabin/shapeless/releases
-  lazy val spireVersion          = "0.17.0"    //https://github.com/non/spire/releases
-  lazy val log4catsVersion       = "1.2.0"     //https://github.com/ChristopherDavenport/log4cats/releases
-  lazy val logbackClassicVersion = "1.2.3"     //https://github.com/qos-ch/logback/releases
-  lazy val javaxMailVersion      = "1.6.2"     // https://github.com/javaee/javamail/releases
-  lazy val scalaScrapperVersion  = "2.2.0"     //https://github.com/ruippeixotog/scala-scraper/releases
-  lazy val pureConfigVersion     = "0.12.3"    //https://github.com/pureconfig/pureconfig/releases
-  lazy val specs2Version         = "4.9.4"     //https://github.com/etorreborre/specs2/releases
+  lazy val sproutV         = "0.0.1"     //https://github.com/lorandszakacs/sprout/releases
+  lazy val pureharmV       = "0.0.7-M3"  //https://github.com/busymachines/pureharm/releases
+  lazy val catsCoreV       = "2.4.2"     //https://github.com/typelevel/cats/releases
+  lazy val catsEffectV     = "2.3.3"     //https://github.com/typelevel/cats-effect/releases
+  lazy val fs2V            = "2.5.3"     //https://github.com/functional-streams-for-scala/fs2/releases
+  lazy val circeV          = "0.13.0"    //https://github.com/circe/circe/releases
+  lazy val http4sV         = "0.22.0-M4" //https://github.com/http4s/http4s/releases
+  lazy val tsecV           = "0.2.1"     //https://github.com/jmcardon/tsec/releases
+  lazy val doobieV         = "0.10.0"    //https://github.com/tpolecat/doobie/releases
+  lazy val flywayV         = "7.6.0"     //https://github.com/flyway/flyway/releases
+  lazy val shapelessV      = "2.3.3"     //https://github.com/milessabin/shapeless/releases
+  lazy val spireV          = "0.17.0"    //https://github.com/non/spire/releases
+  lazy val log4catsV       = "1.2.0"     //https://github.com/ChristopherDavenport/log4cats/releases
+  lazy val logbackClassicV = "1.2.3"     //https://github.com/qos-ch/logback/releases
+  lazy val javaxMailV      = "1.6.2"     // https://github.com/javaee/javamail/releases
+  lazy val scalaScrapperV  = "2.2.0"     //https://github.com/ruippeixotog/scala-scraper/releases
+  lazy val pureConfigV     = "0.12.3"    //https://github.com/pureconfig/pureconfig/releases
+  lazy val specs2V         = "4.9.4"     //https://github.com/etorreborre/specs2/releases
 
-  def pureharm(m: String): ModuleID = "com.busymachines" %% s"pureharm-$m" % pureHarmVersion withSources ()
+  def pureharm(m: String): ModuleID = "com.busymachines" %% s"pureharm-$m" % pureharmV withSources ()
 
   lazy val phCore:    ModuleID = pureharm("core")
   lazy val phConfig:  ModuleID = pureharm("config")
   lazy val phJson:    ModuleID = pureharm("json-circe")
   lazy val phFlyway:  ModuleID = pureharm("db-core-flyway")
-  lazy val phEffects: ModuleID = pureharm("effects-cats")
+
+  lazy val sprout: ModuleID = "com.lorandszakacs" %% "sprout" % sproutV withSources ()
 
   //============================================================================================
   //================================= http://typelevel.org/scala/ ==============================
   //========================================  typelevel ========================================
   //============================================================================================
 
-  lazy val cats:       ModuleID = "org.typelevel" %% "cats-core"   % catsCoreVersion   withSources ()
-  lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion withSources ()
+  lazy val cats:       ModuleID = "org.typelevel" %% "cats-core"   % catsCoreV   withSources ()
+  lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % catsEffectV withSources ()
 
-  lazy val fs2Core: ModuleID = "co.fs2" %% "fs2-core" % fs2Version withSources ()
-  lazy val fs2IO:   ModuleID = "co.fs2" %% "fs2-io"   % fs2Version withSources ()
+  lazy val fs2Core: ModuleID = "co.fs2" %% "fs2-core" % fs2V withSources ()
+  lazy val fs2IO:   ModuleID = "co.fs2" %% "fs2-io"   % fs2V withSources ()
 
   lazy val fs2: Seq[ModuleID] = Seq(fs2Core, fs2IO)
 
-  lazy val circeCore:          ModuleID = "io.circe" %% "circe-core"           % circeVersion
-  lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % circeVersion
-  lazy val circeGenericExtras: ModuleID = "io.circe" %% "circe-generic-extras" % circeVersion
+  lazy val circeCore:          ModuleID = "io.circe" %% "circe-core"           % circeV
+  lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % circeV
+  lazy val circeGenericExtras: ModuleID = "io.circe" %% "circe-generic-extras" % circeV
 
   lazy val circe: Seq[ModuleID] = Seq(circeCore, circeGeneric, circeGenericExtras)
 
-  lazy val http4sBlazeServer: ModuleID = "org.http4s" %% "http4s-blaze-server" % http4sVersion withSources ()
-  lazy val http4sCirce:       ModuleID = "org.http4s" %% "http4s-circe"        % http4sVersion withSources ()
-  lazy val http4sDSL:         ModuleID = "org.http4s" %% "http4s-dsl"          % http4sVersion withSources ()
+  lazy val http4sBlazeServer: ModuleID = "org.http4s" %% "http4s-blaze-server" % http4sV withSources ()
+  lazy val http4sCirce:       ModuleID = "org.http4s" %% "http4s-circe"        % http4sV withSources ()
+  lazy val http4sDSL:         ModuleID = "org.http4s" %% "http4s-dsl"          % http4sV withSources ()
 
   lazy val http4s: Seq[ModuleID] = Seq(http4sBlazeServer, http4sCirce, http4sDSL)
 
-  lazy val doobieCore     = "org.tpolecat" %% "doobie-core"     % doobieVersion withSources ()
-  lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"   % doobieVersion withSources ()
-  lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres" % doobieVersion withSources ()
-  lazy val doobieTK       = "org.tpolecat" %% "doobie-specs2"   % doobieVersion           % Test withSources ()
+  lazy val doobieCore     = "org.tpolecat" %% "doobie-core"     % doobieV withSources ()
+  lazy val doobieHikari   = "org.tpolecat" %% "doobie-hikari"   % doobieV withSources ()
+  lazy val doobiePostgres = "org.tpolecat" %% "doobie-postgres" % doobieV withSources ()
+  lazy val doobieTK       = "org.tpolecat" %% "doobie-specs2"   % doobieV           % Test withSources ()
 
   lazy val doobie: Seq[ModuleID] = Seq(doobieCore, doobieHikari, doobiePostgres, doobieTK)
 
-  lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % shapelessVersion withSources ()
+  lazy val shapeless: ModuleID = "com.chuusai" %% "shapeless" % shapelessV withSources ()
 
-  lazy val flyway = "org.flywaydb" % "flyway-core" % flywayVersion withSources ()
+  lazy val flyway = "org.flywaydb" % "flyway-core" % flywayV withSources ()
 
   //============================================================================================
   //==========================================  math ===========================================
   //============================================================================================
 
-  lazy val spire: ModuleID = "org.typelevel" %% "spire" % spireVersion withSources ()
+  lazy val spire: ModuleID = "org.typelevel" %% "spire" % spireV withSources ()
 
   //============================================================================================
   //========================================  security  ========================================
   //============================================================================================
 
   lazy val tsec: Seq[ModuleID] = Seq(
-    "io.github.jmcardon" %% "tsec-common"   % tsecVersion withSources (),
-    "io.github.jmcardon" %% "tsec-password" % tsecVersion withSources (),
-    "io.github.jmcardon" %% "tsec-mac"      % tsecVersion withSources (),
-    "io.github.jmcardon" %% "tsec-jwt-mac"  % tsecVersion withSources (),
+    "io.github.jmcardon" %% "tsec-common"   % tsecV withSources (),
+    "io.github.jmcardon" %% "tsec-password" % tsecV withSources (),
+    "io.github.jmcardon" %% "tsec-mac"      % tsecV withSources (),
+    "io.github.jmcardon" %% "tsec-jwt-mac"  % tsecV withSources (),
   )
 
   //============================================================================================
   //=========================================  logging =========================================
   //============================================================================================
 
-  lazy val log4cats = "org.typelevel" %% "log4cats-slf4j" % log4catsVersion withSources ()
+  lazy val log4cats = "org.typelevel" %% "log4cats-slf4j" % log4catsV withSources ()
 
   //this is a Java library, notice that we used one single % instead of %%
   //it is the backend implementation used by log4cats
-  lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % logbackClassicVersion withSources ()
+  lazy val logbackClassic = "ch.qos.logback" % "logback-classic" % logbackClassicV withSources ()
 
   //============================================================================================
   //==========================================  email ==========================================
   //============================================================================================
 
   //this is a Java library, notice that we used one single % instead of %%
-  lazy val javaxMail = "com.sun.mail" % "javax.mail" % javaxMailVersion withSources ()
+  lazy val javaxMail = "com.sun.mail" % "javax.mail" % javaxMailV withSources ()
 
   //============================================================================================
   //========================================= html =============================================
   //============================================================================================
 
-  lazy val scalaScrapper = "net.ruippeixotog" %% "scala-scraper" % scalaScrapperVersion withSources ()
+  lazy val scalaScrapper = "net.ruippeixotog" %% "scala-scraper" % scalaScrapperV withSources ()
 
   //============================================================================================
   //========================================== config ==========================================
   //============================================================================================
 
-  lazy val pureConfig: ModuleID = "com.github.pureconfig" %% "pureconfig" % pureConfigVersion withSources ()
+  lazy val pureConfig: ModuleID = "com.github.pureconfig" %% "pureconfig" % pureConfigV withSources ()
 
   //============================================================================================
   //=========================================  testing =========================================
   //============================================================================================
 
-  lazy val specs2: ModuleID = "org.specs2" %% "specs2-core" % specs2Version withSources ()
+  lazy val specs2: ModuleID = "org.specs2" %% "specs2-core" % specs2V withSources ()
 
   //============================================================================================
   //=======================================  transitive ========================================
