@@ -1,8 +1,7 @@
-package pms.effects
+package pms.core
 
 import java.util.concurrent.TimeUnit
 import org.specs2.mutable.Specification
-import pms.effects.implicits._
 import scala.concurrent.duration._
 
 /**
@@ -17,8 +16,8 @@ final class EffectThrottlerSpec extends Specification {
 
   private val runs = List(0, 1, 2, 3, 4, 5, 6)
 
-  private val interval      = 100 millis
-  private val stuffDuration = 75 millis
+  private val interval      = 100.millis
+  private val stuffDuration = 75.millis
 
   "throttle effects at 1F/100ms" >> {
     val minWaitTime = computeMinWaitTime(runs.length, interval, 1)
@@ -52,7 +51,7 @@ final class EffectThrottlerSpec extends Specification {
       )
 
     val elapsed = unsafeMeasureTime(eff.unsafeRunSync())
-    (elapsed must be_>=(interval)) and (elapsed must be_<=(minWaitTime))
+    (elapsed must be_>=(interval)).and(elapsed must be_<=(minWaitTime))
   }
 
   "handle throttled effects failure" >> {

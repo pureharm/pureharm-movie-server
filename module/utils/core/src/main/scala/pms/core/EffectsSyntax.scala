@@ -1,4 +1,4 @@
-package pms.effects
+package pms.core
 
 /**
   *
@@ -15,8 +15,6 @@ object EffectsSyntax {
   }
 
   class ConcurrentFAOps[F[_], A](fa: F[A])(implicit F: Concurrent[F]) {
-    import pms.effects.implicits._
-
     def forkAndForget: F[Unit] = F.start(fa).void
   }
 }

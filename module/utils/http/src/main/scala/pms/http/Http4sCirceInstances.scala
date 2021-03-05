@@ -2,7 +2,7 @@ package pms.http
 
 import fs2.Chunk
 import io.circe.Printer
-import pms.effects._
+import pms.core._
 import pms.json._
 import org.http4s._
 import org.http4s.headers.`Content-Type`

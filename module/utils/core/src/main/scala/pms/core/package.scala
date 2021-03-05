@@ -12,4 +12,4 @@ import busymachines.pureharm.effects.{PureharmEffectsAllImplicits, PureharmEffec
   */
 package object core
   extends PureharmCoreTypeDefinitions with PureharmAnomalyTypeDefinitions with PureharmEffectsAllTypes
-  with PureharmEffectsAllImplicits
+  with PureharmEffectsAllImplicits with EffectsSyntax.Implicits

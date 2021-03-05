@@ -5,7 +5,7 @@
 //import pms.algebra.movie.ModuleMovieAsync
 //import pms.algebra.user.ModuleUserAsync
 //import pms.db.config.{DatabaseConfig, DatabaseConfigAlgebra}
-//import pms.effects._
+//import pms.core._
 //import pms.service.movie.rest.ModuleMovieRestAsync
 //
 //import scala.concurrent.ExecutionContext

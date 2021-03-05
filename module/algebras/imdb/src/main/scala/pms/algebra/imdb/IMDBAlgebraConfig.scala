@@ -1,6 +1,6 @@
 package pms.algebra.imdb
 
-import pms.effects._
+import pms.core._
 import pms.config._
 
 import scala.concurrent.duration._
@@ -11,7 +11,7 @@ final case class IMDBAlgebraConfig(
 )
 
 object IMDBAlgebraConfig extends ConfigLoader[IMDBAlgebraConfig] {
-  import pms.effects.implicits._
+
 
   override def default[F[_]: Sync]: F[IMDBAlgebraConfig] =
     IMDBAlgebraConfigLoaderRepr.default.map { repr =>

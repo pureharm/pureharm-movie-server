@@ -8,7 +8,7 @@
 //
 //import scala.concurrent.duration._
 //import monix.execution.Scheduler.Implicits.global
-//import pms.effects._
+//import pms.core._
 //
 //import scala.concurrent.ExecutionContext
 //

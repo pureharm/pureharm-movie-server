@@ -6,8 +6,8 @@ import org.http4s.dsl._
 import pms.algebra.http._
 import pms.algebra.imdb._
 import pms.algebra.movie._
-import pms.effects._
-import pms.effects.implicits._
+import pms.core._
+
 import pms.service.movie._
 import spire.math.Interval
 

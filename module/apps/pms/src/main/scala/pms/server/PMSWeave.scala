@@ -13,7 +13,6 @@ import pms.db.{FlywayAlgebra, TransactorAlgebra}
 import pms.email._
 import pms.logger._
 import pms.core._
-import pms.effects.EffectThrottler
 import pms.rest.movie.MovieAPI
 import pms.rest.user.UserAPI
 import pms.server.config.PMSConfig
@@ -69,8 +68,8 @@ object PMSWeave {
     for {
       serverConfig      <- PMSConfig.defaultR[F]
       gmailConfig       <- GmailConfig.defaultR[F]
-      imdbAlgebraConfig <- IMDBAlgebraConfig.defaultR[F]
-      dbConfig          <- DatabaseConfig.defaultR[F]
+      imdbAlgebraConfig <- IMDBAlgebraConfig.fromNamespaceR[F]("algebra.imdb")
+      dbConfig          <- DatabaseConfig.fromNamespaceR[F]("pms.db")
 
       transactor <- TransactorAlgebra.resource[F](dbExecutionContext, dbConfig.connection)
       _          <-

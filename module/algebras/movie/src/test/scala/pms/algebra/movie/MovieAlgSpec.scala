@@ -3,7 +3,7 @@
 //import java.time.LocalDate
 //
 //import pms.core.{Email, Module, PlainTextPassword}
-//import pms.effects._
+//import pms.core._
 //import pms.server.bootstrap.ModuleServerBootstrap
 //import pms.db.config._
 //import doobie.util.transactor.Transactor

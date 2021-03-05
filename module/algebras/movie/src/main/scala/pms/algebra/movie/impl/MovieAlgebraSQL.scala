@@ -1,13 +1,9 @@
 package pms.algebra.movie.impl
 
 import java.time.LocalDate
-import pms.effects._
-import pms.effects.implicits._
-import doobie._
-import doobie.implicits._
-import doobie.implicits.javatime._
+import pms.db._
 import pms.algebra.movie._
-import pms.core.{Iscata, Fail}
+import pms.core._
 import spire.math._
 
 /**
@@ -18,20 +14,9 @@ import spire.math._
   */
 private[movie] object MovieAlgebraSQL {
 
-  //TODO: these metas could be automatically derived for any PhantomType,
-  // and should be moved a pms.db module, akin to all other pms-util modules. Currently,
-  // an empty such module exists. See what else can/should be moved into that module.
-  // an example of how this can be solved, is done here, but for JSON codecs:
-  // https://github.com/busymachines/pureharm/blob/master/json-circe/src/main/scala/busymachines/pureharm/internals/json/PureharmJsonInstances.scala#L58
-  // and the above bit of code is mixed into our pms.json.implicits; That is why we don't have to do the same thing for JSON codecs.
-  implicit protected val movieIDMeta: Meta[MovieID] =
-    Meta[Long].imap(MovieID.spook)(MovieID.despook)
-
-  implicit protected val movieTitleMeta: Meta[MovieTitle] =
-    Meta[String].imap(MovieTitle.spook)(MovieTitle.despook)
-
-  implicit protected val releaseDateMeta: Meta[ReleaseDate] =
-    Meta[LocalDate].imap(ReleaseDate.spook)(ReleaseDate.despook)
+  implicit protected val movieIDMeta:     Meta[MovieID]     = Meta[Long].haunt[MovieID]
+  implicit protected val movieTitleMeta:  Meta[MovieTitle]  = Meta[String].haunt[MovieTitle]
+  implicit protected val releaseDateMeta: Meta[ReleaseDate] = Meta[LocalDate].haunt[ReleaseDate]
 
   //TODO: the columns for the entire "movies" column can be extracted
   // in a doobie Fragment and reused. Unfortunately stitching together

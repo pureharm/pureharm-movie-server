@@ -1,8 +1,8 @@
 package pms.algebra.movie
 
-import doobie.util.transactor.Transactor
+import pms.db._
 import pms.algebra.user._
-import pms.core.{Async, Resource}
+import pms.core._
 
 /**
   *
@@ -36,5 +36,5 @@ object MovieAlgebra {
   def resource[F[_]](
     userAuth:            UserAuthAlgebra[F]
   )(implicit transactor: Transactor[F], F: Async[F]): Resource[F, MovieAlgebra[F]] =
-    Resource.pure(new MovieAlgebraImpl(userAuth, transactor))
+    new MovieAlgebraImpl(userAuth, transactor).pure[Resource[F, *]].widen
 }

@@ -1,6 +1,6 @@
 //package pms.service.movie
 //
-//import pms.effects._
+//import pms.core._
 //import org.http4s._
 //import org.http4s.dsl.io._
 //import org.http4s.implicits._

@@ -1,10 +1,9 @@
 package pms.algebra.movie.impl
 
-import doobie._
-import doobie.implicits._
+import pms.db._
 import pms.algebra.movie._
 import pms.algebra.user.UserAuthAlgebra
-import pms.effects._
+import pms.core._
 
 /**
   *

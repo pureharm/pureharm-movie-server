@@ -2,7 +2,7 @@ package pms.rest.movie
 
 import pms.algebra.http.AuthCtxRoutes
 import pms.algebra.movie.MovieAlgebra
-import pms.effects._
+import pms.core._
 import pms.service.movie.IMDBService
 
 trait MovieAPI[F[_]] {
@@ -12,13 +12,10 @@ trait MovieAPI[F[_]] {
 object MovieAPI {
 
   def resource[F[_]: Async](imdbService: IMDBService[F], movieAlgebra: MovieAlgebra[F]): Resource[F, MovieAPI[F]] =
-    Resource
-      .pure(
-        new MovieRestRoutes[F](
-          imdbService  = imdbService,
-          movieAlgebra = movieAlgebra,
-        )
-      )
+    new MovieRestRoutes[F](
+      imdbService  = imdbService,
+      movieAlgebra = movieAlgebra,
+    ).pure[Resource[F, *]]
       .map(_.authedRoutes)
       .map(rts =>
         new MovieAPI[F] {

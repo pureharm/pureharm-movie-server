@@ -6,8 +6,8 @@ import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.model.Document
 import pms.algebra.imdb._
-import pms.effects._
-import pms.effects.implicits._
+import pms.core._
+
 
 /**
   *

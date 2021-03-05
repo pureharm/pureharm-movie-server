@@ -1,6 +1,5 @@
-package pms.effects
+package pms.core
 
-import pms.effects.implicits._
 import scala.concurrent.duration._
 
 /**

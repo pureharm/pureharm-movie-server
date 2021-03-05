@@ -5,9 +5,7 @@ import org.http4s.dsl._
 import org.http4s.server._
 import org.typelevel.ci.CIString
 import pms.algebra.user._
-import pms.core.Fail
-import pms.effects._
-import pms.effects.implicits._
+import pms.core._
 
 /**
   *

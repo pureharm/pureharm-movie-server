@@ -1,7 +1,7 @@
 //package pms.algebra.user
 //
 //import pms.core.{Email, PlainTextPassword}
-//import pms.effects._
+//import pms.core._
 //
 //object TestHelpersFunctions {
 //

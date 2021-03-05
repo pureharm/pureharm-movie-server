@@ -21,7 +21,7 @@ lazy val server = Project(id = "server", file("./module/apps/pms"))
     )
   )
   .dependsOn(
-    `pms-effects`,
+    `pms-core`,
     `pms-logger`,
     `pms-config`,
     `pms-db-config`,
@@ -34,7 +34,7 @@ lazy val server = Project(id = "server", file("./module/apps/pms"))
     `bootstrap`,
   )
   .aggregate(
-    `pms-effects`,
+    `pms-core`,
     `pms-logger`,
     `pms-config`,
     `pms-db-config`,
@@ -56,7 +56,7 @@ lazy val `bootstrap` = project
   )
   .dependsOn(
     `pms-logger`,
-    `pms-effects`,
+    `pms-core`,
     `pms-config`,
     `pms-core`,
     `pms-db-config`,
@@ -64,7 +64,7 @@ lazy val `bootstrap` = project
   )
   .aggregate(
     `pms-logger`,
-    `pms-effects`,
+    `pms-core`,
     `pms-config`,
     `pms-db-config`,
     `pms-core`,
@@ -83,7 +83,7 @@ lazy val `service-user` = serviceProject("user")
     `pms-email`,
     `pms-config`,
     `pms-logger`,
-    `pms-effects`,
+    `pms-core`,
     `pms-core`,
     `pms-json`,
     `pms-http`,
@@ -94,7 +94,7 @@ lazy val `service-user` = serviceProject("user")
     `pms-email`,
     `pms-config`,
     `pms-logger`,
-    `pms-effects`,
+    `pms-core`,
     `pms-core`,
     `pms-json`,
     `pms-http`,
@@ -114,7 +114,7 @@ lazy val `service-movie` = serviceProject("movie")
     `algebra-http-sec`,
     `pms-config`,
     `pms-logger`,
-    `pms-effects`,
+    `pms-core`,
     `pms-core`,
     `pms-json`,
     `pms-http`,
@@ -126,7 +126,7 @@ lazy val `service-movie` = serviceProject("movie")
     `algebra-http-sec`,
     `pms-config`,
     `pms-logger`,
-    `pms-effects`,
+    `pms-core`,
     `pms-core`,
     `pms-json`,
     `pms-http`,
@@ -145,7 +145,6 @@ lazy val `rest-user` = restProject("user")
     `pms-email`,
     `pms-config`,
     `pms-logger`,
-    `pms-effects`,
     `pms-core`,
     `pms-json`,
     `pms-http`,
@@ -157,7 +156,6 @@ lazy val `rest-user` = restProject("user")
     `pms-email`,
     `pms-config`,
     `pms-logger`,
-    `pms-effects`,
     `pms-core`,
     `pms-json`,
     `pms-http`,
@@ -177,7 +175,6 @@ lazy val `rest-movie` = restProject("movie")
     `algebra-http-sec`,
     `pms-config`,
     `pms-logger`,
-    `pms-effects`,
     `pms-core`,
     `pms-json`,
     `pms-http`,
@@ -189,7 +186,6 @@ lazy val `rest-movie` = restProject("movie")
     `algebra-http-sec`,
     `pms-config`,
     `pms-logger`,
-    `pms-effects`,
     `pms-core`,
     `pms-json`,
     `pms-http`,
@@ -203,14 +199,12 @@ lazy val `algebra-http-sec` = algebraProject("http-sec")
   )
   .dependsOn(
     `pms-config`,
-    `pms-effects`,
     `pms-core`,
     `pms-http`,
     `algebra-user`,
   )
   .aggregate(
     `pms-config`,
-    `pms-effects`,
     `pms-core`,
     `pms-http`,
     `algebra-user`,
@@ -226,13 +220,11 @@ lazy val `algebra-imdb` = algebraProject("imdb")
   .dependsOn(
     `pms-config`,
     `pms-logger`,
-    `pms-effects`,
     `pms-core`,
   )
   .aggregate(
     `pms-config`,
     `pms-logger`,
-    `pms-effects`,
     `pms-core`,
   )
 
@@ -246,14 +238,12 @@ lazy val `algebra-movie` = algebraProject("movie")
   .dependsOn(
     `algebra-user`,
     `pms-config`,
-    `pms-effects`,
     `pms-core`,
     `pms-db`,
   )
   .aggregate(
     `algebra-user`,
     `pms-config`,
-    `pms-effects`,
     `pms-core`,
     `pms-db`,
   )
@@ -266,14 +256,12 @@ lazy val `algebra-user` = algebraProject("user")
   )
   .dependsOn(
     `pms-config`,
-    `pms-effects`,
     `pms-core`,
     `pms-email`,
     `pms-db`,
   )
   .aggregate(
     `pms-config`,
-    `pms-effects`,
     `pms-core`,
     `pms-email`,
     `pms-db`,
@@ -287,16 +275,14 @@ lazy val `pms-db` = utilProject("db")
     ) ++ Libraries.doobie ++ Libraries.fs2
   )
   .dependsOn(
-    `pms-effects`,
+    `pms-core`,
     `pms-db-config`,
     `pms-logger`,
-    `pms-core`,
   )
   .aggregate(
-    `pms-effects`,
+    `pms-core`,
     `pms-db-config`,
     `pms-logger`,
-    `pms-core`,
   )
 
 lazy val `pms-email` = utilProject("email")
@@ -309,13 +295,11 @@ lazy val `pms-email` = utilProject("email")
   .dependsOn(
     `pms-core`,
     `pms-logger`,
-    `pms-effects`,
     `pms-config`,
   )
   .aggregate(
     `pms-core`,
     `pms-logger`,
-    `pms-effects`,
     `pms-config`,
   )
 
@@ -327,12 +311,10 @@ lazy val `pms-http` = utilProject("http")
   )
   .dependsOn(
     `pms-core`,
-    `pms-effects`,
     `pms-json`,
   )
   .aggregate(
     `pms-core`,
-    `pms-effects`,
     `pms-json`,
   )
 
@@ -343,12 +325,10 @@ lazy val `pms-json` = utilProject("json")
     ) ++ Libraries.circe
   )
   .dependsOn(
-    `pms-core`,
-    `pms-effects`,
+    `pms-core`
   )
   .aggregate(
-    `pms-core`,
-    `pms-effects`,
+    `pms-core`
   )
 
 lazy val `pms-db-config` = utilProject("db-config")
@@ -362,11 +342,11 @@ lazy val `pms-db-config` = utilProject("db-config")
   )
   .dependsOn(
     `pms-config`,
-    `pms-effects`,
+    `pms-core`,
   )
   .aggregate(
     `pms-config`,
-    `pms-effects`,
+    `pms-core`,
   )
 
 lazy val `pms-config` = utilProject("config")
@@ -377,10 +357,10 @@ lazy val `pms-config` = utilProject("config")
     )
   )
   .dependsOn(
-    `pms-effects`
+    `pms-core`
   )
   .aggregate(
-    `pms-effects`
+    `pms-core`
   )
 
 lazy val `pms-logger` = utilProject("logger")
@@ -391,10 +371,10 @@ lazy val `pms-logger` = utilProject("logger")
     )
   )
   .dependsOn(
-    `pms-effects`
+    `pms-core`
   )
   .aggregate(
-    `pms-effects`
+    `pms-core`
   )
 
 lazy val `pms-core` = utilProject("core")
@@ -402,24 +382,13 @@ lazy val `pms-core` = utilProject("core")
     libraryDependencies ++= Seq(
       Libraries.shapeless,
       Libraries.phCore,
+      Libraries.phEffects,
       Libraries.specs2 % Test,
     )
   )
   .dependsOn(
-    `pms-effects`
   )
   .aggregate(
-    `pms-effects`
-  )
-
-lazy val `pms-effects` = utilProject("effects")
-  .settings(
-    libraryDependencies ++= Seq(
-      Libraries.cats,
-      Libraries.catsEffect,
-      Libraries.phEffects,
-      Libraries.specs2 % Test,
-    )
   )
 
 //=============================================================================

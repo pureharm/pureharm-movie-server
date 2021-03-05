@@ -1,7 +1,7 @@
 package pms.email
 
+import pms.core._
 import pms.config._
-import pms.effects.Sync
 
 /**
   *

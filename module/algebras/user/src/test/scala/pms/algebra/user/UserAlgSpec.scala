@@ -3,7 +3,7 @@
 //import doobie.util.transactor.Transactor
 //import pms.core.{Email,               Module, PlainTextPassword}
 //import pms.db.config.{DatabaseConfig, DatabaseConfigAlgebra}
-//import pms.effects._
+//import pms.core._
 //
 //import scala.concurrent.ExecutionContext
 //

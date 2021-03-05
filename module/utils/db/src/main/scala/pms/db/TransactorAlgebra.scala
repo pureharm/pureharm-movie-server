@@ -1,9 +1,8 @@
 package pms.db
 
 import busymachines.pureharm.db.DBConnectionConfig
-import doobie.Transactor
-import doobie.hikari.HikariTransactor
-import pms.effects._
+
+import pms.core._
 import scala.concurrent.ExecutionContext
 
 object TransactorAlgebra {
@@ -11,10 +10,11 @@ object TransactorAlgebra {
   def resource[F[_]](
     connectionExecutionContext: ExecutionContext,
     config:                     DBConnectionConfig,
-  )(implicit as:                Async[F], cs: ContextShift[F]): Resource[F, Transactor[F]] =
+  )(implicit as:                Async[F], cs: ContextShift[F]): Resource[F, Transactor[F]] = {
+    import doobie.hikari.HikariTransactor
     for {
       blocker <- Blocker(as)
-      xa      <- HikariTransactor.newHikariTransactor(
+      xa      <- HikariTransactor.newHikariTransactor[F](
         driverClassName = "org.postgresql.Driver",
         url             = config.jdbcURL: String,
         user            = config.username: String,
@@ -23,4 +23,5 @@ object TransactorAlgebra {
         blocker         = blocker,
       )
     } yield xa
+  }
 }

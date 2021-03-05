@@ -1,7 +1,7 @@
 package pms.algebra.user.impl
 
-import pms.effects._
-import pms.effects.implicits._
+import pms.core._
+
 
 import scala.concurrent.duration._
 

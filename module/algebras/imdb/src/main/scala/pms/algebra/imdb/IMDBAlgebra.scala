@@ -3,7 +3,7 @@ package pms.algebra.imdb
 import cats.effect.{Async, Resource}
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import pms.algebra.imdb.impl.IMDBAlgebraImpl
-import pms.effects.EffectThrottler
+import pms.core._
 
 /**
   *
@@ -18,6 +18,6 @@ trait IMDBAlgebra[F[_]] {
 object IMDBAlgebra {
 
   def resource[F[_]: Async](throttler: EffectThrottler[F]): Resource[F, IMDBAlgebra[F]] =
-    Resource.pure(new IMDBAlgebraImpl[F](throttler, new JsoupBrowser()))
+    new IMDBAlgebraImpl[F](throttler, new JsoupBrowser()).pure[Resource[F, *]]
 
 }
