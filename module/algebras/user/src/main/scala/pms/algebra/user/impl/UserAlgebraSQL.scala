@@ -1,7 +1,5 @@
 package pms.algebra.user.impl
 
-import pms.effects.implicits._
-
 import doobie._
 import doobie.implicits._
 import pms.algebra.user._

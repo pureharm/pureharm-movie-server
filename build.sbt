@@ -1,5 +1,4 @@
 import sbt._
-import Dependencies._
 import Settings._
 
 addCommandAlias("mkSite", ";docs/clean;docs/makeMicrosite")
@@ -8,18 +7,17 @@ addCommandAlias("mkJar", ";clean;update;compile;server/assembly")
 
 //=============================================================================
 //=============================================================================
+ThisBuild / version := "1.0.0"
 
 lazy val server = Project(id = "server", file("./module/apps/pms"))
   .settings(commonSettings)
-  .settings(AssemblySettings.settings)
+  .enablePlugins(JavaAppPackaging)
   .settings(
-    mainClass                   := Option("pms.server.PureMovieServerApp"),
-    mainClass in assembly       := Option("pms.server.PureMovieServerApp"),
-    assemblyJarName in assembly := s"pure-movie-server.jar",
+    Compile / mainClass := Option("pms.server.PureMovieServerApp")
   )
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test
+      Libraries.specs2 % Test
     )
   )
   .dependsOn(
@@ -51,10 +49,9 @@ lazy val server = Project(id = "server", file("./module/apps/pms"))
 
 lazy val `bootstrap` = project
   .settings(commonSettings)
-  .settings(AssemblySettings.settings)
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test
+      Libraries.specs2 % Test
     )
   )
   .dependsOn(
@@ -77,7 +74,7 @@ lazy val `bootstrap` = project
 lazy val `service-user` = serviceProject("user")
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test
+      Libraries.specs2 % Test
     )
   )
   .dependsOn(
@@ -106,8 +103,8 @@ lazy val `service-user` = serviceProject("user")
 lazy val `service-movie` = serviceProject("movie")
   .settings(
     libraryDependencies ++= Seq(
-      spire,
-      specs2Test,
+      Libraries.spire,
+      Libraries.specs2 % Test,
     )
   )
   .dependsOn(
@@ -138,7 +135,7 @@ lazy val `service-movie` = serviceProject("movie")
 lazy val `rest-user` = restProject("user")
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test
+      Libraries.specs2 % Test
     )
   )
   .dependsOn(
@@ -169,8 +166,8 @@ lazy val `rest-user` = restProject("user")
 lazy val `rest-movie` = restProject("movie")
   .settings(
     libraryDependencies ++= Seq(
-      spire,
-      specs2Test,
+      Libraries.spire,
+      Libraries.specs2 % Test,
     )
   )
   .dependsOn(
@@ -201,7 +198,7 @@ lazy val `rest-movie` = restProject("movie")
 lazy val `algebra-http-sec` = algebraProject("http-sec")
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test
+      Libraries.specs2 % Test
     )
   )
   .dependsOn(
@@ -222,8 +219,8 @@ lazy val `algebra-http-sec` = algebraProject("http-sec")
 lazy val `algebra-imdb` = algebraProject("imdb")
   .settings(
     libraryDependencies ++= Seq(
-      scalaScrapper,
-      specs2Test,
+      Libraries.scalaScrapper,
+      Libraries.specs2 % Test,
     )
   )
   .dependsOn(
@@ -242,8 +239,8 @@ lazy val `algebra-imdb` = algebraProject("imdb")
 lazy val `algebra-movie` = algebraProject("movie")
   .settings(
     libraryDependencies ++= Seq(
-      spire,
-      specs2Test,
+      Libraries.spire,
+      Libraries.specs2 % Test,
     )
   )
   .dependsOn(
@@ -264,8 +261,8 @@ lazy val `algebra-movie` = algebraProject("movie")
 lazy val `algebra-user` = algebraProject("user")
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test
-    ) ++ tsec
+      Libraries.specs2 % Test
+    ) ++ Libraries.tsec
   )
   .dependsOn(
     `pms-config`,
@@ -285,9 +282,9 @@ lazy val `algebra-user` = algebraProject("user")
 lazy val `pms-db` = utilProject("db")
   .settings(
     libraryDependencies ++= Seq(
-      phFlyway,
-      specs2Test,
-    ) ++ doobie ++ fs2
+      Libraries.phFlyway,
+      Libraries.specs2 % Test,
+    ) ++ Libraries.doobie ++ Libraries.fs2
   )
   .dependsOn(
     `pms-effects`,
@@ -305,8 +302,8 @@ lazy val `pms-db` = utilProject("db")
 lazy val `pms-email` = utilProject("email")
   .settings(
     libraryDependencies ++= Seq(
-      javaxMail,
-      specs2Test,
+      Libraries.javaxMail,
+      Libraries.specs2 % Test,
     )
   )
   .dependsOn(
@@ -325,8 +322,8 @@ lazy val `pms-email` = utilProject("email")
 lazy val `pms-http` = utilProject("http")
   .settings(
     libraryDependencies ++= Seq(
-      specs2Test
-    ) ++ http4s ++ fs2
+      Libraries.specs2 % Test
+    ) ++ Libraries.http4s ++ Libraries.fs2
   )
   .dependsOn(
     `pms-core`,
@@ -342,8 +339,8 @@ lazy val `pms-http` = utilProject("http")
 lazy val `pms-json` = utilProject("json")
   .settings(
     libraryDependencies ++= Seq(
-      phJson
-    ) ++ circe
+      Libraries.phJson
+    ) ++ Libraries.circe
   )
   .dependsOn(
     `pms-core`,
@@ -357,11 +354,11 @@ lazy val `pms-json` = utilProject("json")
 lazy val `pms-db-config` = utilProject("db-config")
   .settings(
     libraryDependencies ++= Seq(
-      doobieCore,
-      doobieHikari,
-      phFlyway,
-      flyway,
-    ) ++ fs2
+      Libraries.doobieCore,
+      Libraries.doobieHikari,
+      Libraries.phFlyway,
+      Libraries.flyway,
+    ) ++ Libraries.fs2
   )
   .dependsOn(
     `pms-config`,
@@ -375,8 +372,8 @@ lazy val `pms-db-config` = utilProject("db-config")
 lazy val `pms-config` = utilProject("config")
   .settings(
     libraryDependencies ++= Seq(
-      pureConfig,
-      phConfig,
+      Libraries.pureConfig,
+      Libraries.phConfig,
     )
   )
   .dependsOn(
@@ -389,8 +386,8 @@ lazy val `pms-config` = utilProject("config")
 lazy val `pms-logger` = utilProject("logger")
   .settings(
     libraryDependencies ++= Seq(
-      log4cats,
-      logbackClassic,
+      Libraries.log4cats,
+      Libraries.logbackClassic,
     )
   )
   .dependsOn(
@@ -403,9 +400,9 @@ lazy val `pms-logger` = utilProject("logger")
 lazy val `pms-core` = utilProject("core")
   .settings(
     libraryDependencies ++= Seq(
-      shapeless,
-      phCore,
-      specs2Test,
+      Libraries.shapeless,
+      Libraries.phCore,
+      Libraries.specs2 % Test,
     )
   )
   .dependsOn(
@@ -417,53 +414,13 @@ lazy val `pms-core` = utilProject("core")
 
 lazy val `pms-effects` = utilProject("effects")
   .settings(
-    libraryDependencies ++= cats ++ Seq(
-      catsEffect,
-      phEffects,
-      specs2Test,
+    libraryDependencies ++= Seq(
+      Libraries.cats,
+      Libraries.catsEffect,
+      Libraries.phEffects,
+      Libraries.specs2 % Test,
     )
   )
-
-//lazy val docs = project
-//  .enablePlugins(MicrositesPlugin)
-//  .enablePlugins(TutPlugin)
-//  .disablePlugins(ScalafmtPlugin)
-//  //.disablePlugins(ScalafixPlugin)
-//  .settings(commonSettings)
-//  .settings(micrositeTasksSettings)
-//  .settings(
-//    micrositeName              := "pure-movie-server",
-//    micrositeDescription       := "Example web server written in a pure functional programming style",
-//    micrositeBaseUrl           := "/pure-movie-server",
-//    micrositeDocumentationUrl  := "/pure-movie-server/docs/",
-//    micrositeHomepage          := "http://busymachines.github.io/pure-movie-server/",
-//    micrositeGithubOwner       := "busymachines",
-//    micrositeGithubRepo        := "pure-movie-server",
-//    micrositeHighlightTheme    := "atom-one-light",
-//    //-------------- docs project ------------
-//    //micrositeImgDirectory := (resourceDirectory in Compile).value / "microsite" / "images",
-//    //micrositeCssDirectory := (resourceDirectory in Compile).value / "microsite" / "styles"
-//    //micrositeJsDirectory := (resourceDirectory in Compile).value / "microsite" / "scripts"
-//    micrositePalette           := Map(
-//      "brand-primary"   -> "#E05236",
-//      "brand-secondary" -> "#3F3242",
-//      "brand-tertiary"  -> "#2D232F",
-//      "gray-dark"       -> "#453E46",
-//      "gray"            -> "#837F84",
-//      "gray-light"      -> "#E3E2E3",
-//      "gray-lighter"    -> "#F4F3F4",
-//      "white-color"     -> "#FFFFFF",
-//    ),
-//    //micrositeFavicons := Seq(
-//    //  MicrositeFavicon("favicon16x16.png", "16x16"),
-//    //  MicrositeFavicon("favicon32x32.png", "32x32")
-//    //),
-//    micrositeFooterText        := Some("""Ⓒ 2020 <a href="https://www.busymachines.com/">BusyMachines</a>"""),
-//    //------ same as default settings --------
-//    micrositePushSiteWith      := GHPagesPlugin,
-//    micrositeGitHostingService := GitHub,
-//  )
-//  .dependsOn()
 
 //=============================================================================
 //=============================================================================
@@ -471,9 +428,8 @@ lazy val `pms-effects` = utilProject("effects")
 def genericProject(id: String, folder: String, name: String): Project =
   Project(s"$id-$name", file(s"$folder/$name"))
     .settings(commonSettings)
-    .settings(AssemblySettings.settings)
 
 def algebraProject(name: String): Project = genericProject("algebra", "module/algebras", name)
 def utilProject(name:    String): Project = genericProject("pms", "module/utils", name)
 def serviceProject(name: String): Project = genericProject("service", "module/services", name)
-def restProject(name: String): Project = genericProject("rest", "module/rest", name)
+def restProject(name:    String): Project = genericProject("rest", "module/rest", name)

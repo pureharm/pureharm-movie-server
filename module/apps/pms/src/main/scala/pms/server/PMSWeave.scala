@@ -38,11 +38,11 @@ final class PMSWeave[F[_]] private (
     concurrentEffect:     ConcurrentEffect[F],
     timer:                Timer[F],
     httpExecutionContext: ExecutionContext,
-  ): Resource[F, Server[F]] =
+  ): Resource[F, Server] =
     BlazeServerBuilder[F](httpExecutionContext)
       .bindHttp(serverConfig.port, serverConfig.host)
       .withHttpApp(http4sApp)
-      .withWebSockets(enableWebsockets = true)
+      .withWebSockets(enableWebsockets = false)
       .withBanner(Seq.empty)
       .resource
 
@@ -63,7 +63,7 @@ final class PMSWeave[F[_]] private (
 object PMSWeave {
 
   def resource[F[_]](
-    logger:             PMSLogger[F],
+    logger:             Logger[F],
     dbExecutionContext: ExecutionContext,
   )(implicit timer:     Timer[F], mainContextShift: ContextShift[F], C: Concurrent[F]): Resource[F, PMSWeave[F]] =
     for {

@@ -32,7 +32,7 @@ trait Http4sCirceInstances {
     *
     * @return
     */
-  implicit def syncEntityJsonEncoder[F[_]: Applicative, T: Encoder]: EntityEncoder[F, T] =
+  implicit def syncEntityJsonEncoder[F[_], T: Encoder]: EntityEncoder[F, T] =
     EntityEncoder[F, Chunk[Byte]]
       .contramap[Json] { json =>
         val bytes = printer.printToByteBuffer(json)
@@ -47,7 +47,7 @@ trait Http4sCirceInstances {
 }
 
 object Http4sCirceInstances {
-  private val printer:        Printer        = Printer.noSpaces.copy(dropNullValues = true)
+  private val printer: Printer = Printer.noSpaces.copy(dropNullValues = true)
 
   private val circeInstances: CirceInstances =
     CirceInstances.withPrinter(printer).build

@@ -1,6 +1,6 @@
 package pms
 
-import io.chrisdavenport.log4cats
+import org.typelevel.log4cats
 
 /**
   *
@@ -9,7 +9,7 @@ import io.chrisdavenport.log4cats
   *
   */
 package object logger {
-  type PMSLogger[F[_]] = log4cats.SelfAwareStructuredLogger[F]
-  val PMSLogger: log4cats.slf4j.Slf4jLogger.type = log4cats.slf4j.Slf4jLogger
+  type Logger[F[_]] = log4cats.SelfAwareStructuredLogger[F]
+  val Logger: log4cats.slf4j.Slf4jLogger.type = log4cats.slf4j.Slf4jLogger
 
 }

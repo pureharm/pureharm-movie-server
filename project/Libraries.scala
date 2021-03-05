@@ -1,24 +1,24 @@
 import sbt._
 
-object Dependencies {
+object Libraries {
   //============================================================================================
   //============================================================================================
   //======================================= DEPENDENCIES =======================================
   //============================================================================================
   //============================================================================================
 
-  lazy val pureHarmVersion       = "0.0.5"     //https://github.com/busymachines/pureharm/releases
-  lazy val catsCoreVersion       = "2.1.1"     //https://github.com/typelevel/cats/releases
-  lazy val catsEffectVersion     = "2.1.3"     //https://github.com/typelevel/cats-effect/releases
-  lazy val fs2Version            = "2.3.0"     //https://github.com/functional-streams-for-scala/fs2/releases
+  lazy val pureHarmVersion       = "0.0.7-M3"  //https://github.com/busymachines/pureharm/releases
+  lazy val catsCoreVersion       = "2.4.2"     //https://github.com/typelevel/cats/releases
+  lazy val catsEffectVersion     = "2.3.3"     //https://github.com/typelevel/cats-effect/releases
+  lazy val fs2Version            = "2.5.3"     //https://github.com/functional-streams-for-scala/fs2/releases
   lazy val circeVersion          = "0.13.0"    //https://github.com/circe/circe/releases
-  lazy val http4sVersion         = "0.21.4"    //https://github.com/http4s/http4s/releases
-  lazy val tsecVersion           = "0.2.0"     //https://github.com/jmcardon/tsec/releases
-  lazy val doobieVersion         = "0.9.0"     //https://github.com/tpolecat/doobie/releases
-  lazy val flywayVersion         = "6.4.1"     //https://github.com/flyway/flyway/releases
+  lazy val http4sVersion         = "0.22.0-M4" //https://github.com/http4s/http4s/releases
+  lazy val tsecVersion           = "0.2.1"     //https://github.com/jmcardon/tsec/releases
+  lazy val doobieVersion         = "0.10.0"    //https://github.com/tpolecat/doobie/releases
+  lazy val flywayVersion         = "7.6.0"     //https://github.com/flyway/flyway/releases
   lazy val shapelessVersion      = "2.3.3"     //https://github.com/milessabin/shapeless/releases
-  lazy val spireVersion          = "0.17.0-M1" //https://github.com/non/spire/releases
-  lazy val log4catsVersion       = "1.1.1"     //https://github.com/ChristopherDavenport/log4cats/releases
+  lazy val spireVersion          = "0.17.0"    //https://github.com/non/spire/releases
+  lazy val log4catsVersion       = "1.2.0"     //https://github.com/ChristopherDavenport/log4cats/releases
   lazy val logbackClassicVersion = "1.2.3"     //https://github.com/qos-ch/logback/releases
   lazy val javaxMailVersion      = "1.6.2"     // https://github.com/javaee/javamail/releases
   lazy val scalaScrapperVersion  = "2.2.0"     //https://github.com/ruippeixotog/scala-scraper/releases
@@ -38,13 +38,8 @@ object Dependencies {
   //========================================  typelevel ========================================
   //============================================================================================
 
-  lazy val catsCore:   ModuleID = "org.typelevel" %% "cats-core"   % catsCoreVersion withSources ()
-  lazy val catsKernel: ModuleID = "org.typelevel" %% "cats-kernel" % catsCoreVersion withSources ()
-  lazy val catsMacros: ModuleID = "org.typelevel" %% "cats-macros" % catsCoreVersion withSources ()
-  lazy val catsFree:   ModuleID = "org.typelevel" %% "cats-free"   % catsCoreVersion withSources ()
-
-  lazy val cats:       Seq[ModuleID] = Seq(catsCore, catsKernel, catsMacros, catsFree)
-  lazy val catsEffect: ModuleID      = "org.typelevel" %% "cats-effect" % catsEffectVersion withSources ()
+  lazy val cats:       ModuleID = "org.typelevel" %% "cats-core"   % catsCoreVersion   withSources ()
+  lazy val catsEffect: ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion withSources ()
 
   lazy val fs2Core: ModuleID = "co.fs2" %% "fs2-core" % fs2Version withSources ()
   lazy val fs2IO:   ModuleID = "co.fs2" %% "fs2-io"   % fs2Version withSources ()
@@ -88,14 +83,14 @@ object Dependencies {
     "io.github.jmcardon" %% "tsec-common"   % tsecVersion withSources (),
     "io.github.jmcardon" %% "tsec-password" % tsecVersion withSources (),
     "io.github.jmcardon" %% "tsec-mac"      % tsecVersion withSources (),
-    "io.github.jmcardon" %% "tsec-jwt-mac"  % tsecVersion withSources ()
+    "io.github.jmcardon" %% "tsec-jwt-mac"  % tsecVersion withSources (),
   )
 
   //============================================================================================
   //=========================================  logging =========================================
   //============================================================================================
 
-  lazy val log4cats = "io.chrisdavenport" %% "log4cats-slf4j" % log4catsVersion withSources ()
+  lazy val log4cats = "org.typelevel" %% "log4cats-slf4j" % log4catsVersion withSources ()
 
   //this is a Java library, notice that we used one single % instead of %%
   //it is the backend implementation used by log4cats
@@ -125,8 +120,6 @@ object Dependencies {
   //============================================================================================
 
   lazy val specs2: ModuleID = "org.specs2" %% "specs2-core" % specs2Version withSources ()
-
-  lazy val specs2Test: ModuleID = specs2 % Test
 
   //============================================================================================
   //=======================================  transitive ========================================

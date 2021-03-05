@@ -19,7 +19,7 @@ sealed abstract class ServerBootstrapAlgebra[F[_]: Sync](
   private val uba: UserAccountBootstrapAlgebra[F],
 ) {
 
-  private val logger = PMSLogger.getLogger[F]
+  private val logger = Logger.getLogger[F]
 
   final def bootStrapSuperAdmin(email: Email, pw: PlainTextPassword): F[User] =
     bootStrapUser(email, pw, UserRole.SuperAdmin)

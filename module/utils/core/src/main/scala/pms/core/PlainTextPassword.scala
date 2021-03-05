@@ -1,8 +1,5 @@
 package pms.core
 
-import pms.effects._
-import pms.effects.implicits._
-
 /**
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
@@ -14,8 +11,8 @@ object PlainTextPassword {
   //TODO: make these restrictions configurable
   def apply(pw: String): Attempt[PlainTextPassword] =
     if (pw.length < 6)
-      Attempt.raiseError(Fail.invalid("Password needs to have at least 6 characters"))
-    else Attempt.pure(new PlainTextPassword(pw))
+      Fail.invalid("Password needs to have at least 6 characters").raiseError[Attempt, PlainTextPassword]
+    else new PlainTextPassword(pw).pure[Attempt]
 
 }
 

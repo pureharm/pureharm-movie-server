@@ -2,7 +2,7 @@ package pms.db
 
 import busymachines.pureharm.db.DBConnectionConfig
 import busymachines.pureharm.db.flyway._
-import io.chrisdavenport.log4cats.Logger
+import pms.logger._
 import pms.core._
 
 trait FlywayAlgebra[F[_]] {
@@ -16,7 +16,7 @@ object FlywayAlgebra {
   def resource[F[_]: Sync](
     dbConfig: DBConnectionConfig
   ): Resource[F, FlywayAlgebra[F]] =
-    new FlywayAlgebraImpl[F](connectionConfig = dbConfig, config = none).pure[Resource[F, *]]
+    new FlywayAlgebraImpl[F](connectionConfig = dbConfig, config = none).pure[Resource[F, *]].widen
 
   final private class FlywayAlgebraImpl[F[_]: Sync](
     private[FlywayAlgebra] val connectionConfig: DBConnectionConfig,

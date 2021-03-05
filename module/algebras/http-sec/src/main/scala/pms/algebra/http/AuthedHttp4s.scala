@@ -3,7 +3,7 @@ package pms.algebra.http
 import org.http4s._
 import org.http4s.dsl._
 import org.http4s.server._
-import org.http4s.util.CaseInsensitiveString
+import org.typelevel.ci.CIString
 import pms.algebra.user._
 import pms.core.Fail
 import pms.effects._
@@ -22,7 +22,7 @@ object AuthedHttp4s {
     AuthMiddleware(tokenVerification, onFailure).pure[Resource[F, *]]
   }
 
-  private val `X-Auth-Token` = CaseInsensitiveString("X-AUTH-TOKEN")
+  private val `X-Auth-Token` = CIString("X-AUTH-TOKEN")
 
   private val challenges: NonEmptyList[Challenge] = NonEmptyList.of(
     Challenge(
@@ -45,14 +45,12 @@ object AuthedHttp4s {
       val optHeader = req.headers.get(`X-Auth-Token`)
       optHeader match {
         case None         =>
-          Attempt
-            .raiseError[AuthCtx](Fail.unauthorized(s"No ${`X-Auth-Token`} provided"))
-            .pure[F]
+          Fail.unauthorized(s"No ${`X-Auth-Token`} provided").raiseError[Attempt, AuthCtx].pure[F]
         case Some(header) =>
           authAlgebra
             .authenticate(AuthenticationToken(header.value))
-            .map(Attempt.pure)
-            .handleError(Attempt.raiseError)
+            .map(_.pure[Attempt])
+            .handleError(_.raiseError[Attempt, AuthCtx])
       }
     }
 }

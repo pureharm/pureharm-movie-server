@@ -1,8 +1,5 @@
 package pms.core
 
-import pms.effects._
-import pms.effects.implicits._
-
 /**
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
@@ -13,9 +10,9 @@ object Email {
 
   def apply(em: String): Attempt[Email] =
     if (!em.contains("@"))
-      Attempt.raiseError(Fail.invalid("Email must contain: @"))
+      Fail.invalid("Email must contain: @").raiseError[Attempt, Email]
     else
-      Attempt.pure(new Email(em))
+      new Email(em).pure[Attempt]
 
 }
 

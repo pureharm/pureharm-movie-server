@@ -6,7 +6,7 @@ object Settings {
 
   val commonSettings: Seq[Setting[_]] = Seq(
     //https://github.com/scala/scala/releases
-    scalaVersion                       := "2.13.2",
+    scalaVersion                       := "2.13.5",
     /*
      * Eliminates useless, unintuitive, and sometimes broken additions of `withFilter`
      * when using generator arrows in for comprehensions. e.g.
@@ -38,38 +38,8 @@ object Settings {
      *
      * https://github.com/typelevel/kind-projector
      */
-    addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.11.0").cross(CrossVersion.full)),
-    /**
-      * Gives better error messages for failed implicit resolution.
-      * Absolutely amazing in general, invaluable for teaching <3
-      *
-      * https://github.com/tek/splain
-      */
-    addCompilerPlugin(("io.tryp"        % "splain"         % "0.5.6").cross(CrossVersion.patch)),
+    addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.11.3").cross(CrossVersion.full)),
     scalacOptions ++= scala2_13Flags ++ betterForPluginCompilerFlags,
   )
-
-  object AssemblySettings extends sbtassembly.AssemblyKeys {
-
-    val settings: Seq[Setting[_]] = {
-      import sbtassembly.{MergeStrategy, PathList}
-
-      sbtassembly.AssemblyPlugin.autoImport.baseAssemblySettings ++
-        Seq(
-          // Skip tests during while running the assembly task
-          test in assembly                  := {},
-          assemblyMergeStrategy in assembly := {
-            case PathList("application.conf", _ @_*) => MergeStrategy.concat
-            case "application.conf"                  => MergeStrategy.concat
-            case PathList("reference.conf", _ @_*)   => MergeStrategy.concat
-            case "reference.conf"                    => MergeStrategy.concat
-            case x                                   => (assemblyMergeStrategy in assembly).value(x)
-          },
-          //this is to avoid propagation of the assembly task to all subprojects.
-          //changing this makes assembly incredibly slow
-          aggregate in assembly             := false,
-        )
-    }
-  }
 
 }

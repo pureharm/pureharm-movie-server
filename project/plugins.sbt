@@ -6,7 +6,7 @@
   *
   * https://github.com/scalameta/scalafmt
   */
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.4") //https://github.com/scalameta/sbt-scalafmt/releases
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.2") //https://github.com/scalameta/sbt-scalafmt/releases
 
 //=============================================================================
 //=============================================================================
@@ -38,44 +38,13 @@ addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.4") //https://github.com/sc
 //=============================================================================
 
 /**
-  * Used to create one big fat jar which contains all dependencies of this application
+  * Used to create the convenient executable that allows us
+  * to easily run the entire project from the command line.
   *
-  * https://github.com/sbt/sbt-assembly
+  * https://github.com/sbt/sbt-native-packager/releases
   */
-addSbtPlugin("com.eed3si9n" %% "sbt-assembly" % "0.14.10") //https://github.com/sbt/sbt-assembly
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.8.0")
 
-//=============================================================================
-//=============================================================================
-
-/**
-  * neat way of visualizing the dependency graph both in the sbt repl, and to export
-  * it as an .svg
-  *
-  * https://github.com/jrudolph/sbt-dependency-graph
-  *
+/** https://github.com/lampepfl/dotty/releases
   */
-//addSbtPlugin("net.virtual-void" %% "sbt-dependency-graph" % "0.9.2")
-
-//=============================================================================
-//=============================================================================
-
-/**
-  * Used to build the documentation.
-  *
-  * https://github.com/47deg/sbt-microsites
-  */
-//addSbtPlugin("com.47deg" % "sbt-microsites" % "0.7.18")
-
-//=============================================================================
-//=============================================================================
-
-/**
-  *
-  * Used by sbt-microsites
-  *
-  * https://github.com/sbt/sbt-ghpages
-  */
-//addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.6.2")
-
-//=============================================================================
-//=============================================================================
+addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.5.3")

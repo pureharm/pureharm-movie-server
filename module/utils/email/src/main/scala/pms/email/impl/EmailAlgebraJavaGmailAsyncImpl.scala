@@ -23,7 +23,7 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
 
   private val F: Async[F] = Async.apply[F]
 
-  private val logger: PMSLogger[F] = PMSLogger.getLogger[F]
+  private val logger: Logger[F] = Logger.getLogger[F]
 
   override def sendEmail(to:        Email, subject: Subject, content: Content): F[Unit] = {
     val mimaMessage = F.pure {

@@ -1,6 +1,7 @@
 import sbt._
 
 object CompilerFlags {
+
   /**
     * tpolecat's glorious compile flag list adapted for scala 2.13 (fewer flags):
     * https://tpolecat.github.io/2017/04/25/scalac-flags.html
@@ -24,7 +25,6 @@ object CompilerFlags {
     "-Xlint:inaccessible",           // Warn about inaccessible types in method signatures.
     "-Xlint:infer-any",              // Warn when a type argument is inferred to be `Any`.
     "-Xlint:missing-interpolator",   // A string literal appears to be missing an interpolator id.
-    "-Xlint:nullary-override",       // Warn when non-nullary `def f()' overrides nullary `def f'.
     "-Xlint:nullary-unit",           // Warn when nullary methods return Unit.
     "-Xlint:option-implicit",        // Option.apply used implicit view.
     "-Xlint:package-object-classes", // Class or object defined in package object.
@@ -32,15 +32,19 @@ object CompilerFlags {
     "-Xlint:private-shadow",         // A private field (or class parameter) shadows a superclass field.
     "-Xlint:stars-align",            // Pattern sequence wildcard must align with sequence component.
     "-Xlint:type-parameter-shadow",  // A local type parameter shadows a type already in scope.
+    "-Wdead-code",                   // Warn when we have dead code
     "-Ywarn-extra-implicit",         // Warn when more than one implicit parameter section is defined.
     "-Ywarn-numeric-widen",          // Warn when numerics are widened.
     "-Ywarn-unused:implicits",       // Warn if an implicit parameter is unused.
     "-Ywarn-unused:imports",         // Warn if an import selector is not referenced.
     "-Ywarn-unused:locals",          // Warn if a local definition is unused.
-    "-Ywarn-unused:params",          // Warn if a value parameter is unused.
+    "-Wunused:params",               // Warn if a value parameter is unused.
+    "-Wunused:synthetics",           // Warn if context boud is not used
     "-Ywarn-unused:patvars",         // Warn if a variable bound in a pattern is unused.
     "-Ywarn-unused:privates",        // Warn if a private member is unused.
-    "-Ywarn-value-discard"           // Warn when non-Unit expression results are unused.
+    "-Ywarn-value-discard",          // Warn when non-Unit expression results are unused.
+    "-Wconf:any:warning-verbose",    // Gives extra information about warning,
+    "-Ytasty-reader",                // Allows depending on libraries written in Scala 3
   )
 
   /**
@@ -51,6 +55,6 @@ object CompilerFlags {
     "-P:bm4:no-filtering:y",     // see https://github.com/oleg-py/better-monadic-for#desugaring-for-patterns-without-withfilters--pbm4no-filteringy
     "-P:bm4:no-map-id:y",        // see https://github.com/oleg-py/better-monadic-for#final-map-optimization--pbm4no-map-idy
     "-P:bm4:no-tupling:y",       // see https://github.com/oleg-py/better-monadic-for#desugar-bindings-as-vals-instead-of-tuples--pbm4no-tuplingy
-    "-P:bm4:implicit-patterns:y" //see https://github.com/oleg-py/better-monadic-for#define-implicits-in-for-comprehensions-or-matches
+    "-P:bm4:implicit-patterns:y",//see https://github.com/oleg-py/better-monadic-for#define-implicits-in-for-comprehensions-or-matches
   )
 }
