@@ -9,8 +9,8 @@ package object user {
   object UserID extends Sprout[Long] with SproutEq[Long]
   type UserID = UserID.Type
 
-  object UserRegistrationToken extends Sprout[String]
-  type UserInviteToken = UserRegistrationToken.Type
+  type UserInviteToken = UserInviteToken.Type
+  object UserInviteToken extends Sprout[String]
 
   object PasswordResetToken extends Sprout[String]
   type PasswordResetToken = PasswordResetToken.Type

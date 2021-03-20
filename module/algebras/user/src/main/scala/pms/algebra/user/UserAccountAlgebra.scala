@@ -10,7 +10,7 @@ import pms.db._
   */
 trait UserAccountAlgebra[F[_]] {
 
-  implicit protected def monadError: MonadError[F, Throwable]
+  implicit protected def monadThrow: MonadError[F, Throwable]
   protected def authAlgebra:         UserAuthAlgebra[F]
 
   final def invitationStep1(

@@ -8,7 +8,7 @@ import pms.db._
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018
   */
-abstract class UserAuthAlgebra[F[_]: Sync] {
+abstract class UserAuthAlgebra[F[_]: MonadThrow] {
 
   def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx]
 
