@@ -2,11 +2,8 @@ package pms.algebra.user
 
 import pms._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 13 Jul 2018
-  *
   */
 final class UserAccountBootstrapAlgebra[F[_]] private (
   private val uca: UserAccountAlgebra[F]

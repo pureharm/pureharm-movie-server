@@ -4,11 +4,8 @@ import pms.algebra.user._
 import pms._
 import pms.db._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 24 Apr 2019
-  *
   */
 private[impl] object UserAlgebraMetas {
 //

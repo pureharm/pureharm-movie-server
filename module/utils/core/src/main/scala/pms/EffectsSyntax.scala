@@ -1,10 +1,7 @@
 package pms
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 08 May 2019
-  *
   */
 object EffectsSyntax {
 

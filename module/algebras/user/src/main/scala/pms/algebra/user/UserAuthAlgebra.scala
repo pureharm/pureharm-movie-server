@@ -4,11 +4,8 @@ import pms.algebra.user.impl.UserAlgebraImpl
 import pms._
 import pms.db._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018
-  *
   */
 abstract class UserAuthAlgebra[F[_]: Sync] {
 
@@ -16,42 +13,38 @@ abstract class UserAuthAlgebra[F[_]: Sync] {
 
   def authenticate(token: AuthenticationToken): F[AuthCtx]
 
-  final def promoteUser(id:            UserID, newRole:        UserRole)(implicit auth: AuthCtx): F[Unit] =
+  final def promoteUser(id: UserID, newRole: UserRole)(implicit auth: AuthCtx): F[Unit] =
     authorizeGTERoleThan(newRole)(promoteUserOP(id, newRole))
 
-  /**
-    * Lowest level of authorization, essentially anyone
+  /** Lowest level of authorization, essentially anyone
     * who is logged in can perform the given op.
     *
     * @param op
     *   The operation that we want to guard with
     *   certain user priviliges.
     */
-  final def authorizeNewbie[A](op:     => F[A])(implicit auth: AuthCtx): F[A] =
+  final def authorizeNewbie[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
     authorizeGTERoleThan(UserRole.Newbie)(op)
 
-  /**
-    * Requires member to have priviliges from [[UserRole.Member]] upwards
+  /** Requires member to have priviliges from [[UserRole.Member]] upwards
     *
     * @param op
     *   The operation that we want to guard with
     *   certain user priviliges.
     */
-  final def authorizeMember[A](op:     => F[A])(implicit auth: AuthCtx): F[A] =
+  final def authorizeMember[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
     authorizeGTERoleThan(UserRole.Member)(op)
 
-  /**
-    * Requires member to have priviliges from [[UserRole.Curator]] upwards
+  /** Requires member to have priviliges from [[UserRole.Curator]] upwards
     *
     * @param op
     *   The operation that we want to guard with
     *   certain user priviliges.
     */
-  final def authorizeCurator[A](op:    => F[A])(implicit auth: AuthCtx): F[A] =
+  final def authorizeCurator[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
     authorizeGTERoleThan(UserRole.Curator)(op)
 
-  /**
-    * Requires member to have priviliges from [[UserRole.SuperAdmin]] upwards
+  /** Requires member to have priviliges from [[UserRole.SuperAdmin]] upwards
     *
     * @param op
     *   The operation that we want to guard with

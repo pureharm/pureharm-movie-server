@@ -2,14 +2,11 @@ package pms.email
 
 import pms._
 
-/**
-  *
-  * This style of writing algebras (in layman terms: interface) is called
+/** This style of writing algebras (in layman terms: interface) is called
   * "final tagless".
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 Jun 2018
-  *
   */
 trait EmailAlgebra[F[_]] {
 

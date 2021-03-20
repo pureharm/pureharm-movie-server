@@ -5,12 +5,8 @@ import pms.Email
 import pms.email._
 import pms._
 
-
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
-  *
   */
 final class UserAccountService[F[_]] private (
   private val userAccount:  UserAccountAlgebra[F],

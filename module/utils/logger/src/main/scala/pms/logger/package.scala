@@ -2,11 +2,8 @@ package pms
 
 import org.typelevel.log4cats
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Mar 2019
-  *
   */
 package object logger {
   type Logger[F[_]] = log4cats.SelfAwareStructuredLogger[F]

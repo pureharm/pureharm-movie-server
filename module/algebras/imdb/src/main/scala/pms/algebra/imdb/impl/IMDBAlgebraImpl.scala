@@ -8,12 +8,8 @@ import net.ruippeixotog.scalascraper.model.Document
 import pms.algebra.imdb._
 import pms._
 
-
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
-  *
   */
 final private[imdb] class IMDBAlgebraImpl[F[_]](
   val throttler: EffectThrottler[F],

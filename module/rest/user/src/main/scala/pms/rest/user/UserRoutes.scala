@@ -5,12 +5,8 @@ import pms.algebra.http._
 import pms.algebra.user._
 import pms._
 
-
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
-  *
   */
 final class UserRoutes[F[_]](
   private val userAlgebra: UserAlgebra[F]

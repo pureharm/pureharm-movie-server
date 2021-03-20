@@ -7,15 +7,12 @@ import pms._
 import pms.email._
 import pms.logger._
 
-/**
-  *
-  * Uses javax-mail to send emails. Configured to work only for
+/** Uses javax-mail to send emails. Configured to work only for
   * gmail account:
   * https://javaee.github.io/javamail/Gmail
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 Jun 2018
-  *
   */
 private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
   private val config: GmailConfig
@@ -25,7 +22,7 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
 
   private val logger: Logger[F] = Logger.getLogger[F]
 
-  override def sendEmail(to:        Email, subject: Subject, content: Content): F[Unit] = {
+  override def sendEmail(to: Email, subject: Subject, content: Content): F[Unit] = {
     val mimaMessage = F.pure {
       val message: MimeMessage = new MimeMessage(session)
 
@@ -52,8 +49,7 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
     } yield ()
   }
 
-  /**
-    * WTB bracket, please :( but we're on an older version of cats-effect
+  /** WTB bracket, please :( but we're on an older version of cats-effect
     * because Monix has not been updated to 1.0.0-RC2 yet
     *
     * https://typelevel.org/cats-effect/typeclasses/bracket.html
@@ -68,8 +64,7 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
   private def cleanup(transport: Transport): F[Unit] =
     F.delay(transport.close())
 
-  /**
-    * A complete list of session properties can be found at
+  /** A complete list of session properties can be found at
     * https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html
     *
     * session is just a data structure. It can be reused every time.

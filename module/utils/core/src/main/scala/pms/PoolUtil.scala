@@ -6,7 +6,7 @@ private[pms] object PoolUtil {
 
   def unsafeAvailableCPUs: Int = Runtime.getRuntime.availableProcessors()
 
-  private[pms] def exitOnFatal(ec:                 ExecutorService): ExecutionContext = new ExecutionContext {
+  private[pms] def exitOnFatal(ec: ExecutorService): ExecutionContext = new ExecutionContext {
     private val underlying: ExecutionContext = ExecutionContext.fromExecutorService(ec)
 
     override def execute(r: Runnable): Unit = {

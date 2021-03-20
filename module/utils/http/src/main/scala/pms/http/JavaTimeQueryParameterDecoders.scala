@@ -6,11 +6,8 @@ import org.http4s.QueryParamDecoder
 
 import pms.TimeFormatters
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 28 Jun 2018
-  *
   */
 trait JavaTimeQueryParameterDecoders {
 

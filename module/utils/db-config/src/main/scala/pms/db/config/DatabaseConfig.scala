@@ -3,8 +3,7 @@ package pms.db.config
 import pms._
 import pms.config._
 
-/**
-  * @author Alexandru Stana, alexandru.stana@busymachines.com
+/** @author Alexandru Stana, alexandru.stana@busymachines.com
   * @since 28/06/2018
   */
 final case class DatabaseConfig(

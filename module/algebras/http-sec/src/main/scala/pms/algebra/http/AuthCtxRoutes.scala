@@ -4,11 +4,8 @@ import pms._
 import pms.algebra.user.AuthCtx
 import org.http4s.{AuthedRequest, AuthedRoutes, Response}
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
-  *
   */
 object AuthCtxRoutes {
 

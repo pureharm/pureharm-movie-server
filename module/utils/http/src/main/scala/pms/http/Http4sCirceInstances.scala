@@ -9,21 +9,17 @@ import org.http4s.headers.`Content-Type`
 import org.http4s.{EntityDecoder, EntityEncoder}
 import org.http4s.circe.CirceInstances
 
-/**
-  *
-  * You need to have this in scope if you want "seamless" serializing/deserializing
+/** You need to have this in scope if you want "seamless" serializing/deserializing
   * to/from JSON in your HttpRoutes endpoints.
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
-  *
   */
 trait Http4sCirceInstances {
 
   import Http4sCirceInstances._
 
-  /**
-    * This code was copied from [[org.http4s.circe.CirceInstances#jsonEncoderWithPrinter]]
+  /** This code was copied from [[org.http4s.circe.CirceInstances#jsonEncoderWithPrinter]]
     * Ideally, we would have done directly:
     * {{{
     *   circeInstance.jsonEncoderOf[F, T]

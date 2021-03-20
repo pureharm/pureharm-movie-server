@@ -6,11 +6,8 @@ import pms.algebra.http._
 import pms.algebra.user._
 import pms._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
-  *
   */
 final class UserLoginRoutes[F[_]](
   private val userAuthAlgebra: UserAuthAlgebra[F]
@@ -18,8 +15,7 @@ final class UserLoginRoutes[F[_]](
   val F:                       Async[F]
 ) extends Http4sDsl[F] with UserRoutesJSON {
 
-  /**
-    * User/password gets transimited in the ``Authorization``
+  /** User/password gets transimited in the ``Authorization``
     * Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==
     *
     * base64Encoding($user:$password)
@@ -34,14 +30,16 @@ final class UserLoginRoutes[F[_]](
   private def findBasicAuth(hs: Headers): F[BasicCredentials] = {
     val r: Attempt[BasicCredentials] = for {
       auth:  headers.Authorization <-
-        Fail.nicata("""
-                      |
-                      |hs.get(headers.Authorization)
-                      |          .liftTo[Attempt](Fail.unauthorized("Missing Authorization header"))
-                      |
-                      |""".stripMargin).raiseError[Attempt, headers.Authorization]
+        Fail
+          .nicata("""
+                    |
+                    |hs.get(headers.Authorization)
+                    |          .liftTo[Attempt](Fail.unauthorized("Missing Authorization header"))
+                    |
+                    |""".stripMargin)
+          .raiseError[Attempt, headers.Authorization]
 
-      basic: BasicCredentials <- auth.credentials match {
+      basic: BasicCredentials      <- auth.credentials match {
         case Credentials.Token(AuthScheme.Basic, token) =>
           BasicCredentials(token).pure[Attempt]
         case credentials                                =>
@@ -55,9 +53,8 @@ final class UserLoginRoutes[F[_]](
   }
 
   private val loginRoutes: HttpRoutes[F] =
-    HttpRoutes.of[F] {
-      case req @ POST -> Root / "user" / "login" =>
-        Ok(findBasicAuth(req.headers).flatMap(logInWithUserNamePassword))
+    HttpRoutes.of[F] { case req @ POST -> Root / "user" / "login" =>
+      Ok(findBasicAuth(req.headers).flatMap(logInWithUserNamePassword))
     }
 
   val routes: HttpRoutes[F] = loginRoutes

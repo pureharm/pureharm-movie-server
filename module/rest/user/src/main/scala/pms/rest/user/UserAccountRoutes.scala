@@ -8,11 +8,8 @@ import pms._
 
 import pms.service.user._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
-  *
   */
 final class UserAccountRoutes[F[_]](
   private val userService: UserAccountService[F]

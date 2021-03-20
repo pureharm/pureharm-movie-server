@@ -1,13 +1,10 @@
 package pms.algebra.movie
 
-/**
-  *
-  * See [[Movie]]
+/** See [[Movie]]
   * This class is used to specify all the data needed to create a movie
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
-  *
   */
 //TODO: a good first candidate for extra information would be to add an image cover.
 //  As an external URL, or direct upload

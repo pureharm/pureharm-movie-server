@@ -1,10 +1,7 @@
 package pms
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 Jun 2018
-  *
   */
 package object email {
   //TODO: make PhantomTypes out of these

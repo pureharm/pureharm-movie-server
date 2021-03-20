@@ -2,11 +2,8 @@ package pms.algebra
 
 import pms._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018
-  *
   */
 package object user {
   object UserID extends Sprout[Long] with SproutEq[Long]

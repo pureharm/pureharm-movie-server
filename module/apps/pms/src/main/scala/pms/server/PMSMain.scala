@@ -3,11 +3,8 @@ package pms.server
 import org.http4s.server.Server
 import pms._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018
-  *
   */
 object PMSMain extends IOApp {
 

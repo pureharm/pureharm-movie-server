@@ -4,9 +4,7 @@ import cats.effect.std.Semaphore
 
 import scala.concurrent.duration._
 
-/**
-  *
-  * Used to control the rate at which Fs are computed by fixing the amount of Fs
+/** Used to control the rate at which Fs are computed by fixing the amount of Fs
   * to be executed in the given time interval.
   *
   * @param interval  time unit between `size` consecutive requests
@@ -20,8 +18,7 @@ final class EffectThrottler[F[_]: Temporal: Concurrent](
 
 //  private val F = Concurrent.apply[F]
 
-  /**
-    * Returns an F that will be "slowed" time to the configured rate
+  /** Returns an F that will be "slowed" time to the configured rate
     * of execution.
     */
   def throttle[T](f: F[T]): F[Attempt[T]] = Fail

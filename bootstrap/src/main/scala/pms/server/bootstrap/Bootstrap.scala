@@ -3,12 +3,8 @@ package pms.server.bootstrap
 import pms.{Email, PlainTextPassword}
 import pms._
 
-
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 13 Jul 2018
-  *
   */
 object Bootstrap {
 

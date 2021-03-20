@@ -4,11 +4,8 @@ package pms.effects
 //import org.specs2.mutable.Specification
 //import scala.concurrent.duration._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Mar 2019
-  *
   */
 //final class EffectThrottlerSpec extends Specification {
 //  implicit private val timer: Timer[IO]        = IO.timer(ExecutionContext.global)

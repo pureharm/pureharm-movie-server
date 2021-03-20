@@ -3,11 +3,8 @@ package pms.algebra
 import pms._
 import java.time._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
-  *
   */
 package object movie {
   object MovieID extends Sprout[Long]

@@ -1,13 +1,10 @@
 package pms
 
-/**
-  *
-  * Simply an alias for busymachines.pureharm.json._ so that we don't have
+/** Simply an alias for busymachines.pureharm.json._ so that we don't have
   * to always import that as well
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
-  *
   */
 package object json {
   type Codec[A] = io.circe.Codec[A]

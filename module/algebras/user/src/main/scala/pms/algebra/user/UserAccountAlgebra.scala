@@ -4,11 +4,8 @@ import pms.algebra.user.impl.UserAlgebraImpl
 import pms._
 import pms.db._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018
-  *
   */
 trait UserAccountAlgebra[F[_]] {
 

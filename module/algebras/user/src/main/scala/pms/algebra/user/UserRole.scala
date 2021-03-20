@@ -3,12 +3,8 @@ package pms.algebra.user
 import pms.Fail
 import pms._
 
-
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018
-  *
   */
 sealed trait UserRole extends Product with Serializable with Ordered[UserRole]
 

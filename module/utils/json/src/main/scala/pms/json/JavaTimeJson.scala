@@ -3,11 +3,8 @@ package pms.json
 import java.time.LocalDate
 import pms._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
-  *
   */
 trait JavaTimeJson {
 

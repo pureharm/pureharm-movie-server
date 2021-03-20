@@ -4,15 +4,12 @@ import pms.algebra.movie._
 import pms.json._
 import pms.json.implicits._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
-  *
   */
 object MovieRoutesJSON extends MovieRoutesJSON
 
-trait MovieRoutesJSON  {
+trait MovieRoutesJSON {
 
   implicit val movieCirceCodec: Codec[Movie] = derive.codec[Movie]
 

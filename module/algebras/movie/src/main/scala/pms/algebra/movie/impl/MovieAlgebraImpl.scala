@@ -5,11 +5,8 @@ import pms.algebra.movie._
 import pms.algebra.user.UserAuthAlgebra
 import pms._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
-  *
   */
 final private[movie] class MovieAlgebraImpl[F[_]: MonadThrow](
   override protected val userAuth: UserAuthAlgebra[F],

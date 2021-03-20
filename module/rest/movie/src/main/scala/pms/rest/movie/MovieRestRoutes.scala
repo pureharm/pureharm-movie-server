@@ -10,11 +10,8 @@ import pms._
 
 import pms.service.movie._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
-  *
   */
 final class MovieRestRoutes[F[_]](
   private val imdbService:  IMDBService[F],
@@ -44,9 +41,8 @@ final class MovieRestRoutes[F[_]](
   private object TitleQueryParamMatcher extends QueryParamDecoderMatcher[TitleQuery]("title")
 
   private val imdbImportRoutes: AuthCtxRoutes[F] = {
-    AuthCtxRoutes[F] {
-      case PUT -> Root / "movie_import" / "imdb" :? TitleQueryParamMatcher(title) as user =>
-        Ok(imdbService.scrapeIMDBForTitle(TitleQuery(title))(user))
+    AuthCtxRoutes[F] { case PUT -> Root / "movie_import" / "imdb" :? TitleQueryParamMatcher(title) as user =>
+      Ok(imdbService.scrapeIMDBForTitle(TitleQuery(title))(user))
     }
   }
 

@@ -6,13 +6,10 @@ import pms.algebra.user._
 import pms.{Email, PlainTextPassword}
 import pms.logger._
 
-/**
-  *
-  * This should be used only in development, and testing!
+/** This should be used only in development, and testing!
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 13 Jul 2018
-  *
   */
 sealed abstract class ServerBootstrapAlgebra[F[_]: Sync](
   private val uca: UserAccountAlgebra[F],

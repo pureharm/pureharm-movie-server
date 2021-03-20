@@ -4,11 +4,8 @@ import pms.db._
 import pms.algebra.user._
 import pms._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 21 Jun 2018
-  *
   */
 final private[user] class UserAlgebraImpl[F[_]](implicit
   val F:          Async[F],

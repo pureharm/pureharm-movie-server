@@ -3,11 +3,8 @@ package pms.email
 import pms._
 import pms.config._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 Jun 2018
-  *
   */
 final case class GmailConfig(
   from:     Sender,

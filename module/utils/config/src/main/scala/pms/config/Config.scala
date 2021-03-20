@@ -1,8 +1,7 @@
 package pms.config
 
 import pms._
-/**
-  * Capability for reading config files.
+/** Capability for reading config files.
   *
   * Used to signal that something in our app
   * reads configurations
