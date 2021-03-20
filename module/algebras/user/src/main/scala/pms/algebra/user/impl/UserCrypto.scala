@@ -34,7 +34,7 @@ private[impl] object UserCrypto {
     * }}}
     *
     */
-  private[impl] def generateToken[F[_]: ApplicativeThrow: Random]: F[String] =
+  private[impl] def generateToken[F[_]: ApplicativeThrow: SecureRandom]: F[String] =
     Fail.nicata("generateToken").raiseError[F, String]
 
   private[impl] def hashPWWithBcrypt[F[_]: ApplicativeThrow: Random](ptpw: PlainTextPassword): F[BcryptPW] =

@@ -246,12 +246,14 @@ lazy val `algebra-user` = algebraProject("user")
     `pms-core`,
     `pms-email`,
     `pms-db`,
+    `pms-crypto`,
   )
   .aggregate(
     `pms-config`,
     `pms-core`,
     `pms-email`,
     `pms-db`,
+    `pms-crypto`,
   )
 
 lazy val `pms-db` = utilProject("db")
@@ -291,7 +293,10 @@ lazy val `pms-email` = utilProject("email")
 lazy val `pms-http` = utilProject("http")
   .settings(
     libraryDependencies ++= Seq(
-    ) ++ Libraries.http4s
+      Libraries.http4sDSL,
+      Libraries.http4sCirce,
+      Libraries.http4sBlazeServer,
+    )
   )
   .dependsOn(
     `pms-core`,
@@ -358,11 +363,23 @@ lazy val `pms-logger` = utilProject("logger")
     `pms-core`
   )
 
+lazy val `pms-crypto` = utilProject("crypto")
+  .settings(
+    libraryDependencies ++= Seq(
+      Libraries.javaBcrypt
+    )
+  )
+  .dependsOn(
+    `pms-core`
+  )
+  .aggregate(
+    `pms-core`
+  )
+
 lazy val `pms-core` = utilProject("core")
   .settings(
     libraryDependencies ++= Seq(
       Libraries.sprout,
-      Libraries.shapeless,
       Libraries.phCore,
       Libraries.cats,
       Libraries.catsEffect,
