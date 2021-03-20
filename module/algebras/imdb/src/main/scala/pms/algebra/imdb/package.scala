@@ -4,19 +4,16 @@ import java.time.Year
 
 import pms.core._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
-  *
   */
 package object imdb {
-  object TitleQuery extends PhantomType[String]
+  object TitleQuery extends SproutSub[String]
   type TitleQuery = TitleQuery.Type
 
-  object IMDBTitle extends PhantomType[String]
+  object IMDBTitle extends SproutSub[String]
   type IMDBTitle = IMDBTitle.Type
 
-  object ReleaseYear extends PhantomType[Year]
+  object ReleaseYear extends SproutSub[Year]
   type ReleaseYear = ReleaseYear.Type
 }

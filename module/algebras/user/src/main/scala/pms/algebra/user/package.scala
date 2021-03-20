@@ -9,16 +9,16 @@ import pms.core._
   *
   */
 package object user {
-  object UserID extends PhantomType[Long]
+  object UserID extends Sprout[Long] with SproutEq[Long]
   type UserID = UserID.Type
 
-  object UserRegistrationToken extends PhantomType[String]
+  object UserRegistrationToken extends Sprout[String]
   type UserInviteToken = UserRegistrationToken.Type
 
-  object PasswordResetToken extends PhantomType[String]
+  object PasswordResetToken extends Sprout[String]
   type PasswordResetToken = PasswordResetToken.Type
 
-  object AuthenticationToken extends PhantomType[String]
+  object AuthenticationToken extends Sprout[String]
   type AuthenticationToken = AuthenticationToken.Type
 
   type UserModuleAlgebra[F[_]] = UserAuthAlgebra[F] with UserAlgebra[F] with UserAccountAlgebra[F]

@@ -2,11 +2,8 @@ package pms.core
 
 import busymachines.pureharm.anomaly._
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 09 May 2019
-  *
   */
 object AnomalyIDS {
 
@@ -26,8 +23,6 @@ object AnomalyIDS {
 }
 
 /**
-  *
-  *
   */
 object Fail {
 
@@ -50,17 +45,15 @@ object Fail {
   def error(msg: String): Throwable = Catastrophe(msg)
 }
 
-/**
-  *
-  * "Not implemented catastrophe", a slightly better version of stdlib ???
+/** "Not implemented catastrophe", a slightly better version of stdlib ???
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 09 May 2019
-  *
   */
 final case class Nicata(what: String)
   extends Catastrophe(
-    s"Something is unimplemented: '$what'. Section either in development or it's a complete oversight"
+    s"Something is unimplemented: '$what'. Section either in development or it's a complete oversight",
+    Option.empty,
   ) {
   override val id: AnomalyID = AnomalyIDS.NicataAnomalyID
 
@@ -68,14 +61,11 @@ final case class Nicata(what: String)
     Anomaly.Parameters("what" -> what)
 }
 
-/**
-  *
-  * "Inconsistent State", technically should never happen, and you should
+/** "Inconsistent State", technically should never happen, and you should
   * really try to restructure your code so you never get here.
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 09 May 2019
-  *
   */
 final case class Iscata(what: String, where: String, override val causedBy: Option[Throwable] = None)
   extends Catastrophe(

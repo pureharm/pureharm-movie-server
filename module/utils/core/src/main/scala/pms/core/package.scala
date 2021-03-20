@@ -1,26 +1,21 @@
 package pms
 
-import busymachines.pureharm.PureharmCoreTypeDefinitions
-import busymachines.pureharm.anomaly.PureharmAnomalyTypeDefinitions
+import busymachines.pureharm.{PureharmCoreAliases, PureharmCoreImplicits}
 import scala.{concurrent => sc}
 
 import cats.{effect => ce}
 import cats.syntax
 import cats.instances
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 Apr 2019
-  *
   */
 package object core
-  extends PureharmCoreTypeDefinitions with PureharmAnomalyTypeDefinitions with syntax.AllSyntax
-  with syntax.AllSyntaxBinCompat0 with syntax.AllSyntaxBinCompat1 with syntax.AllSyntaxBinCompat2
-  with syntax.AllSyntaxBinCompat3 with syntax.AllSyntaxBinCompat4 with syntax.AllSyntaxBinCompat5
-  with syntax.AllSyntaxBinCompat6 with instances.AllInstances with instances.AllInstancesBinCompat0
-  with instances.AllInstancesBinCompat1 with instances.AllInstancesBinCompat2 with instances.AllInstancesBinCompat3
-  with instances.AllInstancesBinCompat4 with instances.AllInstancesBinCompat5 with instances.AllInstancesBinCompat6
-  with EffectsSyntax.Implicits {
+  extends PureharmCoreAliases with PureharmCoreImplicits with syntax.AllSyntax with syntax.AllSyntaxBinCompat0
+  with syntax.AllSyntaxBinCompat1 with syntax.AllSyntaxBinCompat2 with syntax.AllSyntaxBinCompat3
+  with syntax.AllSyntaxBinCompat4 with syntax.AllSyntaxBinCompat5 with syntax.AllSyntaxBinCompat6
+  with instances.AllInstances with instances.AllInstancesBinCompat0 with instances.AllInstancesBinCompat1
+  with instances.AllInstancesBinCompat2 with instances.AllInstancesBinCompat3 with instances.AllInstancesBinCompat4
+  with instances.AllInstancesBinCompat5 with instances.AllInstancesBinCompat6 with EffectsSyntax.Implicits {
 
   type Random[F[_]] = ce.std.Random[F]
 

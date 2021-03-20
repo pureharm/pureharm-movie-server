@@ -9,7 +9,7 @@ object Libraries {
   //============================================================================================
 
   lazy val sproutV         = "0.0.1"     //https://github.com/lorandszakacs/sprout/releases
-  lazy val pureharmCoreV   = "0.0.7-M3"  //https://github.com/busymachines/pureharm/releases
+  lazy val pureharmCoreV   = "0.1.0"     //https://github.com/busymachines/pureharm/releases
   lazy val catsCoreV       = "2.4.2"     //https://github.com/typelevel/cats/releases
   lazy val catsEffectV     = "3.0.0-RC2" //https://github.com/typelevel/cats-effect/releases
   lazy val fs2V            = "3.0.0-M9"  //https://github.com/typelevel/fs2/releases
@@ -24,9 +24,8 @@ object Libraries {
   lazy val cirisV          = "2.0.0-RC1" //https://github.com/vlovgr/ciris/releases
   lazy val javaBcryptV     = "0.9.0"     //java - https://github.com/patrickfav/bcrypt/releases
 
-  lazy val phCore: ModuleID = "com.busymachines" %% s"pureharm-core" % pureharmCoreV withSources ()
-
-  lazy val sprout: ModuleID = "com.lorandszakacs" %% "sprout" % sproutV withSources ()
+  lazy val phCore: ModuleID = "com.busymachines"  %% s"pureharm-core" % pureharmCoreV withSources ()
+  lazy val sprout: ModuleID = "com.lorandszakacs" %% "sprout"         % sproutV       withSources ()
 
   //============================================================================================
   //================================= http://typelevel.org/scala/ ==============================

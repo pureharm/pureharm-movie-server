@@ -10,13 +10,13 @@ import java.time._
   *
   */
 package object movie {
-  object MovieID extends PhantomType[Long]
+  object MovieID extends Sprout[Long]
   type MovieID = MovieID.Type
 
-  object MovieTitle extends PhantomType[String]
+  object MovieTitle extends Sprout[String]
   type MovieTitle = MovieTitle.Type
 
-  object ReleaseDate extends PhantomType[LocalDate]
+  object ReleaseDate extends Sprout[LocalDate]
   type ReleaseDate = ReleaseDate.Type
 
   type QueryInterval = (ReleaseDate, ReleaseDate)
