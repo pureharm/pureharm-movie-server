@@ -21,11 +21,8 @@ import pms.service.user.UserAccountService
 
 import scala.concurrent.ExecutionContext
 
-/**
-  *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
+/** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jul 2018
-  *
   */
 final class PMSWeave[F[_]] private (
   serverConfig:         PMSConfig,
@@ -67,7 +64,8 @@ object PMSWeave {
     for {
       implicit0(config: Config[F]) <- Config.resource[F]
       implicit0(logging: Logging[F]) <- Logging.resource[F]
-      implicit0(random: Random[F]) <- Random.javaUtilConcurrentThreadLocalRandom[F].pure[Resource[F, *]]
+      implicit0(random: Random[F]) <- Random.resource[F]
+      implicit0(secureRandom: SecureRandom[F]) <- SecureRandom.resource[F]
       implicit0(logger: Logger[F]) = logging.of(this)
       poolsConfig       <- PMSPoolConfig.resource[F]
       serverConfig      <- PMSConfig.resource[F]
@@ -85,7 +83,7 @@ object PMSWeave {
           .evalMap(flyway => if (dbConfig.forceClean) flyway.cleanDB(logger).map(_ => flyway) else flyway.pure[F])
           .evalMap(flyway => flyway.runMigrations(logger))
 
-      throttler                  <- EffectThrottler.resource[F](imdbAlgebraConfig.requestsInterval, imdbAlgebraConfig.requestsNumber)
+      throttler <- EffectThrottler.resource[F](imdbAlgebraConfig.requestsInterval, imdbAlgebraConfig.requestsNumber)
 
       imdbAlgebra    <- IMDBAlgebra.resource[F](throttler)
       authAlgebra    <- UserAuthAlgebra.resource[F]

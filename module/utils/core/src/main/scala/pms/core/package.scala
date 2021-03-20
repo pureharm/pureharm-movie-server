@@ -23,7 +23,6 @@ package object core
   with EffectsSyntax.Implicits {
 
   type Random[F[_]] = ce.std.Random[F]
-  val Random: ce.std.Random.type = ce.std.Random
 
   //----------- handy custom types -----------
   final type Attempt[+R] = scala.util.Either[Throwable, R]
