@@ -8,13 +8,10 @@ import pms._
   */
 trait JavaTimeJson {
 
-  implicit val localDateCirceCodec: Codec[LocalDate] = Codec.from(
-    Decoder
-      .apply[String]
-      .map(s => LocalDate.parse(s, TimeFormatters.LocalDateFormatter)),
-    Encoder
-      .apply[String]
-      .contramap(m => m.format(TimeFormatters.LocalDateFormatter)),
-  )
+  implicit val localDateCirceEncoder: io.circe.Encoder[LocalDate] =
+    io.circe.Encoder[String].contramap(m => m.format(TimeFormatters.LocalDateFormatter))
+
+  implicit val localDateCirceDecoder: io.circe.Decoder[LocalDate] =
+    io.circe.Decoder[String].emapTry(s => Try(LocalDate.parse(s, TimeFormatters.LocalDateFormatter)))
 
 }
