@@ -334,6 +334,7 @@ lazy val `pms-db-config` = utilProject("db-config")
   .settings(
     libraryDependencies ++= Seq(
       Libraries.flyway,
+      Libraries.pgJDBC,
       Libraries.ip4s,
     )
   )

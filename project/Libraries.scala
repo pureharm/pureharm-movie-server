@@ -17,6 +17,7 @@ object Libraries {
   val http4sV         = "1.0.0-M19" //https://github.com/http4s/http4s/releases
   val skunkV          = "0.1.0-M1"  //https://github.com/tpolecat/skunk/releases
   val flywayV         = "7.6.0"     //java - https://github.com/flyway/flyway/releases
+  val pgJDBCV         = "42.2.19"   //java — https://github.com/pgjdbc/pgjdbc/releases
   val log4catsV       = "2.0.0-RC1" //https://github.com/typelevel/log4cats/releases
   val logbackClassicV = "1.2.3"     //https://github.com/qos-ch/logback/releases
   val javaxMailV      = "1.6.2"     // https://github.com/javaee/javamail/releases
@@ -46,8 +47,9 @@ object Libraries {
   val http4sCirce       = "org.http4s" %% "http4s-circe"        % http4sV withSources ()
   val http4sDSL         = "org.http4s" %% "http4s-dsl"          % http4sV withSources ()
 
-  val skunk  = "org.tpolecat" %% "skunk-core"  % skunkV  withSources ()
-  val flyway = "org.flywaydb"  % "flyway-core" % flywayV withSources ()
+  val skunk  = "org.tpolecat"  %% "skunk-core"  % skunkV  withSources ()
+  val flyway = "org.flywaydb"   % "flyway-core" % flywayV withSources ()
+  val pgJDBC = "org.postgresql" % "postgresql"  % pgJDBCV withSources ()
 
   //============================================================================================
   //==========================================  math ===========================================
