@@ -1,6 +1,6 @@
 package pms.logger
 
-import pms.core._
+import pms._
 
 trait Logging[F[_]] {
   def of(a: AnyRef): Logger[F]

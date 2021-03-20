@@ -1,4 +1,4 @@
-package pms.core
+package pms
 
 sealed trait SecureRandom[F[_]] {
   def nextBytes(n: Int): F[Array[Byte]]

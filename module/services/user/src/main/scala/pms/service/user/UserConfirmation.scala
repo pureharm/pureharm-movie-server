@@ -1,7 +1,7 @@
 package pms.service.user
 
 import pms.algebra.user.UserInviteToken
-import pms.core.PlainTextPassword
+import pms.PlainTextPassword
 
 /**
   *

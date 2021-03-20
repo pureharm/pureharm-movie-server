@@ -1,9 +1,9 @@
 package pms.service.user
 
 import pms.algebra.user._
-import pms.core.Email
+import pms.Email
 import pms.email._
-import pms.core._
+import pms._
 
 
 /**

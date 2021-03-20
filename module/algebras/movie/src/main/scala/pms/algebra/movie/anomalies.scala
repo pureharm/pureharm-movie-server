@@ -1,7 +1,7 @@
 package pms.algebra.movie
 
 import busymachines.pureharm.anomaly._
-import pms.core.AnomalyIDS
+import pms.AnomalyIDS
 
 /**
   *

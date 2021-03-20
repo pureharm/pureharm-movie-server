@@ -1,12 +1,12 @@
-package pms.core
+package pms
 
 import java.util.concurrent.{ExecutorService, ThreadFactory}
 
-private[core] object PoolUtil {
+private[pms] object PoolUtil {
 
   def unsafeAvailableCPUs: Int = Runtime.getRuntime.availableProcessors()
 
-  private[core] def exitOnFatal(ec:                 ExecutorService): ExecutionContext = new ExecutionContext {
+  private[pms] def exitOnFatal(ec:                 ExecutorService): ExecutionContext = new ExecutionContext {
     private val underlying: ExecutionContext = ExecutionContext.fromExecutorService(ec)
 
     override def execute(r: Runnable): Unit = {
@@ -36,7 +36,7 @@ private[core] object PoolUtil {
     *   A thread factory where the name + daemon status is prefixed to the thread ID.
     * @return
     */
-  private[core] def namedThreadPoolFactory(prefix: String, daemonThreads: Boolean): ThreadFactory = new ThreadFactory {
+  private[pms] def namedThreadPoolFactory(prefix: String, daemonThreads: Boolean): ThreadFactory = new ThreadFactory {
 
     override def newThread(r: Runnable): Thread = {
       val thread = new Thread(r)

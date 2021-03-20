@@ -1,6 +1,6 @@
 package pms.db
 
-import pms.core._
+import pms._
 import pms.db.config.DBConnectionConfig
 
 import scala.concurrent.ExecutionContext

@@ -1,7 +1,7 @@
 package pms.algebra.user
 
-import pms.core.Fail
-import pms.core._
+import pms.Fail
+import pms._
 
 
 /**

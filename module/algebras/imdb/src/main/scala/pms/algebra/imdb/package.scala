@@ -2,7 +2,7 @@ package pms.algebra
 
 import java.time.Year
 
-import pms.core._
+import pms._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018

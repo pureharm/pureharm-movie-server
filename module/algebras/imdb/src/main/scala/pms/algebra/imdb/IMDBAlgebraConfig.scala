@@ -1,6 +1,6 @@
 package pms.algebra.imdb
 
-import pms.core._
+import pms._
 import pms.config._
 
 import scala.concurrent.duration._

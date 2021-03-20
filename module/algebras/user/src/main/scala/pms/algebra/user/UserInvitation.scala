@@ -1,6 +1,6 @@
 package pms.algebra.user
 
-import pms.core._
+import pms._
 
 /**
   *

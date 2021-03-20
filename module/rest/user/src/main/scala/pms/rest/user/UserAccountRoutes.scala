@@ -4,7 +4,7 @@ import org.http4s._
 import org.http4s.dsl._
 import pms.algebra.http._
 import pms.algebra.user._
-import pms.core._
+import pms._
 
 import pms.service.user._
 

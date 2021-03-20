@@ -5,8 +5,8 @@ import java.time.LocalDate
 import pms.algebra.imdb._
 import pms.algebra.movie._
 import pms.algebra.user._
-import pms.core.Fail
-import pms.core._
+import pms.Fail
+import pms._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018

@@ -1,5 +1,3 @@
-package pms
-
 import busymachines.pureharm.{PureharmCoreAliases, PureharmCoreImplicits}
 import scala.{concurrent => sc}
 
@@ -9,7 +7,7 @@ import cats.instances
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 Apr 2019
   */
-package object core
+package object pms
   extends PureharmCoreAliases with PureharmCoreImplicits with syntax.AllSyntax with syntax.AllSyntaxBinCompat0
   with syntax.AllSyntaxBinCompat1 with syntax.AllSyntaxBinCompat2 with syntax.AllSyntaxBinCompat3
   with syntax.AllSyntaxBinCompat4 with syntax.AllSyntaxBinCompat5 with syntax.AllSyntaxBinCompat6

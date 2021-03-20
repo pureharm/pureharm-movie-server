@@ -1,7 +1,7 @@
 package pms.server.bootstrap
 
-import pms.core.{Email, PlainTextPassword}
-import pms.core._
+import pms.{Email, PlainTextPassword}
+import pms._
 
 
 /**

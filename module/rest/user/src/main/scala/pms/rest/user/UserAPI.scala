@@ -3,7 +3,7 @@ package pms.rest.user
 import org.http4s.HttpRoutes
 import pms.algebra.http.AuthCtxRoutes
 import pms.algebra.user.{UserAlgebra, UserAuthAlgebra}
-import pms.core._
+import pms._
 import pms.service.user.UserAccountService
 
 trait UserAPI[F[_]] {

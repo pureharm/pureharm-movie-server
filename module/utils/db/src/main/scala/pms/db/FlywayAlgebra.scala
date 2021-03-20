@@ -1,7 +1,7 @@
 package pms.db
 
 import pms.logger._
-import pms.core._
+import pms._
 import pms.db.config._
 
 trait FlywayAlgebra[F[_]] {

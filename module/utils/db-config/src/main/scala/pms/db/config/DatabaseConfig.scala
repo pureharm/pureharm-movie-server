@@ -1,6 +1,6 @@
 package pms.db.config
 
-import pms.core._
+import pms._
 import pms.config._
 
 /**

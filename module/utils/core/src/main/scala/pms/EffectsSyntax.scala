@@ -1,4 +1,4 @@
-package pms.core
+package pms
 
 /**
   *

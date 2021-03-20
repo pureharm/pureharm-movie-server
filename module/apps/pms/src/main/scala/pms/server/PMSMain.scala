@@ -1,7 +1,7 @@
 package pms.server
 
 import org.http4s.server.Server
-import pms.core._
+import pms._
 
 /**
   *

@@ -12,7 +12,7 @@ import pms.db.config._
 import pms.db._
 import pms.email._
 import pms.logger._
-import pms.core._
+import pms._
 import pms.rest.movie.MovieAPI
 import pms.rest.user.UserAPI
 import pms.server.config._

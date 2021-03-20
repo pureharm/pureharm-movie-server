@@ -22,7 +22,7 @@ package object json {
   object implicits {}
 
   object derive {
-    def codec[T]: Codec[T] = throw pms.core.Fail.nicata("json derivation")
+    def codec[T]: Codec[T] = throw pms.Fail.nicata("json derivation")
   }
 //  object implicits extends phjson.PureharmJsonImplicits with busymachines.pureharm.internals.json.AnomalyJsonCodec with JavaTimeJson with PMSCoreJson
 //  object derive    extends phjson.SemiAutoDerivation

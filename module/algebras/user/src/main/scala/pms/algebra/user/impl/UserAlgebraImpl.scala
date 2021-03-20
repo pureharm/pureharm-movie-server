@@ -2,7 +2,7 @@ package pms.algebra.user.impl
 
 import pms.db._
 import pms.algebra.user._
-import pms.core._
+import pms._
 
 /**
   *

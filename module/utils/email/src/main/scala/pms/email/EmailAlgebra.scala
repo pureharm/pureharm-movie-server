@@ -1,7 +1,6 @@
 package pms.email
 
-import pms.core.{Async, Email}
-import pms.core._
+import pms._
 
 /**
   *

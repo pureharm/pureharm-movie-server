@@ -3,7 +3,7 @@ package pms.algebra.movie.impl
 import pms.db._
 import pms.algebra.movie._
 import pms.algebra.user.UserAuthAlgebra
-import pms.core._
+import pms._
 
 /**
   *

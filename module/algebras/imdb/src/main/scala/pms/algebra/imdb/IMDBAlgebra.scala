@@ -3,7 +3,7 @@ package pms.algebra.imdb
 import cats.effect.{Async, Resource}
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import pms.algebra.imdb.impl.IMDBAlgebraImpl
-import pms.core._
+import pms._
 
 /**
   *

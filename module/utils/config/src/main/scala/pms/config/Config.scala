@@ -1,6 +1,6 @@
 package pms.config
 
-import pms.core._
+import pms._
 /**
   * Capability for reading config files.
   *

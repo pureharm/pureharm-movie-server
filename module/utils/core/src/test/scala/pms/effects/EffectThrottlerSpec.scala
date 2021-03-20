@@ -1,4 +1,4 @@
-package pms.core
+package pms.effects
 
 //import java.util.concurrent.TimeUnit
 //import org.specs2.mutable.Specification

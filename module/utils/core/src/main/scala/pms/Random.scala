@@ -1,4 +1,4 @@
-package pms.core
+package pms
 
 /** Pseudo companion for [[cats.effect.std.Random]] that
   * exposes the one method we use to create randomness in our app

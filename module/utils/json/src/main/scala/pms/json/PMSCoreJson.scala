@@ -1,6 +1,6 @@
 package pms.json
 
-import pms.core._
+import pms._
 
 /**
   *

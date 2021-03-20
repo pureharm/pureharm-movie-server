@@ -1,6 +1,6 @@
 package pms.algebra
 
-import pms.core._
+import pms._
 import java.time._
 
 /**

@@ -2,7 +2,7 @@ package pms.rest.movie
 
 import pms.algebra.http.AuthCtxRoutes
 import pms.algebra.movie.MovieAlgebra
-import pms.core._
+import pms._
 import pms.service.movie.IMDBService
 
 trait MovieAPI[F[_]] {

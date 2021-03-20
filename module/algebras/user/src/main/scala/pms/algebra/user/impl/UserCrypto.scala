@@ -1,7 +1,7 @@
 package pms.algebra.user.impl
 
 import cats.effect.std.Random
-import pms.core._
+import pms._
 
 import scala.concurrent.duration._
 
@@ -12,7 +12,7 @@ import scala.concurrent.duration._
 //import tsec.passwordhashers._
 //import tsec.passwordhashers.jca._
 
-import pms.core.PlainTextPassword
+import pms.PlainTextPassword
 
 /**
   *

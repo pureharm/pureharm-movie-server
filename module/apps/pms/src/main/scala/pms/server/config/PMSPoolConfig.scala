@@ -1,7 +1,7 @@
 package pms.server.config
 
 import pms.config._
-import pms.core._
+import pms._
 
 final case class PMSPoolConfig(
   pgSqlPool:      Int,

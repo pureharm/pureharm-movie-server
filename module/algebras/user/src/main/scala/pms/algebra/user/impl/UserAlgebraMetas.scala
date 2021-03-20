@@ -1,7 +1,7 @@
 package pms.algebra.user.impl
 
 import pms.algebra.user._
-import pms.core._
+import pms._
 import pms.db._
 
 /**

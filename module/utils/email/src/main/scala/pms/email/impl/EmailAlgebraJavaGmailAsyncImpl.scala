@@ -3,7 +3,7 @@ package pms.email.impl
 import java.util.Properties
 import javax.mail._
 import javax.mail.internet._
-import pms.core._
+import pms._
 import pms.email._
 import pms.logger._
 
