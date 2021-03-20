@@ -18,6 +18,13 @@ package object kernel {
       */
     override def refine[F[_]](o: String)(implicit F: MonadThrow[F]): F[String] =
       if (o.length < 6) Fail.invalid("Password needs to have at least 6 characters").raiseError[F, String]
-      else o.pure[F]
+      else if (o.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72)
+        Fail.invalid("Password needs to be less than 71 bytes long, i.e. ~ 35 chars long").raiseError[F, String]
+      else
+        o.pure[F]
+
+    implicit class Ops(p: PlainTextPassword) {
+      def utf8Bytes: Array[Byte] = oldType(p).getBytes(java.nio.charset.StandardCharsets.UTF_8)
+    }
   }
 }
