@@ -11,7 +11,7 @@ CREATE TABLE users (
   password bytea NOT NULL,
   role user_role NOT NULL,
   registration_token varchar(255) NOT NULL,
-  password_reset_token varchar(255),
+  password_reset_token varchar(255)
 );
 
 CREATE TABLE user_invitations (
@@ -35,4 +35,4 @@ CREATE TABLE movies (
   id uuid PRIMARY KEY NOT NULL,
   name varchar(255) NOT NULL,
   release_date date NOT NULL
-)
+);
