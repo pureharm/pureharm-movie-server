@@ -24,4 +24,12 @@ object EnvVars {
 
   case object PMS_DB_FLYWAY_SCHEMAS extends EnvVars
 
+  case object PMS_EMAIL_FROM      extends EnvVars
+  case object PMS_EMAIL_USER      extends EnvVars
+  case object PMS_EMAIL_PASSWORD  extends EnvVars
+  case object PMS_EMAIL_HOST      extends EnvVars
+  case object PMS_EMAIL_PORT      extends EnvVars
+  case object PMS_EMAIL_AUTH      extends EnvVars
+  case object PMS_EMAIL_START_TLS extends EnvVars
+
 }

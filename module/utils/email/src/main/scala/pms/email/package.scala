@@ -5,7 +5,7 @@ package pms
   */
 package object email {
   //TODO: make PhantomTypes out of these
-  type Sender = String
+  type EmailSender = String
 
   type EmailUser     = String
   type EmailPassword = String

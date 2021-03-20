@@ -10,6 +10,4 @@ final case class IMDBAlgebraConfig(
   requestsNumber:   Long,
 )
 
-object IMDBAlgebraConfig {
-  def resource[F[_]: Config]: Resource[F, IMDBAlgebraConfig] = ???
-}
+object IMDBAlgebraConfig

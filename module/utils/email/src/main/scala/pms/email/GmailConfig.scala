@@ -8,7 +8,7 @@ import pms.config._
   * @since 05 Jun 2018
   */
 final case class GmailConfig(
-  from:     Sender,
+  from:     EmailSender,
   user:     EmailUser,
   password: EmailPassword,
   host:     SmtpHost,
@@ -17,8 +17,4 @@ final case class GmailConfig(
   startTLS: Boolean,
 )
 
-object GmailConfig extends ConfigLoader[GmailConfig] {
-
-  override val configValue: ConfigValue[Effect, GmailConfig] =
-    ???
-}
+object GmailConfig
