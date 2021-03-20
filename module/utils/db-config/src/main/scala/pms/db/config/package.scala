@@ -1,16 +1,13 @@
 package pms.db
 
 import pms._
+import com.comcast.ip4s._
 
 package object config {
-  final object DBHost extends SproutSub[String]
-
-  /** Do not include port in the hostname,
-    * configured via DBPort
-    */
+  final object DBHost extends SproutSub[Host]
   final type DBHost = DBHost.Type
 
-  final object DBPort extends SproutSub[Int]
+  final object DBPort extends SproutSub[Port]
   final type DBPort = DBPort.Type
 
   final object DBUsername extends SproutSub[String]

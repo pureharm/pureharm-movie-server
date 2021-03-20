@@ -27,24 +27,14 @@ object PMSServerConfig {
       imdbAlgebraConfig,
       dbConfig,
     )
-
-  import com.comcast.ip4s.{Host, Port}
-
-  implicit private val portDecoder: ConfigDecoder[String, Port] =
-    ConfigDecoder[String, Int].mapOption("Port")(Port.fromInt)
-
-  implicit private val hostDecoder: ConfigDecoder[String, Host] =
-    ConfigDecoder[String, String].mapOption("Host")(Host.fromString)
+  import com.comcast.ip4s._
 
   private object httpConfig extends ConfigLoader[HttpConfig] {
 
-    private val DefaultPort = Port.fromInt(21312).liftTo[Try](Fail.init(EnvVars.PMS_SERVER_PORT.show)).get
-    private val DefaultHost = Host.fromString("0.0.0.0").liftTo[Try](Fail.init(EnvVars.PMS_SERVER_HOST.show)).get
-
     override val configValue: ConfigValue[Effect, HttpConfig] = (
-      env(EnvVars.PMS_SERVER_PORT.show).as[Port].default(DefaultPort),
-      env(EnvVars.PMS_SERVER_HOST.show).as[Host].default(DefaultHost),
-      default(APIRoot("/pms/api")),
+      env(EnvVars.PMS_SERVER_PORT.show).as[Port].default(port"21312"),
+      env(EnvVars.PMS_SERVER_HOST.show).as[Host].default(host"0.0.0.0"),
+      env(EnvVars.PMS_SERVER_API_ROOT.show).as[APIRoot].default(APIRoot("/pms/api")),
       env(EnvVars.PMS_APP_DEV_MODE_BOOTSTRAP.show).as[Boolean].default(false),
     ).parMapN(HttpConfig.apply)
 
@@ -52,19 +42,14 @@ object PMSServerConfig {
 
   private object gmailConfig extends ConfigLoader[GmailConfig] {
 
-    private val DefaultEmailPort = Port.fromInt(587).liftTo[Try](Fail.init(EnvVars.PMS_EMAIL_PORT.show)).get
-
-    private val DefaultEmailHost =
-      Host.fromString("smtp.gmail.com").liftTo[Try](Fail.init(EnvVars.PMS_EMAIL_HOST.show)).get
-
     override val configValue: ConfigValue[Effect, GmailConfig] = (
-      env(EnvVars.PMS_EMAIL_FROM.show).as[EmailSender].default("email@gmailprovider.com"),
-      env(EnvVars.PMS_EMAIL_USER.show).as[EmailUser].default("email@gmailprovider.com"),
-      env(EnvVars.PMS_EMAIL_PASSWORD.show).as[EmailPassword].default("DontPutPasswordsHereLol"),
-      env(EnvVars.PMS_EMAIL_HOST.show).as[Host].default(DefaultEmailHost).map(_.toString),
-      env(EnvVars.PMS_EMAIL_PORT.show).as[Port].default(DefaultEmailPort).map(_.value),
-      env(EnvVars.PMS_EMAIL_AUTH.show).as[Boolean].default(true),
-      env(EnvVars.PMS_EMAIL_START_TLS.show).as[Boolean].default(true),
+      env(EnvVars.PMS_EMAIL_FROM.show).as[EmailSender].default(EmailSender("email@gmailprovider.com")),
+      env(EnvVars.PMS_EMAIL_USER.show).as[EmailUser].default(EmailUser("email@gmailprovider.com")),
+      env(EnvVars.PMS_EMAIL_PASSWORD.show).as[EmailPassword].default(EmailPassword("DontPutPasswordsHereLol")),
+      env(EnvVars.PMS_EMAIL_HOST.show).as[SmtpHost].default(SmtpHost(host"smtp.gmail.com")),
+      env(EnvVars.PMS_EMAIL_PORT.show).as[SmtpPort].default(SmtpPort(port"587")),
+      env(EnvVars.PMS_EMAIL_AUTH.show).as[SmtpAuth].default(SmtpAuth.True),
+      env(EnvVars.PMS_EMAIL_START_TLS.show).as[SmtpStartTLS].default(SmtpStartTLS.True),
     ).parMapN(GmailConfig.apply)
   }
   import scala.concurrent.duration._
@@ -90,8 +75,8 @@ object PMSServerConfig {
       * ./docker-postgresql.sh
       */
     private val connectionConfig: ConfigValue[Effect, DBConnectionConfig] = (
-      env(EnvVars.PMS_DB_HOST.show).as[DBHost].default(DBHost("localhost")),
-      env(EnvVars.PMS_DB_PORT.show).as[DBPort].default(DBPort(5432)),
+      env(EnvVars.PMS_DB_HOST.show).as[DBHost].default(DBHost(host"localhost")),
+      env(EnvVars.PMS_DB_PORT.show).as[DBPort].default(DBPort(port"5432")),
       env(EnvVars.PMS_DB_NAME.show).as[DatabaseName].default(DatabaseName("mymoviedatabase")),
       env(EnvVars.PMS_DB_USERNAME.show).as[DBUsername].default(DBUsername("busyuser")),
       env(EnvVars.PMS_DB_PASSWORD.show).as[DBPassword].default(DBPassword("qwerty")),

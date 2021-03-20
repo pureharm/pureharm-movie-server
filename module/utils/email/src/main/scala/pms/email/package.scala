@@ -1,22 +1,42 @@
 package pms
 
+import com.comcast.ip4s.{Host, Port}
+
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 Jun 2018
   */
 package object email {
 
-  type EmailSender = String
+  type EmailSender = EmailSender.Type
+  object EmailSender extends SproutSub[String]
 
-  type EmailUser     = String
-  type EmailPassword = String
+  type EmailUser = EmailUser.Type
+  object EmailUser extends SproutSub[String]
 
-  type SmtpHost = String
-  type SmtpPort = Int
+  type EmailPassword = EmailPassword.Type
+  object EmailPassword extends SproutSub[String]
 
-  type SmtpAuth     = Boolean
-  type SmtpStartTLS = Boolean
+  type SmtpHost = SmtpHost.Type
+  object SmtpHost extends SproutSub[Host]
+  type SmtpPort = SmtpPort.Type
+  object SmtpPort extends SproutSub[Port]
 
-  type Subject = String
-  type Content = String
+  type SmtpAuth = SmtpAuth.Type
+
+  object SmtpAuth extends SproutSub[Boolean] {
+    val False: SmtpAuth = newType(false)
+    val True:  SmtpAuth = newType(true)
+  }
+  type SmtpStartTLS = SmtpStartTLS.Type
+
+  object SmtpStartTLS extends SproutSub[Boolean] {
+    val False: SmtpStartTLS = newType(false)
+    val True:  SmtpStartTLS = newType(true)
+  }
+
+  type Subject = Subject.Type
+  object Subject extends SproutSub[String]
+  type Content = Content.Type
+  object Content extends SproutSub[String]
 
 }

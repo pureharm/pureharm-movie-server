@@ -23,7 +23,7 @@ object Libraries {
   val scalaScrapperV  = "2.2.0"     //https://github.com/ruippeixotog/scala-scraper/releases
   val cirisV          = "2.0.0-RC1" //https://github.com/vlovgr/ciris/releases
   val javaBcryptV     = "0.9.0"     //java - https://github.com/patrickfav/bcrypt/releases
-  val ips4sV          = "1.4.1"     //https://github.com/Comcast/ip4s/releases
+  val ips4sV          = "3.0.0-RC2" //https://github.com/Comcast/ip4s/releases
 
   val phCore = "com.busymachines"  %% s"pureharm-core" % pureharmCoreV withSources ()
   val sprout = "com.lorandszakacs" %% "sprout"         % sproutV       withSources ()

@@ -39,7 +39,7 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
       message   <- mimaMessage
       transport <- F.delay(session.getTransport("smtp"))
       _         <-
-        F.delay(transport.connect(config.host, config.user, config.password))
+        F.delay(transport.connect(config.host.toString, config.user, config.password))
           .onError(cleanupErr(transport))
       _         <- logger.info("Connected to SMTP server")
       _         <-

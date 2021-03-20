@@ -3,8 +3,6 @@ package pms.db
 import pms._
 import pms.db.config.DBConnectionConfig
 
-import scala.concurrent.ExecutionContext
-
 object TransactorAlgebra {
 
   def resource[F[_]](

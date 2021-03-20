@@ -23,9 +23,9 @@ final class UserAccountService[F[_]] private (
           .sendEmail(
             to      = inv.email,
             //FIXME: resolve this data from an email content algebra or something
-            subject = s"You have been invited to join Pure Movie Server as a :${inv.role.productPrefix}",
+            subject = Subject(s"You have been invited to join Pure Movie Server as a :${inv.role.productPrefix}"),
             //FIXME: resolve this data from an email content algebra or something
-            content = s"Please click this link to finish registration: [link_to_frontend]/$regToken",
+            content = Content(s"Please click this link to finish registration: [link_to_frontend]/$regToken"),
           )
           .forkAndForget //FIXME: do recoverWith and at least delete the user registration if sending email fails.
     } yield ()
@@ -42,8 +42,9 @@ final class UserAccountService[F[_]] private (
         emailAlgebra
           .sendEmail(
             to      = email,
-            subject = "Password reset for Pure Movie Server",
-            content = s"Please click the following link to reset your account password: [link_to_FE]$resetToken",
+            subject = Subject("Password reset for Pure Movie Server"),
+            content =
+              Content(s"Please click the following link to reset your account password: [link_to_FE]$resetToken"),
           )
           .forkAndForget
     } yield ()

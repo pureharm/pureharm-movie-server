@@ -1,5 +1,7 @@
 package pms
 
+import com.comcast.ip4s.{Host, Port}
+
 package object config {
   final type Effect[A] = ciris.Effect[A]
 
@@ -18,6 +20,16 @@ package object config {
   def env(name: String): ConfigValue[Effect, String] = ciris.env(name)
 
   def default[A](value: => A): ConfigValue[Effect, A] = ciris.default(value)
+
+  implicit def defaultHostSproutForCiris[N](implicit
+    ev: ConfigDecoder[String, Host],
+    nt: NewType[Host, N],
+  ): ConfigDecoder[String, N] = ev.map(nt.newType)
+
+  implicit def defaultPortSproutForCiris[N](implicit
+    ev: ConfigDecoder[String, Port],
+    nt: NewType[Port, N],
+  ): ConfigDecoder[String, N] = ev.map(nt.newType)
 
   implicit def defaultStringSproutForCiris[N](implicit
     ev: ConfigDecoder[String, String],
@@ -52,4 +64,10 @@ package object config {
         s.newType[Attempt](value).leftMap(thr => ciris.ConfigError(s"${thr.toString} --> $cfgKey"))
       }
   }
+
+  implicit val portDecoder: ConfigDecoder[String, Port] =
+    ConfigDecoder[String, Int].mapOption("Port")(Port.fromInt)
+
+  implicit val hostDecoder: ConfigDecoder[String, Host] =
+    ConfigDecoder[String, String].mapOption("Host")(Host.fromString)
 }

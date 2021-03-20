@@ -349,7 +349,8 @@ lazy val `pms-db-config` = utilProject("db-config")
 lazy val `pms-config` = utilProject("config")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.ciris
+      Libraries.ciris,
+      Libraries.ip4s,
     )
   )
   .dependsOn(
