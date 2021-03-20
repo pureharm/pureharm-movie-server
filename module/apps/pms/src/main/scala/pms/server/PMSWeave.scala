@@ -1,7 +1,5 @@
 package pms.server
 
-import org.http4s.server._
-import org.http4s._
 import pms.algebra.http._
 import pms.algebra.imdb._
 import pms.algebra.movie.MovieAlgebra
@@ -18,11 +16,14 @@ import pms.server.config._
 import pms.service.movie.IMDBService
 import pms.service.user.UserAccountService
 
+import org.http4s.server._
+import org.http4s._
+
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jul 2018
   */
 final class PMSWeave[F[_]] private (
-  serverConfig: PMSConfig,
+  serverConfig: PMSServerConfig,
   middleware:   AuthMiddleware[F, AuthCtx],
   userAPI:      UserAPI[F],
   movieAPI:     MovieAPI[F],
@@ -32,8 +33,8 @@ final class PMSWeave[F[_]] private (
     import org.http4s.ember.server.EmberServerBuilder
     EmberServerBuilder
       .default[F]
-      .withPort(serverConfig.port)
-      .withHost(serverConfig.host)
+      .withPort(serverConfig.httpConfig.port)
+      .withHost(serverConfig.httpConfig.host)
       .withHttpApp(http4sApp)
       .withoutTLS
       .build
@@ -46,9 +47,7 @@ final class PMSWeave[F[_]] private (
 //    val authed = NonEmptyList.of[AuthCtxRoutes[F]](userAPI.authedRoutes, movieAPI.authedRoutes).reduceK
     val pmsAPI: HttpRoutes[F] = HttpRoutes.empty[F]
 
-    org.http4s.server
-      .Router[F](("api", pmsAPI))
-      .orNotFound
+    Router[F](("api", pmsAPI)).orNotFound
   }
 
 }
@@ -66,26 +65,27 @@ object PMSWeave {
       implicit0(random: Random[F]) <- Random.resource[F]
       implicit0(secureRandom: SecureRandom[F]) <- SecureRandom.resource[F]
       implicit0(logger: Logger[F]) = logging.of(this)
-      serverConfig      <- PMSConfig.resource[F]
-      gmailConfig       <- GmailConfig.resource[F]
-      imdbAlgebraConfig <- IMDBAlgebraConfig.resource[F]
-      dbConfig          <- DatabaseConfig.resource[F]
+
+      config <- PMSServerConfig.resource[F]
 
       _         <- FlywayAlgebra
-        .resource[F](dbConfig.connection)
-        .evalMap(flyway => if (dbConfig.forceClean) flyway.cleanDB(logger).map(_ => flyway) else flyway.pure[F])
+        .resource[F](config.dbConfig.connection)
+        .evalMap(flyway => if (config.dbConfig.forceClean) flyway.cleanDB(logger).map(_ => flyway) else flyway.pure[F])
         .evalMap(flyway => flyway.runMigrations(logger))
 
-      implicit0(transactor: Transactor[F]) <- TransactorAlgebra.resource[F](dbConfig.connection)
+      implicit0(transactor: Transactor[F]) <- TransactorAlgebra.resource[F](config.dbConfig.connection)
 
-      throttler <- EffectThrottler.resource[F](imdbAlgebraConfig.requestsInterval, imdbAlgebraConfig.requestsNumber)
+      throttler <- EffectThrottler.resource[F](
+        config.imdbConfig.requestsInterval,
+        config.imdbConfig.requestsNumber,
+      )
 
       imdbAlgebra    <- IMDBAlgebra.resource[F](throttler)
       authAlgebra    <- UserAuthAlgebra.resource[F]
       accountAlgebra <- UserAccountAlgebra.resource[F]
       userAlgebra    <- UserAlgebra.resource[F]
       movieAlgebra   <- MovieAlgebra.resource[F](authAlgebra)
-      emailAlgebra   <- EmailAlgebra.resource[F](gmailConfig)
+      emailAlgebra   <- EmailAlgebra.resource[F](config.emailConfig)
 
       imdbService <- IMDBService.resource[F](movieAlgebra, imdbAlgebra)
       userService <- UserAccountService.resource[F](accountAlgebra, emailAlgebra)
@@ -95,6 +95,6 @@ object PMSWeave {
       movieAPI <- MovieAPI.resource(imdbService, movieAlgebra)
       userAPI  <- UserAPI.resource(userAlgebra, authAlgebra, userService)
 
-    } yield new PMSWeave[F](serverConfig, middleware, userAPI, movieAPI)
+    } yield new PMSWeave[F](config, middleware, userAPI, movieAPI)
 
 }

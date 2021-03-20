@@ -1,5 +1,6 @@
 package pms.email
 
+import ciris.{ConfigValue, Effect}
 import pms._
 import pms.config._
 
@@ -16,6 +17,8 @@ final case class GmailConfig(
   startTLS: Boolean,
 )
 
-object GmailConfig {
-  def resource[F[_]: Config]: Resource[F, GmailConfig] = ???
+object GmailConfig extends ConfigLoader[GmailConfig] {
+
+  override val configValue: ConfigValue[Effect, GmailConfig] =
+    ???
 }

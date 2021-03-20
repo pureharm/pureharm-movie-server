@@ -28,6 +28,8 @@ object Fail {
 
   def nicata(what: String): Throwable = Nicata(what)
 
+  def init(what: String): Throwable = Iscata(what, "Invalid initialization values")
+
   def iscata(what: String, where: String): Throwable = Iscata(what, where)
 
   def notFound(msg: String): Throwable = NotFoundAnomaly(msg)
