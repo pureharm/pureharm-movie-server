@@ -8,6 +8,6 @@ import com.comcast.ip4s.{Host, Port}
 final case class HttpConfig(
   port:      Port,
   host:      Host,
-  apiRoot:   String,
+  apiRoot:   APIRoot,
   bootstrap: Boolean,
 )

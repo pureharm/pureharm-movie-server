@@ -83,7 +83,7 @@ object FlywayAlgebra {
           case None    => () //default everything. Do nothing, lol, java
           case Some(c) =>
             if (c.migrationLocations.nonEmpty) {
-              fwConfig.locations(c.migrationLocations: _*)
+              fwConfig.locations(c.migrationLocations.map(MigrationLocation.oldType): _*)
             }
             if (c.schemas.nonEmpty) {
               fwConfig.schemas(c.schemas: _*)

@@ -21,8 +21,9 @@ object EnvVars {
   case object PMS_DB_NAME     extends EnvVars
   case object PMS_DB_USERNAME extends EnvVars
   case object PMS_DB_PASSWORD extends EnvVars
+  case object PMS_DB_SCHEMA   extends EnvVars
 
-  case object PMS_DB_FLYWAY_SCHEMAS extends EnvVars
+  case object PMS_DB_FLYWAY_CLEAN_ON_VALIDATION extends EnvVars
 
   case object PMS_EMAIL_FROM      extends EnvVars
   case object PMS_EMAIL_USER      extends EnvVars

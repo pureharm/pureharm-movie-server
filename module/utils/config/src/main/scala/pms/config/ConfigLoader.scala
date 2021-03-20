@@ -1,7 +1,6 @@
 package pms.config
 
 import pms._
-import ciris._
 
 trait ConfigLoader[T] {
   def configValue: ConfigValue[Effect, T]

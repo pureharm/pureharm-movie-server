@@ -280,7 +280,8 @@ lazy val `pms-db` = utilProject("db")
 lazy val `pms-email` = utilProject("email")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.javaxMail
+      Libraries.javaxMail,
+      Libraries.ip4s,
     )
   )
   .dependsOn(
@@ -332,7 +333,8 @@ lazy val `pms-json` = utilProject("json")
 lazy val `pms-db-config` = utilProject("db-config")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.flyway
+      Libraries.flyway,
+      Libraries.ip4s,
     )
   )
   .dependsOn(

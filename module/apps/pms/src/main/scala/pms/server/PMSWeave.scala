@@ -5,7 +5,6 @@ import pms.algebra.imdb._
 import pms.algebra.movie.MovieAlgebra
 import pms.algebra.user._
 import pms.config._
-import pms.db.config._
 import pms.db._
 import pms.email._
 import pms.logger._
@@ -43,9 +42,9 @@ final class PMSWeave[F[_]] private (
   private def http4sApp: HttpApp[F] = {
     import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 
-//    val routes = NonEmptyList.of[HttpRoutes[F]](userAPI.routes).reduceK
-//    val authed = NonEmptyList.of[AuthCtxRoutes[F]](userAPI.authedRoutes, movieAPI.authedRoutes).reduceK
-    val pmsAPI: HttpRoutes[F] = HttpRoutes.empty[F]
+    val routes = NonEmptyList.of[HttpRoutes[F]](userAPI.routes).reduceK
+    val authed = NonEmptyList.of[AuthCtxRoutes[F]](userAPI.authedRoutes, movieAPI.authedRoutes).reduceK
+    val pmsAPI: HttpRoutes[F] = routes <+> middleware(authed)
 
     Router[F](("api", pmsAPI)).orNotFound
   }
@@ -70,7 +69,6 @@ object PMSWeave {
 
       _         <- FlywayAlgebra
         .resource[F](config.dbConfig.connection)
-        .evalMap(flyway => if (config.dbConfig.forceClean) flyway.cleanDB(logger).map(_ => flyway) else flyway.pure[F])
         .evalMap(flyway => flyway.runMigrations(logger))
 
       implicit0(transactor: Transactor[F]) <- TransactorAlgebra.resource[F](config.dbConfig.connection)
