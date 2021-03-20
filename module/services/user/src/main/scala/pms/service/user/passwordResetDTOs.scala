@@ -1,6 +1,7 @@
 package pms.service.user
 
 import pms._
+import pms.kernel._
 import pms.algebra.user._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs

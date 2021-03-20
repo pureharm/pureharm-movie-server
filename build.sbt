@@ -268,11 +268,13 @@ lazy val `pms-db` = utilProject("db")
     `pms-core`,
     `pms-db-config`,
     `pms-logger`,
+    `pms-kernel`,
   )
   .aggregate(
     `pms-core`,
     `pms-db-config`,
     `pms-logger`,
+    `pms-kernel`,
   )
 
 lazy val `pms-email` = utilProject("email")
@@ -319,10 +321,12 @@ lazy val `pms-json` = utilProject("json")
     )
   )
   .dependsOn(
-    `pms-core`
+    `pms-core`,
+    `pms-kernel`,
   )
   .aggregate(
-    `pms-core`
+    `pms-core`,
+    `pms-kernel`,
   )
 
 lazy val `pms-db-config` = utilProject("db-config")

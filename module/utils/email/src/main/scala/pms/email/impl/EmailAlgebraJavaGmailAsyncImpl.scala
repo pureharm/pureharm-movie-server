@@ -4,6 +4,7 @@ import java.util.Properties
 import javax.mail._
 import javax.mail.internet._
 import pms._
+import pms.kernel._
 import pms.email._
 import pms.logger._
 
@@ -27,7 +28,7 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
       val message: MimeMessage = new MimeMessage(session)
 
       message.setFrom(new InternetAddress(config.from))
-      message.addRecipient(Message.RecipientType.TO, new InternetAddress(to.plainTextEmail))
+      message.addRecipient(Message.RecipientType.TO, new InternetAddress(Email.oldType(to)))
       message.setSubject(subject)
       message.setText(content)
       message.saveChanges()
@@ -44,7 +45,7 @@ private[email] class EmailAlgebraJavaGmailAsyncImpl[F[_]: Async](
       _         <-
         F.delay(transport.sendMessage(message, message.getAllRecipients))
           .onError(cleanupErr(transport))
-      _         <- logger.info(s"Sent email to: ${to.plainTextEmail}")
+      _         <- logger.info(s"Sent email to: $to")
       _         <- cleanup(transport)
     } yield ()
   }

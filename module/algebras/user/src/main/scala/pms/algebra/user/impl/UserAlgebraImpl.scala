@@ -3,6 +3,7 @@ package pms.algebra.user.impl
 import pms.db._
 import pms.algebra.user._
 import pms._
+import pms.kernel._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 21 Jun 2018

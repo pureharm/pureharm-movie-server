@@ -1,9 +1,9 @@
 package pms.service.user
 
-import pms.algebra.user._
-import pms.Email
-import pms.email._
 import pms._
+import pms.kernel._
+import pms.email._
+import pms.algebra.user._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018

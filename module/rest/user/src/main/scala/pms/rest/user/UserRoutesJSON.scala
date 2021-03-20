@@ -2,7 +2,6 @@ package pms.rest.user
 
 import pms.algebra.user._
 import pms.json._
-import pms.json.implicits._
 import pms.service.user._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs

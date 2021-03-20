@@ -1,10 +1,9 @@
 package pms.server.bootstrap
 
 import pms._
-
-import pms.algebra.user._
-import pms.{Email, PlainTextPassword}
+import pms.kernel._
 import pms.logger._
+import pms.algebra.user._
 
 /** This should be used only in development, and testing!
   *
@@ -29,7 +28,7 @@ sealed abstract class ServerBootstrapAlgebra[F[_]: Sync](
       token <- uba.bootstrapUser(inv)
       user  <- uca.invitationStep2(token, pw)
       _     <- logger.info(
-        s"BOOTSTRAP — inserting user: role=${inv.role.productPrefix} email=${inv.email.plainTextEmail} pw=${pw.plainText}"
+        s"BOOTSTRAP — inserting user: role=${inv.role.productPrefix} email=${inv.email} pw=$pw"
       )
     } yield user
 }

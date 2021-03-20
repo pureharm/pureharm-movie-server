@@ -1,10 +1,11 @@
 package pms.rest.user
 
 import org.http4s.dsl._
-import org.http4s.{headers, _}
+import org.http4s._
 import pms.algebra.http._
 import pms.algebra.user._
 import pms._
+import pms.kernel._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
@@ -22,8 +23,8 @@ final class UserLoginRoutes[F[_]](
     */
   private def logInWithUserNamePassword(bc: BasicCredentials): F[AuthCtx] =
     for {
-      email <- Email(bc.username).liftTo[F]
-      ptpw  <- PlainTextPassword(bc.password).liftTo[F]
+      email <- Email[F](bc.username)
+      ptpw  <- PlainTextPassword[F](bc.password)
       auth  <- userAuthAlgebra.authenticate(email, ptpw)
     } yield auth
 

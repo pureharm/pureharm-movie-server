@@ -12,7 +12,7 @@ import scala.concurrent.duration._
 //import tsec.passwordhashers._
 //import tsec.passwordhashers.jca._
 
-import pms.PlainTextPassword
+import pms.kernel._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 22 Mar 2019

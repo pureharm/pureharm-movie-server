@@ -1,6 +1,6 @@
 package pms.algebra.user
 
-import pms._
+import pms.kernel._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018

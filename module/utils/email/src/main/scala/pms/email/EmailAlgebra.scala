@@ -1,6 +1,7 @@
 package pms.email
 
 import pms._
+import pms.kernel._
 
 /** This style of writing algebras (in layman terms: interface) is called
   * "final tagless".

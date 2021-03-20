@@ -2,6 +2,7 @@ package pms.algebra.user
 
 import pms.algebra.user.impl.UserAlgebraImpl
 import pms._
+import pms.kernel._
 import pms.db._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs

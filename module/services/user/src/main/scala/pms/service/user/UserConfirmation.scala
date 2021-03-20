@@ -1,7 +1,8 @@
 package pms.service.user
 
-import pms.algebra.user.UserInviteToken
-import pms.PlainTextPassword
+import pms.kernel._
+import pms.algebra.user._
+
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 24 Apr 2019
