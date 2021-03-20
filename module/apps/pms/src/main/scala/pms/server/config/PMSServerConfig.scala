@@ -32,10 +32,10 @@ object PMSServerConfig {
   private object httpConfig extends ConfigLoader[HttpConfig] {
 
     override val configValue: ConfigValue[Effect, HttpConfig] = (
-      env(EnvVars.PMS_SERVER_PORT.show).as[Port].default(port"21312"),
-      env(EnvVars.PMS_SERVER_HOST.show).as[Host].default(host"0.0.0.0"),
-      env(EnvVars.PMS_SERVER_API_ROOT.show).as[APIRoot].default(APIRoot("/pms/api")),
-      env(EnvVars.PMS_APP_DEV_MODE_BOOTSTRAP.show).as[Boolean].default(false),
+      env(EnvVar.PMS_SERVER_PORT).as[Port].default(port"21312"),
+      env(EnvVar.PMS_SERVER_HOST).as[Host].default(host"0.0.0.0"),
+      env(EnvVar.PMS_SERVER_API_ROOT).as[APIRoot].default(APIRoot("/pms/api")),
+      env(EnvVar.PMS_APP_DEV_MODE_BOOTSTRAP).as[Boolean].default(false),
     ).parMapN(HttpConfig.apply)
 
   }
@@ -43,13 +43,13 @@ object PMSServerConfig {
   private object gmailConfig extends ConfigLoader[GmailConfig] {
 
     override val configValue: ConfigValue[Effect, GmailConfig] = (
-      env(EnvVars.PMS_EMAIL_FROM.show).as[EmailSender].default(EmailSender("email@gmailprovider.com")),
-      env(EnvVars.PMS_EMAIL_USER.show).as[EmailUser].default(EmailUser("email@gmailprovider.com")),
-      env(EnvVars.PMS_EMAIL_PASSWORD.show).as[EmailPassword].default(EmailPassword("DontPutPasswordsHereLol")),
-      env(EnvVars.PMS_EMAIL_HOST.show).as[SmtpHost].default(SmtpHost(host"smtp.gmail.com")),
-      env(EnvVars.PMS_EMAIL_PORT.show).as[SmtpPort].default(SmtpPort(port"587")),
-      env(EnvVars.PMS_EMAIL_AUTH.show).as[SmtpAuth].default(SmtpAuth.True),
-      env(EnvVars.PMS_EMAIL_START_TLS.show).as[SmtpStartTLS].default(SmtpStartTLS.True),
+      env(EnvVar.PMS_EMAIL_FROM).as[EmailSender].default(EmailSender("email@gmailprovider.com")),
+      env(EnvVar.PMS_EMAIL_USER).as[EmailUser].default(EmailUser("email@gmailprovider.com")),
+      env(EnvVar.PMS_EMAIL_PASSWORD).as[EmailPassword].default(EmailPassword("DontPutPasswordsHereLol")),
+      env(EnvVar.PMS_EMAIL_HOST).as[SmtpHost].default(SmtpHost(host"smtp.gmail.com")),
+      env(EnvVar.PMS_EMAIL_PORT).as[SmtpPort].default(SmtpPort(port"587")),
+      env(EnvVar.PMS_EMAIL_AUTH).as[SmtpAuth].default(SmtpAuth.True),
+      env(EnvVar.PMS_EMAIL_START_TLS).as[SmtpStartTLS].default(SmtpStartTLS.True),
     ).parMapN(GmailConfig.apply)
   }
   import scala.concurrent.duration._
@@ -75,18 +75,18 @@ object PMSServerConfig {
       * ./docker-postgresql.sh
       */
     private val connectionConfig: ConfigValue[Effect, DBConnectionConfig] = (
-      env(EnvVars.PMS_DB_HOST.show).as[DBHost].default(DBHost(host"localhost")),
-      env(EnvVars.PMS_DB_PORT.show).as[DBPort].default(DBPort(port"5432")),
-      env(EnvVars.PMS_DB_NAME.show).as[DatabaseName].default(DatabaseName("mymoviedatabase")),
-      env(EnvVars.PMS_DB_USERNAME.show).as[DBUsername].default(DBUsername("busyuser")),
-      env(EnvVars.PMS_DB_PASSWORD.show).as[DBPassword].default(DBPassword("qwerty")),
-      env(EnvVars.PMS_DB_SCHEMA.show).as[SchemaName].default(DefaultSchema),
+      env(EnvVar.PMS_DB_HOST).as[DBHost].default(DBHost(host"localhost")),
+      env(EnvVar.PMS_DB_PORT).as[DBPort].default(DBPort(port"5432")),
+      env(EnvVar.PMS_DB_NAME).as[DatabaseName].default(DatabaseName("mymoviedatabase")),
+      env(EnvVar.PMS_DB_USERNAME).as[DBUsername].default(DBUsername("busyuser")),
+      env(EnvVar.PMS_DB_PASSWORD).as[DBPassword].default(DBPassword("qwerty")),
+      env(EnvVar.PMS_DB_SCHEMA).as[SchemaName].default(DefaultSchema),
     ).parMapN(DBConnectionConfig.apply)
 
     private val flywayConfig: ConfigValue[Effect, FlywayConfig] = {
       ( //we want flyway to deal w/ the same Schema as our database connection config
-        env(EnvVars.PMS_DB_SCHEMA.show).as[SchemaName].default(DefaultSchema),
-        env(EnvVars.PMS_DB_FLYWAY_CLEAN_ON_VALIDATION.show)
+        env(EnvVar.PMS_DB_SCHEMA).as[SchemaName].default(DefaultSchema),
+        env(EnvVar.PMS_DB_FLYWAY_CLEAN_ON_VALIDATION)
           .as[CleanOnValidationError]
           .default(CleanOnValidationError.True),
       ).parMapN { case (schemaName, cleanOnValidationError) =>

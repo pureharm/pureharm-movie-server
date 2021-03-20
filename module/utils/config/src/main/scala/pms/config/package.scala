@@ -17,7 +17,7 @@ package object config {
   type ConfigValue[+F[_], A] = ciris.ConfigValue[F, A]
   val ConfigValue: ciris.ConfigValue.type = ciris.ConfigValue
 
-  def env(name: String): ConfigValue[Effect, String] = ciris.env(name)
+  def env(name: EnvVar): ConfigValue[Effect, String] = ciris.env(name.show)
 
   def default[A](value: => A): ConfigValue[Effect, A] = ciris.default(value)
 
