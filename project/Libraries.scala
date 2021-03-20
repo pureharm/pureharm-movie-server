@@ -42,7 +42,7 @@ object Libraries {
   lazy val circeGeneric:       ModuleID = "io.circe" %% "circe-generic"        % circeV
   lazy val circeGenericExtras: ModuleID = "io.circe" %% "circe-generic-extras" % circeV
 
-  lazy val http4sBlazeServer: ModuleID = "org.http4s" %% "http4s-blaze-server" % http4sV withSources ()
+  lazy val http4sEmberServer: ModuleID = "org.http4s" %% "http4s-ember-server" % http4sV withSources ()
   lazy val http4sCirce:       ModuleID = "org.http4s" %% "http4s-circe"        % http4sV withSources ()
   lazy val http4sDSL:         ModuleID = "org.http4s" %% "http4s-dsl"          % http4sV withSources ()
 

@@ -1,6 +1,5 @@
 package pms.server
 
-import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server._
 import org.http4s._
 import pms.algebra.http._
@@ -19,33 +18,33 @@ import pms.server.config._
 import pms.service.movie.IMDBService
 import pms.service.user.UserAccountService
 
-import scala.concurrent.ExecutionContext
-
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jul 2018
   */
 final class PMSWeave[F[_]] private (
-  serverConfig:         PMSConfig,
-  middleware:           AuthMiddleware[F, AuthCtx],
-  userAPI:              UserAPI[F],
-  movieAPI:             MovieAPI[F],
-  httpExecutionContext: ExecutionContext,
-)(implicit F:           Async[F], timer: Temporal[F]) {
+  serverConfig: PMSConfig,
+  middleware:   AuthMiddleware[F, AuthCtx],
+  userAPI:      UserAPI[F],
+  movieAPI:     MovieAPI[F],
+)(implicit F:   Async[F]) {
 
-  def serverResource: Resource[F, Server] =
-    BlazeServerBuilder[F](httpExecutionContext)
-      .bindHttp(serverConfig.port, serverConfig.host)
+  def serverResource: Resource[F, Server] = {
+    import org.http4s.ember.server.EmberServerBuilder
+    EmberServerBuilder
+      .default[F]
+      .withPort(serverConfig.port)
+      .withHost(serverConfig.host)
       .withHttpApp(http4sApp)
-      .withWebSockets(enableWebsockets = false)
-      .withBanner(Seq.empty)
-      .resource
+      .withoutTLS
+      .build
+  }
 
   private def http4sApp: HttpApp[F] = {
     import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 
 //    val routes = NonEmptyList.of[HttpRoutes[F]](userAPI.routes).reduceK
 //    val authed = NonEmptyList.of[AuthCtxRoutes[F]](userAPI.authedRoutes, movieAPI.authedRoutes).reduceK
-    val pmsAPI: HttpRoutes[F] = ??? //routes <+> middleware(authed)
+    val pmsAPI: HttpRoutes[F] = HttpRoutes.empty[F]
 
     org.http4s.server
       .Router[F](("api", pmsAPI))
@@ -67,21 +66,17 @@ object PMSWeave {
       implicit0(random: Random[F]) <- Random.resource[F]
       implicit0(secureRandom: SecureRandom[F]) <- SecureRandom.resource[F]
       implicit0(logger: Logger[F]) = logging.of(this)
-      poolsConfig       <- PMSPoolConfig.resource[F]
       serverConfig      <- PMSConfig.resource[F]
       gmailConfig       <- GmailConfig.resource[F]
       imdbAlgebraConfig <- IMDBAlgebraConfig.resource[F]
       dbConfig          <- DatabaseConfig.resource[F]
 
-      httpServerExecutionContext <-
-        PoolFixed.fixed[F]("pms-http4s", maxThreads = poolsConfig.httpServerPool, daemons = false)
+      _         <- FlywayAlgebra
+        .resource[F](dbConfig.connection)
+        .evalMap(flyway => if (dbConfig.forceClean) flyway.cleanDB(logger).map(_ => flyway) else flyway.pure[F])
+        .evalMap(flyway => flyway.runMigrations(logger))
 
       implicit0(transactor: Transactor[F]) <- TransactorAlgebra.resource[F](dbConfig.connection)
-      _                          <-
-        FlywayAlgebra
-          .resource[F](dbConfig.connection)
-          .evalMap(flyway => if (dbConfig.forceClean) flyway.cleanDB(logger).map(_ => flyway) else flyway.pure[F])
-          .evalMap(flyway => flyway.runMigrations(logger))
 
       throttler <- EffectThrottler.resource[F](imdbAlgebraConfig.requestsInterval, imdbAlgebraConfig.requestsNumber)
 
@@ -100,6 +95,6 @@ object PMSWeave {
       movieAPI <- MovieAPI.resource(imdbService, movieAlgebra)
       userAPI  <- UserAPI.resource(userAlgebra, authAlgebra, userService)
 
-    } yield new PMSWeave[F](serverConfig, middleware, userAPI, movieAPI, httpServerExecutionContext)
+    } yield new PMSWeave[F](serverConfig, middleware, userAPI, movieAPI)
 
 }

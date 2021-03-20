@@ -301,7 +301,7 @@ lazy val `pms-http` = utilProject("http")
     libraryDependencies ++= Seq(
       Libraries.http4sDSL,
       Libraries.http4sCirce,
-      Libraries.http4sBlazeServer,
+      Libraries.http4sEmberServer,
     )
   )
   .dependsOn(

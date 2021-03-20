@@ -1,5 +1,6 @@
 package pms.server.config
 
+import com.comcast.ip4s.{Host, Port}
 import pms.config._
 import pms._
 
@@ -7,8 +8,8 @@ import pms._
   * @since 20 Jun 2018
   */
 final case class PMSConfig(
-  port:      Int,
-  host:      String,
+  port:      Port,
+  host:      Host,
   apiRoot:   String,
   bootstrap: Boolean,
 )
