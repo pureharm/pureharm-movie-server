@@ -3,9 +3,9 @@ package pms.algebra.user.impl
 import pms._
 import pms.kernel._
 import pms.db._
-import pms.algebra.user.{UserInviteExpiration, UserInviteToken, UserRole}
+import pms.algebra.user._
 
-object SQLUserInvitations {
+object PSQLUserInvitations {
 
   final case class UserInvitationRepr(
     email:           Email,
@@ -24,7 +24,7 @@ object SQLUserInvitations {
   private val user_invitations_row:   Row       = sql"$email, $role, $invitation_token, $expires_at"
   private val user_invitations_table: TableName = const"user_invitations"
 
-  private val enum_role:                  Codec[UserRole]             = SQLUserCodecs.enum_user_role
+  private val enum_role:                  Codec[UserRole]             = PSQLUserCodecs.enum_user_role
   private val varchar64_invitation_token: Codec[UserInviteToken]      = varchar(64).sprout
   private val timestamptz_expires_at:     Codec[UserInviteExpiration] = timestamptz.sprout
 
@@ -34,8 +34,8 @@ object SQLUserInvitations {
   /*_*/
 }
 
-final case class SQLUserInvitations[F[_]](private val session: Session[F])(implicit F: MonadCancelThrow[F]) {
-  import SQLUserInvitations._
+final case class PSQLUserInvitations[F[_]](private val session: Session[F])(implicit F: MonadCancelThrow[F]) {
+  import PSQLUserInvitations._
   import pms.db.codecs._
   /*_*/
 

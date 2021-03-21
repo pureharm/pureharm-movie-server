@@ -4,9 +4,9 @@ import pms._
 import pms.algebra.user.UserRole
 import pms.db._
 
-object SQLUserCodecs extends SQLUserCodecs
+object PSQLUserCodecs extends PSQLUserCodecs
 
-trait SQLUserCodecs {
+trait PSQLUserCodecs {
   import db.codecs._
 
   val enum_user_role: Codec[UserRole] =

@@ -8,7 +8,7 @@ import pms.time._
   */
 package object user {
   type UserID = UserID.Type
-  object UserID extends Sprout[Long] with SproutEq[Long]
+  object UserID extends SproutUUID
 
   type UserInviteToken = UserInviteToken.Type
   object UserInviteToken extends Sprout[String]

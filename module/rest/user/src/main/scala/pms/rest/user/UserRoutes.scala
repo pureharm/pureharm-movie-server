@@ -15,7 +15,7 @@ final class UserRoutes[F[_]](
 ) extends Http4sDsl[F] with UserRoutesJSON {
 
   private val userRestRoutes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {
-    case GET -> Root / "user" / LongVar(userID) as user =>
+    case GET -> Root / "user" / UUIDVar(userID) as user =>
       for {
         resp <- Ok(userAlgebra.findUser(UserID(userID))(user))
       } yield resp
