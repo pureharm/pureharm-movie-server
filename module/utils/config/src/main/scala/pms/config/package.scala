@@ -21,39 +21,14 @@ package object config {
 
   def default[A](value: => A): ConfigValue[Effect, A] = ciris.default(value)
 
-  implicit def defaultHostSproutForCiris[N](implicit
-    ev: ConfigDecoder[String, Host],
-    nt: NewType[Host, N],
+  implicit def defaultCirisEnvVarNewTypeConfigDecoder[O, N](implicit
+    nt: NewType[O, N],
+    ev: ConfigDecoder[String, O],
   ): ConfigDecoder[String, N] = ev.map(nt.newType)
 
-  implicit def defaultPortSproutForCiris[N](implicit
-    ev: ConfigDecoder[String, Port],
-    nt: NewType[Port, N],
-  ): ConfigDecoder[String, N] = ev.map(nt.newType)
-
-  implicit def defaultStringSproutForCiris[N](implicit
-    ev: ConfigDecoder[String, String],
-    nt: NewType[String, N],
-  ): ConfigDecoder[String, N] = ev.map(nt.newType)
-
-  implicit def defaultIntSproutForCiris[N](implicit
-    ev: ConfigDecoder[String, Int],
-    nt: NewType[Int, N],
-  ): ConfigDecoder[String, N] = ev.map(nt.newType)
-
-  implicit def defaultBooleanSproutForCiris[N](implicit
-    ev: ConfigDecoder[String, Boolean],
-    nt: NewType[Boolean, N],
-  ): ConfigDecoder[String, N] = ev.map(nt.newType)
-
-  implicit def defaultStringRefinedForCiris[N](implicit
-    ev: ConfigDecoder[String, String],
-    nt: RefinedTypeThrow[String, N],
-  ): ConfigDecoder[String, N] = ev.sproutRefined[N]
-
-  implicit def defaultIntRefinedForCiris[N](implicit
-    ev: ConfigDecoder[String, Int],
-    nt: RefinedTypeThrow[Int, N],
+  implicit def defaultCirisEnvVarRefinedTypeConfigDecoder[O, N](implicit
+    nt: RefinedTypeThrow[O, N],
+    ev: ConfigDecoder[String, O],
   ): ConfigDecoder[String, N] = ev.sproutRefined[N]
 
   implicit class Ops[O](v: EnvDecoder[O]) {
