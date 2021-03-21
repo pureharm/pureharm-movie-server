@@ -10,8 +10,8 @@ import pms.service.user._
 trait UserRoutesJSON {
 
   implicit val userRoleCirceCodec: Codec[UserRole] = Codec.from(
-    Decoder[String].emap(s => UserRole.fromName(s).left.map(_.getMessage)),
-    Encoder[String].contramap(ur => ur.productPrefix),
+    Decoder[String].emapTry(s => UserRole.fromName[Try](s)),
+    Encoder[String].contramap(_.toName),
   )
 
   implicit val userInvitationCirceCodec: Codec[UserInvitation] =

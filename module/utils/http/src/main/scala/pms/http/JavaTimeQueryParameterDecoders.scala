@@ -1,10 +1,8 @@
 package pms.http
 
-import java.time.LocalDate
-
-import org.http4s.QueryParamDecoder
-
-import pms.TimeFormatters
+import org.http4s.{ParseFailure, QueryParamDecoder}
+import pms._
+import pms.time._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 28 Jun 2018
@@ -12,5 +10,14 @@ import pms.TimeFormatters
 trait JavaTimeQueryParameterDecoders {
 
   implicit val localDateQueryParamDecoder: QueryParamDecoder[LocalDate] =
-    QueryParamDecoder.stringQueryParamDecoder.map(s => LocalDate.parse(s, TimeFormatters.LocalDateFormatter))
+    QueryParamDecoder.stringQueryParamDecoder.emap(s =>
+      LocalDate
+        .fromString[Attempt](s)
+        .leftMap(t =>
+          ParseFailure(
+            sanitized = "Failed to parse query param for LocalDate",
+            details   = t.getMessage,
+          )
+        )
+    )
 }
