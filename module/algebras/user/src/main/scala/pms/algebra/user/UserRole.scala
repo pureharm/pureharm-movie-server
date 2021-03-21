@@ -6,14 +6,16 @@ import pms._
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018
   */
-sealed trait UserRole extends Product with Serializable with Ordered[UserRole]
+sealed trait UserRole extends Product with Serializable with Ordered[UserRole] {
+  def toName: String = this.productPrefix
+}
 
 object UserRole {
 
-  def fromName(s: String): Attempt[UserRole] =
+  def fromName[F[_]: ApplicativeThrow](s: String): F[UserRole] =
     nameToRole
       .get(s)
-      .liftTo[Attempt](Fail.invalid(s"UserRole has to be one of $allString, but was: $s"))
+      .liftTo[F](Fail.invalid(s"UserRole has to be one of $allString, but was: $s"))
 
   implicit val userRoleOrdering: Ordering[UserRole] =
     (x: UserRole, y: UserRole) => x.compare(y)
