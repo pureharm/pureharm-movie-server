@@ -1,6 +1,6 @@
 //package pms.algebra.user
 //
-//import doobie.util.transactor.Transactor
+//import doobie.util.dbPool.dbPool
 //import pms.core.{Email,               Module, PlainTextPassword}
 //import pms.db.config.{DatabaseConfig, DatabaseConfigAlgebra}
 //import pms.core._
@@ -15,7 +15,7 @@
 //    DatabaseConfig("org.postgresql.Driver", "jdbc:postgresql:testmoviedatabase", "busyuser", "qwerty", false)
 //
 //  implicit val cs = IO.contextShift(ExecutionContext.global)
-//  implicit def transactor: Transactor[IO] = DatabaseConfigAlgebra.transactor(databaseConfig).unsafeRunSync()
+//  implicit def dbPool: dbPool[IO] = DatabaseConfigAlgebra.dbPool(databaseConfig).unsafeRunSync()
 //  implicit val userAccount      = userBootstrapAlgebra.unsafeRunSync()
 //
 //  DatabaseConfigAlgebra.initializeSQLDb(databaseConfig).unsafeRunSync()

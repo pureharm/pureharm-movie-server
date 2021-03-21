@@ -1,6 +1,6 @@
 //package pms.service.movie
 //import cats.effect.Timer
-//import doobie.util.transactor.Transactor
+//import doobie.util.dbPool.dbPool
 //import pms.algebra.imdb.{IMDBAlgebraConfig, ModuleIMDBAsync}
 //import pms.algebra.movie.ModuleMovieAsync
 //import pms.algebra.user.ModuleUserAsync
@@ -22,7 +22,7 @@
 //
 //  implicit val cs = IO.contextShift(ExecutionContext.global)
 //
-//  implicit def transactor: Transactor[IO] = DatabaseConfigAlgebra.transactor(databaseConfig).unsafeRunSync()
+//  implicit def dbPool: dbPool[IO] = DatabaseConfigAlgebra.dbPool(databaseConfig).unsafeRunSync()
 //
 //  implicit def async: Async[IO] = Concurrent.apply[IO]
 //

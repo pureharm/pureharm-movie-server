@@ -15,7 +15,9 @@ package object pms
   with instances.AllInstancesBinCompat2 with instances.AllInstancesBinCompat3 with instances.AllInstancesBinCompat4
   with instances.AllInstancesBinCompat5 with instances.AllInstancesBinCompat6 with EffectsSyntax.Implicits {
 
-  type Random[F[_]] = ce.std.Random[F]
+  type Random[F[_]]  = ce.std.Random[F]
+  type Console[F[_]] = ce.std.Console[F]
+  val Console: ce.std.Console.type = ce.std.Console
 
   //----------- handy custom types -----------
   final type Attempt[+R] = scala.util.Either[Throwable, R]
@@ -192,8 +194,6 @@ package object pms
 
   final type Resource[F[_], A] = ce.Resource[F, A]
   final val Resource: ce.Resource.type = ce.Resource
-
-  //----------- cats-effect concurrent -----------
 
   //----------- standard scala types -----------
 

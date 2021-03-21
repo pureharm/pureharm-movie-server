@@ -32,6 +32,6 @@ object MovieAlgebra {
 
   def resource[F[_]](
     userAuth:            UserAuthAlgebra[F]
-  )(implicit transactor: SessionPool[F], F: cats.effect.MonadCancelThrow[F]): Resource[F, MovieAlgebra[F]] =
-    new MovieAlgebraImpl(userAuth, transactor).pure[Resource[F, *]].widen
+  )(implicit dbPool: DDPool[F], F: cats.effect.MonadCancelThrow[F]): Resource[F, MovieAlgebra[F]] =
+    new MovieAlgebraImpl(userAuth, dbPool).pure[Resource[F, *]].widen
 }

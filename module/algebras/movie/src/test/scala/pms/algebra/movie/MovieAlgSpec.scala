@@ -6,7 +6,7 @@
 //import pms.core._
 //import pms.server.bootstrap.ModuleServerBootstrap
 //import pms.db.config._
-//import doobie.util.transactor.Transactor
+//import doobie.util.dbPool.dbPool
 //import pms.algebra.user._
 //import spire.math.Interval
 //
@@ -22,8 +22,8 @@
 //    DatabaseConfig("org.postgresql.Driver", "jdbc:postgresql:testmoviedatabase", "busyuser", "qwerty", false)
 //
 //  implicit val cs = IO.contextShift(ExecutionContext.global)
-//  implicit val transactor:       Transactor[IO]                  = DatabaseConfigAlgebra.transactor(databaseConfig).unsafeRunSync()
-//  implicit val userAccount:      UserAccountAlgebra[IO]          = UserAccountAlgebra.async(F, transactor)
+//  implicit val dbPool:       dbPool[IO]                  = DatabaseConfigAlgebra.dbPool(databaseConfig).unsafeRunSync()
+//  implicit val userAccount:      UserAccountAlgebra[IO]          = UserAccountAlgebra.async(F, dbPool)
 //  implicit val userBootstrapAlg: UserAccountBootstrapAlgebra[IO] = UserAccountBootstrapAlgebra.impl(userAccount)
 //
 //  DatabaseConfigAlgebra.initializeSQLDb(databaseConfig).unsafeRunSync()
@@ -31,7 +31,7 @@
 //  val (user: User, email: Email, userRole: UserRole, userPw: PlainTextPassword) =
 //    TestHelpersFunctions.unsafeCreateUser("SuperAdmin_Movie@yahoo.com", "SuperAdmin", "password1234")
 //
-//  val userAuth = UserAuthAlgebra.async(F, transactor)
+//  val userAuth = UserAuthAlgebra.async(F, dbPool)
 //
 //  implicit val authCtx = userAuth.authenticate(email, userPw).unsafeRunSync()
 //

@@ -11,7 +11,7 @@ import pms.kernel._
 final private[user] class UserAlgebraImpl[F[_]](implicit
                                                 val F:          MonadThrow[F],
                                                 val sr:         SecureRandom[F],
-                                                val transactor: SessionPool[F],
+                                                val dbPool: DDPool[F],
 ) extends UserAuthAlgebra[F]()(F) with UserAccountAlgebra[F] with UserAlgebra[F] {
 
 //  import UserAlgebraSQL._
@@ -23,7 +23,7 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
 
   override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] =
     for {
-//      userRepr <- findRepr(email).transact(transactor).flatMap {
+//      userRepr <- findRepr(email).transact(dbPool).flatMap {
 //        case None    => F.raiseError[UserRepr](invalidEmailOrPW)
 //        case Some(v) => F.pure[UserRepr](v)
 //      }
@@ -57,7 +57,7 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
 //        role            = inv.role,
 //        invitationToken = token,
 //      )
-//      _ <- UserInvitationSQL.insert(toInsert).transact(transactor)
+//      _ <- UserInvitationSQL.insert(toInsert).transact(dbPool)
     } yield token
 
   override def invitationStep2(token: UserInviteToken, pw: PlainTextPassword): F[User] =

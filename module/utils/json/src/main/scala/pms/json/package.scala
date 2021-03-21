@@ -1,5 +1,8 @@
 package pms
 
+import io.circe.Decoder.Result
+import io.circe.{HCursor, Json}
+
 /** Simply an alias for busymachines.pureharm.json._ so that we don't have
   * to always import that as well
   *
@@ -17,7 +20,17 @@ package object json extends JavaTimeJson {
   val Decoder: io.circe.Decoder.type = io.circe.Decoder
 
   object derive {
-    def codec[T]: Codec[T] = throw pms.Fail.nicata("json derivation")
+
+    def codec[T]: Codec[T] = new Codec[T] {
+
+      override def apply(c: HCursor): Result[T] = io.circe.DecodingFailure
+        .fromThrowable(
+          Fail.nicata("JSON decoding"),
+          List.empty,
+        )
+        .asLeft[T]
+      override def apply(a: T):       Json      = Json.Null
+    }
   }
 
   implicit def sproutJSONEncoder[O, N](implicit enc: Encoder[O], ot: OldType[O, N]): Encoder[N] =

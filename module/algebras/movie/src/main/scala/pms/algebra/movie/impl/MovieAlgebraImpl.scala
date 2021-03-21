@@ -10,7 +10,7 @@ import pms._
   */
 final private[movie] class MovieAlgebraImpl[F[_]: MonadThrow](
                                                                override protected val userAuth: UserAuthAlgebra[F],
-                                                               private val transactor:          SessionPool[F],
+                                                               private val dbPool:          DDPool[F],
 ) extends MovieAlgebra[F] {
 
   override protected def createMovieImpl(mc: MovieCreation): F[Movie] = ???

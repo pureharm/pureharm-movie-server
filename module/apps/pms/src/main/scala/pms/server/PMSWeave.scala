@@ -59,6 +59,7 @@ object PMSWeave {
     mainContextShift: Async[F],
   ): Resource[F, PMSWeave[F]] =
     for {
+      implicit0(console: Console[F]) <- Console.make[F].pure[Resource[F, *]]
       implicit0(config: Config[F]) <- Config.resource[F]
       implicit0(logging: Logging[F]) <- Logging.resource[F]
       implicit0(random: Random[F]) <- Random.resource[F]
@@ -67,11 +68,11 @@ object PMSWeave {
 
       config <- PMSServerConfig.resource[F]
 
-      _         <- FlywayAlgebra
+      _         <- Flyway
         .resource[F](config.dbConfig.connection)
         .evalMap(flyway => flyway.runMigrations(logger))
 
-      implicit0(transactor: SessionPool[F]) <- SessionPool.resource[F](config.dbConfig.connection)
+      implicit0(dbPool: DDPool[F]) <- DBPool.resource[F](config.dbConfig.connection)
 
       throttler <- EffectThrottler.resource[F](
         config.imdbConfig.requestsInterval,

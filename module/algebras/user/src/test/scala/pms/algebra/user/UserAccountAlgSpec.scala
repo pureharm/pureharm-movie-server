@@ -1,7 +1,7 @@
 //package pms.algebra.user
 //
 //import cats.effect.ContextShift
-//import doobie.util.transactor.Transactor
+//import doobie.util.dbPool.dbPool
 //import pms.core.{Email, Module, PlainTextPassword}
 //import pms.core._
 //import pms.db.config.{DatabaseConfig, DatabaseConfigAlgebra}
@@ -17,7 +17,7 @@
 //  implicit override def F: Concurrent[IO]   = Concurrent.apply[IO]
 //  implicit val cs:         ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 //
-//  implicit val transactor: Transactor[IO] = DatabaseConfigAlgebra.transactor(databaseConfig).unsafeRunSync()
+//  implicit val dbPool: dbPool[IO] = DatabaseConfigAlgebra.dbPool(databaseConfig).unsafeRunSync()
 //
 //  implicit val userAccount = userModuleAlgebra.unsafeRunSync()
 //  implicit val userBootstrapAlg: UserAccountBootstrapAlgebra[IO] =

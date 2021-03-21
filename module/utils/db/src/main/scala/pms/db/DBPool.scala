@@ -4,11 +4,13 @@ import pms._
 import pms.db._
 import pms.db.config._
 
-object SessionPool {
+object DBPool {
+
+  def apply[F[_]](implicit sp: DDPool[F]): DDPool[F] = sp
 
   def resource[F[_]](
     config:      DBConnectionConfig
-  )(implicit as: Async[F]): Resource[F, Resource[F, Session[F]]] = {
+  )(implicit as: Async[F], console: Console[F]): Resource[F, Resource[F, Session[F]]] = {
     import natchez.Trace
     /** By setting the search path setting of the session we tell
       * postgresql which schema to use.
@@ -20,7 +22,7 @@ object SessionPool {
       * https://www.postgresql.org/docs/current/runtime-config-client.html
       */
     val parameters:         Map[String, String] =
-      Session.DefaultConnectionParameters ++ ("search_path", SchemaName.oldType(config.schema))
+      Session.DefaultConnectionParameters.updated("search_path", SchemaName.oldType(config.schema))
     implicit val noopTrace: Trace[F]            = Trace.Implicits.noop[F]
     import skunk.Strategy
     Session
@@ -32,9 +34,10 @@ object SessionPool {
         password   = Option(config.password),
         debug      = false,
         max        = 64,
-        //debug      = true,
         parameters = parameters,
-        strategy   = Strategy.SearchPath,//required for figuring out user defined types
+        //required for figuring out user defined types
+        strategy   = Strategy.SearchPath,
+        //debug      = true,
       )
 
   }
