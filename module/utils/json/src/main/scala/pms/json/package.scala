@@ -1,8 +1,5 @@
 package pms
 
-import io.circe.Decoder.Result
-import io.circe.{HCursor, Json}
-
 /** Simply an alias for busymachines.pureharm.json._ so that we don't have
   * to always import that as well
   *
@@ -10,6 +7,7 @@ import io.circe.{HCursor, Json}
   * @since 25 Jun 2018
   */
 package object json extends JavaTimeJson {
+  import io.circe._
   type Codec[A] = io.circe.Codec[A]
   val Codec: io.circe.Codec.type = io.circe.Codec
 
@@ -20,29 +18,20 @@ package object json extends JavaTimeJson {
   val Decoder: io.circe.Decoder.type = io.circe.Decoder
 
   object derive {
+    import io.circe.generic.codec.DerivedAsObjectCodec
+    import shapeless.Lazy
 
-    def codec[T]: Codec[T] = new Codec[T] {
-
-      override def apply(c: HCursor): Result[T] = io.circe.DecodingFailure
-        .fromThrowable(
-          Fail.nicata("JSON decoding"),
-          List.empty,
-        )
-        .asLeft[T]
-      override def apply(a: T):       Json      = Json.Null
-    }
+    def codec[T](implicit codec: Lazy[DerivedAsObjectCodec[T]]): Codec[T] =
+      io.circe.generic.semiauto.deriveCodec[T]
   }
 
-  implicit def sproutJSONEncoder[O, N](implicit enc: Encoder[O], ot: OldType[O, N]): Encoder[N] =
+  implicit def sproutJSONEncoder[O, N](implicit ot: OldType[O, N], enc: Encoder[O]): Encoder[N] =
     enc.contramap(ot.oldType)
 
-  implicit def sproutNewtypeJSONDecoder[O, N](implicit dec: Decoder[O], nt: NewType[O, N]): Decoder[N] =
+  implicit def sproutNewtypeJSONDecoder[O, N](implicit nt: NewType[O, N], dec: Decoder[O]): Decoder[N] =
     dec.imap(nt.newType)(nt.oldType)
 
-  implicit def sproutRefinedThrowJSONDecoder[O, N](implicit dec: Decoder[O], nt: RefinedTypeThrow[O, N]): Decoder[N] =
-    dec.emap(o => nt.newType[Attempt](o).leftMap(_.getMessage))
-
-//  object implicits extends phjson.PureharmJsonImplicits with busymachines.pureharm.internals.json.AnomalyJsonCodec with JavaTimeJson with PMSCoreJson
-//  object derive    extends phjson.SemiAutoDerivation
+  implicit def sproutRefinedThrowJSONDecoder[O, N](implicit nt: RefinedTypeThrow[O, N], dec: Decoder[O]): Decoder[N] =
+    dec.emapTry(o => nt.newType[Try](o))
 
 }
