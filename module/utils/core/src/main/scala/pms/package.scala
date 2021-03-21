@@ -165,17 +165,23 @@ package object pms
   final val Show: cats.Show.type = cats.Show
 
   //----------- cats-effect types -----------
-  final type Sync[F[_]] = ce.Sync[F]
-  final val Sync: ce.Sync.type = ce.Sync
+  final type MonadCancel[F[_], E] = ce.MonadCancel[F, E]
+  final val MonadCancel: ce.MonadCancel.type = ce.MonadCancel
 
-  final type Async[F[_]] = ce.Async[F]
-  final val Async: ce.Async.type = ce.Async
+  final type MonadCancelThrow[F[_]] = ce.MonadCancelThrow[F]
+  final val MonadCancelThrow: ce.MonadCancelThrow.type = ce.MonadCancelThrow
 
   final type Concurrent[F[_]] = ce.Concurrent[F]
   final val Concurrent: ce.Concurrent.type = ce.Concurrent
 
   final type Temporal[F[_]] = ce.Temporal[F]
   final val Temporal: ce.Temporal.type = ce.Temporal
+
+  final type Sync[F[_]] = ce.Sync[F]
+  final val Sync: ce.Sync.type = ce.Sync
+
+  final type Async[F[_]] = ce.Async[F]
+  final val Async: ce.Async.type = ce.Async
 
   final type SyncIO[+A] = ce.SyncIO[A]
   final val SyncIO: ce.SyncIO.type = ce.SyncIO
