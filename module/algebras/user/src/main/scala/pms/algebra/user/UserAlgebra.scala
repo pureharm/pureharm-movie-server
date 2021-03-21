@@ -15,6 +15,6 @@ trait UserAlgebra[F[_]] {
 
 object UserAlgebra {
 
-  def resource[F[_]](implicit transactor: Transactor[F], F: Async[F]): Resource[F, UserAlgebra[F]] =
+  def resource[F[_]](implicit transactor: SessionPool[F], F: Async[F]): Resource[F, UserAlgebra[F]] =
     Resource.pure(new UserAlgebraImpl())
 }

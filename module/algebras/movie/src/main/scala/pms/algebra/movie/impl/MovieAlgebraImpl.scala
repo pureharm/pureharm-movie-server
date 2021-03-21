@@ -9,8 +9,8 @@ import pms._
   * @since 25 Jun 2018
   */
 final private[movie] class MovieAlgebraImpl[F[_]: MonadThrow](
-  override protected val userAuth: UserAuthAlgebra[F],
-  private val transactor:          Transactor[F],
+                                                               override protected val userAuth: UserAuthAlgebra[F],
+                                                               private val transactor:          SessionPool[F],
 ) extends MovieAlgebra[F] {
 
   override protected def createMovieImpl(mc: MovieCreation): F[Movie] = ???

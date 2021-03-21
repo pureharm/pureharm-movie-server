@@ -31,6 +31,6 @@ trait UserAccountAlgebra[F[_]] {
 
 object UserAccountAlgebra {
 
-  def resource[F[_]](implicit transactor: Transactor[F], F: Async[F]): Resource[F, UserAccountAlgebra[F]] =
+  def resource[F[_]](implicit transactor: SessionPool[F], F: Async[F]): Resource[F, UserAccountAlgebra[F]] =
     Resource.pure[F, UserAccountAlgebra[F]](new UserAlgebraImpl[F]())
 }

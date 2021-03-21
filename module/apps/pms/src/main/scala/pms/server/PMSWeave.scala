@@ -71,7 +71,7 @@ object PMSWeave {
         .resource[F](config.dbConfig.connection)
         .evalMap(flyway => flyway.runMigrations(logger))
 
-      implicit0(transactor: Transactor[F]) <- TransactorAlgebra.resource[F](config.dbConfig.connection)
+      implicit0(transactor: SessionPool[F]) <- SessionPool.resource[F](config.dbConfig.connection)
 
       throttler <- EffectThrottler.resource[F](
         config.imdbConfig.requestsInterval,

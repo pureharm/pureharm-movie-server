@@ -9,9 +9,9 @@ import pms.kernel._
   * @since 21 Jun 2018
   */
 final private[user] class UserAlgebraImpl[F[_]](implicit
-  val F:          MonadThrow[F],
-  val sr:         SecureRandom[F],
-  val transactor: Transactor[F],
+                                                val F:          MonadThrow[F],
+                                                val sr:         SecureRandom[F],
+                                                val transactor: SessionPool[F],
 ) extends UserAuthAlgebra[F]()(F) with UserAccountAlgebra[F] with UserAlgebra[F] {
 
 //  import UserAlgebraSQL._

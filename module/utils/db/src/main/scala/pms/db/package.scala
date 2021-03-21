@@ -1,5 +1,6 @@
 package pms
 
 package object db {
-  type Transactor[F[_]] = Nothing
+  type Session[F[_]] = skunk.Session[F]
+  val Session: skunk.Session.type = skunk.Session
 }
