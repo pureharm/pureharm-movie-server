@@ -25,6 +25,7 @@ object Libraries {
   val cirisV          = "2.0.0-RC1" //https://github.com/vlovgr/ciris/releases
   val javaBcryptV     = "0.9.0"     //java - https://github.com/patrickfav/bcrypt/releases
   val ips4sV          = "3.0.0-RC2" //https://github.com/Comcast/ip4s/releases
+  val scalaJavaTimeV  = "2.2.0"     //https://github.com/cquiroz/scala-java-time/releases
 
   val phCore = "com.busymachines"  %% s"pureharm-core" % pureharmCoreV withSources ()
   val sprout = "com.lorandszakacs" %% "sprout"         % sproutV       withSources ()
@@ -52,8 +53,10 @@ object Libraries {
   val pgJDBC = "org.postgresql" % "postgresql"  % pgJDBCV withSources ()
 
   //============================================================================================
-  //==========================================  math ===========================================
+  //==========================================  time ===========================================
   //============================================================================================
+
+  val scalaJavaTime = "io.github.cquiroz" %% "scala-java-time" % scalaJavaTimeV withSources ()
 
   //============================================================================================
   //========================================  security  ========================================

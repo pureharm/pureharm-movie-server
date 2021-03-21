@@ -248,6 +248,7 @@ lazy val `algebra-user` = algebraProject("user")
     `pms-db`,
     `pms-crypto`,
     `pms-kernel`,
+    `pms-time`,
   )
   .aggregate(
     `pms-config`,
@@ -256,6 +257,25 @@ lazy val `algebra-user` = algebraProject("user")
     `pms-db`,
     `pms-crypto`,
     `pms-kernel`,
+    `pms-time`,
+  )
+
+//=============================================================================
+//=============================================================================
+//=============================================================================
+
+//=============================================================================
+//=============================================================================
+//=============================================================================
+
+lazy val `pms-time` = utilProject("time")
+  .settings(
+    libraryDependencies ++= Seq(
+      Libraries.scalaJavaTime
+    )
+  )
+  .dependsOn(
+    `pms-core`
   )
 
 lazy val `pms-db` = utilProject("db")
@@ -324,10 +344,12 @@ lazy val `pms-json` = utilProject("json")
   .dependsOn(
     `pms-core`,
     `pms-kernel`,
+    `pms-time`,
   )
   .aggregate(
     `pms-core`,
     `pms-kernel`,
+    `pms-time`,
   )
 
 lazy val `pms-db-config` = utilProject("db-config")
@@ -425,5 +447,6 @@ def genericProject(id: String, folder: String, name: String): Project =
 
 def algebraProject(name: String): Project = genericProject("algebra", "module/algebras", name)
 def utilProject(name:    String): Project = genericProject("pms", "module/utils", name)
+def troveProject(name:   String): Project = genericProject("pms", "module/troves", name)
 def serviceProject(name: String): Project = genericProject("service", "module/services", name)
 def restProject(name:    String): Project = genericProject("rest", "module/rest", name)
