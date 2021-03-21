@@ -1,5 +1,6 @@
 package pms.rest.user
 
+import pms._
 import pms.algebra.user._
 import pms.json._
 import pms.service.user._
