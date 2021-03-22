@@ -23,11 +23,12 @@ import org.http4s._
   * @since 11 Jul 2018
   */
 final class PHMSWeave[F[_]] private (
-  serverConfig: PHMSServerConfig,
-  middleware:   AuthMiddleware[F, AuthCtx],
-  userAPI:      UserAPI[F],
-  movieAPI:     MovieAPI[F],
-)(implicit F:   Async[F]) {
+  serverConfig:    PHMSServerConfig,
+  serverBootstrap: ServerBootrapAlgebra,
+  middleware:      AuthMiddleware[F, AuthCtx],
+  userAPI:         UserAPI[F],
+  movieAPI:        MovieAPI[F],
+)(implicit F:      Async[F]) {
 
   def serverResource: Resource[F, Server] = {
     import org.http4s.ember.server.EmberServerBuilder
@@ -49,6 +50,9 @@ final class PHMSWeave[F[_]] private (
 
     Router[F](("api", phmsAPI)).orNotFound
   }
+
+  private def bootstrapServer: F[Unit] =
+    this.b
 
 }
 

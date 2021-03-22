@@ -11,6 +11,7 @@ final case class PHMSServerConfig(
   emailConfig: GmailConfig,
   imdbConfig:  IMDBAlgebraConfig,
   dbConfig:    DatabaseConfig,
+  boostrap:    BootstrapServer,
 )
 
 object PHMSServerConfig {
@@ -21,13 +22,21 @@ object PHMSServerConfig {
       gmailConfig       <- gmailConfig.resource[F]
       imdbAlgebraConfig <- imdbAlgebraConfig.resource[F]
       dbConfig          <- databaseConfig.resource[F]
+      bootstrap         <- bootstrapConfig.resource[F]
     } yield PHMSServerConfig(
       serverConfig,
       gmailConfig,
       imdbAlgebraConfig,
       dbConfig,
+      bootstrap,
     )
   import com.comcast.ip4s._
+
+  private object bootstrapConfig extends ConfigLoader[BootstrapServer] {
+
+    override def configValue: ConfigValue[Effect, BootstrapServer] =
+      env(EnvVar.PHMS_APP_DEV_MODE_BOOTSTRAP).as[BootstrapServer].default(BootstrapServer.True)
+  }
 
   private object httpConfig extends ConfigLoader[HttpConfig] {
 
