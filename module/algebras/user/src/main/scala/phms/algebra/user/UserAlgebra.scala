@@ -18,8 +18,9 @@ object UserAlgebra {
 
   def resource[F[_]](implicit
     dbPool: DDPool[F],
-    F:      Async[F],
+    F:      MonadCancelThrow[F],
     time:   Time[F],
+    r:      Random[F],
     sr:     SecureRandom[F],
   ): Resource[F, UserAlgebra[F]] =
     Resource.pure[F, UserAlgebra[F]](new UserAlgebraImpl())

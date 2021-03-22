@@ -11,6 +11,7 @@ import phms.algebra.user._
   */
 final private[user] class UserAlgebraImpl[F[_]](implicit
   val F:      MonadCancelThrow[F],
+  val r:      Random[F],
   val sr:     SecureRandom[F],
   val time:   Time[F],
   val dbPool: DDPool[F],
@@ -21,24 +22,32 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
 
   private val invalidEmailOrPW: Throwable = Fail.unauthorized("Invalid email or password")
 
+  /** Question?
+    *
+    * TODO: ponder: should we check the user record in the bounds of the same transaction or keep two
+    * separate dbPool calls?
+    */
   override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] =
     for {
-//      userRepr <- findRepr(email).transact(dbPool).flatMap {
-//        case None    => F.raiseError[UserRepr](invalidEmailOrPW)
-//        case Some(v) => F.pure[UserRepr](v)
-//      }
-      bcryptHash    <- Fail.nicata("User authentication find user by email").raiseError[F, UserCrypto.BcryptPW]
-      validPassword <- UserCrypto.checkUserPassword[F](pw, bcryptHash)
-      auth          <-
+      userRepr      <- dbPool.use(session => PSQLUsers(session).findByEmail(email).flatMap(_.liftTo[F](invalidEmailOrPW)))
+      validPassword <- UserCrypto.checkUserPassword[F](pw, userRepr.bcryptPW)
+      tuple         <-
         if (validPassword) {
           for {
-            token <- UserCrypto.generateToken[F, AuthenticationToken]
-            ctx   <- Fail.nicata("Store user authentication").raiseError[F, AuthCtx]
-          } yield ctx
+            token     <- UserCrypto.generateToken[F, AuthenticationToken]
+            //TODO: make token expiration configurable
+            expiresAt <- UserAuthExpiration.tomorrow[F]
+            ctxRepr = PSQLUserAuth.UserAuthRepr(
+              token     = token,
+              userID    = userRepr.id,
+              expiresAt = expiresAt,
+            )
+            _ <- dbPool.use(session => PSQLUserAuth(session).insert(ctxRepr))
+          } yield (userRepr, ctxRepr)
         }
-        else invalidEmailOrPW.raiseError[F, AuthCtx]
+        else invalidEmailOrPW.raiseError[F, (PSQLUsers.UserRepr, PSQLUserAuth.UserAuthRepr)]
 
-    } yield auth
+    } yield fromRepr(tuple)
 
   override def authenticate(token: AuthenticationToken): F[AuthCtx] =
     Fail.nicata(s"Authenticate via token: $token").raiseError[F, AuthCtx]
@@ -91,8 +100,33 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
 
   override def invitationStep2(token: UserInviteToken, pw: PlainTextPassword): F[User] =
     for {
-      bcrypt <- UserCrypto.hashPWWithBcrypt[F](pw)
-      user   <- Fail.nicata(s"User invitation step2. We did bcrypt: $bcrypt").raiseError[F, User]
+      bcrypt    <- UserCrypto.hashPWWithBcrypt[F](pw)
+      newUserID <- UserID.generate[F]
+      user      <- dbPool.use { session =>
+        val users            = PSQLUsers(session)
+        val user_invitations = PSQLUserInvitations(session)
+        session.transaction.use { _ =>
+          for {
+            invite <- user_invitations
+              .findByInvite(token)
+              .flatMap(_.liftTo[F](Fail.invalid(s"Invalid user invite token: $token")))
+
+            isExpired <- UserInviteExpiration.isInPast[F](invite.expiresAt)
+            _         <-
+              if (isExpired) Fail.invalid(s"User invitation expired @ ${invite.expiresAt}").raiseError[F, Unit]
+              else F.unit
+
+            newUserRepr = PSQLUsers.UserRepr(
+              id           = newUserID,
+              email        = invite.email,
+              role         = invite.role,
+              bcryptPW     = bcrypt,
+              pwResetToken = Option.empty,
+            )
+            _ <- users.insert(newUserRepr)
+          } yield fromRepr(newUserRepr)
+        }
+      }
     } yield user
 
   override def resetPasswordStep1(email: Email): F[PasswordResetToken] =
@@ -108,6 +142,17 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
     } yield ()
 
   override def findUser(id: UserID)(implicit auth: AuthCtx): F[Option[User]] =
-    Fail.nicata(s"find user by id $id").raiseError[F, Option[User]]
+    //TODO: implement security policy for user retrieval
+    dbPool.use(session => PSQLUsers(session).findByID(id).map(_.map(fromRepr)))
 
+  private def fromRepr(u: PSQLUsers.UserRepr): User = User(
+    id    = u.id,
+    email = u.email,
+    role  = u.role,
+  )
+
+  private def fromRepr(u: (PSQLUsers.UserRepr, PSQLUserAuth.UserAuthRepr)): AuthCtx = AuthCtx(
+    token = u._2.token,
+    user  = fromRepr(u._1),
+  )
 }

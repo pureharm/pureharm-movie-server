@@ -13,9 +13,12 @@ final private[movie] class MovieAlgebraImpl[F[_]: MonadThrow](
   private val dbPool:              DDPool[F],
 ) extends MovieAlgebra[F] {
 
-  override protected def createMovieImpl(mc: MovieCreation): F[Movie] = ???
+  override protected def createMovieImpl(mc: MovieCreation): F[Movie] =
+    Fail.nicata("createMovieImpl").raiseError[F, Movie]
 
-  override protected def findMoviesBetweenImpl(interval: QueryInterval): F[List[Movie]] = ???
+  override protected def findMoviesBetweenImpl(interval: QueryInterval): F[List[Movie]] =
+    Fail.nicata("findMoviesBetweenImpl").raiseError[F, List[Movie]]
 
-  override protected def findMovieImpl(mid: MovieID): F[Movie] = ???
+  override protected def findMovieImpl(mid: MovieID): F[Movie] =
+    Fail.nicata("findMovieImpl").raiseError[F, Movie]
 }
