@@ -5,6 +5,7 @@ import phms.algebra.imdb._
 import phms.algebra.movie.MovieAlgebra
 import phms.algebra.user._
 import phms.config._
+import phms.time._
 import phms.db._
 import phms.email._
 import phms.logger._
@@ -63,6 +64,7 @@ object PHMSWeave {
       implicit0(config: Config[F]) <- Config.resource[F]
       implicit0(logging: Logging[F]) <- Logging.resource[F]
       implicit0(random: Random[F]) <- Random.resource[F]
+      implicit0(time: Time[F]) <- Time.resource[F]
       implicit0(secureRandom: SecureRandom[F]) <- SecureRandom.resource[F]
       implicit0(logger: Logger[F]) = logging.of(this)
 

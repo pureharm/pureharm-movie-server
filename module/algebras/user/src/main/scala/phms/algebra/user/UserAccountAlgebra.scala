@@ -2,6 +2,7 @@ package phms.algebra.user
 
 import phms.algebra.user.impl.UserAlgebraImpl
 import phms._
+import phms.time._
 import phms.kernel._
 import phms.db._
 
@@ -31,6 +32,11 @@ trait UserAccountAlgebra[F[_]] {
 
 object UserAccountAlgebra {
 
-  def resource[F[_]](implicit dbPool: DDPool[F], F: Async[F], sr: SecureRandom[F]): Resource[F, UserAccountAlgebra[F]] =
+  def resource[F[_]](implicit
+    dbPool: DDPool[F],
+    F:      Async[F],
+    time:   Time[F],
+    sr:     SecureRandom[F],
+  ): Resource[F, UserAccountAlgebra[F]] =
     Resource.pure[F, UserAccountAlgebra[F]](new UserAlgebraImpl[F]())
 }

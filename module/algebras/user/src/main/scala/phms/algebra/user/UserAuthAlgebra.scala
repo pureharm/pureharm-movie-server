@@ -2,6 +2,7 @@ package phms.algebra.user
 
 import phms.algebra.user.impl.UserAlgebraImpl
 import phms._
+import phms.time._
 import phms.kernel._
 import phms.db._
 
@@ -65,6 +66,11 @@ abstract class UserAuthAlgebra[F[_]: MonadThrow] {
 
 object UserAuthAlgebra {
 
-  def resource[F[_]](implicit dbPool: DDPool[F], F: Async[F], sr: SecureRandom[F]): Resource[F, UserAuthAlgebra[F]] =
+  def resource[F[_]](implicit
+    dbPool: DDPool[F],
+    F:      Async[F],
+    time:   Time[F],
+    sr:     SecureRandom[F],
+  ): Resource[F, UserAuthAlgebra[F]] =
     Resource.pure[F, UserAuthAlgebra[F]](new UserAlgebraImpl[F]())
 }

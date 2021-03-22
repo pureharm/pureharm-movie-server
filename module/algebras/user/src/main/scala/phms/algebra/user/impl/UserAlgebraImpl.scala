@@ -1,9 +1,10 @@
 package phms.algebra.user.impl
 
-import phms.db._
-import phms.algebra.user._
 import phms._
+import phms.time._
+import phms.db._
 import phms.kernel._
+import phms.algebra.user._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 21 Jun 2018
@@ -11,10 +12,9 @@ import phms.kernel._
 final private[user] class UserAlgebraImpl[F[_]](implicit
   val F:      MonadCancelThrow[F],
   val sr:     SecureRandom[F],
+  val time:   Time[F],
   val dbPool: DDPool[F],
 ) extends UserAuthAlgebra[F]()(F) with UserAccountAlgebra[F] with UserAlgebra[F] {
-
-//  import UserAlgebraSQL._
 
   override protected def monadThrow:  MonadThrow[F]      = F
   override protected def authAlgebra: UserAuthAlgebra[F] = this
@@ -50,14 +50,43 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
     inv: UserInvitation
   ): F[UserInviteToken] =
     for {
-      token <- UserCrypto.generateToken[F, UserInviteToken]
-      _     <- Fail.nicata("Store registration step 1").raiseError[F, Unit]
-//      toInsert = UserInvitationSQL.UserInvitationRepr(
-//        email           = inv.email,
-//        role            = inv.role,
-//        invitationToken = token,
-//      )
-//      _ <- UserInvitationSQL.insert(toInsert).transact(dbPool)
+      token     <- UserCrypto.generateToken[F, UserInviteToken]
+      //TODO: make expiry time configurable, and inject it here
+      expiresAt <- UserInviteExpiration.tomorrow[F]
+      toInsert = PSQLUserInvitations.UserInvitationRepr(
+        email           = inv.email,
+        role            = inv.role,
+        invitationToken = token,
+        expiresAt       = expiresAt,
+      )
+      _ <- dbPool.use { session =>
+        val users        = PSQLUsers[F](session)
+        val user_invites = PSQLUserInvitations[F](session)
+        session.transaction.use { _ =>
+          for {
+            optUser   <- users.findByEmail(inv.email)
+            _         <-
+              //TODO: add syntax for failing on any F[Option[T]] on some, so we don't repeat the else branch
+              if (optUser.isDefined)
+                Fail.conflict(s"User w/ email: ${inv.email} already exists").raiseError[F, Unit]
+              else F.unit
+            //TODO: idem
+            optInvite <- user_invites.findByEmail(inv.email)
+            _         <-
+              if (optInvite.isDefined)
+                Fail
+                  .conflict(
+                    s"""|User invite for email: ${inv.email} already exists. 
+                        |We currently do not support refreshing invites, 
+                        |maybe thing of this as a new feature?
+                        """.stripMargin
+                  )
+                  .raiseError[F, Unit]
+              else F.unit
+            _         <- user_invites.insert(toInsert)
+          } yield ()
+        }
+      }
     } yield token
 
   override def invitationStep2(token: UserInviteToken, pw: PlainTextPassword): F[User] =
