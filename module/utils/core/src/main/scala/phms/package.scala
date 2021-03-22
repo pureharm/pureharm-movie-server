@@ -15,6 +15,9 @@ package object phms
   with instances.AllInstancesBinCompat2 with instances.AllInstancesBinCompat3 with instances.AllInstancesBinCompat4
   with instances.AllInstancesBinCompat5 with instances.AllInstancesBinCompat6 with EffectsSyntax.Implicits {
 
+  type Stream[+F[_], +O] = fs2.Stream[F, O]
+  val Stream: fs2.Stream.type = fs2.Stream
+
   type Random[F[_]]  = ce.std.Random[F]
   type Console[F[_]] = ce.std.Console[F]
   val Console: ce.std.Console.type = ce.std.Console
