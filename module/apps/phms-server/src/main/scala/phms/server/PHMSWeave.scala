@@ -54,7 +54,6 @@ final class PHMSWeave[F[_]] private (
   }
 
   def bootstrapServer: F[Unit] = for {
-    _ <- console.println(s"""Attempting bootstrap ${serverConfig.boostrap}""")
     _ <-
       if (serverConfig.boostrap) {
         phms.server.bootstrap.Bootstrap
@@ -89,7 +88,7 @@ object PHMSWeave {
       config <- PHMSServerConfig.resource[F]
 
       _         <- Flyway
-        .resource[F](config.dbConfig.connection)
+        .resource[F](config.dbConfig.connection, config.dbConfig.flyway)
         .evalMap(flyway => flyway.runMigrations(logger))
 
       implicit0(dbPool: DDPool[F]) <- DBPool.resource[F](config.dbConfig.connection)

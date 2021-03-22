@@ -16,7 +16,7 @@ private[impl] object UserCrypto {
     sr: SecureRandom[F],
     nt: NewType[String, TokenType],
   ): F[TokenType] =
-    sr.nextString(64).map(nt.newType)
+    sr.nextBytesAsBase64(64).map(nt.newType)
 
   private[impl] def hashPWWithBcrypt[F[_]](
     ptpw:       PlainTextPassword

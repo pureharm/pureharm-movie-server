@@ -1,9 +1,13 @@
 package phms
 
+import fs2._
+
+import java.nio.charset.StandardCharsets
+
 sealed trait SecureRandom[F[_]] {
   def sync: Sync[F]
-  def nextBytes(n:  Int): F[Array[Byte]]
-  def nextString(n: Int): F[String]
+  def nextBytes(n:         Int): F[Array[Byte]]
+  def nextBytesAsBase64(n: Int): F[String]
 }
 
 object SecureRandom {
@@ -13,8 +17,13 @@ object SecureRandom {
       cats.effect.std.Random.javaSecuritySecureRandom(8).map { r: Random[F] =>
         new SecureRandom[F] {
           override def sync: Sync[F] = F
-          override def nextBytes(n:  Int): F[Array[Byte]] = r.nextBytes(n)
-          override def nextString(n: Int): F[String]      = r.nextString(n)
+          override def nextBytes(n:         Int): F[Array[Byte]] = r.nextBytes(n)
+          override def nextBytesAsBase64(n: Int): F[String]      =
+            Stream
+              .evalSeq(this.nextBytes(n).map(_.toSeq))
+              .through(fs2.text.base64.encode[F])
+              .compile
+              .string
         }
       }
     }

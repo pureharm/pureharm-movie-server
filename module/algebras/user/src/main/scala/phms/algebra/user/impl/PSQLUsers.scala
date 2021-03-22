@@ -26,13 +26,13 @@ object PSQLUsers {
   private val uuid_user_id:                   Codec[UserID]              = PSQLUserCodecs.uuid_user_id
   private val enum_role:                      Codec[UserRole]            = PSQLUserCodecs.enum_user_role
   private val bytea_bcrypt:                   Codec[UserCrypto.BcryptPW] = bytea.sproutRefined
-  private val varchar64_password_reset_token: Codec[PasswordResetToken]  = varchar(64).sprout
+  private val varchar96_password_reset_token: Codec[PasswordResetToken]  = PSQLUserCodecs.varchar96_token.sprout
 
   private val users_repr_row: Row       = sql"$id, $email, $role, $bcrypt_password_hash, $password_reset_token"
   private val users_table:    TableName = const"users"
 
   private val user_repr: Codec[UserRepr] =
-    (uuid_user_id ~ varchar128_email ~ enum_role ~ bytea_bcrypt ~ varchar64_password_reset_token.opt).gimap
+    (uuid_user_id ~ varchar128_email ~ enum_role ~ bytea_bcrypt ~ varchar96_password_reset_token.opt).gimap
 
   /*_*/
 }
@@ -89,7 +89,7 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
         sql"""
            SELECT $users_repr_row
            FROM $users_table
-           WHERE $password_reset_token = $varchar64_password_reset_token
+           WHERE $password_reset_token = $varchar96_password_reset_token
          """.query(user_repr)
       )
       .use(_.option(target))
@@ -99,7 +99,7 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
       .prepare(
         sql"""
          UPDATE $users_table
-         SET $password_reset_token=$varchar64_password_reset_token
+         SET $password_reset_token=$varchar96_password_reset_token
          WHERE $email=$varchar128_email
        """.command
       )
@@ -114,9 +114,9 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
       .prepare(
         sql"""
          UPDATE $users_table
-         SET $password_reset_token=${varchar64_password_reset_token.opt},
+         SET $password_reset_token=${varchar96_password_reset_token.opt},
              $bcrypt_password_hash=$bytea_bcrypt
-         WHERE $password_reset_token=$varchar64_password_reset_token
+         WHERE $password_reset_token=$varchar96_password_reset_token
        """.command
       )
       .use(_.execute(Option.empty[PasswordResetToken] ~ newPW ~ target).void)

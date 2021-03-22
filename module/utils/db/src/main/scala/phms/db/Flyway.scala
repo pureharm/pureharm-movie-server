@@ -13,13 +13,14 @@ trait Flyway[F[_]] {
 object Flyway {
 
   def resource[F[_]: Sync](
-    dbConfig: DBConnectionConfig
+    dbConfig:     DBConnectionConfig,
+    flywayConfig: FlywayConfig,
   ): Resource[F, Flyway[F]] =
-    new FlywayImpl[F](connectionConfig = dbConfig, config = none).pure[Resource[F, *]].widen
+    new FlywayImpl[F](connectionConfig = dbConfig, config = flywayConfig).pure[Resource[F, *]].widen
 
   final private class FlywayImpl[F[_]: Sync](
     private[Flyway] val connectionConfig: DBConnectionConfig,
-    private[Flyway] val config:           Option[FlywayConfig],
+    private[Flyway] val config:           FlywayConfig,
   ) extends Flyway[F] {
 
     override def runMigrations(implicit logger: Logger[F]): F[Int] =
@@ -39,10 +40,10 @@ object Flyway {
 
     def migrate[F[_]](
       dbConfig:     DBConnectionConfig,
-      flywayConfig: Option[FlywayConfig] = Option.empty,
+      flywayConfig: FlywayConfig,
     )(implicit F:   Sync[F]): F[Int] =
       for {
-        fw   <- flywayInit[F](dbConfig.jdbcURL, dbConfig.username, dbConfig.password, flywayConfig)
+        fw   <- flywayInit[F](dbConfig.jdbcURL, dbConfig.username, dbConfig.password, Option(flywayConfig))
         migs <- F.delay(fw.migrate())
       } yield migs.migrationsExecuted
 

@@ -25,11 +25,13 @@ object PSQLUserInvitations {
   private val user_invitations_table: TableName = const"user_invitations"
 
   private val enum_role:                  Codec[UserRole]             = PSQLUserCodecs.enum_user_role
-  private val varchar64_invitation_token: Codec[UserInviteToken]      = varchar(64).sprout
+
+  private val varchar96_invitation_token: Codec[UserInviteToken]      =
+    PSQLUserCodecs.varchar96_token.sprout[UserInviteToken]
   private val timestamptz_expires_at:     Codec[UserInviteExpiration] = timestamptz.sprout
 
   private val user_invitation_repr: Codec[UserInvitationRepr] =
-    (varchar128_email ~ enum_role ~ varchar64_invitation_token ~ timestamptz_expires_at).gimap
+    (varchar128_email ~ enum_role ~ varchar96_invitation_token ~ timestamptz_expires_at).gimap
 
   /*_*/
 }
@@ -56,7 +58,7 @@ final case class PSQLUserInvitations[F[_]](private val session: Session[F])(impl
         sql"""
            SELECT $user_invitations_row 
            FROM $user_invitations_table
-           WHERE $invitation_token = $varchar64_invitation_token
+           WHERE $invitation_token = $varchar96_invitation_token
          """.query(user_invitation_repr)
       )
       .use((pc: PreparedQuery[F, UserInviteToken, UserInvitationRepr]) => pc.option(t))
@@ -77,7 +79,7 @@ final case class PSQLUserInvitations[F[_]](private val session: Session[F])(impl
       .prepare(
         sql"""
           DELETE FROM $user_invitations_table
-          WHERE $invitation_token = $varchar64_invitation_token
+          WHERE $invitation_token = $varchar96_invitation_token
          """.command
       )
       .use(_.execute(toDelete).void)

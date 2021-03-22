@@ -26,7 +26,7 @@ final private[bootstrap] class ServerBootstrapAlgebra[F[_]: Sync] private (
   def bootStrapUser(inv: UserInvitation, pw: PlainTextPassword): F[User] =
     for {
       _     <- logger.info(
-        s"BOOTSTRAP — inserting user invite: role=${inv.role.productPrefix} email=${inv.email} pw=$pw"
+        s"BOOTSTRAP — inserting user invite: role=${inv.role.productPrefix} email=${inv.email} pw=$pw."
       )
       token <- uba.bootstrapUser(inv)
       _     <- logger.info(s"BOOTSTRAP — done inserting user invite")

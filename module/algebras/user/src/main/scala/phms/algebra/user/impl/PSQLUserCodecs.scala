@@ -9,7 +9,9 @@ object PSQLUserCodecs extends PSQLUserCodecs
 trait PSQLUserCodecs {
   import db.codecs._
 
-  val uuid_user_id: Codec[UserID] = uuid.sprout[UserID]
+  //all our tokens are base64 encodings of 64 bytes ~ 4*(64/3) bytes.
+  val varchar96_token: Codec[String] = varchar(96)
+  val uuid_user_id:    Codec[UserID] = uuid.sprout[UserID]
 
   val enum_user_role: Codec[UserRole] =
     `enum`[UserRole](

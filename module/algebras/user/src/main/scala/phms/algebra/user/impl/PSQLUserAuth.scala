@@ -19,14 +19,14 @@ object PSQLUserAuth {
   private val user_id:    Column = const"user_id"
   private val expires_at: Column = const"expires_at"
 
-  private val varchar64_token:        Codec[AuthenticationToken] = varchar(64).sprout[AuthenticationToken]
+  private val varchar96_token:        Codec[AuthenticationToken] = PSQLUserCodecs.varchar96_token.sprout[AuthenticationToken]
   private val uuid_user_id:           Codec[UserID]              = PSQLUserCodecs.uuid_user_id
   private val timestamptz_expires_at: Codec[UserAuthExpiration]  = timestamptz.sprout[UserAuthExpiration]
 
   private val user_auths_row:   Row       = sql"$token, $user_id, $expires_at"
   private val user_auths_table: TableName = const"user_authentications"
 
-  private val user_auth_repr: Codec[UserAuthRepr] = (varchar64_token ~ uuid_user_id ~ timestamptz_expires_at).gimap
+  private val user_auth_repr: Codec[UserAuthRepr] = (varchar96_token ~ uuid_user_id ~ timestamptz_expires_at).gimap
 
   /*_*/
 }
@@ -50,7 +50,7 @@ final case class PSQLUserAuth[F[_]](private val session: Session[F])(implicit F:
         sql"""
            SELECT $user_auths_row 
            FROM $user_auths_table
-           WHERE $token = $varchar64_token
+           WHERE $token = $varchar96_token
          """.query(user_auth_repr): Query[AuthenticationToken, UserAuthRepr]
       )
       .use(pc => pc.option(t))
@@ -68,7 +68,7 @@ final case class PSQLUserAuth[F[_]](private val session: Session[F])(implicit F:
     .prepare(
       sql"""
           DELETE FROM $user_auths_table
-          WHERE $token = $varchar64_token
+          WHERE $token = $varchar96_token
          """.command: Command[AuthenticationToken]
     )
     .use(pc => pc.execute(t).void)
