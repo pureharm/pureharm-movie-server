@@ -19,6 +19,9 @@ package object user {
   type AuthenticationToken = AuthenticationToken.Type
   object AuthenticationToken extends Sprout[String]
 
+  type UserAuthExpiration = UserAuthExpiration.Type
+  object UserAuthExpiration extends SproutTimestamp
+
   type UserInviteExpiration = UserInviteExpiration.Type
   object UserInviteExpiration extends SproutTimestamp
 

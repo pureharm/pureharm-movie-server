@@ -23,7 +23,7 @@ object PSQLUsers {
   private val bcrypt_password_hash: Column = const"bcrypt_password_hash"
   private val password_reset_token: Column = const"password_reset_token"
 
-  private val uuid_user_id:                   Codec[UserID]              = uuid.sprout[UserID]
+  private val uuid_user_id:                   Codec[UserID]              = PSQLUserCodecs.uuid_user_id
   private val enum_role:                      Codec[UserRole]            = PSQLUserCodecs.enum_user_role
   private val bytea_bcrypt:                   Codec[UserCrypto.BcryptPW] = bytea.sproutRefined
   private val varchar64_password_reset_token: Codec[PasswordResetToken]  = varchar(64).sprout
