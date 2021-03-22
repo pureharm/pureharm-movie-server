@@ -9,36 +9,37 @@ addCommandAlias("mkJar", ";clean;update;compile;server/assembly")
 //=============================================================================
 ThisBuild / version := "1.0.0"
 
-lazy val server = Project(id = "server", file("./module/apps/pms"))
+lazy val server = Project(id = "server", file("./module/apps/phms"))
   .settings(commonSettings)
   .enablePlugins(JavaAppPackaging)
   .settings(
-    Compile / mainClass := Option("pms.server.PureMovieServerApp")
+    Compile / mainClass := Option("phms.server.PureMovieServerApp")
   )
   .settings(
     libraryDependencies ++= Seq(
     )
   )
   .dependsOn(
-    `pms-core`,
-    `pms-logger`,
-    `pms-config`,
-    `pms-db-config`,
-    `pms-http`,
-    `pms-core`,
+    `phms-core`,
+    `phms-logger`,
+    `phms-config`,
+    `phms-db-config`,
+    `phms-http`,
+    `phms-core`,
     `service-user`,
     `service-movie`,
     `rest-user`,
     `rest-movie`,
     `bootstrap`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
-    `pms-core`,
-    `pms-logger`,
-    `pms-config`,
-    `pms-db-config`,
-    `pms-http`,
-    `pms-core`,
+    `phms-core`,
+    `phms-logger`,
+    `phms-config`,
+    `phms-db-config`,
+    `phms-http`,
+    `phms-core`,
     `service-user`,
     `service-movie`,
     `rest-user`,
@@ -53,19 +54,20 @@ lazy val `bootstrap` = project
     )
   )
   .dependsOn(
-    `pms-logger`,
-    `pms-core`,
-    `pms-config`,
-    `pms-core`,
-    `pms-db-config`,
+    `phms-logger`,
+    `phms-core`,
+    `phms-config`,
+    `phms-core`,
+    `phms-db-config`,
     `algebra-user`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
-    `pms-logger`,
-    `pms-core`,
-    `pms-config`,
-    `pms-db-config`,
-    `pms-core`,
+    `phms-logger`,
+    `phms-core`,
+    `phms-config`,
+    `phms-db-config`,
+    `phms-core`,
     `algebra-user`,
   )
 
@@ -77,24 +79,25 @@ lazy val `service-user` = serviceProject("user")
   .dependsOn(
     `algebra-user`,
     `algebra-http-sec`,
-    `pms-email`,
-    `pms-config`,
-    `pms-logger`,
-    `pms-core`,
-    `pms-core`,
-    `pms-json`,
-    `pms-http`,
+    `phms-email`,
+    `phms-config`,
+    `phms-logger`,
+    `phms-core`,
+    `phms-core`,
+    `phms-json`,
+    `phms-http`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
     `algebra-user`,
     `algebra-http-sec`,
-    `pms-email`,
-    `pms-config`,
-    `pms-logger`,
-    `pms-core`,
-    `pms-core`,
-    `pms-json`,
-    `pms-http`,
+    `phms-email`,
+    `phms-config`,
+    `phms-logger`,
+    `phms-core`,
+    `phms-core`,
+    `phms-json`,
+    `phms-http`,
   )
 
 lazy val `service-movie` = serviceProject("movie")
@@ -107,24 +110,25 @@ lazy val `service-movie` = serviceProject("movie")
     `algebra-imdb`,
     `algebra-movie`,
     `algebra-http-sec`,
-    `pms-config`,
-    `pms-logger`,
-    `pms-core`,
-    `pms-core`,
-    `pms-json`,
-    `pms-http`,
+    `phms-config`,
+    `phms-logger`,
+    `phms-core`,
+    `phms-core`,
+    `phms-json`,
+    `phms-http`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
     `algebra-user`,
     `algebra-imdb`,
     `algebra-movie`,
     `algebra-http-sec`,
-    `pms-config`,
-    `pms-logger`,
-    `pms-core`,
-    `pms-core`,
-    `pms-json`,
-    `pms-http`,
+    `phms-config`,
+    `phms-logger`,
+    `phms-core`,
+    `phms-core`,
+    `phms-json`,
+    `phms-http`,
   )
 
 lazy val `rest-user` = restProject("user")
@@ -136,23 +140,24 @@ lazy val `rest-user` = restProject("user")
     `algebra-user`,
     `service-user`,
     `algebra-http-sec`,
-    `pms-email`,
-    `pms-config`,
-    `pms-logger`,
-    `pms-core`,
-    `pms-json`,
-    `pms-http`,
+    `phms-email`,
+    `phms-config`,
+    `phms-logger`,
+    `phms-core`,
+    `phms-json`,
+    `phms-http`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
     `algebra-user`,
     `service-user`,
     `algebra-http-sec`,
-    `pms-email`,
-    `pms-config`,
-    `pms-logger`,
-    `pms-core`,
-    `pms-json`,
-    `pms-http`,
+    `phms-email`,
+    `phms-config`,
+    `phms-logger`,
+    `phms-core`,
+    `phms-json`,
+    `phms-http`,
   )
 
 lazy val `rest-movie` = restProject("movie")
@@ -165,22 +170,23 @@ lazy val `rest-movie` = restProject("movie")
     `service-movie`,
     `algebra-movie`,
     `algebra-http-sec`,
-    `pms-config`,
-    `pms-logger`,
-    `pms-core`,
-    `pms-json`,
-    `pms-http`,
+    `phms-config`,
+    `phms-logger`,
+    `phms-core`,
+    `phms-json`,
+    `phms-http`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
     `algebra-user`,
     `service-movie`,
     `algebra-movie`,
     `algebra-http-sec`,
-    `pms-config`,
-    `pms-logger`,
-    `pms-core`,
-    `pms-json`,
-    `pms-http`,
+    `phms-config`,
+    `phms-logger`,
+    `phms-core`,
+    `phms-json`,
+    `phms-http`,
   )
 
 lazy val `algebra-http-sec` = algebraProject("http-sec")
@@ -189,15 +195,16 @@ lazy val `algebra-http-sec` = algebraProject("http-sec")
     )
   )
   .dependsOn(
-    `pms-config`,
-    `pms-core`,
-    `pms-http`,
+    `phms-config`,
+    `phms-core`,
+    `phms-http`,
     `algebra-user`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
-    `pms-config`,
-    `pms-core`,
-    `pms-http`,
+    `phms-config`,
+    `phms-core`,
+    `phms-http`,
     `algebra-user`,
   )
 
@@ -208,14 +215,15 @@ lazy val `algebra-imdb` = algebraProject("imdb")
     )
   )
   .dependsOn(
-    `pms-config`,
-    `pms-logger`,
-    `pms-core`,
+    `phms-config`,
+    `phms-logger`,
+    `phms-core`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
-    `pms-config`,
-    `pms-logger`,
-    `pms-core`,
+    `phms-config`,
+    `phms-logger`,
+    `phms-core`,
   )
 
 lazy val `algebra-movie` = algebraProject("movie")
@@ -225,15 +233,16 @@ lazy val `algebra-movie` = algebraProject("movie")
   )
   .dependsOn(
     `algebra-user`,
-    `pms-config`,
-    `pms-core`,
-    `pms-db`,
+    `phms-config`,
+    `phms-core`,
+    `phms-db`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
     `algebra-user`,
-    `pms-config`,
-    `pms-core`,
-    `pms-db`,
+    `phms-config`,
+    `phms-core`,
+    `phms-db`,
   )
 
 lazy val `algebra-user` = algebraProject("user")
@@ -242,22 +251,23 @@ lazy val `algebra-user` = algebraProject("user")
     )
   )
   .dependsOn(
-    `pms-config`,
-    `pms-core`,
-    `pms-email`,
-    `pms-db`,
-    `pms-crypto`,
-    `pms-kernel`,
-    `pms-time`,
+    `phms-config`,
+    `phms-core`,
+    `phms-email`,
+    `phms-db`,
+    `phms-crypto`,
+    `phms-kernel`,
+    `phms-time`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
-    `pms-config`,
-    `pms-core`,
-    `pms-email`,
-    `pms-db`,
-    `pms-crypto`,
-    `pms-kernel`,
-    `pms-time`,
+    `phms-config`,
+    `phms-core`,
+    `phms-email`,
+    `phms-db`,
+    `phms-crypto`,
+    `phms-kernel`,
+    `phms-time`,
   )
 
 //=============================================================================
@@ -268,36 +278,38 @@ lazy val `algebra-user` = algebraProject("user")
 //=============================================================================
 //=============================================================================
 
-lazy val `pms-time` = utilProject("time")
+lazy val `phms-time` = utilProject("time")
   .settings(
     libraryDependencies ++= Seq(
       Libraries.scalaJavaTime
     )
   )
   .dependsOn(
-    `pms-core`
+    `phms-core`,
+    asTestingLibrary(`phms-testkit`),
   )
 
-lazy val `pms-db` = utilProject("db")
+lazy val `phms-db` = utilProject("db")
   .settings(
     libraryDependencies ++= Seq(
       Libraries.skunk
     )
   )
   .dependsOn(
-    `pms-core`,
-    `pms-db-config`,
-    `pms-logger`,
-    `pms-kernel`,
+    `phms-core`,
+    `phms-db-config`,
+    `phms-logger`,
+    `phms-kernel`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
-    `pms-core`,
-    `pms-db-config`,
-    `pms-logger`,
-    `pms-kernel`,
+    `phms-core`,
+    `phms-db-config`,
+    `phms-logger`,
+    `phms-kernel`,
   )
 
-lazy val `pms-email` = utilProject("email")
+lazy val `phms-email` = utilProject("email")
   .settings(
     libraryDependencies ++= Seq(
       Libraries.javaxMail,
@@ -305,19 +317,20 @@ lazy val `pms-email` = utilProject("email")
     )
   )
   .dependsOn(
-    `pms-core`,
-    `pms-logger`,
-    `pms-config`,
-    `pms-kernel`,
+    `phms-core`,
+    `phms-logger`,
+    `phms-config`,
+    `phms-kernel`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
-    `pms-core`,
-    `pms-logger`,
-    `pms-config`,
-    `pms-kernel`,
+    `phms-core`,
+    `phms-logger`,
+    `phms-config`,
+    `phms-kernel`,
   )
 
-lazy val `pms-http` = utilProject("http")
+lazy val `phms-http` = utilProject("http")
   .settings(
     libraryDependencies ++= Seq(
       Libraries.http4sDSL,
@@ -326,15 +339,16 @@ lazy val `pms-http` = utilProject("http")
     )
   )
   .dependsOn(
-    `pms-core`,
-    `pms-json`,
+    `phms-core`,
+    `phms-json`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
-    `pms-core`,
-    `pms-json`,
+    `phms-core`,
+    `phms-json`,
   )
 
-lazy val `pms-json` = utilProject("json")
+lazy val `phms-json` = utilProject("json")
   .settings(
     libraryDependencies ++= Seq(
       Libraries.circeCore,
@@ -342,17 +356,17 @@ lazy val `pms-json` = utilProject("json")
     )
   )
   .dependsOn(
-    `pms-core`,
-    `pms-kernel`,
-    `pms-time`,
+    `phms-core`,
+    `phms-kernel`,
+    `phms-time`,
   )
   .aggregate(
-    `pms-core`,
-    `pms-kernel`,
-    `pms-time`,
+    `phms-core`,
+    `phms-kernel`,
+    `phms-time`,
   )
 
-lazy val `pms-db-config` = utilProject("db-config")
+lazy val `phms-db-config` = utilProject("db-config")
   .settings(
     libraryDependencies ++= Seq(
       Libraries.flyway,
@@ -361,15 +375,15 @@ lazy val `pms-db-config` = utilProject("db-config")
     )
   )
   .dependsOn(
-    `pms-config`,
-    `pms-core`,
+    `phms-config`,
+    `phms-core`,
   )
   .aggregate(
-    `pms-config`,
-    `pms-core`,
+    `phms-config`,
+    `phms-core`,
   )
 
-lazy val `pms-config` = utilProject("config")
+lazy val `phms-config` = utilProject("config")
   .settings(
     libraryDependencies ++= Seq(
       Libraries.ciris,
@@ -377,13 +391,13 @@ lazy val `pms-config` = utilProject("config")
     )
   )
   .dependsOn(
-    `pms-core`
+    `phms-core`
   )
   .aggregate(
-    `pms-core`
+    `phms-core`
   )
 
-lazy val `pms-logger` = utilProject("logger")
+lazy val `phms-logger` = utilProject("logger")
   .settings(
     libraryDependencies ++= Seq(
       Libraries.log4cats,
@@ -391,39 +405,53 @@ lazy val `pms-logger` = utilProject("logger")
     )
   )
   .dependsOn(
-    `pms-core`
+    `phms-core`
   )
   .aggregate(
-    `pms-core`
+    `phms-core`
   )
 
-lazy val `pms-crypto` = utilProject("crypto")
+lazy val `phms-crypto` = utilProject("crypto")
   .settings(
     libraryDependencies ++= Seq(
       Libraries.javaBcrypt
     )
   )
   .dependsOn(
-    `pms-core`,
-    `pms-kernel`,
+    `phms-core`,
+    `phms-kernel`,
+    asTestingLibrary(`phms-testkit`),
   )
   .aggregate(
-    `pms-core`,
-    `pms-kernel`,
+    `phms-core`,
+    `phms-kernel`,
   )
 
-lazy val `pms-kernel` = utilProject("kernel")
+lazy val `phms-kernel` = utilProject("kernel")
   .settings(
     libraryDependencies ++= Seq()
   )
   .dependsOn(
-    `pms-core`
+    `phms-core`
   )
   .aggregate(
-    `pms-core`
+    `phms-core`
   )
 
-lazy val `pms-core` = utilProject("core")
+lazy val `phms-testkit` = utilProject("testkit")
+  .settings(
+    libraryDependencies ++= Seq(
+      Libraries.munit
+    )
+  )
+  .dependsOn(
+    `phms-core`
+  )
+  .aggregate(
+    `phms-core`
+  )
+
+lazy val `phms-core` = utilProject("core")
   .settings(
     libraryDependencies ++= Seq(
       Libraries.sprout,
@@ -446,7 +474,23 @@ def genericProject(id: String, folder: String, name: String): Project =
     .settings(commonSettings)
 
 def algebraProject(name: String): Project = genericProject("algebra", "module/algebras", name)
-def utilProject(name:    String): Project = genericProject("pms", "module/utils", name)
-def troveProject(name:   String): Project = genericProject("pms", "module/troves", name)
+def utilProject(name:    String): Project = genericProject("phms", "module/utils", name)
+def troveProject(name:   String): Project = genericProject("phms", "module/troves", name)
 def serviceProject(name: String): Project = genericProject("service", "module/services", name)
 def restProject(name:    String): Project = genericProject("rest", "module/rest", name)
+
+/** See SBT docs:
+  * https://www.scala-sbt.org/release/docs/Multi-Project.html#Per-configuration+classpath+dependencies
+  *
+  * or an example:
+  * {{{
+  * val testModule = project
+  *
+  * val prodModule = project
+  *   .dependsOn(asTestingLibrary(testModule))
+  * }}}
+  * To ensure that testing code and dependencies
+  * do not wind up in the "compile" (i.e.) prod part of your
+  * application.
+  */
+def asTestingLibrary(p: Project): ClasspathDependency = p % "test -> compile"

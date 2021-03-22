@@ -40,6 +40,10 @@ object Settings {
      */
     addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.11.3").cross(CrossVersion.full)),
     scalacOptions ++= scala2_13Flags ++ betterForPluginCompilerFlags,
+    /** Required if we want to use munit as our testing framework.
+      * https://scalameta.org/munit/docs/getting-started.html
+      */
+    testFrameworks += new TestFramework("munit.Framework"),
   )
 
 }

@@ -12,6 +12,7 @@ object Libraries {
   val pureharmCoreV   = "0.1.0"     //https://github.com/busymachines/pureharm/releases
   val catsCoreV       = "2.4.2"     //https://github.com/typelevel/cats/releases
   val catsEffectV     = "3.0.0-RC2" //https://github.com/typelevel/cats-effect/releases
+  val munitV       = "0.13.1"    //https://github.com/typelevel/munit-cats-effect/releases
   val fs2V            = "3.0.0-M9"  //https://github.com/typelevel/fs2/releases
   val circeV          = "0.13.0"    //https://github.com/circe/circe/releases
   val http4sV         = "1.0.0-M19" //https://github.com/http4s/http4s/releases
@@ -99,4 +100,5 @@ object Libraries {
   //=========================================  testing =========================================
   //============================================================================================
 
+  val munit = "org.typelevel" %% "munit-cats-effect-3" % munitV withSources ()
 }
