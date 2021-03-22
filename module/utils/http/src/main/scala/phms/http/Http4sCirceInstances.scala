@@ -1,7 +1,7 @@
 package phms.http
 
 import fs2.Chunk
-import io.circe.Printer
+import io.circe.{Json, Printer}
 import phms._
 import phms.json._
 import org.http4s._
@@ -28,18 +28,16 @@ trait Http4sCirceInstances {
     *
     * @return
     */
-  implicit def syncEntityJsonEncoder[F[_], T: Encoder]: EntityEncoder[F, T] = throw Fail.nicata("syncEntityJsonEncoder")
-//    EntityEncoder[F, Chunk[Byte]]
-//      .contramap[Json] { json =>
-//        val bytes = printer.printToByteBuffer(json)
-//        Chunk.byteBuffer(bytes)
-//      }
-//      .withContentType(`Content-Type`(MediaType.application.json))
-//      .contramap(t => Encoder.apply[T].apply(t))
+  implicit def jsonEntityEncoder[F[_], T: Encoder]: EntityEncoder[F, T] =
+    EntityEncoder[F, Chunk[Byte]]
+      .contramap[Json] { json =>
+        val bytes = printer.printToByteBuffer(json)
+        Chunk.byteBuffer(bytes)
+      }
+      .withContentType(`Content-Type`(MediaType.application.json))
+      .contramap(t => Encoder.apply[T].apply(t))
 
-  implicit def syncEntityJsonDecoder[F[_]: Sync, T: Decoder]: EntityDecoder[F, T] =
-    throw Fail.nicata("syncEntityJsonDecoder")
-//    circeInstances.jsonOf[F, T]
+  implicit def concurrentEntityDecoder[F[_]: Concurrent, T: Decoder]: EntityDecoder[F, T] = circeInstances.jsonOf[F, T]
 
 }
 
