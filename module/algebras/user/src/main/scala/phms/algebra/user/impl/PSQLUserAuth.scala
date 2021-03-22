@@ -65,5 +65,14 @@ final case class PSQLUserAuth[F[_]](private val session: Session[F])(implicit F:
     )
     .use(pc => pc.execute(userID).void)
 
+  def deleteToken(t: AuthenticationToken): F[Unit] = session
+    .prepare(
+      sql"""
+          DELETE FROM $user_auths_table
+          WHERE $token = $varchar64_token
+         """.command: Command[AuthenticationToken]
+    )
+    .use(pc => pc.execute(t).void)
+
   /*_*/
 }

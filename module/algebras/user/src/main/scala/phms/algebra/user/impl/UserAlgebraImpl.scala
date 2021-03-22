@@ -50,7 +50,25 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
     } yield fromRepr(tuple)
 
   override def authenticate(token: AuthenticationToken): F[AuthCtx] =
-    Fail.nicata(s"Authenticate via token: $token").raiseError[F, AuthCtx]
+    dbPool
+      .use { session =>
+        session.transaction.use { _ =>
+          val user_auths = PSQLUserAuth(session)
+          for {
+            ctxRepr  <- user_auths
+              .findForToken(token)
+              .flatMap(_.liftTo[F](Fail.unauthorized("Invalid authentication token")))
+            userRepr <- PSQLUsers(session).findByID(ctxRepr.userID).flatMap(_.liftTo[F](Fail.iscata("", "")))
+            _        <- UserAuthExpiration
+              .isInPast[F](ctxRepr.expiresAt)
+              .ifM(
+                ifTrue  = Fail.unauthorized("Auth token expired").raiseError[F, Unit],
+                ifFalse = user_auths.deleteToken(token),
+              )
+          } yield (userRepr, ctxRepr)
+        }
+      }
+      .map(fromRepr)
 
   override protected[user] def promoteUserOP(id: UserID, newRole: UserRole): F[Unit] =
     Fail.nicata(s"promoteUserOP for $id, $newRole").raiseError[F, Unit]
