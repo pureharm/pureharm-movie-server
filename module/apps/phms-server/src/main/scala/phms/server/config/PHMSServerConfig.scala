@@ -41,7 +41,7 @@ object PHMSServerConfig {
   private object httpConfig extends ConfigLoader[HttpConfig] {
 
     override val configValue: ConfigValue[Effect, HttpConfig] = (
-      env(EnvVar.PHMS_SERVER_PORT).as[Port].default(port"21312"),
+      env(EnvVar.PHMS_SERVER_PORT).as[Port].default(port"13120"),
       env(EnvVar.PHMS_SERVER_HOST).as[Host].default(host"0.0.0.0"),
       env(EnvVar.PHMS_SERVER_API_ROOT).as[APIRoot].default(APIRoot("/phms/api")),
       env(EnvVar.PHMS_APP_DEV_MODE_BOOTSTRAP).as[Boolean].default(false),
@@ -85,7 +85,7 @@ object PHMSServerConfig {
       */
     private val connectionConfig: ConfigValue[Effect, DBConnectionConfig] = (
       env(EnvVar.PHMS_DB_HOST).as[DBHost].default(DBHost(host"localhost")),
-      env(EnvVar.PHMS_DB_PORT).as[DBPort].default(DBPort(port"5432")),
+      env(EnvVar.PHMS_DB_PORT).as[DBPort].default(DBPort(port"11312")),
       env(EnvVar.PHMS_DB_NAME).as[DatabaseName].default(DatabaseName("mymoviedatabase")),
       env(EnvVar.PHMS_DB_USERNAME).as[DBUsername].default(DBUsername("busyuser")),
       env(EnvVar.PHMS_DB_PASSWORD).as[DBPassword].default(DBPassword("qwerty")),

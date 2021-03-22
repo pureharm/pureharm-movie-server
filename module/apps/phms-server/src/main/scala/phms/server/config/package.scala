@@ -10,6 +10,6 @@ package object config {
 
   object BootstrapServer extends SproutSub[Boolean] {
     val True:  BootstrapServer = newType(true)
-    val False: BootstrapServer = newType(true)
+    val False: BootstrapServer = newType(false)
   }
 }
