@@ -4,10 +4,10 @@ package object kernel {
 
   type Email = Email.Type
 
-  object Email extends SproutRefinedThrow[String] with SproutEq[String] with SproutOrder[String] {
+  object Email extends SproutRefinedThrow[String] {
 
     override def refine[F[_]](o: String)(implicit F: MonadThrow[F]): F[String] =
-      if (o.contains("@")) Fail.invalid("Email must contain: @").raiseError[F, String] else o.pure[F]
+      if (!o.contains("@")) Fail.invalid("Email must contain: @").raiseError[F, String] else o.pure[F]
   }
 
   type PlainTextPassword = PlainTextPassword.Type
