@@ -6,7 +6,7 @@ import phms.db.config._
 
 object DBPool {
 
-  def apply[F[_]](implicit sp: DDPool[F]): DDPool[F] = sp
+  def apply[F[_]](implicit sp: DBPool[F]): DBPool[F] = sp
 
   def resource[F[_]](
     config:      DBConnectionConfig

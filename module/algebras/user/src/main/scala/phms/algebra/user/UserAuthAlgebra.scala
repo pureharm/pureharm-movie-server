@@ -67,11 +67,11 @@ abstract class UserAuthAlgebra[F[_]: MonadThrow] {
 object UserAuthAlgebra {
 
   def resource[F[_]](implicit
-    dbPool: DDPool[F],
-    F:      MonadCancelThrow[F],
-    time:   Time[F],
-    r:      Random[F],
-    sr:     SecureRandom[F],
+                     dbPool: DBPool[F],
+                     F:      MonadCancelThrow[F],
+                     time:   Time[F],
+                     r:      Random[F],
+                     sr:     SecureRandom[F],
   ): Resource[F, UserAuthAlgebra[F]] =
     Resource.pure[F, UserAuthAlgebra[F]](new UserAlgebraImpl[F]())
 }

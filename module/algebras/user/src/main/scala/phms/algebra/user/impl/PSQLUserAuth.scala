@@ -27,7 +27,6 @@ object PSQLUserAuth {
   private val user_auths_table: TableName = const"user_authentications"
 
   private val user_auth_repr: Codec[UserAuthRepr] = (varchar96_token ~ uuid_user_id ~ timestamptz_expires_at).gimap
-
   /*_*/
 }
 

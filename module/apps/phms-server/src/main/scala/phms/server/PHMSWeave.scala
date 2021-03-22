@@ -91,7 +91,7 @@ object PHMSWeave {
         .resource[F](config.dbConfig.connection, config.dbConfig.flyway)
         .evalMap(flyway => flyway.runMigrations(logger))
 
-      implicit0(dbPool: DDPool[F]) <- DBPool.resource[F](config.dbConfig.connection)
+      implicit0(dbPool: DBPool[F]) <- DBPool.resource[F](config.dbConfig.connection)
 
       throttler <- EffectThrottler.resource[F](
         config.imdbConfig.requestsInterval,

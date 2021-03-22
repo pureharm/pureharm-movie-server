@@ -4,7 +4,7 @@ package object db extends skunk.syntax.ToAllOps {
   type Session[F[_]] = skunk.Session[F]
   val Session: skunk.Session.type = skunk.Session
 
-  type DDPool[F[_]] = Resource[F, Session[F]]
+  type DBPool[F[_]] = Resource[F, Session[F]]
 
   type Codec[A]   = skunk.Codec[A]
   type Encoder[A] = skunk.Encoder[A]
@@ -19,6 +19,8 @@ package object db extends skunk.syntax.ToAllOps {
 
   type Command[A]  = skunk.Command[A]
   type Query[I, O] = skunk.Query[I, O]
+
+  type ~[+A, +B] = skunk.~[A, B]
 
   type PreparedQuery[F[_], I, O] = skunk.PreparedQuery[F, I, O]
   val PreparedQuery: skunk.PreparedQuery.type = skunk.PreparedQuery
