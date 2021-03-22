@@ -32,6 +32,6 @@ CREATE TABLE user_authentications (
 
 CREATE TABLE movies (
   id uuid PRIMARY KEY NOT NULL,
-  name varchar NOT NULL,
-  release_date date NOT NULL
+  title varchar NOT NULL,
+  release_date date
 );

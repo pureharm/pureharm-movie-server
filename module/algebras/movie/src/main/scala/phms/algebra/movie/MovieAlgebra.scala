@@ -9,6 +9,8 @@ import phms._
   */
 trait MovieAlgebra[F[_]] {
 
+  implicit protected def concurrent: Concurrent[F]
+
   protected def userAuth: UserAuthAlgebra[F]
 
   final def createMovie(mc: MovieCreation)(implicit auth: AuthCtx): F[Movie] =
@@ -16,13 +18,15 @@ trait MovieAlgebra[F[_]] {
 
   protected def createMovieImpl(mc: MovieCreation): F[Movie]
 
-  def findMoviesBetween(interval: QueryInterval)(implicit auth: AuthCtx): F[List[Movie]] =
-    userAuth.authorizeNewbie(findMoviesBetweenImpl(interval))
+  def findMoviesBetween(interval: QueryInterval)(implicit auth: AuthCtx): Stream[F, Movie] =
+    Stream
+      .eval(userAuth.authorizeNewbie(concurrent.unit))
+      .flatMap(_ => findMoviesBetweenImpl(interval))
 
   def fetchMovie(mid: MovieID)(implicit auth: AuthCtx): F[Movie] =
     userAuth.authorizeNewbie(findMovieImpl(mid))
 
-  protected def findMoviesBetweenImpl(interval: QueryInterval): F[List[Movie]]
+  protected def findMoviesBetweenImpl(interval: QueryInterval): Stream[F, Movie]
 
   protected def findMovieImpl(mid: MovieID): F[Movie]
 }
@@ -31,7 +35,7 @@ object MovieAlgebra {
   import phms.algebra.movie.impl.MovieAlgebraImpl
 
   def resource[F[_]](
-    userAuth:            UserAuthAlgebra[F]
-  )(implicit dbPool: DDPool[F], F: cats.effect.MonadCancelThrow[F]): Resource[F, MovieAlgebra[F]] =
-    new MovieAlgebraImpl(userAuth, dbPool).pure[Resource[F, *]].widen
+    userAuth:   UserAuthAlgebra[F]
+  )(implicit F: Concurrent[F], random: Random[F], dbPool: DBPool[F]): Resource[F, MovieAlgebra[F]] =
+    new MovieAlgebraImpl(userAuth).pure[Resource[F, *]].widen
 }

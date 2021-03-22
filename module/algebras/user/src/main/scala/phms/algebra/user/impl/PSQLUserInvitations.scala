@@ -24,7 +24,7 @@ object PSQLUserInvitations {
   private val user_invitations_row:   Row       = sql"$email, $role, $invitation_token, $expires_at"
   private val user_invitations_table: TableName = const"user_invitations"
 
-  private val enum_role:                  Codec[UserRole]             = PSQLUserCodecs.enum_user_role
+  private val enum_role: Codec[UserRole] = PSQLUserCodecs.enum_user_role
 
   private val varchar96_invitation_token: Codec[UserInviteToken]      =
     PSQLUserCodecs.varchar96_token.sprout[UserInviteToken]

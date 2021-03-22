@@ -19,6 +19,6 @@ package phms.algebra.movie
 //TODO: a more simple alternative is to just store an external URL as given,
 // maybe verify that it doesn't returns a 200 OK on a GET request to it, so that we don't store gibberish.
 final case class MovieCreation(
-  name: MovieTitle,
-  date: Option[ReleaseDate],
+  title: MovieTitle,
+  date:  Option[ReleaseDate],
 )

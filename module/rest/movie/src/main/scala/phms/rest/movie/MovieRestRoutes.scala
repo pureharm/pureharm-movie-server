@@ -27,12 +27,7 @@ final class MovieRestRoutes[F[_]](
   private object EndReleaseDateQueryMatcher   extends QueryParamDecoderMatcher[ReleaseDate]("end")
 
   private object MovieIDMatcher {
-
-    def unapply(str: String): Option[MovieID] =
-      if (!str.isEmpty)
-        Try(MovieID(str.toLong)).toOption
-      else
-        None
+    def unapply(str: String): Option[MovieID] = MovieID.fromString[Try](str).toOption
   }
 
   implicit private val titleQueryParamDecoder: QueryParamDecoder[TitleQuery] =

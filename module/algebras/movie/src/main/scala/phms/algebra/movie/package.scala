@@ -7,7 +7,7 @@ import java.time._
   * @since 25 Jun 2018
   */
 package object movie {
-  object MovieID extends Sprout[Long]
+  object MovieID extends SproutUUID
   type MovieID = MovieID.Type
 
   object MovieTitle extends Sprout[String]

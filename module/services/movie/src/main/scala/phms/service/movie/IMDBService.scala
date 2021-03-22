@@ -43,8 +43,8 @@ final class IMDBService[F[_]] private (
     */
   private def imdbMovieToMovieCreation(imdb: IMDBMovie): MovieCreation =
     MovieCreation(
-      name = MovieTitle(IMDBTitle.oldType(imdb.title)),
-      date = imdb.year.map { y =>
+      title = MovieTitle(IMDBTitle.oldType(imdb.title)),
+      date  = imdb.year.map { y =>
         val year = ReleaseYear.oldType(y)
         val ld   = LocalDate.of(year.getValue, 1, 1)
         ReleaseDate(ld)

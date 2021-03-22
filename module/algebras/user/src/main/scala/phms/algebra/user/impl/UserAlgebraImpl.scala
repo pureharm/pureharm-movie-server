@@ -10,11 +10,11 @@ import phms.algebra.user._
   * @since 21 Jun 2018
   */
 final private[user] class UserAlgebraImpl[F[_]](implicit
-                                                val F:      MonadCancelThrow[F],
-                                                val r:      Random[F],
-                                                val sr:     SecureRandom[F],
-                                                val time:   Time[F],
-                                                val dbPool: DBPool[F],
+  val F:      MonadCancelThrow[F],
+  val r:      Random[F],
+  val sr:     SecureRandom[F],
+  val time:   Time[F],
+  val dbPool: DBPool[F],
 ) extends UserAuthAlgebra[F]()(F) with UserAccountAlgebra[F] with UserAlgebra[F] {
 
   override protected def monadThrow:  MonadThrow[F]      = F
