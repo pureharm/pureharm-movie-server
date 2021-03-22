@@ -9,7 +9,7 @@ addCommandAlias("mkJar", ";clean;update;compile;server/assembly")
 //=============================================================================
 ThisBuild / version := "1.0.0"
 
-lazy val server = Project(id = "server", file("./module/apps/phms"))
+lazy val server = Project(id = "phms-server", file("./module/apps/phms-server"))
   .settings(commonSettings)
   .enablePlugins(JavaAppPackaging)
   .settings(
@@ -47,11 +47,10 @@ lazy val server = Project(id = "server", file("./module/apps/phms"))
     `bootstrap`,
   )
 
-lazy val `bootstrap` = project
+lazy val `bootstrap` = Project(id = "bootstrap", file("./module/apps/bootstrap"))
   .settings(commonSettings)
   .settings(
-    libraryDependencies ++= Seq(
-    )
+    libraryDependencies ++= Seq()
   )
   .dependsOn(
     `phms-logger`,

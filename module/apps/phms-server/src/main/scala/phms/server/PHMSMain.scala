@@ -14,10 +14,12 @@ object PHMSMain extends IOApp {
       .as(ExitCode.Success)
 
   private def runResource[F[_]](implicit
-    CE: Async[F]
+    CE: Async[F],
+    C:  Console[F],
   ): Resource[F, Server] =
     for {
       weave  <- PHMSWeave.resource[F]
+      _      <- Resource.eval(weave.bootstrapServer)
       server <- weave.serverResource
     } yield server
 

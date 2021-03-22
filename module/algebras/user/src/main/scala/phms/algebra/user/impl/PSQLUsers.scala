@@ -28,7 +28,7 @@ object PSQLUsers {
   private val bytea_bcrypt:                   Codec[UserCrypto.BcryptPW] = bytea.sproutRefined
   private val varchar64_password_reset_token: Codec[PasswordResetToken]  = varchar(64).sprout
 
-  private val users_repr_row: Row       = sql"$id, $email, $role $bcrypt_password_hash $password_reset_token"
+  private val users_repr_row: Row       = sql"$id, $email, $role, $bcrypt_password_hash, $password_reset_token"
   private val users_table:    TableName = const"users"
 
   private val user_repr: Codec[UserRepr] =

@@ -1,6 +1,7 @@
 package phms.server.bootstrap
 
 import phms._
+import phms.algebra.user.{UserAccountAlgebra, UserAccountBootstrapAlgebra}
 import phms.kernel._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
@@ -17,10 +18,16 @@ object Bootstrap {
       "bXVycmF5LmJvb2tjaGluQHNvY2lhbGVjb2xvZ3kuZmVjdW5kOk9sZE1hblllbGxzQXRBbmFyY2hpc20="
   }
 
-  def bootstrap[F[_]: Concurrent](usb: ServerBootstrapAlgebra[F]): F[Unit] = for {
-    email <- superAdmin.email[F]
-    passw <- superAdmin.passw[F]
-    _     <- usb.bootStrapSuperAdmin(email, passw).void
-  } yield ()
+  def bootstrap[F[_]: Sync: Console](
+    uca: UserAccountAlgebra[F],
+    uba: UserAccountBootstrapAlgebra[F],
+  ): F[Unit] =
+    for {
+      usb   <- ServerBootstrapAlgebra.create[F](uca, uba).pure[F]
+      email <- superAdmin.email[F]
+      passw <- superAdmin.passw[F]
+      _     <- Console[F].println("Bootstrapping user")
+      _     <- usb.bootStrapSuperAdmin(email, passw).attempt.void
+    } yield ()
 
 }

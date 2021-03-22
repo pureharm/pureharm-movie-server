@@ -23,12 +23,14 @@ import org.http4s._
   * @since 11 Jul 2018
   */
 final class PHMSWeave[F[_]] private (
-  serverConfig:    PHMSServerConfig,
-  serverBootstrap: ServerBootrapAlgebra,
-  middleware:      AuthMiddleware[F, AuthCtx],
-  userAPI:         UserAPI[F],
-  movieAPI:        MovieAPI[F],
-)(implicit F:      Async[F]) {
+  serverConfig:         PHMSServerConfig,
+  middleware:           AuthMiddleware[F, AuthCtx],
+  userAPI:              UserAPI[F],
+  movieAPI:             MovieAPI[F],
+  //TODO: add all modules here
+  userBootstrapAlgebra: UserAccountBootstrapAlgebra[F],
+  userAccountAlgebra:   UserAccountAlgebra[F],
+)(implicit F:           Async[F], console: Console[F]) {
 
   def serverResource: Resource[F, Server] = {
     import org.http4s.ember.server.EmberServerBuilder
@@ -51,8 +53,20 @@ final class PHMSWeave[F[_]] private (
     Router[F](("api", phmsAPI)).orNotFound
   }
 
-  private def bootstrapServer: F[Unit] =
-    this.b
+  def bootstrapServer: F[Unit] = for {
+    _ <- console.println(s"""Attempting bootstrap ${serverConfig.boostrap}""")
+    _ <-
+      if (serverConfig.boostrap) {
+        phms.server.bootstrap.Bootstrap
+          .bootstrap[F](
+            userAccountAlgebra,
+            userBootstrapAlgebra,
+          )
+          .attempt
+          .void
+      }
+      else F.unit
+  } yield ()
 
 }
 
@@ -85,12 +99,13 @@ object PHMSWeave {
         config.imdbConfig.requestsNumber,
       )
 
-      imdbAlgebra    <- IMDBAlgebra.resource[F](throttler)
-      authAlgebra    <- UserAuthAlgebra.resource[F]
-      accountAlgebra <- UserAccountAlgebra.resource[F]
-      userAlgebra    <- UserAlgebra.resource[F]
-      movieAlgebra   <- MovieAlgebra.resource[F](authAlgebra)
-      emailAlgebra   <- EmailAlgebra.resource[F](config.emailConfig)
+      imdbAlgebra          <- IMDBAlgebra.resource[F](throttler)
+      authAlgebra          <- UserAuthAlgebra.resource[F]
+      accountAlgebra       <- UserAccountAlgebra.resource[F]
+      userAlgebra          <- UserAlgebra.resource[F]
+      userBootstrapAlgebra <- UserAccountBootstrapAlgebra.resource[F](accountAlgebra)
+      movieAlgebra         <- MovieAlgebra.resource[F](authAlgebra)
+      emailAlgebra         <- EmailAlgebra.resource[F](config.emailConfig)
 
       imdbService <- IMDBService.resource[F](movieAlgebra, imdbAlgebra)
       userService <- UserAccountService.resource[F](accountAlgebra, emailAlgebra)
@@ -100,6 +115,13 @@ object PHMSWeave {
       movieAPI <- MovieAPI.resource(imdbService, movieAlgebra)
       userAPI  <- UserAPI.resource(userAlgebra, authAlgebra, userService)
 
-    } yield new PHMSWeave[F](config, middleware, userAPI, movieAPI)
+    } yield new PHMSWeave[F](
+      config,
+      middleware,
+      userAPI,
+      movieAPI,
+      userBootstrapAlgebra = userBootstrapAlgebra,
+      userAccountAlgebra   = accountAlgebra,
+    )
 
 }

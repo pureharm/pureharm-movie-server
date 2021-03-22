@@ -33,7 +33,6 @@ object PSQLUserAuth {
 
 final case class PSQLUserAuth[F[_]](private val session: Session[F])(implicit F: MonadCancelThrow[F], time: Time[F]) {
   import PSQLUserAuth._
-  import phms.db.codecs._
 
   /*_*/
   def insert(toInsert: UserAuthRepr): F[Unit] = session

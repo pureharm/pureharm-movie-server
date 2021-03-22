@@ -123,27 +123,25 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
       user      <- dbPool.use { session =>
         val users            = PSQLUsers(session)
         val user_invitations = PSQLUserInvitations(session)
-        session.transaction.use { _ =>
-          for {
-            invite <- user_invitations
-              .findByInvite(token)
-              .flatMap(_.liftTo[F](Fail.invalid(s"Invalid user invite token: $token")))
+        for {
+          invite <- user_invitations
+            .findByInvite(token)
+            .flatMap(_.liftTo[F](Fail.invalid(s"Invalid user invite token: $token")))
 
-            isExpired <- UserInviteExpiration.isInPast[F](invite.expiresAt)
-            _         <-
-              if (isExpired) Fail.invalid(s"User invitation expired @ ${invite.expiresAt}").raiseError[F, Unit]
-              else F.unit
+          isExpired <- UserInviteExpiration.isInPast[F](invite.expiresAt)
+          _         <-
+            if (isExpired) Fail.invalid(s"User invitation expired @ ${invite.expiresAt}").raiseError[F, Unit]
+            else F.unit
 
-            newUserRepr = PSQLUsers.UserRepr(
-              id           = newUserID,
-              email        = invite.email,
-              role         = invite.role,
-              bcryptPW     = bcrypt,
-              pwResetToken = Option.empty,
-            )
-            _ <- users.insert(newUserRepr)
-          } yield fromRepr(newUserRepr)
-        }
+          newUserRepr = PSQLUsers.UserRepr(
+            id           = newUserID,
+            email        = invite.email,
+            role         = invite.role,
+            bcryptPW     = bcrypt,
+            pwResetToken = Option.empty,
+          )
+          _ <- users.insert(newUserRepr)
+        } yield fromRepr(newUserRepr)
       }
     } yield user
 
