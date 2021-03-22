@@ -2,6 +2,7 @@ package phms.rest.user
 
 import org.http4s.dsl._
 import org.http4s._
+import org.typelevel.ci.CIString
 import phms.algebra.http._
 import phms.algebra.user._
 import phms._
@@ -28,30 +29,26 @@ final class UserLoginRoutes[F[_]](
       auth  <- userAuthAlgebra.authenticate(email, ptpw)
     } yield auth
 
-  private def findBasicAuth(hs: Headers): F[BasicCredentials] = {
-    val r: Attempt[BasicCredentials] = for {
-      auth:  headers.Authorization <-
-        Fail
-          .nicata("""
-                    |
-                    |hs.get(headers.Authorization)
-                    |          .liftTo[Attempt](Fail.unauthorized("Missing Authorization header"))
-                    |
-                    |""".stripMargin)
-          .raiseError[Attempt, headers.Authorization]
-
-      basic: BasicCredentials      <- auth.credentials match {
+  private def findBasicAuth(hs: Headers): F[BasicCredentials] =
+    for {
+      authHeader <- hs
+        .get[headers.Authorization]
+        .liftTo[F](
+          Fail.unauthorized(
+            """|No 'Authorization' header, please include one 
+               |for authentication
+               |""".stripMargin
+          )
+        )
+      basic: BasicCredentials <- authHeader.credentials match {
         case Credentials.Token(AuthScheme.Basic, token) =>
-          BasicCredentials(token).pure[Attempt]
+          BasicCredentials(token).pure[F]
         case credentials                                =>
           Fail
             .unauthorized(s"Unsupported credentials w/ AuthScheme ${credentials.authScheme}")
-            .raiseError[Attempt, BasicCredentials]
+            .raiseError[F, BasicCredentials]
       }
     } yield basic
-
-    r.liftTo[F]
-  }
 
   private val loginRoutes: HttpRoutes[F] =
     HttpRoutes.of[F] { case req @ POST -> Root / "user" / "login" =>
