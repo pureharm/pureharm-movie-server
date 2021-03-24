@@ -3,7 +3,7 @@ package phms.rest.user
 import phms._
 import phms.algebra.user._
 import phms.json._
-import phms.service.user._
+import phms.organizer.user._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018

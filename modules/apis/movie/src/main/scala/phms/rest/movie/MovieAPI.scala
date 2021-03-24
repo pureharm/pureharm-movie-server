@@ -13,8 +13,8 @@ object MovieAPI {
 
   def resource[F[_]: Async](imdbOrganizer: IMDBOrganizer[F], movieAlgebra: MovieAlgebra[F]): Resource[F, MovieAPI[F]] =
     new MovieRestRoutes[F](
-      imdbService  = imdbOrganizer,
-      movieAlgebra = movieAlgebra,
+      imdbOrganizer = imdbOrganizer,
+      movieAlgebra  = movieAlgebra,
     ).pure[Resource[F, *]]
       .map(_.authedRoutes)
       .map(rts =>

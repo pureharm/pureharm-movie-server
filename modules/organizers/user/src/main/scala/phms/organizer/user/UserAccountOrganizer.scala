@@ -1,4 +1,4 @@
-package phms.service.user
+package phms.organizer.user
 
 import phms._
 import phms.kernel._
@@ -9,7 +9,7 @@ import phms.port.email.EmailPort
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
   */
-final class UserAccountService[F[_]] private (
+final class UserAccountOrganizer[F[_]] private (
   private val userAccount: UserAccountAlgebra[F],
   private val emailPort:   EmailPort[F],
 )(implicit
@@ -55,15 +55,15 @@ final class UserAccountService[F[_]] private (
 
 }
 
-object UserAccountService {
+object UserAccountOrganizer {
 
   def resource[F[_]: Concurrent](
     userAccount: UserAccountAlgebra[F],
     emailPort:   EmailPort[F],
-  ): Resource[F, UserAccountService[F]] = Resource.pure[F, UserAccountService[F]](
-    new UserAccountService[F](
-      userAccount,
-      emailPort,
+  ): Resource[F, UserAccountOrganizer[F]] = Resource.pure[F, UserAccountOrganizer[F]](
+    new UserAccountOrganizer[F](
+      userAccount = userAccount,
+      emailPort   = emailPort,
     )
   )
 }

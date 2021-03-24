@@ -1,4 +1,4 @@
-package phms.service.user
+package phms.organizer.user
 
 import phms.kernel._
 import phms.algebra.user._
