@@ -1,4 +1,4 @@
-package phms.service.movie
+package phms.organizer.movie
 
 import java.time.LocalDate
 
@@ -11,7 +11,7 @@ import phms._
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
   */
-final class IMDBService[F[_]] private (
+final class IMDBOrganizer[F[_]] private (
   protected val movieAlgebra: MovieAlgebra[F],
   protected val imdbAlgebra:  IMDBAlgebra[F],
 )(implicit F:                 MonadThrow[F]) {
@@ -52,8 +52,10 @@ final class IMDBService[F[_]] private (
     )
 }
 
-object IMDBService {
+object IMDBOrganizer {
 
-  def resource[F[_]: Async](movieAlgebra: MovieAlgebra[F], imdbAlgebra: IMDBAlgebra[F]): Resource[F, IMDBService[F]] =
-    Resource.pure[F, IMDBService[F]](new IMDBService[F](movieAlgebra, imdbAlgebra))
+  def resource[F[_]](movieAlgebra: MovieAlgebra[F], imdbAlgebra: IMDBAlgebra[F])(implicit
+    F:                             MonadThrow[F]
+  ): Resource[F, IMDBOrganizer[F]] =
+    Resource.pure[F, IMDBOrganizer[F]](new IMDBOrganizer[F](movieAlgebra, imdbAlgebra))
 }

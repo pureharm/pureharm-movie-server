@@ -13,7 +13,7 @@ import phms._
 import phms.rest.movie.MovieAPI
 import phms.rest.user.UserAPI
 import phms.server.config._
-import phms.service.movie.IMDBService
+import phms.organizer.movie.IMDBOrganizer
 import phms.service.user.UserAccountService
 import org.http4s.server._
 import org.http4s._
@@ -107,12 +107,12 @@ object PHMSWeave {
       userBootstrapAlgebra <- UserAccountBootstrapAlgebra.resource[F](accountAlgebra)
       movieAlgebra         <- MovieAlgebra.resource[F](authAlgebra)
 
-      imdbService <- IMDBService.resource[F](movieAlgebra, imdbAlgebra)
-      userService <- UserAccountService.resource[F](accountAlgebra, emailPort)
+      imdbOrganizer <- IMDBOrganizer.resource[F](movieAlgebra, imdbAlgebra)
+      userService   <- UserAccountService.resource[F](accountAlgebra, emailPort)
 
       middleware <- AuthedHttp4s.userTokenAuthMiddleware[F](authAlgebra)
 
-      movieAPI <- MovieAPI.resource(imdbService, movieAlgebra)
+      movieAPI <- MovieAPI.resource(imdbOrganizer, movieAlgebra)
       userAPI  <- UserAPI.resource(userAlgebra, authAlgebra, userService)
 
     } yield new PHMSWeave[F](

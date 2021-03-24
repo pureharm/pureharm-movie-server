@@ -8,16 +8,16 @@ import phms.algebra.imdb._
 import phms.algebra.movie._
 import phms._
 
-import phms.service.movie._
+import phms.organizer.movie._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
   */
 final class MovieRestRoutes[F[_]](
-  private val imdbService:  IMDBService[F],
-  private val movieAlgebra: MovieAlgebra[F],
+  private val imdbOrganizer: IMDBOrganizer[F],
+  private val movieAlgebra:  MovieAlgebra[F],
 )(implicit
-  val F:                    Async[F]
+  val F:                     Async[F]
 ) extends Http4sDsl[F] with MovieRoutesJSON {
 
   implicit private val releaseDateQueryParamDecoder: QueryParamDecoder[ReleaseDate] =
@@ -37,7 +37,7 @@ final class MovieRestRoutes[F[_]](
 
   private val imdbImportRoutes: AuthCtxRoutes[F] = {
     AuthCtxRoutes[F] { case PUT -> Root / "movie_import" / "imdb" :? TitleQueryParamMatcher(title) as user =>
-      Ok(imdbService.scrapeIMDBForTitle(TitleQuery(title))(user))
+      Ok(imdbOrganizer.scrapeIMDBForTitle(TitleQuery(title))(user))
     }
   }
 
