@@ -1,7 +1,9 @@
 package phms.email
 
+import cats.effect.std.Supervisor
 import phms._
 import phms.kernel._
+import phms.logger._
 
 /** This style of writing algebras (in layman terms: interface) is called
   * "final tagless".
@@ -11,12 +13,20 @@ import phms.kernel._
   */
 trait EmailAlgebra[F[_]] {
 
-  def sendEmail(to: Email, subject: Subject, content: Content): F[Unit]
-
+  /** @param onCompletion
+    * defines what to do based on the outcome of the email
+    * @return
+    */
+  def sendEmail(to: Email, subject: Subject, content: Content)(
+    onCompletion:   PartialFunction[OutcomeBackground[F], F[Unit]]
+  ): F[Background[F]]
 }
 
 object EmailAlgebra {
 
-  def resource[F[_]](config: GmailConfig)(implicit async: Async[F]): Resource[F, EmailAlgebra[F]] =
-    Resource.pure[F, EmailAlgebra[F]](new impl.EmailAlgebraJavaGmailAsyncImpl[F](config))
+  def resource[F[_]](
+    config:        GmailConfig
+  )(implicit sync: Sync[F], supervisor: Supervisor[F], logging: Logging[F]): Resource[F, EmailAlgebra[F]] =
+    impl.EmailAlgebraJavaSync.resource[F](config).widen
+
 }

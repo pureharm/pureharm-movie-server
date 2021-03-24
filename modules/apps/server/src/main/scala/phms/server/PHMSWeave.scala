@@ -15,7 +15,6 @@ import phms.rest.user.UserAPI
 import phms.server.config._
 import phms.service.movie.IMDBService
 import phms.service.user.UserAccountService
-
 import org.http4s.server._
 import org.http4s._
 
@@ -83,6 +82,7 @@ object PHMSWeave {
       implicit0(random: Random[F]) <- Random.resource[F]
       implicit0(time: Time[F]) <- Time.resource[F]
       implicit0(secureRandom: SecureRandom[F]) <- SecureRandom.resource[F]
+      implicit0(supervisor: Supervisor[F]) <- Supervisor[F]
       implicit0(logger: Logger[F]) = logging.of(this)
 
       config <- PHMSServerConfig.resource[F]
