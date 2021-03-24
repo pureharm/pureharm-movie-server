@@ -38,7 +38,8 @@ object Libraries {
   val sprout             = "com.lorandszakacs" %% "sprout"                % sproutV          withSources() // new-type encodings that allow us to remove stringly typed domain code
   val circeCore          = "io.circe"          %% "circe-core"            % circeV           withSources() // json library
   val circeGeneric       = "io.circe"          %% "circe-generic"         % circeV           withSources() // semi-automatic derivation of json codecs for case classes
-  val http4sEmberServer  = "org.http4s"        %% "http4s-ember-server"   % http4sV          withSources() // backend server that handles all http connection stuff
+  val http4sEmberServer  = "org.http4s"        %% "http4s-ember-server"   % http4sV          withSources() // concrete implementation of a backend http server, ember in particular is a ground up pure FP rewrite. Other options would be blaze, jetty, netty servers
+  val http4sServer       = "org.http4s"        %% "http4s-server"         % http4sV          withSources() // common http4s server abstractions, e.g. AuthMiddleware
   val http4sCirce        = "org.http4s"        %% "http4s-circe"          % http4sV          withSources() // integration between rest API and JSON library
   val http4sDSL          = "org.http4s"        %% "http4s-dsl"            % http4sV          withSources() // library used to define the rest API routes 
   val skunk              = "org.tpolecat"      %% "skunk-core"            % skunkV           withSources() // postgresql database driver written for cats-effect-3

@@ -2,7 +2,7 @@ package phms.algebra.http
 
 import org.http4s._
 import org.http4s.dsl._
-import org.http4s.server._
+import org.http4s.server.AuthMiddleware
 import org.typelevel.ci.CIString
 import phms.algebra.user._
 import phms._
