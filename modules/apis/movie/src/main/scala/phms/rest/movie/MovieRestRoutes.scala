@@ -3,7 +3,7 @@ package phms.rest.movie
 import java.time._
 import org.http4s._
 import org.http4s.dsl._
-import phms.algebra.http._
+import phms.stack.http._
 import phms.algebra.imdb._
 import phms.algebra.movie._
 import phms._

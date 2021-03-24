@@ -1,4 +1,4 @@
-package phms.algebra.http
+package phms.stack.http
 
 import phms._
 import phms.algebra.user.AuthCtx

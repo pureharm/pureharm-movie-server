@@ -1,4 +1,4 @@
-package phms.algebra.http
+package phms.stack.http
 
 import org.http4s._
 import org.http4s.dsl._

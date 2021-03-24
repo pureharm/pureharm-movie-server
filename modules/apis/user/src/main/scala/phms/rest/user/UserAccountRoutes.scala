@@ -2,7 +2,7 @@ package phms.rest.user
 
 import org.http4s._
 import org.http4s.dsl._
-import phms.algebra.http._
+import phms.stack.http._
 import phms.algebra.user._
 import phms._
 

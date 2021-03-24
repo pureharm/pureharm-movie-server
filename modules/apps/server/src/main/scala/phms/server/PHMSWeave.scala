@@ -1,6 +1,6 @@
 package phms.server
 
-import phms.algebra.http._
+import phms.stack.http._
 import phms.algebra.imdb._
 import phms.algebra.movie.MovieAlgebra
 import phms.algebra.user._
@@ -17,7 +17,6 @@ import phms.service.movie.IMDBService
 import phms.service.user.UserAccountService
 import org.http4s.server._
 import org.http4s._
-import phms.port.email.EmailPort
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jul 2018

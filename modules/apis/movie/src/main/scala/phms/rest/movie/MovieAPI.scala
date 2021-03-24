@@ -1,6 +1,6 @@
 package phms.rest.movie
 
-import phms.algebra.http.AuthCtxRoutes
+import phms.stack.http.AuthCtxRoutes
 import phms.algebra.movie.MovieAlgebra
 import phms._
 import phms.service.movie.IMDBService

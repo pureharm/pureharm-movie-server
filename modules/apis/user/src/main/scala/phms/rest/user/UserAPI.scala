@@ -1,7 +1,7 @@
 package phms.rest.user
 
 import org.http4s.HttpRoutes
-import phms.algebra.http.AuthCtxRoutes
+import phms.stack.http.AuthCtxRoutes
 import phms.algebra.user.{UserAlgebra, UserAuthAlgebra}
 import phms._
 import phms.service.user.UserAccountService

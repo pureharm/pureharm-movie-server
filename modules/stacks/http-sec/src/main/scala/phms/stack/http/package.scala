@@ -1,9 +1,9 @@
-package phms.algebra
+package phms.stack
 
 import org.http4s.AuthedRoutes
 import org.http4s.server.AuthMiddleware
-import phms.algebra.user.AuthCtx
-import phms.http.{Http4sCirceInstances, JavaTimeQueryParameterDecoders}
+import phms.algebra.user._
+import phms.http._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
