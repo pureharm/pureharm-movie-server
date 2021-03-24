@@ -7,7 +7,6 @@ import phms.stack.http._
 import phms.algebra.imdb._
 import phms.algebra.movie._
 import phms._
-import phms.http._
 
 import phms.organizer.movie._
 

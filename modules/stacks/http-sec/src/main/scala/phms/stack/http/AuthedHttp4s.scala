@@ -12,9 +12,11 @@ import phms._
   */
 object AuthedHttp4s {
 
-  def userTokenAuthMiddleware[F[_]: Async](authAlgebra: UserAuthAlgebra[F]): Resource[F, AuthMiddleware[F, AuthCtx]] = {
+  def userTokenAuthMiddleware[F[_]](
+    authAlgebra: UserAuthAlgebra[F]
+  )(implicit F:  MonadThrow[F]): Resource[F, AuthMiddleware[F, AuthCtx]] = {
     val tokenVerification: Kleisli[F, Request[F], Attempt[AuthCtx]] = verifyToken[F](authAlgebra)
-    AuthMiddleware(tokenVerification, onFailure).pure[Resource[F, *]]
+    AuthMiddleware(tokenVerification, onFailure[F]).pure[Resource[F, *]]
   }
 
   private val `X-Auth-Token` = CIString("X-AUTH-TOKEN")
@@ -28,14 +30,16 @@ object AuthedHttp4s {
 
   private val wwwHeader = headers.`WWW-Authenticate`(challenges)
 
-  private def onFailure[F[_]: Async]: AuthedRoutes[Throwable, F] =
+  private def onFailure[F[_]](implicit F: MonadThrow[F]): AuthedRoutes[Throwable, F] =
     Kleisli[OptionT[F, *], AuthedRequest[F, Throwable], Response[F]] { _: AuthedRequest[F, Throwable] =>
       val fdsl = Http4sDsl[F]
       import fdsl._
       OptionT.liftF[F, Response[F]](Unauthorized(wwwHeader))
     }
 
-  private def verifyToken[F[_]: Async](authAlgebra: UserAuthAlgebra[F]): Kleisli[F, Request[F], Attempt[AuthCtx]] =
+  private def verifyToken[F[_]](
+    authAlgebra: UserAuthAlgebra[F]
+  )(implicit F:  MonadThrow[F]): Kleisli[F, Request[F], Attempt[AuthCtx]] =
     Kleisli { req: Request[F] =>
       val optHeader = req.headers.get(`X-Auth-Token`)
       optHeader match {
