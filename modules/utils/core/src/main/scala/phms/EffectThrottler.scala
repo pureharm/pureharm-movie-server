@@ -10,40 +10,36 @@ import scala.concurrent.duration._
   * @param interval  time unit between `size` consecutive requests
   * @param semaphore bounded by the number of Fs allowed to be executed in the configured `interval`
   */
-final class EffectThrottler[F[_]: Temporal: Concurrent](
-  private val interval: FiniteDuration,
-  val semaphore:        Semaphore[F],
-) {
+final class EffectThrottler[F[_]](
+  private val interval:        FiniteDuration,
+  private[this] val semaphore: Semaphore[F],
+)(implicit val F:              Temporal[F]) {
 
   /** Returns an F that will be "slowed" time to the configured rate
     * of execution.
     */
-  def throttle[T](f: F[T]): F[Attempt[T]] = Fail
-    .nicata(
-      """
-        |Effect throttler.throttle
-        |
-        |    for {
-        |      _                   <- semaphore.acquire
-        |      (duration, attempt) <- f.timedAttempt()
-        |      _                   <- if (isWithinInterval(duration)) Timer[F].sleep(interval - duration) else F.unit
-        |      _                   <- semaphore.release
-        |    } yield attempt
-        |
-        |  private def isWithinInterval(duration: FiniteDuration): Boolean =
-        |    duration < interval
-        |""".stripMargin
-    )
-    .raiseError[F, Attempt[T]]
+  def throttle[T](f: F[T]): F[T] =
+    /** Basically, we can treat the semaphore permit as a resource,
+      * and this way we guarantee its release, even in case of interruption.
+      */
+    Resource.make[F, Unit](semaphore.acquire)(_ => semaphore.release).use { _ =>
+      for {
+        timedAttempt <- F.timed(f.attempt)
+        (duration, attempt) = timedAttempt
+        _      <- if (isWithinInterval(duration)) F.sleep(interval - duration) else F.unit
+        result <- attempt.liftTo[F]
+      } yield result
+    }
 
+  private def isWithinInterval(duration: FiniteDuration): Boolean = duration < interval
 }
 
 object EffectThrottler {
 
-  def resource[F[_]: Temporal: Concurrent](
-    interval: FiniteDuration,
-    amount:   Long,
-  ): Resource[F, EffectThrottler[F]] =
+  def resource[F[_]](
+    interval:   FiniteDuration,
+    amount:     Long,
+  )(implicit F: Temporal[F]): Resource[F, EffectThrottler[F]] =
     Resource.eval {
       for {
         sem <- Semaphore(amount)

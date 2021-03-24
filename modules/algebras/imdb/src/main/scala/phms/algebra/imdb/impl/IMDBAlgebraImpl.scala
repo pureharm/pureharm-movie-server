@@ -15,17 +15,17 @@ final private[imdb] class IMDBAlgebraImpl[F[_]](
   val throttler: EffectThrottler[F],
   val browser:   JsoupBrowser,
 )(implicit
-  val F:         Async[F]
+  val F:         Sync[F]
 ) extends IMDBAlgebra[F] {
 
   override def scrapeMovieByTitle(title: TitleQuery): F[Option[IMDBMovie]] =
     for {
-      doc       <- throttler.throttle[Document] {
-        F.delay[Document](browser.get(s"https://imdb.com/find?q=$title&s=tt"))
-      }
-      imdbMovie <- doc match {
-        case Left(_)      => F.pure(None)
-        case Right(value) => F.delay(parseIMDBDocument(value))
+      docAttempt <- throttler
+        .throttle[Document](F.blocking[Document](browser.get(s"https://imdb.com/find?q=$title&s=tt")))
+        .attempt
+      imdbMovie  <- docAttempt match {
+        case Left(_)      => Option.empty.pure[F]
+        case Right(value) => F.blocking(parseIMDBDocument(value))
       }
     } yield imdbMovie
 
