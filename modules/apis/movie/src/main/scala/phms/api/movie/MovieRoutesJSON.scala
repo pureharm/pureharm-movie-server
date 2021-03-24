@@ -1,4 +1,4 @@
-package phms.rest.movie
+package phms.api.movie
 
 import phms.algebra.movie._
 import phms.json._

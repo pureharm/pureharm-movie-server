@@ -1,4 +1,4 @@
-package phms.rest.user
+package phms.api.user
 
 import phms._
 import phms.algebra.user._

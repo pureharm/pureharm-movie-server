@@ -1,4 +1,4 @@
-package phms.rest.movie
+package phms.api.movie
 
 import java.time._
 import org.http4s._

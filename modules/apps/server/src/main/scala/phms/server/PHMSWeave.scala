@@ -10,8 +10,8 @@ import phms.db._
 import phms.port.email._
 import phms.logger._
 import phms._
-import phms.rest.movie.MovieAPI
-import phms.rest.user.UserAPI
+import phms.api.movie.MovieAPI
+import phms.api.user.UserAPI
 import phms.server.config._
 import phms.organizer.movie.IMDBOrganizer
 import phms.organizer.user.UserAccountOrganizer

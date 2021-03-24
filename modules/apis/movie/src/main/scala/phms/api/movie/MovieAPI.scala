@@ -1,4 +1,4 @@
-package phms.rest.movie
+package phms.api.movie
 
 import phms.stack.http.AuthCtxRoutes
 import phms.algebra.movie.MovieAlgebra

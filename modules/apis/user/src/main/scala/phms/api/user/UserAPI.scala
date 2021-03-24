@@ -1,4 +1,4 @@
-package phms.rest.user
+package phms.api.user
 
 import org.http4s.HttpRoutes
 import phms.stack.http.AuthCtxRoutes
