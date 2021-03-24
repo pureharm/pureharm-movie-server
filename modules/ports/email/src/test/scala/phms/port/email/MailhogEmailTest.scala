@@ -42,4 +42,27 @@ final class MailhogEmailTest extends PHMSTest {
     } yield ()
   }
 
+  emailPort.test(TestOptions("send out 1000 emails in parallel").tag(Slow)) { emailPort =>
+    for {
+      to <- Email[IO]("phms-mailhog-test@example.com")
+      _  <- Stream
+        .range[IO](0, 1000)
+        .parEvalMapUnordered(Runtime.getRuntime.availableProcessors()) { idx =>
+          for {
+            background <- emailPort.sendEmail(to, Subject(s"subject -- $idx"), Content(s"content $idx")) { case _ =>
+              IO.unit
+            }
+            outcome    <- background.join
+            _ = outcome match {
+              case Outcome.Errored(e)   => fail("failed to send email", e)
+              case Outcome.Canceled()   => fail("email sending was cancelled")
+              case Outcome.Succeeded(_) => assert(cond = true)
+            }
+          } yield ()
+        }
+        .compile
+        .drain
+    } yield ()
+  }
+
 }
