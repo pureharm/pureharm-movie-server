@@ -14,7 +14,8 @@ import phms.organizer.user._
 final class UserAccountRoutes[F[_]](
   private val userOrganizer: UserAccountOrganizer[F]
 )(implicit
-  val F:                     Async[F]
+  val F:                     Concurrent[F],
+  val D:                     Defer[F],
 ) extends Http4sDsl[F] with UserRoutesJSON {
 
   private val userInvitationStep1Routes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {

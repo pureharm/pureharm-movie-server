@@ -13,11 +13,11 @@ trait UserAPI[F[_]] {
 
 object UserAPI {
 
-  def resource[F[_]: Async](
+  def resource[F[_]](
     userAlgebra:          UserAlgebra[F],
     userAuthAlgebra:      UserAuthAlgebra[F],
     userAccountOrganizer: UserAccountOrganizer[F],
-  ): Resource[F, UserAPI[F]] =
+  )(implicit F:           Concurrent[F], D: Defer[F]): Resource[F, UserAPI[F]] =
     for {
       userRoutes        <- Resource.pure[F, UserRoutes[F]](new UserRoutes[F](userAlgebra))
       userLoginRoutes   <- Resource.pure[F, UserLoginRoutes[F]](new UserLoginRoutes[F](userAuthAlgebra))

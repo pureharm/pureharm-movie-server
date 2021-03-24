@@ -39,8 +39,11 @@ package object phms
   type OutcomeBackground[F[_]] = ce.Outcome[F, Throwable, Unit]
 
   //----------- handy custom types -----------
+
   final type Attempt[+R] = scala.util.Either[Throwable, R]
   final val Attempt: Either.type = scala.util.Either
+
+  //----------- cats -----------
 
   final type Functor[F[_]] = cats.Functor[F]
   final val Functor: cats.Functor.type = cats.Functor
@@ -71,6 +74,9 @@ package object phms
 
   final type MonadThrow[F[_]] = cats.MonadThrow[F]
   final val MonadThrow: cats.MonadThrow.type = cats.MonadThrow
+
+  final type Defer[F[_]] = cats.Defer[F]
+  final val Defer: cats.Defer.type = cats.Defer
 
   final type Traverse[F[_]] = cats.Traverse[F]
   final val Traverse: cats.Traverse.type = cats.Traverse

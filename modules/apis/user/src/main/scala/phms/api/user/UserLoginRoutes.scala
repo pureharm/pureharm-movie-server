@@ -13,7 +13,8 @@ import phms.kernel._
 final class UserLoginRoutes[F[_]](
   private val userAuthAlgebra: UserAuthAlgebra[F]
 )(implicit
-  val F:                       Async[F]
+  val F:                       Concurrent[F],
+  val D:                       Defer[F],
 ) extends Http4sDsl[F] with UserRoutesJSON {
 
   /** User/password gets transimited in the ``Authorization``

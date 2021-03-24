@@ -9,6 +9,8 @@ import org.http4s.{AuthedRequest, AuthedRoutes, Response}
   */
 object AuthCtxRoutes {
 
-  def apply[F[_]: Sync](pf: PartialFunction[AuthedRequest[F, AuthCtx], F[Response[F]]]): AuthedRoutes[AuthCtx, F] =
-    AuthedRoutes.of(pf)
+  def apply[F[_]](pf: PartialFunction[AuthedRequest[F, AuthCtx], F[Response[F]]])(implicit
+    F:                Defer[F],
+    FA:               Applicative[F],
+  ): AuthedRoutes[AuthCtx, F] = AuthedRoutes.of(pf)
 }

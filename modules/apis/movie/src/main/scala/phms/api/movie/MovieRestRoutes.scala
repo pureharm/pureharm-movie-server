@@ -7,6 +7,7 @@ import phms.stack.http._
 import phms.algebra.imdb._
 import phms.algebra.movie._
 import phms._
+import phms.http._
 
 import phms.organizer.movie._
 
@@ -17,7 +18,8 @@ final class MovieRestRoutes[F[_]](
   private val imdbOrganizer: IMDBOrganizer[F],
   private val movieAlgebra:  MovieAlgebra[F],
 )(implicit
-  val F:                     Async[F]
+  val F:                     Concurrent[F],
+  val D:                     Defer[F],
 ) extends Http4sDsl[F] with MovieRoutesJSON {
 
   implicit private val releaseDateQueryParamDecoder: QueryParamDecoder[ReleaseDate] =

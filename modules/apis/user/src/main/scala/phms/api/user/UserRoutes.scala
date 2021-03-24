@@ -11,7 +11,8 @@ import phms._
 final class UserRoutes[F[_]](
   private val userAlgebra: UserAlgebra[F]
 )(implicit
-  val F:                   Async[F]
+  val F:                   Concurrent[F],
+  val D:                   Defer[F],
 ) extends Http4sDsl[F] with UserRoutesJSON {
 
   private val userRestRoutes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {

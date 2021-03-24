@@ -11,7 +11,10 @@ trait MovieAPI[F[_]] {
 
 object MovieAPI {
 
-  def resource[F[_]: Async](imdbOrganizer: IMDBOrganizer[F], movieAlgebra: MovieAlgebra[F]): Resource[F, MovieAPI[F]] =
+  def resource[F[_]](imdbOrganizer: IMDBOrganizer[F], movieAlgebra: MovieAlgebra[F])(implicit
+    F:                              Concurrent[F],
+    D:                              Defer[F],
+  ): Resource[F, MovieAPI[F]] =
     new MovieRestRoutes[F](
       imdbOrganizer = imdbOrganizer,
       movieAlgebra  = movieAlgebra,
