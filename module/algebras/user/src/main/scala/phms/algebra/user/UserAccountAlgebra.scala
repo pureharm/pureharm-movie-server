@@ -11,7 +11,7 @@ import phms.db._
   */
 trait UserAccountAlgebra[F[_]] {
 
-  implicit protected def monadThrow: MonadError[F, Throwable]
+  implicit protected def monadThrow: MonadThrow[F]
   protected def authAlgebra:         UserAuthAlgebra[F]
 
   final def invitationStep1(

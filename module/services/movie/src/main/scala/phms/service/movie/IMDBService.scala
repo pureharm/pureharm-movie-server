@@ -14,7 +14,7 @@ import phms._
 final class IMDBService[F[_]] private (
   protected val movieAlgebra: MovieAlgebra[F],
   protected val imdbAlgebra:  IMDBAlgebra[F],
-)(implicit F:                 MonadError[F, Throwable]) {
+)(implicit F:                 MonadThrow[F]) {
 
   //TODO: scraping from IMDB can be improved by scraping two pages, first page you do the
   // search query, and then you get the link to your first search result, and gather
