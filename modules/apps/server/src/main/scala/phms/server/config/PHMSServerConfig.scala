@@ -69,13 +69,13 @@ object PHMSServerConfig {
   private object gmailConfig extends ConfigLoader[GmailConfig] {
 
     override val configValue: ConfigValue[Effect, GmailConfig] = (
-      env(EnvVar.PHMS_EMAIL_FROM).as[EmailSender].default(EmailSender("email@gmailprovider.com")),
-      env(EnvVar.PHMS_EMAIL_USER).as[EmailUser].default(EmailUser("email@gmailprovider.com")),
-      env(EnvVar.PHMS_EMAIL_PASSWORD).as[EmailPassword].default(EmailPassword("DontPutPasswordsHereLol")),
-      env(EnvVar.PHMS_EMAIL_HOST).as[SmtpHost].default(SmtpHost(host"smtp.gmail.com")),
-      env(EnvVar.PHMS_EMAIL_PORT).as[SmtpPort].default(SmtpPort(port"587")),
-      env(EnvVar.PHMS_EMAIL_AUTH).as[SmtpAuth].default(SmtpAuth.True),
-      env(EnvVar.PHMS_EMAIL_START_TLS).as[SmtpStartTLS].default(SmtpStartTLS.True),
+      env(EnvVar.PHMS_EMAIL_FROM).as[EmailSender].default(EmailSender("phms@example.com")),
+      env(EnvVar.PHMS_EMAIL_USER).as[EmailUser].default(EmailUser("phms@example.com")),
+      env(EnvVar.PHMS_EMAIL_PASSWORD).as[EmailPassword].default(EmailPassword("WeDontNeedPasswordForMaihog")),
+      env(EnvVar.PHMS_EMAIL_HOST).as[SmtpHost].default(SmtpHost(host"localhost")),
+      env(EnvVar.PHMS_EMAIL_PORT).as[SmtpPort].default(SmtpPort(port"10125")),
+      env(EnvVar.PHMS_EMAIL_AUTH).as[SmtpAuth].default(SmtpAuth.False),
+      env(EnvVar.PHMS_EMAIL_START_TLS).as[SmtpStartTLS].default(SmtpStartTLS.False),
     ).parMapN(GmailConfig.apply)
   }
   import scala.concurrent.duration._
