@@ -116,6 +116,9 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
       }
     } yield token
 
+  override def undoInvitationStep1(token: UserInviteToken): F[Unit] =
+    dbPool.use(session => PSQLUserInvitations(session).deleteByInvite(token))
+
   override def invitationStep2(token: UserInviteToken, pw: PlainTextPassword): F[User] =
     for {
       bcrypt    <- UserCrypto.hashPWWithBcrypt[F](pw)
@@ -150,6 +153,9 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
       token <- UserCrypto.generateToken[F, PasswordResetToken]
       _     <- Fail.nicata(s"Reset password step 1. Generated the token: $token").raiseError[F, PasswordResetToken]
     } yield token
+
+  override def undoPasswordResetStep1(email: Email): F[Unit] =
+    Fail.nicata(s"Undo password step 1 for email: $email").raiseError[F, Unit]
 
   override def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit] =
     for {

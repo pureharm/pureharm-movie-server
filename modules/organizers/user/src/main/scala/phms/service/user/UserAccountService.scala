@@ -17,17 +17,17 @@ final class UserAccountService[F[_]] private (
 
   def invitationStep1(inv: UserInvitation)(implicit authCtx: AuthCtx): F[Unit] =
     for {
-      regToken <- userAccount.invitationStep1(inv)
-      _        <-
+      inviteToken <- userAccount.invitationStep1(inv)
+      _           <-
+        //TODO: maybe it's a better idea to only write the invitation to DB if we have confirmation that email was sent
         emailAlgebra
           .sendEmail(
             to      = inv.email,
             //FIXME: resolve this data from an email content algebra or something
             subject = Subject(s"You have been invited to join Pure Movie Server as a :${inv.role.productPrefix}"),
             //FIXME: resolve this data from an email content algebra or something
-            content = Content(s"Please click this link to finish registration: [link_to_frontend]/$regToken"),
-          )
-          .forkAndForget //FIXME: do recoverWith and at least delete the user registration if sending email fails.
+            content = Content(s"Please click this link to finish registration: [link_to_frontend]/$inviteToken"),
+          ) { case Outcome.Errored(_) | Outcome.Canceled() => userAccount.undoInvitationStep1(inviteToken) }
     } yield ()
 
   def invitationStep2(conf: UserConfirmation): F[User] =
@@ -38,6 +38,7 @@ final class UserAccountService[F[_]] private (
   def resetPasswordStep1(email: Email): F[Unit] =
     for {
       resetToken <- userAccount.resetPasswordStep1(email)
+      //TODO: maybe it's a better idea to only write the password reset token to DB if we have confirmation that the email was sent
       _          <-
         emailAlgebra
           .sendEmail(
@@ -45,8 +46,7 @@ final class UserAccountService[F[_]] private (
             subject = Subject("Password reset for Pure Movie Server"),
             content =
               Content(s"Please click the following link to reset your account password: [link_to_FE]$resetToken"),
-          )
-          .forkAndForget
+          ) { case Outcome.Errored(_) | Outcome.Canceled() => userAccount.undoPasswordResetStep1(email).attempt.void }
     } yield ()
 
   def resetPasswordStep2(pwr: PasswordResetCompletion): F[Unit] =

@@ -23,9 +23,15 @@ trait UserAccountAlgebra[F[_]] {
 
   protected[user] def registrationStep1Impl(inv: UserInvitation): F[UserInviteToken]
 
+  def undoInvitationStep1(token: UserInviteToken): F[Unit]
+
   def invitationStep2(token: UserInviteToken, pw: PlainTextPassword): F[User]
 
   def resetPasswordStep1(email: Email): F[PasswordResetToken]
+
+  /** Needed in case sending the password reset email fails
+    */
+  def undoPasswordResetStep1(email: Email): F[Unit]
 
   def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit]
 }
