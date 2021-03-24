@@ -15,7 +15,7 @@ object MovieAPI {
     F:                              Concurrent[F],
     D:                              Defer[F],
   ): Resource[F, MovieAPI[F]] =
-    new MovieRestRoutes[F](
+    new MovieRoutes[F](
       imdbOrganizer = imdbOrganizer,
       movieAlgebra  = movieAlgebra,
     ).pure[Resource[F, *]]

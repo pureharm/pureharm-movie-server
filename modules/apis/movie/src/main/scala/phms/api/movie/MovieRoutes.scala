@@ -14,7 +14,7 @@ import phms.organizer.movie._
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
   */
-final class MovieRestRoutes[F[_]](
+final class MovieRoutes[F[_]](
   private val imdbOrganizer: IMDBOrganizer[F],
   private val movieAlgebra:  MovieAlgebra[F],
 )(implicit
