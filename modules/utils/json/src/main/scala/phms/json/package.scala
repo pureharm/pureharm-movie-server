@@ -7,7 +7,6 @@ package phms
   * @since 25 Jun 2018
   */
 package object json extends JavaTimeJson {
-  import io.circe._
   type Codec[A] = io.circe.Codec[A]
   val Codec: io.circe.Codec.type = io.circe.Codec
 

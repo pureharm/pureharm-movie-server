@@ -1,6 +1,5 @@
 package phms.service.user
 
-import phms._
 import phms.kernel._
 import phms.algebra.user._
 

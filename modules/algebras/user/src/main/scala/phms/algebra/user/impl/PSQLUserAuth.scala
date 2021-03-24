@@ -3,7 +3,6 @@ package phms.algebra.user.impl
 import phms._
 import phms.db._
 import phms.algebra.user._
-import phms.time._
 
 object PSQLUserAuth {
 
@@ -30,7 +29,7 @@ object PSQLUserAuth {
   /*_*/
 }
 
-final case class PSQLUserAuth[F[_]](private val session: Session[F])(implicit F: MonadCancelThrow[F], time: Time[F]) {
+final case class PSQLUserAuth[F[_]](private val session: Session[F])(implicit F: MonadCancelThrow[F]) {
   import PSQLUserAuth._
 
   /*_*/

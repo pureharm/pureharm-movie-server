@@ -2,7 +2,6 @@ package phms.algebra.user.impl
 
 import phms._
 import phms.kernel._
-import phms.algebra.user._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 22 Mar 2019

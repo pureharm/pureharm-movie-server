@@ -14,8 +14,7 @@ object PHMSMain extends IOApp {
       .as(ExitCode.Success)
 
   private def runResource[F[_]](implicit
-    CE: Async[F],
-    C:  Console[F],
+    F: Async[F]
   ): Resource[F, Server] =
     for {
       weave  <- PHMSWeave.resource[F]

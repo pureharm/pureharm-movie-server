@@ -1,9 +1,5 @@
 package phms
 
-import fs2._
-
-import java.nio.charset.StandardCharsets
-
 sealed trait SecureRandom[F[_]] {
   def sync: Sync[F]
   def nextBytes(n:         Int): F[Array[Byte]]
