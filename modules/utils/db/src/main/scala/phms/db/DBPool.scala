@@ -1,5 +1,6 @@
 package phms.db
 
+import fs2.io.net.Network
 import phms._
 import phms.db._
 import phms.db.config._
@@ -9,8 +10,8 @@ object DBPool {
   def apply[F[_]](implicit sp: DBPool[F]): DBPool[F] = sp
 
   def resource[F[_]](
-    config:      DBConnectionConfig
-  )(implicit as: Async[F], console: Console[F]): Resource[F, Resource[F, Session[F]]] = {
+    config:     DBConnectionConfig
+  )(implicit F: Concurrent[F], console: Console[F], network: Network[F]): Resource[F, Resource[F, Session[F]]] = {
     import natchez.Trace
     /** By setting the search path setting of the session we tell
       * postgresql which schema to use.

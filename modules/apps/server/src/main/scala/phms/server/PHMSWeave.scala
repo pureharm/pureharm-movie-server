@@ -1,5 +1,6 @@
 package phms.server
 
+import fs2.io.net.Network
 import phms.stack.http._
 import phms.algebra.imdb._
 import phms.algebra.movie.MovieAlgebra
@@ -81,8 +82,10 @@ object PHMSWeave {
       implicit0(logging: Logging[F]) <- Logging.resource[F]
       implicit0(random: Random[F]) <- Random.resource[F]
       implicit0(time: Time[F]) <- Time.resource[F]
+      implicit0(network: Network[F]) <- Resource.pure(Network.forAsync[F])
       implicit0(secureRandom: SecureRandom[F]) <- SecureRandom.resource[F]
       implicit0(supervisor: Supervisor[F]) <- Supervisor[F]
+
       implicit0(logger: Logger[F]) = logging.of(this)
 
       config <- PHMSServerConfig.resource[F]
