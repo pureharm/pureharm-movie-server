@@ -32,7 +32,6 @@ object PSQLUserInvitations {
 
   private val user_invitation_repr: Codec[UserInvitationRepr] =
     (varchar128_email ~ enum_role ~ varchar96_invitation_token ~ timestamptz_expires_at).gimap
-
   /*_*/
 }
 
@@ -42,45 +41,45 @@ final case class PSQLUserInvitations[F[_]](private val session: Session[F])(impl
   /*_*/
 
   //TODO: do not void result, and check for completion, and conflict
-  def insert(toInsert:         UserInvitationRepr): F[Unit]                       =
+  def insert(toInsert: UserInvitationRepr): F[Unit] =
     session
       .prepare(
         sql"""
           INSERT into $user_invitations_table ($user_invitations_row)
           VALUES ${user_invitation_repr.values}
-         """.command
+         """.command: Command[UserInvitationRepr]
       )
-      .use((pc: PreparedCommand[F, UserInvitationRepr]) => pc.execute(toInsert).void)
+      .use(pc => pc.execute(toInsert).void)
 
-  def findByInvite(t:          UserInviteToken):    F[Option[UserInvitationRepr]] =
+  def findByInvite(t: UserInviteToken): F[Option[UserInvitationRepr]] =
     session
       .prepare(
         sql"""
            SELECT $user_invitations_row 
            FROM $user_invitations_table
            WHERE $invitation_token = $varchar96_invitation_token
-         """.query(user_invitation_repr)
+         """.query(user_invitation_repr): Query[UserInviteToken, UserInvitationRepr]
       )
-      .use((pc: PreparedQuery[F, UserInviteToken, UserInvitationRepr]) => pc.option(t))
+      .use(pc => pc.option(t))
 
-  def findByEmail(t:           Email):              F[Option[UserInvitationRepr]] =
+  def findByEmail(t: Email): F[Option[UserInvitationRepr]] =
     session
       .prepare(
         sql"""
            SELECT $user_invitations_row
            FROM $user_invitations_table
            WHERE $email = $varchar128_email
-         """.query(user_invitation_repr)
+         """.query(user_invitation_repr): Query[Email, UserInvitationRepr]
       )
-      .use((pc: PreparedQuery[F, Email, UserInvitationRepr]) => pc.option(t))
+      .use(pc => pc.option(t))
 
-  def deleteByInvite(toDelete: UserInviteToken):    F[Unit]                       =
+  def deleteByInvite(toDelete: UserInviteToken): F[Unit] =
     session
       .prepare(
         sql"""
           DELETE FROM $user_invitations_table
           WHERE $invitation_token = $varchar96_invitation_token
-         """.command
+         """.command: Command[UserInviteToken]
       )
       .use(_.execute(toDelete).void)
 

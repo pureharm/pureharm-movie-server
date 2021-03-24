@@ -53,7 +53,7 @@ final case class PSQLMovies[F[_]](session: Session[F])(implicit F: MonadCancelTh
 
 object PSQLMovies {
   import phms.db.codecs._
-
+  /*_*/
   private val id:           Column = const"id"
   private val title:        Column = const"title"
   private val release_date: Column = const"release_date"
@@ -66,4 +66,5 @@ object PSQLMovies {
   private val movies_table_name: TableName = const"movies"
 
   private val movie: Codec[Movie] = (uuid_movie_id ~ varchar_title ~ date_release_date.opt).gimap[Movie]
+  /*_*/
 }

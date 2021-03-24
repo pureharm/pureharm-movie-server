@@ -42,14 +42,14 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
   import phms.db.codecs._
 
   /*_*/
-  def insert(toInsert:   UserRepr): F[Unit] = session
+  def insert(toInsert: UserRepr): F[Unit] = session
     .prepare(
       sql"""
           INSERT into $users_table ($users_repr_row)
           VALUES ${user_repr.values}
-         """.command
+         """.command: Command[UserRepr]
     )
-    .use((pc: PreparedCommand[F, UserRepr]) => pc.execute(toInsert).void)
+    .use(pc => pc.execute(toInsert).void)
 
   def updateRole(target: UserID, newRole: UserRole): F[Unit] = session
     .prepare(
@@ -57,7 +57,7 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
          UPDATE $users_table
          SET $role=$enum_role
          WHERE $id=$uuid_user_id
-       """.command
+       """.command: Command[UserRole ~ UserID]
     )
     .use(_.execute(newRole ~ target).void)
 
@@ -68,7 +68,7 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
            SELECT $users_repr_row
            FROM $users_table
            WHERE $id = $uuid_user_id
-         """.query(user_repr)
+         """.query(user_repr): Query[UserID, UserRepr]
       )
       .use(_.option(target))
 
@@ -79,7 +79,7 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
            SELECT $users_repr_row
            FROM $users_table
            WHERE $email = $varchar128_email
-         """.query(user_repr)
+         """.query(user_repr): Query[Email, UserRepr]
       )
       .use(_.option(target))
 
@@ -90,7 +90,7 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
            SELECT $users_repr_row
            FROM $users_table
            WHERE $password_reset_token = $varchar96_password_reset_token
-         """.query(user_repr)
+         """.query(user_repr): Query[PasswordResetToken, UserRepr]
       )
       .use(_.option(target))
 
@@ -101,7 +101,7 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
          UPDATE $users_table
          SET $password_reset_token=$varchar96_password_reset_token
          WHERE $email=$varchar128_email
-       """.command
+       """.command: Command[PasswordResetToken ~ Email]
       )
       .use(_.execute(token ~ target).void)
 
@@ -117,7 +117,7 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
          SET $password_reset_token=${varchar96_password_reset_token.opt},
              $bcrypt_password_hash=$bytea_bcrypt
          WHERE $password_reset_token=$varchar96_password_reset_token
-       """.command
+       """.command: Command[Option[PasswordResetToken] ~ UserCrypto.BcryptPW ~ PasswordResetToken]
       )
       .use(_.execute(Option.empty[PasswordResetToken] ~ newPW ~ target).void)
   /*_*/
