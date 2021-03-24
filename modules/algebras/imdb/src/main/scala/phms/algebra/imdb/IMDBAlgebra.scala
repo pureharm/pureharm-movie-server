@@ -1,7 +1,5 @@
 package phms.algebra.imdb
 
-import cats.effect.{Async, Resource}
-import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import phms.algebra.imdb.impl.IMDBAlgebraImpl
 import phms._
 
@@ -13,8 +11,9 @@ trait IMDBAlgebra[F[_]] {
 }
 
 object IMDBAlgebra {
+  import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 
-  def resource[F[_]: Async](throttler: EffectThrottler[F]): Resource[F, IMDBAlgebra[F]] =
+  def resource[F[_]](throttler: EffectThrottler[F])(implicit F: Sync[F]): Resource[F, IMDBAlgebra[F]] =
     new IMDBAlgebraImpl[F](throttler, new JsoupBrowser()).pure[Resource[F, *]]
 
 }
