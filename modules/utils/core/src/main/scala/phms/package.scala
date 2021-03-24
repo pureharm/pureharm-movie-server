@@ -18,9 +18,25 @@ package object phms
   type Stream[+F[_], +O] = fs2.Stream[F, O]
   val Stream: fs2.Stream.type = fs2.Stream
 
-  type Random[F[_]]  = ce.std.Random[F]
+  type Random[F[_]] = ce.std.Random[F]
+
   type Console[F[_]] = ce.std.Console[F]
   val Console: ce.std.Console.type = ce.std.Console
+
+  type Supervisor[F[_]] = ce.std.Supervisor[F]
+  val Supervisor: ce.std.Supervisor.type = ce.std.Supervisor
+
+  type Semaphore[F[_]] = ce.std.Semaphore[F]
+  val Semaphore: ce.std.Semaphore.type = ce.std.Semaphore
+
+  type Fiber[F[_], E, A]   = ce.Fiber[F, E, A]
+  type FiberThrow[F[_], A] = ce.Fiber[F, Throwable, A]
+  type Background[F[_]]    = ce.Fiber[F, Throwable, Unit]
+
+  type Outcome[F[_], E, A] = ce.Outcome[F, E, A]
+  val Outcome: ce.Outcome.type = ce.Outcome
+  type OutcomeThrow[F[_], A]   = ce.Outcome[F, Throwable, A]
+  type OutcomeBackground[F[_]] = ce.Outcome[F, Throwable, Unit]
 
   //----------- handy custom types -----------
   final type Attempt[+R] = scala.util.Either[Throwable, R]
