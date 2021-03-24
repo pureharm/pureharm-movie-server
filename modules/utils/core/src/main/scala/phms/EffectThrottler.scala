@@ -22,7 +22,7 @@ final class EffectThrottler[F[_]](
     /** Basically, we can treat the semaphore permit as a resource,
       * and this way we guarantee its release, even in case of interruption.
       */
-    Resource.make[F, Unit](semaphore.acquire)(_ => semaphore.release).use { _ =>
+    semaphore.permit.use { _ =>
       for {
         timedAttempt <- F.timed(f.attempt)
         (duration, attempt) = timedAttempt
