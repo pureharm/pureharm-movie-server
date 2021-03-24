@@ -30,7 +30,7 @@ final class PHMSWeave[F[_]] private (
   //TODO: add all modules here
   userBootstrapAlgebra: UserAccountBootstrapAlgebra[F],
   userAccountAlgebra:   UserAccountAlgebra[F],
-)(implicit F:           Async[F], console: Console[F]) {
+)(implicit F:           Async[F], logging: Logging[F]) {
 
   def serverResource: Resource[F, Server] = {
     import org.http4s.ember.server.EmberServerBuilder

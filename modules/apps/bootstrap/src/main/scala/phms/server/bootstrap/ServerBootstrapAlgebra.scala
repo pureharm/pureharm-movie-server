@@ -10,12 +10,12 @@ import phms.algebra.user._
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 13 Jul 2018
   */
-final private[bootstrap] class ServerBootstrapAlgebra[F[_]: Sync] private (
+final private[bootstrap] class ServerBootstrapAlgebra[F[_]] private (
   private val uca: UserAccountAlgebra[F],
   private val uba: UserAccountBootstrapAlgebra[F],
-) {
+)(implicit F:      MonadThrow[F], logging: Logging[F]) {
 
-  private val logger = Logger.getLogger[F]
+  private val logger = logging.of(this)
 
   def bootStrapSuperAdmin(email: Email, pw: PlainTextPassword): F[User] =
     bootStrapUser(email, pw, UserRole.SuperAdmin)
@@ -39,9 +39,9 @@ final private[bootstrap] class ServerBootstrapAlgebra[F[_]: Sync] private (
 
 private[bootstrap] object ServerBootstrapAlgebra {
 
-  def create[F[_]: Sync](
-    uca: UserAccountAlgebra[F],
-    uba: UserAccountBootstrapAlgebra[F],
-  ): ServerBootstrapAlgebra[F] = new ServerBootstrapAlgebra(uca, uba)
+  def create[F[_]](
+    uca:        UserAccountAlgebra[F],
+    uba:        UserAccountBootstrapAlgebra[F],
+  )(implicit F: MonadThrow[F], logging: Logging[F]): ServerBootstrapAlgebra[F] = new ServerBootstrapAlgebra(uca, uba)
 
 }

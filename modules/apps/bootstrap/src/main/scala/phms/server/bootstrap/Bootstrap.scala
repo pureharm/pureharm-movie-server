@@ -3,6 +3,7 @@ package phms.server.bootstrap
 import phms._
 import phms.algebra.user.{UserAccountAlgebra, UserAccountBootstrapAlgebra}
 import phms.kernel._
+import phms.logger.Logging
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 13 Jul 2018
@@ -18,15 +19,16 @@ object Bootstrap {
       "bXVycmF5LmJvb2tjaGluQHNvY2lhbGVjb2xvZ3kuZmVjdW5kOk9sZE1hblllbGxzQXRBbmFyY2hpc20="
   }
 
-  def bootstrap[F[_]: Sync: Console](
-    uca: UserAccountAlgebra[F],
-    uba: UserAccountBootstrapAlgebra[F],
-  ): F[Unit] =
+  def bootstrap[F[_]](
+    uca:        UserAccountAlgebra[F],
+    uba:        UserAccountBootstrapAlgebra[F],
+  )(implicit F: MonadThrow[F], logging: Logging[F]): F[Unit] =
     for {
+
       usb   <- ServerBootstrapAlgebra.create[F](uca, uba).pure[F]
       email <- superAdmin.email[F]
       passw <- superAdmin.passw[F]
-      _     <- Console[F].println("Bootstrapping user")
+      _     <- logging.named("bootstrap").info(s"bootstrapping super-admin user w/ email: $email")
       _     <- usb.bootStrapSuperAdmin(email, passw).attempt.void
     } yield ()
 
