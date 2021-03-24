@@ -1,5 +1,6 @@
-package phms
+package phms.port
 
+import phms._
 import com.comcast.ip4s.{Host, Port}
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs

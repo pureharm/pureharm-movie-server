@@ -1,6 +1,5 @@
-package phms.email
+package phms.port.email
 
-import cats.effect.std.Supervisor
 import phms._
 import phms.kernel._
 import phms.logger._
@@ -11,7 +10,7 @@ import phms.logger._
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 Jun 2018
   */
-trait EmailAlgebra[F[_]] {
+trait EmailPort[F[_]] {
 
   /** @param onCompletion
     * defines what to do based on the outcome of the email
@@ -22,11 +21,11 @@ trait EmailAlgebra[F[_]] {
   ): F[Background[F]]
 }
 
-object EmailAlgebra {
+object EmailPort {
 
   def resource[F[_]](
     config:        GmailConfig
-  )(implicit sync: Sync[F], supervisor: Supervisor[F], logging: Logging[F]): Resource[F, EmailAlgebra[F]] =
-    impl.EmailAlgebraJavaSync.resource[F](config).widen
+  )(implicit sync: Sync[F], supervisor: Supervisor[F], logging: Logging[F]): Resource[F, EmailPort[F]] =
+    impl.EmailPortJavaxMail.resource[F](config).widen
 
 }

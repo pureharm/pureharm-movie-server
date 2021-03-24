@@ -1,4 +1,4 @@
-package phms.email
+package phms.port.email
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 Jun 2018

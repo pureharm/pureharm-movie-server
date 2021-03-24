@@ -2,17 +2,18 @@ package phms.service.user
 
 import phms._
 import phms.kernel._
-import phms.email._
+import phms.port.email._
 import phms.algebra.user._
+import phms.port.email.EmailPort
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
   */
 final class UserAccountService[F[_]] private (
-  private val userAccount:  UserAccountAlgebra[F],
-  private val emailAlgebra: EmailAlgebra[F],
+  private val userAccount: UserAccountAlgebra[F],
+  private val emailPort:   EmailPort[F],
 )(implicit
-  private val F:            Concurrent[F]
+  private val F:           Concurrent[F]
 ) {
 
   def invitationStep1(inv: UserInvitation)(implicit authCtx: AuthCtx): F[Unit] =
@@ -20,7 +21,7 @@ final class UserAccountService[F[_]] private (
       inviteToken <- userAccount.invitationStep1(inv)
       _           <-
         //TODO: maybe it's a better idea to only write the invitation to DB if we have confirmation that email was sent
-        emailAlgebra
+        emailPort
           .sendEmail(
             to      = inv.email,
             //FIXME: resolve this data from an email content algebra or something
@@ -40,7 +41,7 @@ final class UserAccountService[F[_]] private (
       resetToken <- userAccount.resetPasswordStep1(email)
       //TODO: maybe it's a better idea to only write the password reset token to DB if we have confirmation that the email was sent
       _          <-
-        emailAlgebra
+        emailPort
           .sendEmail(
             to      = email,
             subject = Subject("Password reset for Pure Movie Server"),
@@ -57,12 +58,12 @@ final class UserAccountService[F[_]] private (
 object UserAccountService {
 
   def resource[F[_]: Concurrent](
-    userAccount:  UserAccountAlgebra[F],
-    emailAlgebra: EmailAlgebra[F],
+    userAccount: UserAccountAlgebra[F],
+    emailPort:   EmailPort[F],
   ): Resource[F, UserAccountService[F]] = Resource.pure[F, UserAccountService[F]](
     new UserAccountService[F](
       userAccount,
-      emailAlgebra,
+      emailPort,
     )
   )
 }

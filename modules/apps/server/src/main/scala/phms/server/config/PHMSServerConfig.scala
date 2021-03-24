@@ -4,7 +4,8 @@ import phms._
 import phms.config._
 import phms.algebra.imdb._
 import phms.db.config._
-import phms.email._
+import phms.port.email._
+import phms.port.email.GmailConfig
 
 final case class PHMSServerConfig(
   httpConfig:  HttpConfig,

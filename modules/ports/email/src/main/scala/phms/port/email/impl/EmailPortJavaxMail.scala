@@ -1,8 +1,8 @@
-package phms.email.impl
+package phms.port.email.impl
 
 import phms._
 import phms.kernel._
-import phms.email._
+import phms.port.email._
 import phms.logger._
 
 import java.util.Properties
@@ -16,11 +16,11 @@ import javax.mail.internet._
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 Jun 2018
   */
-private[email] class EmailAlgebraJavaSync[F[_]] private (
+private[email] class EmailPortJavaxMail[F[_]] private (
   private[this] val config:  GmailConfig,
   private[this] val session: Session,
 )(implicit F:                Sync[F], supervisor: Supervisor[F], logging: Logging[F])
-  extends EmailAlgebra[F] {
+  extends EmailPort[F] {
 
   private val logger:  Logger[F]              = logging.of(this)
   private val loggerR: Logger[Resource[F, *]] = logger.mapK(Resource.liftK)
@@ -70,7 +70,7 @@ private[email] class EmailAlgebraJavaSync[F[_]] private (
   }
 }
 
-private[email] object EmailAlgebraJavaSync {
+private[email] object EmailPortJavaxMail {
 
   def resource[F[_]](
     config:     GmailConfig
@@ -78,8 +78,8 @@ private[email] object EmailAlgebraJavaSync {
     F:          Sync[F],
     supervisor: Supervisor[F],
     logging:    Logging[F],
-  ): Resource[F, EmailAlgebraJavaSync[F]] =
-    Resource.eval[F, EmailAlgebraJavaSync[F]] {
+  ): Resource[F, EmailPortJavaxMail[F]] =
+    Resource.eval[F, EmailPortJavaxMail[F]] {
       for {
         session <- F.delay {
           /** A complete list of session properties can be found at
@@ -97,6 +97,6 @@ private[email] object EmailAlgebraJavaSync {
           props.put("mail.smtps.auth", config.auth.toString)
           Session.getInstance(props)
         }
-      } yield new EmailAlgebraJavaSync(config = config, session = session)
+      } yield new EmailPortJavaxMail(config = config, session = session)
     }
 }

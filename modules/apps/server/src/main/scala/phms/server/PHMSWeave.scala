@@ -7,7 +7,7 @@ import phms.algebra.user._
 import phms.config._
 import phms.time._
 import phms.db._
-import phms.email._
+import phms.port.email._
 import phms.logger._
 import phms._
 import phms.rest.movie.MovieAPI
@@ -17,6 +17,7 @@ import phms.service.movie.IMDBService
 import phms.service.user.UserAccountService
 import org.http4s.server._
 import org.http4s._
+import phms.port.email.EmailPort
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jul 2018
@@ -98,16 +99,17 @@ object PHMSWeave {
         config.imdbConfig.requestsNumber,
       )
 
+      emailPort <- EmailPort.resource[F](config.emailConfig)
+
       imdbAlgebra          <- IMDBAlgebra.resource[F](throttler)
       authAlgebra          <- UserAuthAlgebra.resource[F]
       accountAlgebra       <- UserAccountAlgebra.resource[F]
       userAlgebra          <- UserAlgebra.resource[F]
       userBootstrapAlgebra <- UserAccountBootstrapAlgebra.resource[F](accountAlgebra)
       movieAlgebra         <- MovieAlgebra.resource[F](authAlgebra)
-      emailAlgebra         <- EmailAlgebra.resource[F](config.emailConfig)
 
       imdbService <- IMDBService.resource[F](movieAlgebra, imdbAlgebra)
-      userService <- UserAccountService.resource[F](accountAlgebra, emailAlgebra)
+      userService <- UserAccountService.resource[F](accountAlgebra, emailPort)
 
       middleware <- AuthedHttp4s.userTokenAuthMiddleware[F](authAlgebra)
 
