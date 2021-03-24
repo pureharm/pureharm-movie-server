@@ -22,4 +22,7 @@ package object test {
   val Flaky:  munit.Tag = munit.Flaky
   val Fail:   munit.Tag = munit.Fail
   val Slow:   munit.Tag = munit.Slow
+
+  type TestOptions = munit.TestOptions
+  val TestOptions: munit.TestOptions.type = munit.TestOptions
 }
