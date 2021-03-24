@@ -3,7 +3,19 @@ import Settings._
 
 addCommandAlias("mkJar", ";clean;update;compile;phms-app-server/stage")
 
-ThisBuild / version := "1.0.0"
+//=============================================================================
+//=============================================================================
+//=============================================================================
+
+Global / organization     := "com.busymachines"
+Global / organizationName := "BusyMachines"
+Global / homepage         := Option(url("https://www.busymachines.com/"))
+Global / startYear        := Some(2021)
+Global / licenses         := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
+
+//=============================================================================
+//=============================================================================
+//=============================================================================
 
 lazy val root = Project(id = "pureharm-movie-server", file("."))
   .settings(commonSettings)
