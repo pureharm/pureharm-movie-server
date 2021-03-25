@@ -21,6 +21,7 @@ import phms._
 import phms.time._
 import phms.kernel._
 import phms.db._
+import phms.logger.Logging
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018
@@ -83,11 +84,12 @@ abstract class UserAuthAlgebra[F[_]: MonadThrow] {
 object UserAuthAlgebra {
 
   def resource[F[_]](implicit
-    dbPool: DBPool[F],
-    F:      MonadCancelThrow[F],
-    time:   Time[F],
-    r:      Random[F],
-    sr:     SecureRandom[F],
+    dbPool:  DBPool[F],
+    F:       MonadCancelThrow[F],
+    time:    Time[F],
+    r:       Random[F],
+    sr:      SecureRandom[F],
+    logging: Logging[F],
   ): Resource[F, UserAuthAlgebra[F]] =
     Resource.pure[F, UserAuthAlgebra[F]](new UserAlgebraImpl[F]())
 }

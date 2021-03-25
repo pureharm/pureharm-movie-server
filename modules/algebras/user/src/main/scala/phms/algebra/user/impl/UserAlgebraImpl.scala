@@ -21,17 +21,21 @@ import phms.time._
 import phms.db._
 import phms.kernel._
 import phms.algebra.user._
+import phms.logger._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 21 Jun 2018
   */
 final private[user] class UserAlgebraImpl[F[_]](implicit
-  val F:      MonadCancelThrow[F],
-  val r:      Random[F],
-  val sr:     SecureRandom[F],
-  val time:   Time[F],
-  val dbPool: DBPool[F],
+  F:            MonadCancelThrow[F],
+  random:       Random[F],
+  secureRandom: SecureRandom[F],
+  time:         Time[F],
+  dbPool:       DBPool[F],
+  logging:      Logging[F],
 ) extends UserAuthAlgebra[F]()(F) with UserAccountAlgebra[F] with UserAlgebra[F] {
+
+  private val logger: Logger[F] = logging.named("user_algebra")
 
   override protected def monadThrow:  MonadThrow[F]      = F
   override protected def authAlgebra: UserAuthAlgebra[F] = this
@@ -45,8 +49,11 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
     */
   override def authenticate(email: Email, pw: PlainTextPassword): F[AuthCtx] =
     for {
+      _             <- logger.info("attempting email + pw authentication")
       userRepr      <- dbPool.use(session => PSQLUsers(session).findByEmail(email).flatMap(_.liftTo[F](invalidEmailOrPW)))
+      _             <- logger.info("user exists")
       validPassword <- UserCrypto.checkUserPassword[F](pw, userRepr.bcryptPW)
+      _             <- logger.info(s"is password valid=$validPassword")
       tuple         <-
         if (validPassword) {
           for {
@@ -58,7 +65,9 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
               userID    = userRepr.id,
               expiresAt = expiresAt,
             )
+            _ <- logger.info(s"inserting auth token")
             _ <- dbPool.use(session => PSQLUserAuth(session).insert(ctxRepr))
+            _ <- logger.info(s"login successful")
           } yield (userRepr, ctxRepr)
         }
         else invalidEmailOrPW.raiseError[F, (PSQLUsers.UserRepr, PSQLUserAuth.UserAuthRepr)]
@@ -71,6 +80,7 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
         session.transaction.use { _ =>
           val user_auths = PSQLUserAuth(session)
           for {
+            _        <- logger.debug("attempting token authentication")
             ctxRepr  <- user_auths
               .findForToken(token)
               .flatMap(_.liftTo[F](Fail.unauthorized("Invalid authentication token")))

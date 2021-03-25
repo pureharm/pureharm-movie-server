@@ -21,6 +21,7 @@ import phms._
 import phms.time._
 import phms.kernel._
 import phms.db._
+import phms.logger.Logging
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018
@@ -55,11 +56,12 @@ trait UserAccountAlgebra[F[_]] {
 object UserAccountAlgebra {
 
   def resource[F[_]](implicit
-    dbPool: DBPool[F],
-    F:      MonadCancelThrow[F],
-    time:   Time[F],
-    r:      Random[F],
-    sr:     SecureRandom[F],
+    dbPool:  DBPool[F],
+    F:       MonadCancelThrow[F],
+    time:    Time[F],
+    r:       Random[F],
+    sr:      SecureRandom[F],
+    logging: Logging[F],
   ): Resource[F, UserAccountAlgebra[F]] =
     Resource.pure[F, UserAccountAlgebra[F]](new UserAlgebraImpl[F]())
 }
