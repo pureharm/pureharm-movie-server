@@ -1,7 +1,7 @@
 # usage:
-# ./runJar.sh start  — starts the server from a bundled jar, if the jar doesn't exist it creates it
-# ./runJar.sh clean  — starts the server from a newly created jar, deletes old jar
-# ./runJar.sh        — default, same as start
+# ./phms-server.sh start  — starts the server from a bundled jar, if the jar doesn't exist it creates it
+# ./phms-server.sh clean  — starts the server from a newly created jar, deletes old jar
+# ./phms-server.sh        — default, same as start
 
 #Basically, it just run two commands:
 #sbt mkJar;
@@ -13,6 +13,8 @@ CMD_START='start'
 #the name of the executable jar that is created using `sbt mkJar`
 SBT_ARGS='mkJar'
 SCRIPT_NAME='modules/apps/server/target/universal/stage/bin/phms-app-server'
+RUNTIME_SETUP_SCRIPT='runtime-start.sh'
+RUNTIME_STOP_SCRIPT='runtime-stop.sh'
 
 warning() {
   echo ""
@@ -46,6 +48,9 @@ then
     sbt $SBT_ARGS
   fi #SCRIPT_NAME
 
+  info "starting up dockers ./$RUNTIME_SETUP_SCRIPT"
+  ./$RUNTIME_SETUP_SCRIPT
+
   info "running: './$SCRIPT_NAME'"
   ./$SCRIPT_NAME
 
@@ -53,6 +58,12 @@ elif [ "$user_cmd" == "$CMD_CLEAN" ]
 then
   info "clean + recreating jar: 'sbt mkJar'"
   sbt mkJar
+
+  info "stopping dockers ./$RUNTIME_STOP_SCRIPT"
+  ./$RUNTIME_STOP_SCRIPT
+
+    info "starting up dockers ./$RUNTIME_SETUP_SCRIPT"
+  ./$RUNTIME_SETUP_SCRIPT
 
   info "running: './$SCRIPT_NAME'"
   ./$SCRIPT_NAME
