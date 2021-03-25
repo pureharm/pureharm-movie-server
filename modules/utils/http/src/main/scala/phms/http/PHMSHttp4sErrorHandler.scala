@@ -34,14 +34,14 @@ final class PHMSHttp4sErrorHandler[F[_]](implicit
 
     case t: Throwable =>
       for {
-        _ <- logger.warn(t)(s"Unhandled throwable: $t")
+        _ <- logger.warn(t)(s"Unhandled throwable: \n$t")
         resp = Response[F](status = Status.RequestTimeout)
           .withEntity(fromAnomaly(UnhandledCatastrophe(t)))
       } yield resp
   }
 
   private def fromAnomaly(an: AnomalyLike): PHMSHttp4sErrorHandler.ServerFailure = PHMSHttp4sErrorHandler.ServerFailure(
-    id      = an.id.productPrefix,
+    id      = an.id.name,
     message = an.message,
     params  = an.parameters.view.mapValues(p => p.toString).toMap,
     cause   = an.getClass.getCanonicalName.some,

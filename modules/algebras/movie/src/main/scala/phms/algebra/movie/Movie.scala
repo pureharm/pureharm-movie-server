@@ -22,7 +22,7 @@ package phms.algebra.movie
 // TODO: add as many relevant details as can be reasonably scraped from IMDB.
 // see phms.organizer.movie.IMDBOrganizer.scrapeIMDBForTitle
 final case class Movie(
-  id:   MovieID,
-  name: MovieTitle,
-  date: Option[ReleaseDate] = None,
+  id:    MovieID,
+  title: MovieTitle,
+  date:  Option[ReleaseDate],
 )
