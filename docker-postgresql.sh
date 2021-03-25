@@ -7,9 +7,9 @@
 # Postgres configuration is specified by the parameters below.
 # Docker is required in order for this script to work !
 
-POSTGRES_VERSION=12.3-alpine # see https://hub.docker.com/_/postgres
-CONTAINER_NAME=postgres_pms  # Name of the docker container
-EXPOSED_PORT=5432            # this is the port on the host machine; most likely you want to change this one.
+POSTGRES_VERSION=13.1-alpine # see https://hub.docker.com/_/postgres
+CONTAINER_NAME=postgres_phms # Name of the docker container
+EXPOSED_PORT=11312           # this is the port on the host machine; most likely you want to change this one.
 INTERNAL_PORT=5432           # this is the default port on which postgresql starts on within the container.
 
 DB_NAME=mymoviedatabase

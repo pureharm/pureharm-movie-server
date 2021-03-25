@@ -1,4 +1,19 @@
-import CompilerFlags._
+/*
+ * Copyright 2021 BusyMachines
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import sbt.Keys._
 import sbt._
 
@@ -6,7 +21,7 @@ object Settings {
 
   val commonSettings: Seq[Setting[_]] = Seq(
     //https://github.com/scala/scala/releases
-    scalaVersion                       := "2.13.2",
+    scalaVersion                       := "2.13.5",
     /*
      * Eliminates useless, unintuitive, and sometimes broken additions of `withFilter`
      * when using generator arrows in for comprehensions. e.g.
@@ -38,38 +53,12 @@ object Settings {
      *
      * https://github.com/typelevel/kind-projector
      */
-    addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.11.0").cross(CrossVersion.full)),
-    /**
-      * Gives better error messages for failed implicit resolution.
-      * Absolutely amazing in general, invaluable for teaching <3
-      *
-      * https://github.com/tek/splain
+    addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.11.3").cross(CrossVersion.full)),
+    scalacOptions ++= CompilerFlags.scala2_13Flags ++ CompilerFlags.betterForPluginCompilerFlags,
+    /** Required if we want to use munit as our testing framework.
+      * https://scalameta.org/munit/docs/getting-started.html
       */
-    addCompilerPlugin(("io.tryp"        % "splain"         % "0.5.6").cross(CrossVersion.patch)),
-    scalacOptions ++= scala2_13Flags ++ betterForPluginCompilerFlags,
+    testFrameworks += new TestFramework("munit.Framework"),
   )
-
-  object AssemblySettings extends sbtassembly.AssemblyKeys {
-
-    val settings: Seq[Setting[_]] = {
-      import sbtassembly.{MergeStrategy, PathList}
-
-      sbtassembly.AssemblyPlugin.autoImport.baseAssemblySettings ++
-        Seq(
-          // Skip tests during while running the assembly task
-          test in assembly                  := {},
-          assemblyMergeStrategy in assembly := {
-            case PathList("application.conf", _ @_*) => MergeStrategy.concat
-            case "application.conf"                  => MergeStrategy.concat
-            case PathList("reference.conf", _ @_*)   => MergeStrategy.concat
-            case "reference.conf"                    => MergeStrategy.concat
-            case x                                   => (assemblyMergeStrategy in assembly).value(x)
-          },
-          //this is to avoid propagation of the assembly task to all subprojects.
-          //changing this makes assembly incredibly slow
-          aggregate in assembly             := false,
-        )
-    }
-  }
 
 }
