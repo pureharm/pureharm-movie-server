@@ -88,8 +88,8 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
             _        <- UserAuthExpiration
               .isInPast[F](ctxRepr.expiresAt)
               .ifM(
-                ifTrue  = Fail.unauthorized("Auth token expired").raiseError[F, Unit],
-                ifFalse = user_auths.deleteToken(token),
+                ifTrue  = user_auths.deleteToken(token) *> Fail.unauthorized("Auth token expired").raiseError[F, Unit],
+                ifFalse = F.unit,
               )
           } yield (userRepr, ctxRepr)
         }
