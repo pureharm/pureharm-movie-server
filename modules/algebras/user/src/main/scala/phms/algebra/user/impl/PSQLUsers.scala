@@ -61,7 +61,7 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
   def insert(toInsert: UserRepr): F[Unit] = session
     .prepare(
       sql"""
-          INSERT into $users_table ($users_repr_row)
+          INSERT INTO $users_table ($users_repr_row)
           VALUES ${user_repr.values}
          """.command: Command[UserRepr]
     )

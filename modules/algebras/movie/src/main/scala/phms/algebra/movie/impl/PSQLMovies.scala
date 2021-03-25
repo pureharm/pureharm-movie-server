@@ -28,9 +28,8 @@ final case class PSQLMovies[F[_]](session: Session[F])(implicit F: MonadCancelTh
     session
       .prepare(
         sql"""
-           INSERT INTO $movies_table_name
-           VALUES ($movies_row)
-           ${movie.values}
+           INSERT INTO $movies_table_name ($movies_row)
+           VALUES ${movie.values}
          """.command: Command[Movie]
       )
       .use(_.execute(m).void)
