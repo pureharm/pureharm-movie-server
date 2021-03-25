@@ -51,9 +51,7 @@ final class UserLoginRoutes[F[_]](
         .get[headers.Authorization]
         .liftTo[F](
           Fail.unauthorized(
-            """|No 'Authorization' header, please include one 
-               |for authentication
-               |""".stripMargin
+            """No valid 'Authorization' header. Please ensure that it includes 'Basic $bearertoken' w/ only one single space after Basic.""".stripMargin
           )
         )
       basic: BasicCredentials <- authHeader.credentials match {
