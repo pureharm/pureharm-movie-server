@@ -92,8 +92,8 @@ object PHMSWeave {
 
   @scala.annotation.nowarn
   def resource[F[_]](implicit
-    timer:            Temporal[F],
-    mainContextShift: Async[F],
+    timer: Temporal[F],
+    async: Async[F],
   ): Resource[F, PHMSWeave[F]] =
     for {
       implicit0(console: Console[F]) <- Console.make[F].pure[Resource[F, *]]
