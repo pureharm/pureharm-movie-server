@@ -34,6 +34,7 @@ import phms.organizer.movie.IMDBOrganizer
 import phms.organizer.user.UserAccountOrganizer
 import org.http4s.server._
 import org.http4s._
+import phms.http.PHMSErrorHandler
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jul 2018
@@ -46,6 +47,7 @@ final class PHMSWeave[F[_]] private (
   //TODO: add all modules here
   userBootstrapAlgebra: UserAccountBootstrapAlgebra[F],
   userAccountAlgebra:   UserAccountAlgebra[F],
+  errorHandler:         PHMSErrorHandler[F],
 )(implicit F:           Async[F], logging: Logging[F]) {
 
   def serverResource: Resource[F, Server] = {
@@ -54,6 +56,7 @@ final class PHMSWeave[F[_]] private (
       .default[F]
       .withPort(serverConfig.httpConfig.port)
       .withHost(serverConfig.httpConfig.host)
+      .withErrorHandler(errorHandler)
       .withHttpApp(http4sApp)
       .withoutTLS
       .build
@@ -66,7 +69,7 @@ final class PHMSWeave[F[_]] private (
     val authed = NonEmptyList.of[AuthCtxRoutes[F]](userAPI.authedRoutes, movieAPI.authedRoutes).reduceK
     val phmsAPI: HttpRoutes[F] = routes <+> middleware(authed)
 
-    Router[F](("api", phmsAPI)).orNotFound
+    Router[F](("phms/api", phmsAPI)).orNotFound
   }
 
   def bootstrapServer: F[Unit] = for {
@@ -134,6 +137,7 @@ object PHMSWeave {
       movieAPI <- MovieAPI.resource(imdbOrganizer, movieAlgebra)
       userAPI  <- UserAPI.resource(userAlgebra, authAlgebra, userAccountOrganizer)
 
+      errorHandler <- PHMSErrorHandler.resource[F]
     } yield new PHMSWeave[F](
       config,
       middleware,
@@ -141,6 +145,7 @@ object PHMSWeave {
       movieAPI,
       userBootstrapAlgebra = userBootstrapAlgebra,
       userAccountAlgebra   = accountAlgebra,
+      errorHandler         = errorHandler,
     )
 
 }

@@ -311,6 +311,7 @@ lazy val `phms-util-http` = utilProject("http")
   .dependsOn(
     `phms-util-core`,
     `phms-util-json`,
+    `phms-util-logger`,
     asTestingLibrary(`phms-util-testkit`),
   )
 
