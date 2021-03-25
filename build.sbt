@@ -67,7 +67,8 @@ lazy val `phms-app-server` = appProject("server")
   .settings(commonSettings)
   .enablePlugins(JavaAppPackaging)
   .settings(
-    Compile / mainClass := Option("phms.server.PureMovieServerApp")
+    Compile / mainClass             := Option("phms.server.PHMSMain"),
+    Compile / discoveredMainClasses := Seq.empty, // see https://sbt-native-packager.readthedocs.io/en/stable/archetypes/java_app/index.html#java-app-plugin
   )
   .settings(
     libraryDependencies ++= Seq(

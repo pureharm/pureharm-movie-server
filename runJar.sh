@@ -5,13 +5,14 @@
 
 #Basically, it just run two commands:
 #sbt mkJar;
-#java -jar server/target/scala-2.12/pure-movie-server.jar
+#./modules/apps/server/target/universal/stage/bin/phms-app-server
 
 CMD_CLEAN='clean'
 CMD_START='start'
 
 #the name of the executable jar that is created using `sbt mkJar`
-JAR_NAME=server/target/scala-2.12/pure-movie-server.jar
+SBT_ARGS='mkJar'
+SCRIPT_NAME='modules/apps/server/target/universal/stage/bin/phms-app-server'
 
 warning() {
   echo ""
@@ -37,24 +38,24 @@ fi
 
 if [ "$user_cmd" == "$CMD_START" ]
 then
-  if [ -f $JAR_NAME ]
+  if [ -f $SCRIPT_NAME ]
   then
-    info "jar already exists."
+    info "executable already exists."
   else
-    info "jar does not exist. creating using: 'sbt mkJar'"
-    sbt mkJar
-  fi #jar_name
+    info "executable does not exist. creating using: 'sbt $SBT_ARGS'"
+    sbt $SBT_ARGS
+  fi #SCRIPT_NAME
 
-  info "running: 'java -jar $JAR_NAME'"
-  java -jar $JAR_NAME
+  info "running: './$SCRIPT_NAME'"
+  ./$SCRIPT_NAME
 
 elif [ "$user_cmd" == "$CMD_CLEAN" ]
 then
   info "clean + recreating jar: 'sbt mkJar'"
   sbt mkJar
 
-  info "running: 'java -jar $JAR_NAME'"
-  java -jar $JAR_NAME
+  info "running: './$SCRIPT_NAME'"
+  ./$SCRIPT_NAME
 fi
 
 
