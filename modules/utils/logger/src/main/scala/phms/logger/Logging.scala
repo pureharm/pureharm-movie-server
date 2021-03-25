@@ -27,7 +27,7 @@ object Logging {
 
   def resource[F[_]: Sync]: Resource[F, Logging[F]] =
     new Logging[F] {
-      override def of(a:    AnyRef): Logger[F] = Logger.getLoggerFromName(a.getClass.getCanonicalName.stripSuffix("$"))
+      override def of(a:    AnyRef): Logger[F] = Logger.getLoggerFromName(a.getClass.getSimpleName.stripSuffix("$"))
       override def named(s: String): Logger[F] = Logger.getLoggerFromName(s)
     }.pure[Resource[F, *]]
 }
