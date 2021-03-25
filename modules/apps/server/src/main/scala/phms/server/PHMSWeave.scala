@@ -34,7 +34,7 @@ import phms.organizer.movie.IMDBOrganizer
 import phms.organizer.user.UserAccountOrganizer
 import org.http4s.server._
 import org.http4s._
-import phms.http.PHMSErrorHandler
+import phms.http.PHMSHttp4sErrorHandler
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jul 2018
@@ -47,7 +47,7 @@ final class PHMSWeave[F[_]] private (
   //TODO: add all modules here
   userBootstrapAlgebra: UserAccountBootstrapAlgebra[F],
   userAccountAlgebra:   UserAccountAlgebra[F],
-  errorHandler:         PHMSErrorHandler[F],
+  errorHandler:         PHMSHttp4sErrorHandler[F],
 )(implicit F:           Async[F], logging: Logging[F]) {
 
   def serverResource: Resource[F, Server] = {
@@ -137,7 +137,7 @@ object PHMSWeave {
       movieAPI <- MovieAPI.resource(imdbOrganizer, movieAlgebra)
       userAPI  <- UserAPI.resource(userAlgebra, authAlgebra, userAccountOrganizer)
 
-      errorHandler <- PHMSErrorHandler.resource[F]
+      errorHandler <- PHMSHttp4sErrorHandler.resource[F]
     } yield new PHMSWeave[F](
       config,
       middleware,

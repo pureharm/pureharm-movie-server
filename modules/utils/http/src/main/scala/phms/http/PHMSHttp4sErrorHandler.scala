@@ -2,11 +2,10 @@ package phms.http
 
 import busymachines.pureharm.anomaly.AnomalyLike
 import org.http4s._
-import org.http4s.server.ServiceErrorHandler
 import phms._
 import phms.logger._
 
-final class PHMSErrorHandler[F[_]](implicit
+final class PHMSHttp4sErrorHandler[F[_]](implicit
   F:       MonadThrow[F],
   logging: Logging[F],
 ) extends PartialFunction[Throwable, F[Response[F]]] with Http4sCirceInstances {
@@ -28,20 +27,20 @@ final class PHMSErrorHandler[F[_]](implicit
 
     case t: java.util.concurrent.TimeoutException =>
       for {
-        _ <- logger.debug(s"Request timed out: ${t.getMessage}")
+        _ <- logger.trace(s"Ember triggered request timed out: ${t.getMessage}")
         resp = Response[F](status = Status.RequestTimeout)
           .withEntity(fromAnomaly(UnhandledCatastrophe(t)))
       } yield resp
 
     case t: Throwable =>
       for {
-        _ <- logger.warn(t)(s"Unhandled throwable")
+        _ <- logger.warn(t)(s"Unhandled throwable: $t")
         resp = Response[F](status = Status.RequestTimeout)
           .withEntity(fromAnomaly(UnhandledCatastrophe(t)))
       } yield resp
   }
 
-  private def fromAnomaly(an: AnomalyLike): PHMSErrorHandler.ServerFailure = PHMSErrorHandler.ServerFailure(
+  private def fromAnomaly(an: AnomalyLike): PHMSHttp4sErrorHandler.ServerFailure = PHMSHttp4sErrorHandler.ServerFailure(
     id      = an.id.productPrefix,
     message = an.message,
     params  = an.parameters.view.mapValues(p => p.toString).toMap,
@@ -52,12 +51,12 @@ final class PHMSErrorHandler[F[_]](implicit
   override def apply(v1:      Throwable): F[Response[F]] = function(v1)
 }
 
-object PHMSErrorHandler {
+object PHMSHttp4sErrorHandler {
 
   def resource[F[_]](implicit
     F:       MonadThrow[F],
     logging: Logging[F],
-  ): Resource[F, PHMSErrorHandler[F]] = new PHMSErrorHandler[F]().pure[Resource[F, *]]
+  ): Resource[F, PHMSHttp4sErrorHandler[F]] = new PHMSHttp4sErrorHandler[F]().pure[Resource[F, *]]
 
   /** TODO: replace w/ proper anomaly serialization
     */
