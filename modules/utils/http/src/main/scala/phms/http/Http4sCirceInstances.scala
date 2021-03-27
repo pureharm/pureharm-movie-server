@@ -23,7 +23,6 @@ import phms.json._
 import org.http4s._
 import org.http4s.headers.`Content-Type`
 import org.http4s.{EntityDecoder, EntityEncoder}
-import org.http4s.circe.CirceInstances
 
 /** You need to have this in scope if you want "seamless" serializing/deserializing
   * to/from JSON in your HttpRoutes endpoints.
@@ -53,13 +52,11 @@ trait Http4sCirceInstances {
       .withContentType(`Content-Type`(MediaType.application.json))
       .contramap(t => Encoder.apply[T].apply(t))
 
-  implicit def concurrentEntityDecoder[F[_]: Concurrent, T: Decoder]: EntityDecoder[F, T] = circeInstances.jsonOf[F, T]
+  implicit def concurrentEntityDecoder[F[_]: Concurrent, T: Decoder]: EntityDecoder[F, T] =
+    ??? //circeInstances.jsonOf[F, T]
 
 }
 
 object Http4sCirceInstances {
   private val printer: Printer = Printer.noSpaces.copy(dropNullValues = true)
-
-  private val circeInstances: CirceInstances =
-    CirceInstances.withPrinter(printer).build
 }
