@@ -23,8 +23,7 @@ object CompilerFlags {
     */
   def scala3Flags: Seq[String] = Seq(
     "-source:future-migration",        // the compiler is lenient with features removed from Scala2
-    "-deprecation",
-    "-rewrite",
+    "-deprecation",                    // deprecation warnings
     "-language:implicitConversions",   // enables old style of extension syntax, still used by some of our libraries, so we can't remove it they do a full rewrite with Scala 3 features
     "-language:higherKinds",           // can't do pure FP without this :)
     "-language:existentials",          // Existential types (besides wildcard types) can be written and inferred

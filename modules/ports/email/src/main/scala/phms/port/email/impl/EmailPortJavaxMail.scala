@@ -33,8 +33,8 @@ import javax.mail.internet.*
   * @since 05 Jun 2018
   */
 private[email] class EmailPortJavaxMail[F[_]] private (
-  private[this] val config:  GmailConfig,
-  private[this] val session: Session,
+  private val config:  GmailConfig,
+  private val session: Session,
 )(implicit F:                Sync[F], supervisor: Supervisor[F], logging: Logging[F])
   extends EmailPort[F] {
 

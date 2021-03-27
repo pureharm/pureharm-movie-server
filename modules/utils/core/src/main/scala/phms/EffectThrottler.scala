@@ -27,9 +27,9 @@ import scala.concurrent.duration.*
   * @param semaphore bounded by the number of Fs allowed to be executed in the configured `interval`
   */
 final class EffectThrottler[F[_]](
-  private val interval:        FiniteDuration,
-  private[this] val semaphore: Semaphore[F],
-)(implicit val F:              Temporal[F]) {
+  private val interval:  FiniteDuration,
+  private val semaphore: Semaphore[F],
+)(implicit val F:        Temporal[F]) {
 
   /** Returns an F that will be "slowed" time to the configured rate
     * of execution.
