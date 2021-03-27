@@ -16,7 +16,7 @@
 
 package phms.algebra.imdb
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 final case class IMDBAlgebraConfig(
   requestsInterval: FiniteDuration,

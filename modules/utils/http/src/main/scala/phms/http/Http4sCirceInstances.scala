@@ -18,9 +18,9 @@ package phms.http
 
 import fs2.Chunk
 import io.circe.{Json, Printer}
-import phms._
-import phms.json._
-import org.http4s._
+import phms.*
+import phms.json.*
+import org.http4s.*
 import org.http4s.headers.`Content-Type`
 import org.http4s.{EntityDecoder, EntityEncoder}
 
@@ -32,7 +32,7 @@ import org.http4s.{EntityDecoder, EntityEncoder}
   */
 trait Http4sCirceInstances {
 
-  import Http4sCirceInstances._
+  import Http4sCirceInstances.*
 
   /** This code was copied from [[org.http4s.circe.CirceInstances#jsonEncoderWithPrinter]]
     * Ideally, we would have done directly:

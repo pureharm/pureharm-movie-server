@@ -16,9 +16,9 @@
 
 package phms.server.bootstrap
 
-import phms._
+import phms.*
 import phms.algebra.user.{UserAccountAlgebra, UserAccountBootstrapAlgebra}
-import phms.kernel._
+import phms.kernel.*
 import phms.logger.Logging
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs

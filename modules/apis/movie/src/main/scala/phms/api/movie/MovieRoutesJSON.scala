@@ -16,8 +16,8 @@
 
 package phms.api.movie
 
-import phms.algebra.movie._
-import phms.json._
+import phms.algebra.movie.*
+import phms.json.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018

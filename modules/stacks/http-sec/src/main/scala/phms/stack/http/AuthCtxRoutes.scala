@@ -16,7 +16,7 @@
 
 package phms.stack.http
 
-import phms._
+import phms.*
 import phms.algebra.user.AuthCtx
 import org.http4s.{AuthedRequest, AuthedRoutes, Response}
 

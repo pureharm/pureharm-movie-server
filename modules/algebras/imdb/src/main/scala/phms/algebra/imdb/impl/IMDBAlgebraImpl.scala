@@ -18,8 +18,8 @@ package phms.algebra.imdb.impl
 
 import java.time.Year
 
-import phms.algebra.imdb._
-import phms._
+import phms.algebra.imdb.*
+import phms.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
@@ -43,7 +43,9 @@ final private[imdb] class IMDBAlgebraImpl[F[_]](
   } yield imdbMovie
 
   import net.ruippeixotog.scalascraper.model.Document
-  // this import causes Scala 3 compiler crash because of dotty interop
+  // this import causes Scala 3 compiler crash because of dotty interop,
+  // and we can't implement this method using its syntax. Simply drop the library
+  // and use jsoup directly :shrug:
   // import net.ruippeixotog.scalascraper.dsl.DSL._
 
   private def parseIMDBDocument(imdbDocument: Document): Option[IMDBMovie] = ???

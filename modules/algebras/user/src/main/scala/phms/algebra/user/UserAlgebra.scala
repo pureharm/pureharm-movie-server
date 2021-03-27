@@ -17,9 +17,9 @@
 package phms.algebra.user
 
 import phms.algebra.user.impl.UserAlgebraImpl
-import phms._
-import phms.time._
-import phms.db._
+import phms.*
+import phms.time.*
+import phms.db.*
 import phms.logger.Logging
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs

@@ -15,9 +15,9 @@
  */
 
 import busymachines.pureharm.{PureharmCoreAliases, PureharmCoreImplicits}
-import scala.{concurrent => sc}
+import scala.{concurrent as sc}
 
-import cats.{effect => ce}
+import cats.{effect as ce}
 import cats.syntax
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs

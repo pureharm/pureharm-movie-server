@@ -1,10 +1,10 @@
 package phms.crypto
 
-import phms._
+import phms.*
 import phms.kernel.PlainTextPassword
 
 object BCrypt {
-  import at.favre.lib.crypto.{bcrypt => jbcrypt}
+  import at.favre.lib.crypto.{bcrypt as jbcrypt}
 
   private val version:   jbcrypt.BCrypt.Version  = jbcrypt.BCrypt.Version.VERSION_2A
   private val hasher:    jbcrypt.BCrypt.Hasher   = jbcrypt.BCrypt.`with`(version)

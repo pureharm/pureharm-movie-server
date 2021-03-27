@@ -16,10 +16,10 @@
 
 package phms.api.user
 
-import org.http4s.dsl._
-import phms.stack.http._
-import phms.algebra.user._
-import phms._
+import org.http4s.dsl.*
+import phms.stack.http.*
+import phms.algebra.user.*
+import phms.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018

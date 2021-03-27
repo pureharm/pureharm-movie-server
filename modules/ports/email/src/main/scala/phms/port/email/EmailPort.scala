@@ -16,9 +16,9 @@
 
 package phms.port.email
 
-import phms._
-import phms.kernel._
-import phms.logger._
+import phms.*
+import phms.kernel.*
+import phms.logger.*
 
 /** This style of writing algebras (in layman terms: interface) is called
   * "final tagless".

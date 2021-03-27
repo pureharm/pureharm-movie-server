@@ -17,7 +17,7 @@
 package phms.algebra.user
 
 import phms.Fail
-import phms._
+import phms.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018

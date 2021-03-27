@@ -16,10 +16,10 @@
 
 package phms.server.bootstrap
 
-import phms._
-import phms.kernel._
-import phms.logger._
-import phms.algebra.user._
+import phms.*
+import phms.kernel.*
+import phms.logger.*
+import phms.algebra.user.*
 
 /** This should be used only in development, and testing!
   *

@@ -16,7 +16,7 @@
 
 package phms.logger
 
-import phms._
+import phms.*
 
 trait Logging[F[_]] {
   def of(a:    AnyRef): Logger[F]

@@ -16,7 +16,7 @@
 
 package phms.config
 
-import phms._
+import phms.*
 
 trait ConfigLoader[T] {
   def configValue: ConfigValue[Effect, T]

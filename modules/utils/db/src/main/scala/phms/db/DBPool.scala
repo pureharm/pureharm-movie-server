@@ -17,9 +17,9 @@
 package phms.db
 
 import fs2.io.net.Network
-import phms._
-import phms.db._
-import phms.db.config._
+import phms.*
+import phms.db.*
+import phms.db.config.*
 
 object DBPool {
 

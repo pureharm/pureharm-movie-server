@@ -16,8 +16,8 @@
 
 package phms.time
 
-import phms._
-import java.{time => jt}
+import phms.*
+import java.{time as jt}
 
 sealed trait Time[F[_]] {
 

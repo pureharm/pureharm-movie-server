@@ -16,14 +16,14 @@
 
 package phms.algebra.user.impl
 
-import phms._
-import phms.algebra.user._
-import phms.db._
+import phms.*
+import phms.algebra.user.*
+import phms.db.*
 
 object PSQLUserCodecs extends PSQLUserCodecs
 
 trait PSQLUserCodecs {
-  import db.codecs._
+  import db.codecs.*
 
   //all our tokens are base64 encodings of 64 bytes ~ 4*(64/3) bytes.
   val varchar96_token: Codec[String] = varchar(96)

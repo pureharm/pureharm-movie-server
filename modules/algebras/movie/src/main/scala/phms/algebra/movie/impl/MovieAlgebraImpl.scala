@@ -16,10 +16,10 @@
 
 package phms.algebra.movie.impl
 
-import phms.db._
-import phms.algebra.movie._
+import phms.db.*
+import phms.algebra.movie.*
 import phms.algebra.user.UserAuthAlgebra
-import phms._
+import phms.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018

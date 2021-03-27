@@ -18,7 +18,7 @@ package phms.api.movie
 
 import phms.stack.http.AuthCtxRoutes
 import phms.algebra.movie.MovieAlgebra
-import phms._
+import phms.*
 import phms.organizer.movie.IMDBOrganizer
 
 trait MovieAPI[F[_]] {

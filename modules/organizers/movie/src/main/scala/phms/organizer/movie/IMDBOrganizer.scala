@@ -18,11 +18,11 @@ package phms.organizer.movie
 
 import java.time.LocalDate
 
-import phms.algebra.imdb._
-import phms.algebra.movie._
-import phms.algebra.user._
+import phms.algebra.imdb.*
+import phms.algebra.movie.*
+import phms.algebra.user.*
 import phms.Fail
-import phms._
+import phms.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018

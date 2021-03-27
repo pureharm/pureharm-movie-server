@@ -16,8 +16,8 @@
 
 package phms.time
 
-import phms._
-import java.{time => jt}
+import phms.*
+import java.{time as jt}
 
 object LocalDate {
   def now[F[_]](implicit t: Time[F]): F[LocalDate] = t.LocalDate.now

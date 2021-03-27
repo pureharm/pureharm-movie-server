@@ -1,9 +1,9 @@
 package phms.http
 
 import busymachines.pureharm.anomaly.AnomalyLike
-import org.http4s._
-import phms._
-import phms.logger._
+import org.http4s.*
+import phms.*
+import phms.logger.*
 
 final class PHMSHttp4sErrorHandler[F[_]](implicit
   F:       MonadThrow[F],
@@ -85,7 +85,7 @@ object PHMSHttp4sErrorHandler {
   )
 
   private object ServerFailure {
-    import phms.json._
+    import phms.json.*
     implicit val jsonCodec: phms.json.Codec[ServerFailure] = derive.codec[ServerFailure]
   }
 }

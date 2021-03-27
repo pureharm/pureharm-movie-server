@@ -16,8 +16,8 @@
 
 package phms.db
 
-import phms._
-import com.comcast.ip4s._
+import phms.*
+import com.comcast.ip4s.*
 
 package object config {
   object DBHost extends SproutSub[Host]

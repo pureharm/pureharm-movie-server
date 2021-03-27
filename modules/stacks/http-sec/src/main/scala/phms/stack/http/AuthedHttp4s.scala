@@ -16,12 +16,12 @@
 
 package phms.stack.http
 
-import org.http4s._
-import org.http4s.dsl._
+import org.http4s.*
+import org.http4s.dsl.*
 import org.http4s.server.AuthMiddleware
 import org.typelevel.ci.CIString
-import phms.algebra.user._
-import phms._
+import phms.algebra.user.*
+import phms.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
@@ -49,7 +49,7 @@ object AuthedHttp4s {
   private def onFailure[F[_]](implicit F: MonadThrow[F]): AuthedRoutes[Throwable, F] =
     Kleisli[OptionT[F, *], AuthedRequest[F, Throwable], Response[F]] { (_: AuthedRequest[F, Throwable]) =>
       val fdsl = Http4sDsl[F]
-      import fdsl._
+      import fdsl.*
       OptionT.liftF[F, Response[F]](Unauthorized(wwwHeader))
     }
 

@@ -16,7 +16,7 @@
 
 package phms.config
 
-import phms._
+import phms.*
 
 /** Capability for reading config files.
   *

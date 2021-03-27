@@ -1,9 +1,9 @@
 package phms.port.email
 
-import phms._
-import phms.test._
-import com.comcast.ip4s._
-import phms.kernel._
+import phms.*
+import phms.test.*
+import com.comcast.ip4s.*
+import phms.kernel.*
 import phms.logger.Logging
 
 /** This test tries to send emails to a local mailhog server

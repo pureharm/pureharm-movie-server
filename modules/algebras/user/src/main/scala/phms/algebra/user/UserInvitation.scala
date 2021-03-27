@@ -16,7 +16,7 @@
 
 package phms.algebra.user
 
-import phms.kernel._
+import phms.kernel.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018

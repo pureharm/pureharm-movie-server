@@ -17,7 +17,7 @@
 package phms.server
 
 import org.http4s.server.Server
-import phms._
+import phms.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018

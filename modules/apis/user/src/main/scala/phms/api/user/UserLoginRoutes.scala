@@ -16,12 +16,12 @@
 
 package phms.api.user
 
-import org.http4s.dsl._
-import org.http4s._
-import phms.stack.http._
-import phms.algebra.user._
-import phms._
-import phms.kernel._
+import org.http4s.dsl.*
+import org.http4s.*
+import phms.stack.http.*
+import phms.algebra.user.*
+import phms.*
+import phms.kernel.*
 
 import scala.concurrent.duration._
 

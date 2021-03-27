@@ -16,7 +16,7 @@
 
 package phms.db
 
-import phms._
+import phms.*
 
 object codecs extends skunk.codec.AllCodecs with KernelSkunkCodecs {
 

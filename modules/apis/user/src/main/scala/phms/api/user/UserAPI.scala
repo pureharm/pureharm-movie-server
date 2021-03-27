@@ -19,7 +19,7 @@ package phms.api.user
 import org.http4s.HttpRoutes
 import phms.stack.http.AuthCtxRoutes
 import phms.algebra.user.{UserAlgebra, UserAuthAlgebra}
-import phms._
+import phms.*
 import phms.organizer.user.UserAccountOrganizer
 
 trait UserAPI[F[_]] {

@@ -16,7 +16,7 @@
 
 package phms.algebra.movie
 
-import busymachines.pureharm.anomaly._
+import busymachines.pureharm.anomaly.*
 import phms.AnomalyIDS
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs

@@ -16,10 +16,10 @@
 
 package phms.organizer.user
 
-import phms._
-import phms.kernel._
-import phms.port.email._
-import phms.algebra.user._
+import phms.*
+import phms.kernel.*
+import phms.port.email.*
+import phms.algebra.user.*
 import phms.port.email.EmailPort
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs

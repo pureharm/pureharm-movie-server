@@ -16,10 +16,10 @@
 
 package phms.api.user
 
-import phms._
-import phms.algebra.user._
-import phms.json._
-import phms.organizer.user._
+import phms.*
+import phms.algebra.user.*
+import phms.json.*
+import phms.organizer.user.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018

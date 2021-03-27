@@ -16,9 +16,9 @@
 
 package phms.algebra.movie
 
-import phms.db._
-import phms.algebra.user._
-import phms._
+import phms.db.*
+import phms.algebra.user.*
+import phms.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018

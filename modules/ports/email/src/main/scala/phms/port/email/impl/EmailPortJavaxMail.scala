@@ -16,14 +16,14 @@
 
 package phms.port.email.impl
 
-import phms._
-import phms.kernel._
-import phms.port.email._
-import phms.logger._
+import phms.*
+import phms.kernel.*
+import phms.port.email.*
+import phms.logger.*
 
 import java.util.Properties
-import javax.mail._
-import javax.mail.internet._
+import javax.mail.*
+import javax.mail.internet.*
 
 /** Uses javax-mail to send emails. Configured to work only for
   * gmail account:

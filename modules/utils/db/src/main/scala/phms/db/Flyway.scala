@@ -16,9 +16,9 @@
 
 package phms.db
 
-import phms.logger._
-import phms._
-import phms.db.config._
+import phms.logger.*
+import phms.*
+import phms.db.config.*
 
 trait Flyway[F[_]] {
   def runMigrations(implicit logger: Logger[F]): F[Int]
@@ -52,7 +52,7 @@ object Flyway {
   }
 
   private object Flyway {
-    import org.flywaydb.core.{Flyway => JFlyway}
+    import org.flywaydb.core.{Flyway as JFlyway}
 
     def migrate[F[_]](
       dbConfig:     DBConnectionConfig,
@@ -92,10 +92,10 @@ object Flyway {
           case None    => () //default everything. Do nothing, lol, java
           case Some(c) =>
             if (c.migrationLocations.nonEmpty) {
-              fwConfig.locations(c.migrationLocations.map(MigrationLocation.oldType): _*)
+              fwConfig.locations(c.migrationLocations.map(MigrationLocation.oldType) *)
             }
             if (c.schemas.nonEmpty) {
-              fwConfig.schemas(c.schemas: _*)
+              fwConfig.schemas(c.schemas *)
             }
             fwConfig.ignoreMissingMigrations(c.ignoreMissingMigrations)
             fwConfig.cleanOnValidationError(c.cleanOnValidationError)

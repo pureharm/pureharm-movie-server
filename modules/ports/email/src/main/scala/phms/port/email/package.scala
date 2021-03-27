@@ -16,8 +16,8 @@
 
 package phms.port
 
-import phms._
-import com.comcast.ip4s._
+import phms.*
+import com.comcast.ip4s.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 Jun 2018

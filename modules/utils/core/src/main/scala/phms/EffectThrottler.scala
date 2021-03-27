@@ -18,7 +18,7 @@ package phms
 
 import cats.effect.std.Semaphore
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 /** Used to control the rate at which Fs are computed by fixing the amount of Fs
   * to be executed in the given time interval.

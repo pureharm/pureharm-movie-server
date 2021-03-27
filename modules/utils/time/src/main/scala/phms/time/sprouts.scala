@@ -16,7 +16,7 @@
 
 package phms.time
 
-import phms._
+import phms.*
 
 trait SproutTimestamp extends Sprout[OffsetDateTime] {
   def now[F[_]](implicit F:      Applicative[F], t: Time[F]): F[Type] = t.now.map(this.newType)

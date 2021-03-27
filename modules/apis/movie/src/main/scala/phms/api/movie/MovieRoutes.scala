@@ -16,15 +16,15 @@
 
 package phms.api.movie
 
-import java.time._
-import org.http4s._
-import org.http4s.dsl._
-import phms.stack.http._
-import phms.algebra.imdb._
-import phms.algebra.movie._
-import phms._
+import java.time.*
+import org.http4s.*
+import org.http4s.dsl.*
+import phms.stack.http.*
+import phms.algebra.imdb.*
+import phms.algebra.movie.*
+import phms.*
 
-import phms.organizer.movie._
+import phms.organizer.movie.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018

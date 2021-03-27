@@ -17,23 +17,23 @@
 package phms.server
 
 import fs2.io.net.Network
-import phms.stack.http._
-import phms.algebra.imdb._
+import phms.stack.http.*
+import phms.algebra.imdb.*
 import phms.algebra.movie.MovieAlgebra
-import phms.algebra.user._
-import phms.config._
-import phms.time._
-import phms.db._
-import phms.port.email._
-import phms.logger._
-import phms._
+import phms.algebra.user.*
+import phms.config.*
+import phms.time.*
+import phms.db.*
+import phms.port.email.*
+import phms.logger.*
+import phms.*
 import phms.api.movie.MovieAPI
 import phms.api.user.UserAPI
-import phms.server.config._
+import phms.server.config.*
 import phms.organizer.movie.IMDBOrganizer
 import phms.organizer.user.UserAccountOrganizer
-import org.http4s.server._
-import org.http4s._
+import org.http4s.server.*
+import org.http4s.*
 import phms.http.PHMSHttp4sErrorHandler
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
@@ -94,17 +94,21 @@ object PHMSWeave {
   def resource[F[_]](implicit
     timer: Temporal[F],
     async: Async[F],
-  ): Resource[F, PHMSWeave[F]] =
-    Console.make[F].pure[Resource[F, *]].flatMap { implicit console: Console[F] =>
-      Time.resource[F].flatMap { implicit time: Time[F] =>
-        Config.resource[F].flatMap { implicit configCap: Config[F] =>
-          Logging.resource[F].flatMap { implicit logging: Logging[F] =>
+  ): Resource[F, PHMSWeave[F]] = {
+    for {
+      given Console[F] <- Console.make[F].pure[Resource[F, *]]
+    } yield ???
+
+    Console.make[F].pure[Resource[F, *]].flatMap { implicit (console: Console[F]) =>
+      Time.resource[F].flatMap { implicit (time: Time[F]) =>
+        Config.resource[F].flatMap { implicit (configCap: Config[F]) =>
+          Logging.resource[F].flatMap { implicit (logging: Logging[F]) =>
             implicit val logger: Logger[F] = logging.named("phms.weave")
-            Random.resource[F].flatMap { implicit random: Random[F] =>
-              SecureRandom.resource[F].flatMap { implicit secureRandom: SecureRandom[F] =>
-                Supervisor[F].flatMap { implicit supervisor: Supervisor[F] =>
-                  PHMSServerConfig.resource[F].flatMap { implicit config: PHMSServerConfig =>
-                    DBPool.resource[F](config.dbConfig.connection).flatMap { implicit dbPool: DBPool[F] =>
+            Random.resource[F].flatMap { implicit (random: Random[F]) =>
+              SecureRandom.resource[F].flatMap { implicit (secureRandom: SecureRandom[F]) =>
+                Supervisor[F].flatMap { implicit (supervisor: Supervisor[F]) =>
+                  PHMSServerConfig.resource[F].flatMap { implicit (config: PHMSServerConfig) =>
+                    DBPool.resource[F](config.dbConfig.connection).flatMap { implicit (dbPool: DBPool[F]) =>
                       for {
                         _ <- Flyway
                           .resource[F](config.dbConfig.connection, config.dbConfig.flyway)
@@ -153,5 +157,6 @@ object PHMSWeave {
       }
 
     }
+  }
 
 }

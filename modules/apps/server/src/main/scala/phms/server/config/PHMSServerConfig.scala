@@ -16,11 +16,11 @@
 
 package phms.server.config
 
-import phms._
-import phms.config._
-import phms.algebra.imdb._
-import phms.db.config._
-import phms.port.email._
+import phms.*
+import phms.config.*
+import phms.algebra.imdb.*
+import phms.db.config.*
+import phms.port.email.*
 import phms.port.email.GmailConfig
 
 final case class PHMSServerConfig(
@@ -47,7 +47,7 @@ object PHMSServerConfig {
       dbConfig,
       bootstrap,
     )
-  import com.comcast.ip4s._
+  import com.comcast.ip4s.*
 
   private object bootstrapConfig extends ConfigLoader[BootstrapServer] {
 
@@ -78,7 +78,7 @@ object PHMSServerConfig {
       env(EnvVar.PHMS_EMAIL_START_TLS).as[SmtpStartTLS].default(SmtpStartTLS.False),
     ).parMapN(GmailConfig.apply)
   }
-  import scala.concurrent.duration._
+  import scala.concurrent.duration.*
 
   private object imdbAlgebraConfig extends ConfigLoader[IMDBAlgebraConfig] {
 

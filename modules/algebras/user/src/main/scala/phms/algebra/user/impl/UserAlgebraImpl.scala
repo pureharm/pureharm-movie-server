@@ -16,12 +16,12 @@
 
 package phms.algebra.user.impl
 
-import phms._
-import phms.time._
-import phms.db._
-import phms.kernel._
-import phms.algebra.user._
-import phms.logger._
+import phms.*
+import phms.time.*
+import phms.db.*
+import phms.kernel.*
+import phms.algebra.user.*
+import phms.logger.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 21 Jun 2018
@@ -33,7 +33,7 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
   time:         Time[F],
   dbPool:       DBPool[F],
   logging:      Logging[F],
-) extends UserAuthAlgebra[F]()(F) with UserAccountAlgebra[F] with UserAlgebra[F] {
+) extends UserAuthAlgebra[F]()(using F) with UserAccountAlgebra[F] with UserAlgebra[F] {
 
   private val logger: Logger[F] = logging.named("user_algebra")
 

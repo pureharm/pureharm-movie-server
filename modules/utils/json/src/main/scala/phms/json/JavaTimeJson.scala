@@ -16,8 +16,8 @@
 
 package phms.json
 
-import phms._
-import phms.time._
+import phms.*
+import phms.time.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
