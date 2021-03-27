@@ -20,18 +20,18 @@ import phms._
 import com.comcast.ip4s._
 
 package object config {
-  final object DBHost extends SproutSub[Host]
+  object DBHost extends SproutSub[Host]
   final type DBHost = DBHost.Type
 
-  final object DBPort extends SproutSub[Port]
+  object DBPort extends SproutSub[Port]
   final type DBPort = DBPort.Type
 
-  final object DBUsername extends SproutSub[String]
+  object DBUsername extends SproutSub[String]
   final type DBUsername = DBUsername.Type
 
   type JDBCUrl = JDBCUrl.Type
 
-  final object JDBCUrl extends SproutSub[String] {
+  object JDBCUrl extends SproutSub[String] {
 
     def postgresql(host: DBHost, port: DBPort, db: DatabaseName): this.Type =
       this.apply(s"jdbc:postgresql://$host:$port/$db")
@@ -40,16 +40,16 @@ package object config {
       this.apply(s"jdbc:postgresql://$host:$port/$db?currentSchema=$schema")
   }
 
-  final object DBPassword extends SproutSub[String]
+  object DBPassword extends SproutSub[String]
   final type DBPassword = DBPassword.Type
 
-  final object TableName extends SproutSub[String]
+  object TableName extends SproutSub[String]
   final type TableName = TableName.Type
 
-  final object DatabaseName extends SproutSub[String]
+  object DatabaseName extends SproutSub[String]
   final type DatabaseName = DatabaseName.Type
 
-  final object SchemaName extends SproutSub[String] {
+  object SchemaName extends SproutSub[String] {
     def public: SchemaName = SchemaName("public")
   }
   final type SchemaName = SchemaName.Type
