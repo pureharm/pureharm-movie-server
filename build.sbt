@@ -78,6 +78,7 @@ lazy val `phms-app-server` = appProject("server")
     `phms-util-core`,
     `phms-util-logger`,
     `phms-util-config`,
+    `phms-util-db`,
     `phms-util-db-config`,
     `phms-util-http`,
     `phms-organizer-user`,
