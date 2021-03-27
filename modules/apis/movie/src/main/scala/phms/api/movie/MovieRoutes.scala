@@ -53,23 +53,23 @@ final class MovieRoutes[F[_]](
   private object TitleQueryParamMatcher extends QueryParamDecoderMatcher[TitleQuery]("title")
 
   private val imdbImportRoutes: AuthCtxRoutes[F] = {
-    AuthCtxRoutes[F] { case PUT -> Root / "movie_import" / "imdb" :? TitleQueryParamMatcher(title) as user =>
+    AuthCtxRoutes[F] { case PUT -> Root / "movie_import" / "imdb" :? TitleQueryParamMatcher(title) `as` user =>
       Ok(imdbOrganizer.scrapeIMDBForTitle(TitleQuery(title))(user))
     }
   }
 
   private val movieRoutes: AuthCtxRoutes[F] = {
     AuthCtxRoutes[F] {
-      case (req @ POST -> Root / "movie") as user =>
+      case (req @ POST -> Root / "movie") `as` user =>
         for {
           mc   <- req.as[MovieCreation]
           resp <- Created(movieAlgebra.createMovie(mc)(user))
         } yield resp
 
-      case GET -> Root / "movie" / MovieIDMatcher(mid) as user =>
+      case GET -> Root / "movie" / MovieIDMatcher(mid) `as` user =>
         Ok(movieAlgebra.fetchMovie(mid)(user))
 
-      case GET -> Root / "movie" :? StartReleaseDateQueryMatcher(start) :? EndReleaseDateQueryMatcher(end) as user =>
+      case GET -> Root / "movie" :? StartReleaseDateQueryMatcher(start) :? EndReleaseDateQueryMatcher(end) `as` user =>
         val interval = (start, end)
         Ok(movieAlgebra.findMoviesBetween(interval)(user))
     }

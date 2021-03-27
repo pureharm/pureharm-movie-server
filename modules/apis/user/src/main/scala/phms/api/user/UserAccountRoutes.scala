@@ -35,7 +35,7 @@ final class UserAccountRoutes[F[_]](
 ) extends Http4sDsl[F] with UserRoutesJSON {
 
   private val userInvitationStep1Routes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {
-    case (req @ POST -> Root / "user_invitation") as user =>
+    case (req @ POST -> Root / "user_invitation") `as` user =>
       for {
         reg  <- req.as[UserInvitation]
         _    <- userOrganizer.invitationStep1(reg)(user)
