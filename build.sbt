@@ -202,7 +202,7 @@ lazy val `phms-stack-http-sec` = stackProject("http-sec")
 lazy val `phms-algebra-imdb` = algebraProject("imdb")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.scalaScrapper.withDottyCompat(scalaVersion.value)
+      Libraries.scalaScrapper.cross(CrossVersion.for3Use2_13)
     )
   )
   .dependsOn(
