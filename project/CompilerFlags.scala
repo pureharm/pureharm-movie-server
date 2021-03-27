@@ -78,7 +78,6 @@ object CompilerFlags {
     * https://github.com/lampepfl/dotty/blob/master/compiler/src/dotty/tools/dotc/config/ScalaSettings.scala
     */
   def scala3Flags: Seq[String] = Seq(
-    "-rewrite",                        // let compiler rewrite old syntax where it can
     "-source:3.0-migration",           // the compiler is lenient with features removed from Scala2
     "-language:implicitConversions",   // enables old style of extension syntax, still used by some of our libraries, so we can't remove it they do a full rewrite with Scala 3 features
     "-language:higherKinds",           // can't do pure FP without this :)

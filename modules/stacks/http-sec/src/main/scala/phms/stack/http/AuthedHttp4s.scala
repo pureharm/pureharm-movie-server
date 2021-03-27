@@ -47,7 +47,7 @@ object AuthedHttp4s {
   private val wwwHeader = headers.`WWW-Authenticate`(challenges)
 
   private def onFailure[F[_]](implicit F: MonadThrow[F]): AuthedRoutes[Throwable, F] =
-    Kleisli[OptionT[F, *], AuthedRequest[F, Throwable], Response[F]] { _: AuthedRequest[F, Throwable] =>
+    Kleisli[OptionT[F, *], AuthedRequest[F, Throwable], Response[F]] { (_: AuthedRequest[F, Throwable]) =>
       val fdsl = Http4sDsl[F]
       import fdsl._
       OptionT.liftF[F, Response[F]](Unauthorized(wwwHeader))
@@ -56,7 +56,7 @@ object AuthedHttp4s {
   private def verifyToken[F[_]](
     authAlgebra: UserAuthAlgebra[F]
   )(implicit F:  MonadThrow[F]): Kleisli[F, Request[F], Attempt[AuthCtx]] =
-    Kleisli { req: Request[F] =>
+    Kleisli { (req: Request[F]) =>
       val optHeader = req.headers.get(`X-Auth-Token`)
       optHeader match {
         case None =>
