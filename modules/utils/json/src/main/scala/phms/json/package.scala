@@ -32,12 +32,18 @@ package object json extends JavaTimeJson {
   type Decoder[A] = io.circe.Decoder[A]
   val Decoder: io.circe.Decoder.type = io.circe.Decoder
 
-  object derive {
-    import io.circe.generic.codec.DerivedAsObjectCodec
-    import shapeless.Lazy
+  /** see:
+    * https://github.com/circe/circe/blob/master/modules/generic/shared/src/main/scala-3/io/circe/generic/semiauto.scala
+    */
+  // object derive {
+  //   import scala.deriving.Mirror
 
-    def codec[T](implicit codec: Lazy[DerivedAsObjectCodec[T]]): Codec[T] =
-      io.circe.generic.semiauto.deriveCodec[T]
+  //     inline final def decoder[A](using inline A: Mirror.Of[A]): Decoder[A] = Decoder.derived[A]
+  //     inline final def encoder[A](using inline A: Mirror.Of[A]): Encoder.AsObject[A] = Encoder.AsObject.derived[A]
+  //     inline final def codec[A](using inline A: Mirror.Of[A]): Codec.AsObject[A] = Codec.AsObject.derived[A]
+  // }
+  object derive {
+    final def codec[A]: Codec.AsObject[A] = ???
   }
 
   implicit def sproutJSONEncoder[O, N](implicit ot: OldType[O, N], enc: Encoder[O]): Encoder[N] =
