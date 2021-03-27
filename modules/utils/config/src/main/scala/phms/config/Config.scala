@@ -24,14 +24,14 @@ import phms.*
   * reads configurations
   */
 sealed trait Config[F[_]] {
-  implicit protected val async: Async[F]
+  protected given async: Async[F]
   def load[T](value: ConfigValue[F, T]): F[T] = value.load[F]
 }
 
 object Config {
 
-  def resource[F[_]](implicit F: Async[F]): Resource[F, Config[F]] =
+  def resource[F[_]](using F: Async[F]): Resource[F, Config[F]] =
     new Config[F] {
-      override protected val async: Async[F] = F
+      override protected given async: Async[F] = F
     }.pure[Resource[F, *]]
 }
