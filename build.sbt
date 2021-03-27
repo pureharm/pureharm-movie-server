@@ -18,7 +18,7 @@ import sbt._
 import Settings._
 
 addCommandAlias("mkJar", ";clean;update;compile;phms-app-server/stage")
-
+addCommandAlias("rebuild", ";clean;Test/clean;compile;Test/compile;")
 //=============================================================================
 //=============================================================================
 //=============================================================================
