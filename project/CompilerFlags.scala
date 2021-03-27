@@ -17,6 +17,7 @@
 import sbt._
 
 object CompilerFlags {
+  // format: off
 
   /** tpolecat's glorious compile flag list adapted for scala 2.13 (fewer flags):
     * https://tpolecat.github.io/2017/04/25/scalac-flags.html
@@ -70,5 +71,17 @@ object CompilerFlags {
     "-P:bm4:no-map-id:y",        // see https://github.com/oleg-py/better-monadic-for#final-map-optimization--pbm4no-map-idy
     "-P:bm4:no-tupling:y",       // see https://github.com/oleg-py/better-monadic-for#desugar-bindings-as-vals-instead-of-tuples--pbm4no-tuplingy
     "-P:bm4:implicit-patterns:y",//see https://github.com/oleg-py/better-monadic-for#define-implicits-in-for-comprehensions-or-matches
+  )
+
+  /**
+    * See for reference
+    * https://github.com/lampepfl/dotty/blob/master/compiler/src/dotty/tools/dotc/config/ScalaSettings.scala
+    */
+  def scala3Flags: Seq[String] = Seq(
+    "-source:3.0-migration",           // the compiler is lenient with features removed from Scala2
+    "-language:implicitConversions",   // enables old style of extension syntax, still used by some of our libraries, so we can't remove it they do a full rewrite with Scala 3 features
+    "-language:higherKinds",           // can't do pure FP without this :)
+    "-language:existentials",          // Existential types (besides wildcard types) can be written and inferred
+    "-Ykind-projector",                // replacement for the kind-projector compiler plugin we used in Scala 2
   )
 }

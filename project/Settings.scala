@@ -19,7 +19,13 @@ import sbt._
 
 object Settings {
 
-  val commonSettings: Seq[Setting[_]] = Seq(
+  val common3Settings: Seq[Setting[_]] = Seq(
+    scalaVersion := "3.0.0-RC1",
+    testFrameworks += new TestFramework("munit.Framework"),
+    scalacOptions ++= CompilerFlags.scala3Flags,
+  )
+
+  val common213Settings: Seq[Setting[_]] = Seq(
     //https://github.com/scala/scala/releases
     scalaVersion                       := "2.13.5",
     /*

@@ -30,6 +30,9 @@ addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.2")
   */
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.8.1")
 
+/** https://github.com/scalacenter/scala3-migrate/releases
+  */
+addSbtPlugin("ch.epfl.scala" % "sbt-scala3-migrate" % "0.3.1")
 //=============================================================================
 //=============================================================================
 
