@@ -41,5 +41,5 @@ package object user {
   type UserInviteExpiration = UserInviteExpiration.Type
   object UserInviteExpiration extends SproutTimestamp
 
-  type UserModuleAlgebra[F[_]] = UserAuthAlgebra[F] with UserAlgebra[F] with UserAccountAlgebra[F]
+  type UserModuleAlgebra[F[_]] = UserAuthAlgebra[F] & UserAlgebra[F] & UserAccountAlgebra[F]
 }
