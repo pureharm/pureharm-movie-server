@@ -20,7 +20,7 @@ import phms.*
 
 object codecs extends skunk.codec.AllCodecs with KernelSkunkCodecs {
 
-  implicit class Ops[O](val c: skunk.Codec[O]) extends AnyVal {
+  extension[O](c: skunk.Codec[O]) {
 
     def sprout[N](implicit s: NewType[O, N]): skunk.Codec[N] =
       c.imap(s.newType)(s.oldType)
@@ -32,7 +32,7 @@ object codecs extends skunk.codec.AllCodecs with KernelSkunkCodecs {
       )
   }
 
-  implicit class CodecCompanionOps(val c: skunk.Codec.type) extends AnyVal {
+  extension(c: skunk.Codec.type) {
 
     def from[A](enc: skunk.Encoder[A], dec: skunk.Decoder[A]): skunk.Codec[A] = {
       def initException = new java.lang.ExceptionInInitializerError(

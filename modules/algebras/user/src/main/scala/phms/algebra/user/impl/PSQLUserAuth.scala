@@ -17,7 +17,7 @@
 package phms.algebra.user.impl
 
 import phms.*
-import phms.db.*
+import phms.db.{*, given}
 import phms.algebra.user.*
 
 object PSQLUserAuth {
