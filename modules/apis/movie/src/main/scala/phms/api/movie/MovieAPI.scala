@@ -16,7 +16,7 @@
 
 package phms.api.movie
 
-import phms.stack.http.AuthCtxRoutes
+import phms.stack.http.{*, given}
 import phms.algebra.movie.MovieAlgebra
 import phms.*
 import phms.organizer.movie.IMDBOrganizer

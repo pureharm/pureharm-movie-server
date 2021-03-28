@@ -18,8 +18,8 @@ package phms.api.movie
 
 import java.time.*
 import org.http4s.*
-import org.http4s.dsl.*
-import phms.stack.http.*
+import org.http4s.dsl.{*, given}
+import phms.stack.http.{*, given}
 import phms.algebra.imdb.*
 import phms.algebra.movie.*
 import phms.*
@@ -32,12 +32,12 @@ import phms.organizer.movie.*
 final class MovieRoutes[F[_]](
   private val imdbOrganizer: IMDBOrganizer[F],
   private val movieAlgebra:  MovieAlgebra[F],
-)(implicit
+)(using
   val F:                     Concurrent[F],
   val D:                     Defer[F],
 ) extends Http4sDsl[F] with MovieRoutesJSON {
 
-  implicit private val releaseDateQueryParamDecoder: QueryParamDecoder[ReleaseDate] =
+  private given releaseDateQueryParamDecoder: QueryParamDecoder[ReleaseDate] =
     QueryParamDecoder[LocalDate].map(ReleaseDate.apply)
 
   private object StartReleaseDateQueryMatcher extends QueryParamDecoderMatcher[ReleaseDate]("start")
@@ -47,14 +47,14 @@ final class MovieRoutes[F[_]](
     def unapply(str: String): Option[MovieID] = MovieID.fromString[Try](str).toOption
   }
 
-  implicit private val titleQueryParamDecoder: QueryParamDecoder[TitleQuery] =
+  private given titleQueryParamDecoder: QueryParamDecoder[TitleQuery] =
     QueryParamDecoder[String].map(TitleQuery.apply)
 
   private object TitleQueryParamMatcher extends QueryParamDecoderMatcher[TitleQuery]("title")
 
   private val imdbImportRoutes: AuthCtxRoutes[F] = {
     AuthCtxRoutes[F] { case PUT -> Root / "movie_import" / "imdb" :? TitleQueryParamMatcher(title) `as` user =>
-      Ok(imdbOrganizer.scrapeIMDBForTitle(TitleQuery(title))(user))
+      Ok(imdbOrganizer.scrapeIMDBForTitle(TitleQuery(title))(using user))
     }
   }
 
@@ -63,15 +63,15 @@ final class MovieRoutes[F[_]](
       case (req @ POST -> Root / "movie") `as` user =>
         for {
           mc   <- req.as[MovieCreation]
-          resp <- Created(movieAlgebra.createMovie(mc)(user))
+          resp <- Created(movieAlgebra.createMovie(mc)(using user))
         } yield resp
 
       case GET -> Root / "movie" / MovieIDMatcher(mid) `as` user =>
-        Ok(movieAlgebra.fetchMovie(mid)(user))
+        Ok(movieAlgebra.fetchMovie(mid)(using user))
 
       case GET -> Root / "movie" :? StartReleaseDateQueryMatcher(start) :? EndReleaseDateQueryMatcher(end) `as` user =>
         val interval = (start, end)
-        Ok(movieAlgebra.findMoviesBetween(interval)(user))
+        Ok(movieAlgebra.findMoviesBetween(interval)(using user))
     }
   }
 

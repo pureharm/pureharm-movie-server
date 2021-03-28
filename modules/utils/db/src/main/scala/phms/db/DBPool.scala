@@ -18,16 +18,17 @@ package phms.db
 
 import fs2.io.net.Network
 import phms.*
-import phms.db.*
 import phms.db.config.*
+
+type DBPool[F[_]] = Resource[F, Session[F]]
 
 object DBPool {
 
-  def apply[F[_]](implicit sp: DBPool[F]): DBPool[F] = sp
+  def apply[F[_]](using sp: DBPool[F]): DBPool[F] = sp
 
   def resource[F[_]](
     config:     DBConnectionConfig
-  )(implicit F: Concurrent[F], console: Console[F], network: Network[F]): Resource[F, Resource[F, Session[F]]] = {
+  )(using Concurrent[F], Console[F], Network[F]): Resource[F, DBPool[F]] = {
     import natchez.Trace
     /** By setting the search path setting of the session we tell
       * postgresql which schema to use.
@@ -40,7 +41,7 @@ object DBPool {
       */
     val parameters:         Map[String, String] =
       Session.DefaultConnectionParameters.updated("search_path", SchemaName.oldType(config.schema))
-    implicit val noopTrace: Trace[F]            = Trace.Implicits.noop[F]
+    given noopTrace: Trace[F]            = Trace.Implicits.noop[F]
     import skunk.Strategy
     Session
       .pooled(

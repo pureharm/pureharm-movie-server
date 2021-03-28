@@ -29,17 +29,17 @@ trait MovieAlgebra[F[_]] {
 
   protected def userAuth: UserAuthAlgebra[F]
 
-  final def createMovie(mc: MovieCreation)(implicit auth: AuthCtx): F[Movie] =
+  final def createMovie(mc: MovieCreation)(using auth: AuthCtx): F[Movie] =
     userAuth.authorizeNewbie(createMovieImpl(mc))
 
   protected def createMovieImpl(mc: MovieCreation): F[Movie]
 
-  def findMoviesBetween(interval: QueryInterval)(implicit auth: AuthCtx): Stream[F, Movie] =
+  def findMoviesBetween(interval: QueryInterval)(using auth: AuthCtx): Stream[F, Movie] =
     Stream
       .eval(userAuth.authorizeNewbie(concurrent.unit))
       .flatMap(_ => findMoviesBetweenImpl(interval))
 
-  def fetchMovie(mid: MovieID)(implicit auth: AuthCtx): F[Movie] =
+  def fetchMovie(mid: MovieID)(using auth: AuthCtx): F[Movie] =
     userAuth.authorizeNewbie(findMovieImpl(mid))
 
   protected def findMoviesBetweenImpl(interval: QueryInterval): Stream[F, Movie]

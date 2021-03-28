@@ -25,7 +25,7 @@ import phms.time.*
   */
 trait JavaTimeQueryParameterDecoders {
 
-  implicit val localDateQueryParamDecoder: QueryParamDecoder[LocalDate] =
+  given localDateQueryParamDecoder: QueryParamDecoder[LocalDate] =
     QueryParamDecoder.stringQueryParamDecoder.emap(s =>
       LocalDate
         .fromString[Attempt](s)

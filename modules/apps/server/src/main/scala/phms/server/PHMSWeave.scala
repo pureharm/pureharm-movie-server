@@ -22,7 +22,7 @@ import phms.time.*
 import phms.db.*
 import phms.port.email.*
 import phms.logger.*
-import phms.stack.http.*
+import phms.stack.http.{*, given}
 import phms.algebra.imdb.*
 import phms.algebra.movie.MovieAlgebra
 import phms.algebra.user.*
@@ -91,66 +91,52 @@ final class PHMSWeave[F[_]] private (
 
 object PHMSWeave {
 
-  @scala.annotation.nowarn
   def resource[F[_]](using Temporal[F], Async[F]): Resource[F, PHMSWeave[F]] = {
-    Console.make[F].pure[Resource[F, *]].flatMap { implicit (console: Console[F]) =>
-      Time.resource[F].flatMap { implicit (time: Time[F]) =>
-        Config.resource[F].flatMap { implicit (configCap: Config[F]) =>
-          Logging.resource[F].flatMap { implicit (logging: Logging[F]) =>
-            implicit val logger: Logger[F] = logging.named("phms.weave")
-            Random.resource[F].flatMap { implicit (random: Random[F]) =>
-              SecureRandom.resource[F].flatMap { implicit (secureRandom: SecureRandom[F]) =>
-                Supervisor[F].flatMap { implicit (supervisor: Supervisor[F]) =>
-                  PHMSServerConfig.resource[F].flatMap { implicit (config: PHMSServerConfig) =>
-                    DBPool.resource[F](config.dbConfig.connection).flatMap { implicit (dbPool: DBPool[F]) =>
-                      for {
-                        _ <- Flyway
-                          .resource[F](config.dbConfig.connection, config.dbConfig.flyway)
-                          .evalMap(flyway => flyway.runMigrations(logger))
+    for {
+      given Console[F]      <- Console.make[F].pure[Resource[F, *]]
+      given Time[F]         <- Time.resource[F]
+      given Config[F]       <- Config.resource[F]
+      given Logging[F]      <- Logging.resource[F]
+      given Random[F]       <- Random.resource[F]
+      given SecureRandom[F] <- SecureRandom.resource[F]
+      given Supervisor[F]   <- Supervisor[F]
+      given Logger[F]       = Logging[F].named("phms.weave")
+      config                <- PHMSServerConfig.resource[F]
+      given DBPool[F]       <- DBPool.resource[F](config.dbConfig.connection)
 
-                        throttler <- EffectThrottler.resource[F](
-                          config.imdbConfig.requestsInterval,
-                          config.imdbConfig.requestsNumber,
-                        )
+      _ <- Flyway
+        .resource[F](config.dbConfig.connection, config.dbConfig.flyway)
+        .evalMap(flyway => flyway.runMigrations(using Logger[F]))
 
-                        emailPort <- EmailPort.resource[F](config.emailConfig)
+      throttler <- EffectThrottler.resource[F](config.imdbConfig.requestsInterval, config.imdbConfig.requestsNumber)
 
-                        imdbAlgebra          <- IMDBAlgebra.resource[F](throttler)
-                        authAlgebra          <- UserAuthAlgebra.resource[F]
-                        accountAlgebra       <- UserAccountAlgebra.resource[F]
-                        userAlgebra          <- UserAlgebra.resource[F]
-                        userBootstrapAlgebra <- UserAccountBootstrapAlgebra.resource[F](accountAlgebra)
-                        movieAlgebra         <- MovieAlgebra.resource[F](authAlgebra)
+      emailPort <- EmailPort.resource[F](config.emailConfig)
 
-                        imdbOrganizer        <- IMDBOrganizer.resource[F](movieAlgebra, imdbAlgebra)
-                        userAccountOrganizer <- UserAccountOrganizer.resource[F](accountAlgebra, emailPort)
+      imdbAlgebra          <- IMDBAlgebra.resource[F](throttler)
+      authAlgebra          <- UserAuthAlgebra.resource[F]
+      accountAlgebra       <- UserAccountAlgebra.resource[F]
+      userAlgebra          <- UserAlgebra.resource[F]
+      userBootstrapAlgebra <- UserAccountBootstrapAlgebra.resource[F](accountAlgebra)
+      movieAlgebra         <- MovieAlgebra.resource[F](authAlgebra)
 
-                        middleware <- AuthedHttp4s.userTokenAuthMiddleware[F](authAlgebra)
+      imdbOrganizer        <- IMDBOrganizer.resource[F](movieAlgebra, imdbAlgebra)
+      userAccountOrganizer <- UserAccountOrganizer.resource[F](accountAlgebra, emailPort)
 
-                        movieAPI <- MovieAPI.resource(imdbOrganizer, movieAlgebra)
-                        userAPI  <- UserAPI.resource(userAlgebra, authAlgebra, userAccountOrganizer)
+      middleware <- AuthedHttp4s.userTokenAuthMiddleware[F](authAlgebra)
 
-                        errorHandler <- PHMSHttp4sErrorHandler.resource[F]
-                      } yield new PHMSWeave[F](
-                        config,
-                        middleware,
-                        userAPI,
-                        movieAPI,
-                        userBootstrapAlgebra = userBootstrapAlgebra,
-                        userAccountAlgebra   = accountAlgebra,
-                        errorHandler         = errorHandler,
-                      )
-                    }
-                  }
-                }
-              }
-            }
-          }
+      movieAPI <- MovieAPI.resource(imdbOrganizer, movieAlgebra)
+      userAPI  <- UserAPI.resource(userAlgebra, authAlgebra, userAccountOrganizer)
 
-        }
-      }
-
-    }
+      errorHandler <- PHMSHttp4sErrorHandler.resource[F]
+    } yield new PHMSWeave[F](
+      config,
+      middleware,
+      userAPI,
+      movieAPI,
+      userBootstrapAlgebra = userBootstrapAlgebra,
+      userAccountAlgebra   = accountAlgebra,
+      errorHandler         = errorHandler,
+    )
   }
 
 }

@@ -19,7 +19,7 @@ package phms.http
 import fs2.Chunk
 import io.circe.{Json, Printer}
 import phms.*
-import phms.json.*
+import phms.json.{*, given}
 import org.http4s.*
 import org.http4s.headers.`Content-Type`
 import org.http4s.{EntityDecoder, EntityEncoder}
@@ -43,7 +43,7 @@ trait Http4sCirceInstances {
     *
     * @return
     */
-  implicit def jsonEntityEncoder[F[_], T: Encoder]: EntityEncoder[F, T] =
+  given[F[_], T: Encoder]: EntityEncoder[F, T] =
     EntityEncoder[F, Chunk[Byte]]
       .contramap[Json] { json =>
         val bytes = printer.printToByteBuffer(json)
@@ -52,7 +52,7 @@ trait Http4sCirceInstances {
       .withContentType(`Content-Type`(MediaType.application.json))
       .contramap(t => Encoder.apply[T].apply(t))
 
-  implicit def concurrentEntityDecoder[F[_]: Concurrent, T: Decoder]: EntityDecoder[F, T] =
+  given[F[_]: Concurrent, T: Decoder]: EntityDecoder[F, T] =
     ??? //circeInstances.jsonOf[F, T]
 
 }

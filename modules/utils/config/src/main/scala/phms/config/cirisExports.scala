@@ -19,8 +19,10 @@ package phms.config
 import phms.*
 import com.comcast.ip4s.{Host, Port}
 
-final type Effect[A] = ciris.Effect[A]
+export ciris.Effect
 
+// pending https://github.com/lampepfl/dotty/issues/11922
+// we cannot export these types.
 type ConfigDecoder[A, B] = ciris.ConfigDecoder[A, B]
 val ConfigDecoder: ciris.ConfigDecoder.type = ciris.ConfigDecoder
 
@@ -30,18 +32,8 @@ val ConfigValue: ciris.ConfigValue.type = ciris.ConfigValue
 type EnvDecoder[A] = ConfigDecoder[String, A]
 object EnvDecoder { def apply[A](using i: EnvDecoder[A]): EnvDecoder[A] = i }
 
-def env(name: EnvVar): ConfigValue[Effect, String]  = ciris.env(name.show)
-def default[A](value: => A): ConfigValue[Effect, A] = ciris.default(value)
-
-implicit def defaultCirisEnvVarNewTypeConfigDecoder[O, N](using
-  nt: NewType[O, N],
-  ev: ConfigDecoder[String, O],
-): ConfigDecoder[String, N] = ev.map(nt.newType)
-
-implicit def defaultCirisEnvVarRefinedTypeConfigDecoder[O, N](using
-  nt: RefinedTypeThrow[O, N],
-  ev: ConfigDecoder[String, O],
-): ConfigDecoder[String, N] = ev.sproutRefined[N]
+given [O, N](using nt: NewType[O, N], ev: ConfigDecoder[String, O]):          ConfigDecoder[String, N] = ev.map(nt.newType)
+given [O, N](using nt: RefinedTypeThrow[O, N], ev: ConfigDecoder[String, O]): ConfigDecoder[String, N] = ev.sproutRefined[N]
 
 extension [O](v: EnvDecoder[O]) {
   def sprout[N](using s: NewType[O, N]): EnvDecoder[N] = v.map(s.newType)
@@ -54,3 +46,5 @@ extension [O](v: EnvDecoder[O]) {
 given portDecoder: ConfigDecoder[String, Port] = ConfigDecoder[String, Int].mapOption("Port")(Port.fromInt)
 given hostDecoder: ConfigDecoder[String, Host] = ConfigDecoder[String, String].mapOption("Host")(Host.fromString)
 
+def env(name: EnvVar): ConfigValue[Effect, String]  = ciris.env(name.show)
+def default[A](value: => A): ConfigValue[Effect, A] = ciris.default(value)

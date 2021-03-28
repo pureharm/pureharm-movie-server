@@ -31,11 +31,7 @@ trait UserAccountAlgebra[F[_]] {
   protected given monadThrow: MonadThrow[F]
   protected def authAlgebra:  UserAuthAlgebra[F]
 
-  final def invitationStep1(
-    inv:  UserInvitation
-  )(implicit
-    auth: AuthCtx
-  ): F[UserInviteToken] =
+  final def invitationStep1(inv:  UserInvitation)(using auth: AuthCtx): F[UserInviteToken] =
     authAlgebra.authorizeGTERoleThan(inv.role)(registrationStep1Impl(inv))
 
   protected[user] def registrationStep1Impl(inv: UserInvitation): F[UserInviteToken]

@@ -30,7 +30,7 @@ final class UserAccountOrganizer[F[_]] private (
   private val emailPort:   EmailPort[F],
 )(using F: Concurrent[F]) {
 
-  def invitationStep1(inv: UserInvitation)(implicit authCtx: AuthCtx): F[Unit] =
+  def invitationStep1(inv: UserInvitation)(using authCtx: AuthCtx): F[Unit] =
     for {
       inviteToken <- userAccount.invitationStep1(inv)
       _           <-

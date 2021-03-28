@@ -17,7 +17,7 @@
 package phms.api.user
 
 import org.http4s.dsl.*
-import phms.stack.http.*
+import phms.stack.http.{*, given}
 import phms.algebra.user.*
 import phms.*
 
@@ -26,15 +26,12 @@ import phms.*
   */
 final class UserRoutes[F[_]](
   private val userAlgebra: UserAlgebra[F]
-)(implicit
-  val F:                   Concurrent[F],
-  val D:                   Defer[F],
-) extends Http4sDsl[F] with UserRoutesJSON {
+)(using Concurrent[F], Defer[F]) extends Http4sDsl[F] with UserRoutesJSON {
 
   private val userRestRoutes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {
     case GET -> Root / "user" / UUIDVar(userID) `as` user =>
       for {
-        resp <- Ok(userAlgebra.findUser(UserID(userID))(user))
+        resp <- Ok(userAlgebra.findUser(UserID(userID))(using user))
       } yield resp
   }
 

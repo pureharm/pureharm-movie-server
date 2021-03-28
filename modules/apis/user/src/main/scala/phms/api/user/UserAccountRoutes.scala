@@ -18,7 +18,7 @@ package phms.api.user
 
 import org.http4s.*
 import org.http4s.dsl.*
-import phms.stack.http.*
+import phms.stack.http.{*, given}
 import phms.algebra.user.*
 import phms.*
 
@@ -29,16 +29,13 @@ import phms.organizer.user.*
   */
 final class UserAccountRoutes[F[_]](
   private val userOrganizer: UserAccountOrganizer[F]
-)(implicit
-  val F:                     Concurrent[F],
-  val D:                     Defer[F],
-) extends Http4sDsl[F] with UserRoutesJSON {
+)(using Concurrent[F], Defer[F]) extends Http4sDsl[F] with UserRoutesJSON {
 
   private val userInvitationStep1Routes: AuthCtxRoutes[F] = AuthCtxRoutes[F] {
     case (req @ POST -> Root / "user_invitation") `as` user =>
       for {
         reg  <- req.as[UserInvitation]
-        _    <- userOrganizer.invitationStep1(reg)(user)
+        _    <- userOrganizer.invitationStep1(reg)(using user)
         resp <- Created()
       } yield resp
   }

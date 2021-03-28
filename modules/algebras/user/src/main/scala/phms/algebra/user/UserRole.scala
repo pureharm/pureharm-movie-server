@@ -33,7 +33,7 @@ object UserRole {
       .get(s)
       .liftTo[F](Fail.invalid(s"UserRole has to be one of $allString, but was: $s"))
 
-  implicit val userRoleOrdering: Ordering[UserRole] =
+  given userRoleOrdering: Ordering[UserRole] =
     (x: UserRole, y: UserRole) => x.compare(y)
 
   private val LT = -1

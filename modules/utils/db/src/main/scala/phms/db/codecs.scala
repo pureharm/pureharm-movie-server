@@ -22,10 +22,10 @@ object codecs extends skunk.codec.AllCodecs with KernelSkunkCodecs {
 
   extension[O](c: skunk.Codec[O]) {
 
-    def sprout[N](implicit s: NewType[O, N]): skunk.Codec[N] =
+    def sprout[N](using s: NewType[O, N]): skunk.Codec[N] =
       c.imap(s.newType)(s.oldType)
 
-    def sproutRefined[N](implicit s: RefinedTypeThrow[O, N]): skunk.Codec[N] =
+    def sproutRefined[N](using s: RefinedTypeThrow[O, N]): skunk.Codec[N] =
       skunk.Codec.from[N](
         enc = c.contramap(s.oldType),
         dec = c.emap(v => s.newType[Attempt](v).leftMap(_.toString)),

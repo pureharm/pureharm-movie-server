@@ -189,7 +189,7 @@ final private[user] class UserAlgebraImpl[F[_]](using
       _    <- Fail.nicata(s"Reset password step 2: new hash: $hash").raiseError[F, Unit]
     } yield ()
 
-  override def findUser(id: UserID)(implicit auth: AuthCtx): F[Option[User]] =
+  override def findUser(id: UserID)(using auth: AuthCtx): F[Option[User]] =
     //TODO: implement security policy for user retrieval
     dbPool.use(session => PSQLUsers(session).findByID(id).map(_.map(fromRepr)))
 

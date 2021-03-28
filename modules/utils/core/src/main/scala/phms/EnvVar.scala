@@ -24,7 +24,7 @@ sealed trait EnvVar extends Product with Serializable {
 }
 
 object EnvVar {
-  implicit val showEnvVars: Show[EnvVar] = Show.show(_.productPrefix)
+  given showEnvVars: Show[EnvVar] = Show.show(_.productPrefix)
 
   case object PHMS_APP_DEV_MODE_BOOTSTRAP extends EnvVar
 

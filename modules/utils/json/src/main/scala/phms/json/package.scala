@@ -46,13 +46,8 @@ package object json extends JavaTimeJson {
     final def codec[A]: Codec.AsObject[A] = ???
   }
 
-  implicit def sproutJSONEncoder[O, N](implicit ot: OldType[O, N], enc: Encoder[O]): Encoder[N] =
-    enc.contramap(ot.oldType)
-
-  implicit def sproutNewtypeJSONDecoder[O, N](implicit nt: NewType[O, N], dec: Decoder[O]): Decoder[N] =
-    dec.imap(nt.newType)(nt.oldType)
-
-  implicit def sproutRefinedThrowJSONDecoder[O, N](implicit nt: RefinedTypeThrow[O, N], dec: Decoder[O]): Decoder[N] =
-    dec.emapTry(o => nt.newType[Try](o))
+  given[O, N](using ot: OldType[O, N], enc: Encoder[O]):          Encoder[N] = enc.contramap(ot.oldType)
+  given[O, N](using nt: NewType[O, N], dec: Decoder[O]):          Decoder[N] = dec.imap(nt.newType)(nt.oldType)
+  given[O, N](using nt: RefinedTypeThrow[O, N], dec: Decoder[O]): Decoder[N] = dec.emapTry(o => nt.newType[Try](o))
 
 }

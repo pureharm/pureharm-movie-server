@@ -17,17 +17,17 @@
 package phms.json
 
 import phms.*
-import phms.time.*
+import phms.time.{*, given}
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
   */
 trait JavaTimeJson {
 
-  implicit val encodeLocalDate:       io.circe.Encoder[LocalDate] =
+  given encodeLocalDate:       io.circe.Encoder[LocalDate] =
     io.circe.Encoder[String].contramap((m: LocalDate) => m.show)
 
-  implicit val localDateCirceDecoder: io.circe.Decoder[LocalDate] =
+  given localDateCirceDecoder: io.circe.Decoder[LocalDate] =
     io.circe.Decoder[String].emapTry(LocalDate.fromString[Try])
 
 }

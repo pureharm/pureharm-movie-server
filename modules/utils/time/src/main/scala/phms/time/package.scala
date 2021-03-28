@@ -25,5 +25,5 @@ package object time {
 
   type ZoneOffset = java.time.ZoneOffset
 
-  implicit val showLocalDate: Show[LocalDate] = Show.show(ld => ld.format(TimeFormatters.LocalDateFormatter))
+  given showLocalDate: Show[LocalDate] = Show.show(ld => ld.format(TimeFormatters.LocalDateFormatter))
 }

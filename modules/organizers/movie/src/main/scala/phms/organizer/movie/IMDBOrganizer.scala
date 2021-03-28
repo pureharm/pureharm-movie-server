@@ -36,7 +36,7 @@ final class IMDBOrganizer[F[_]] private (
   // search query, and then you get the link to your first search result, and gather
   // all information from there. From there you can gather much more, at the cost
   // of two external requests instead of just one.
-  def scrapeIMDBForTitle(title: TitleQuery)(implicit authCtx: AuthCtx): F[Movie] =
+  def scrapeIMDBForTitle(title: TitleQuery)(using authCtx: AuthCtx): F[Movie] =
     for {
       maybe: Option[IMDBMovie] <- imdbAlgebra.scrapeMovieByTitle(title)
       //TODO: this is a fairly common shape transformation, F[Option[A]] into F[B],

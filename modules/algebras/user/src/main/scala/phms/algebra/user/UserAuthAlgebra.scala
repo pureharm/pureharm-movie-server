@@ -32,7 +32,7 @@ abstract class UserAuthAlgebra[F[_]: MonadThrow] {
 
   def authenticate(token: AuthenticationToken): F[AuthCtx]
 
-  final def promoteUser(id: UserID, newRole: UserRole)(implicit auth: AuthCtx): F[Unit] =
+  final def promoteUser(id: UserID, newRole: UserRole)(using auth: AuthCtx): F[Unit] =
     authorizeGTERoleThan(newRole)(promoteUserOP(id, newRole))
 
   /** Lowest level of authorization, essentially anyone
@@ -42,7 +42,7 @@ abstract class UserAuthAlgebra[F[_]: MonadThrow] {
     *   The operation that we want to guard with
     *   certain user priviliges.
     */
-  final def authorizeNewbie[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
+  final def authorizeNewbie[A](op: => F[A])(using auth: AuthCtx): F[A] =
     authorizeGTERoleThan(UserRole.Newbie)(op)
 
   /** Requires member to have priviliges from [[UserRole.Member]] upwards
@@ -51,7 +51,7 @@ abstract class UserAuthAlgebra[F[_]: MonadThrow] {
     *   The operation that we want to guard with
     *   certain user priviliges.
     */
-  final def authorizeMember[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
+  final def authorizeMember[A](op: => F[A])(using auth: AuthCtx): F[A] =
     authorizeGTERoleThan(UserRole.Member)(op)
 
   /** Requires member to have priviliges from [[UserRole.Curator]] upwards
@@ -60,7 +60,7 @@ abstract class UserAuthAlgebra[F[_]: MonadThrow] {
     *   The operation that we want to guard with
     *   certain user priviliges.
     */
-  final def authorizeCurator[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
+  final def authorizeCurator[A](op: => F[A])(using auth: AuthCtx): F[A] =
     authorizeGTERoleThan(UserRole.Curator)(op)
 
   /** Requires member to have priviliges from [[UserRole.SuperAdmin]] upwards
@@ -69,12 +69,12 @@ abstract class UserAuthAlgebra[F[_]: MonadThrow] {
     *   The operation that we want to guard with
     *   certain user priviliges.
     */
-  final def authorizeSuperAdmin[A](op: => F[A])(implicit auth: AuthCtx): F[A] =
+  final def authorizeSuperAdmin[A](op: => F[A])(using auth: AuthCtx): F[A] =
     authorizeGTERoleThan(UserRole.SuperAdmin)(op)
 
   protected[user] def promoteUserOP(id: UserID, newRole: UserRole): F[Unit]
 
-  final protected[user] def authorizeGTERoleThan[A](minRole: UserRole)(op: => F[A])(implicit auth: AuthCtx): F[A] =
+  final protected[user] def authorizeGTERoleThan[A](minRole: UserRole)(op: => F[A])(using auth: AuthCtx): F[A] =
     if (auth.user.role >= minRole)
       op
     else

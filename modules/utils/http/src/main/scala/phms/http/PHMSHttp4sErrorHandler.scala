@@ -5,12 +5,10 @@ import org.http4s.*
 import phms.*
 import phms.logger.*
 
-final class PHMSHttp4sErrorHandler[F[_]](implicit
-  F:       MonadThrow[F],
-  logging: Logging[F],
-) extends PartialFunction[Throwable, F[Response[F]]] with Http4sCirceInstances {
+final class PHMSHttp4sErrorHandler[F[_]](using MonadThrow[F], Logging[F])
+  extends PartialFunction[Throwable, F[Response[F]]] with Http4sCirceInstances {
 
-  private val logger: Logger[F] = logging.named("http4s.handler")
+  private val logger: Logger[F] = Logging[F].named("http4s.handler")
 
   private val function: PartialFunction[Throwable, F[Response[F]]] = {
     case c: Catastrophe =>
@@ -70,10 +68,8 @@ final class PHMSHttp4sErrorHandler[F[_]](implicit
 
 object PHMSHttp4sErrorHandler {
 
-  def resource[F[_]](implicit
-    F:       MonadThrow[F],
-    logging: Logging[F],
-  ): Resource[F, PHMSHttp4sErrorHandler[F]] = new PHMSHttp4sErrorHandler[F]().pure[Resource[F, *]]
+  def resource[F[_]](using MonadThrow[F], Logging[F]): Resource[F, PHMSHttp4sErrorHandler[F]] =
+    new PHMSHttp4sErrorHandler[F]().pure[Resource[F, *]]
 
   /** TODO: replace w/ proper anomaly serialization
     */
@@ -85,7 +81,7 @@ object PHMSHttp4sErrorHandler {
   )
 
   private object ServerFailure {
-    import phms.json.*
-    implicit val jsonCodec: phms.json.Codec[ServerFailure] = derive.codec[ServerFailure]
+    import phms.json.{*, given}
+    given Codec[ServerFailure] = derive.codec[ServerFailure]
   }
 }
