@@ -27,7 +27,7 @@ trait MovieAPI[F[_]] {
 
 object MovieAPI {
 
-  def resource[F[_]](imdbOrganizer: IMDBOrganizer[F], movieAlgebra: MovieAlgebra[F])(implicit
+  def resource[F[_]](imdbOrganizer: IMDBOrganizer[F], movieAlgebra: MovieAlgebra[F])(using
     F:                              Concurrent[F],
     D:                              Defer[F],
   ): Resource[F, MovieAPI[F]] =

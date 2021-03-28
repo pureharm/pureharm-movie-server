@@ -16,25 +16,26 @@
 
 package phms.server
 
-import fs2.io.net.Network
-import phms.stack.http.*
-import phms.algebra.imdb.*
-import phms.algebra.movie.MovieAlgebra
-import phms.algebra.user.*
+import phms.http.*
 import phms.config.*
 import phms.time.*
 import phms.db.*
 import phms.port.email.*
 import phms.logger.*
-import phms.*
-import phms.api.movie.MovieAPI
-import phms.api.user.UserAPI
+import phms.stack.http.*
+import phms.algebra.imdb.*
+import phms.algebra.movie.MovieAlgebra
+import phms.algebra.user.*
+import phms.organizer.movie.*
+import phms.organizer.user.*
+import phms.api.movie.*
+import phms.api.user.*
 import phms.server.config.*
-import phms.organizer.movie.IMDBOrganizer
-import phms.organizer.user.UserAccountOrganizer
+import phms.*
+
 import org.http4s.server.*
 import org.http4s.*
-import phms.http.PHMSHttp4sErrorHandler
+import fs2.io.net.Network
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jul 2018
@@ -48,7 +49,7 @@ final class PHMSWeave[F[_]] private (
   userBootstrapAlgebra: UserAccountBootstrapAlgebra[F],
   userAccountAlgebra:   UserAccountAlgebra[F],
   errorHandler:         PHMSHttp4sErrorHandler[F],
-)(implicit F:           Async[F], logging: Logging[F]) {
+)(using F:           Async[F], logging: Logging[F]) {
 
   def serverResource: Resource[F, Server] = {
     import org.http4s.ember.server.EmberServerBuilder
@@ -91,14 +92,7 @@ final class PHMSWeave[F[_]] private (
 object PHMSWeave {
 
   @scala.annotation.nowarn
-  def resource[F[_]](implicit
-    timer: Temporal[F],
-    async: Async[F],
-  ): Resource[F, PHMSWeave[F]] = {
-    for {
-      given Console[F] <- Console.make[F].pure[Resource[F, *]]
-    } yield ???
-
+  def resource[F[_]](using Temporal[F], Async[F]): Resource[F, PHMSWeave[F]] = {
     Console.make[F].pure[Resource[F, *]].flatMap { implicit (console: Console[F]) =>
       Time.resource[F].flatMap { implicit (time: Time[F]) =>
         Config.resource[F].flatMap { implicit (configCap: Config[F]) =>

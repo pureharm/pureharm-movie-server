@@ -26,7 +26,7 @@ import phms.logger.*
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 21 Jun 2018
   */
-final private[user] class UserAlgebraImpl[F[_]](implicit
+final private[user] class UserAlgebraImpl[F[_]](using
   F:            MonadCancelThrow[F],
   random:       Random[F],
   secureRandom: SecureRandom[F],

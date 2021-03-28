@@ -26,7 +26,7 @@ private[impl] object UserCrypto {
 
   type BcryptPW = phms.crypto.BCryptHash
 
-  private[impl] def generateToken[F[_], TokenType](implicit
+  private[impl] def generateToken[F[_], TokenType](using
     F:  ApplicativeThrow[F],
     sr: SecureRandom[F],
     nt: NewType[String, TokenType],
@@ -35,10 +35,10 @@ private[impl] object UserCrypto {
 
   private[impl] def hashPWWithBcrypt[F[_]](
     ptpw:       PlainTextPassword
-  )(implicit F: MonadThrow[F], sr: SecureRandom[F]): F[BcryptPW] = phms.crypto.BCrypt.createBCrypt[F](ptpw)
+  )(using F: MonadThrow[F], sr: SecureRandom[F]): F[BcryptPW] = phms.crypto.BCrypt.createBCrypt[F](ptpw)
 
   private[impl] def checkUserPassword[F[_]](
     p:          PlainTextPassword,
     hash:       UserCrypto.BcryptPW,
-  )(implicit F: MonadThrow[F], sr: SecureRandom[F]): F[Boolean] = phms.crypto.BCrypt.verify[F](p, hash)
+  )(using F: MonadThrow[F], sr: SecureRandom[F]): F[Boolean] = phms.crypto.BCrypt.verify[F](p, hash)
 }

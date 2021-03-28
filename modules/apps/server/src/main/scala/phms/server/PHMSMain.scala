@@ -29,7 +29,7 @@ object PHMSMain extends IOApp {
       .use(_ => IO.never)
       .as(ExitCode.Success)
 
-  private def runResource[F[_]](implicit
+  private def runResource[F[_]](using
     F: Async[F]
   ): Resource[F, Server] =
     for {

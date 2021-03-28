@@ -10,7 +10,7 @@ sealed trait JsoupWrapper[F[_]] {
 
 object JsoupWrapper {
 
-  def resource[F[_]](implicit F: Sync[F]): Resource[F, JsoupWrapper[F]] =
+  def resource[F[_]](using F: Sync[F]): Resource[F, JsoupWrapper[F]] =
     for {
       browser <- Resource.eval[F, JsoupBrowser](jsoupBrowser[F])
     } yield new JsoupWrapper[F] {
@@ -19,6 +19,6 @@ object JsoupWrapper {
         F.blocking[Document](browser.get(url))
     }
 
-  def jsoupBrowser[F[_]](implicit F: Sync[F]): F[JsoupBrowser] = F.blocking(new JsoupBrowser())
+  def jsoupBrowser[F[_]](using F: Sync[F]): F[JsoupBrowser] = F.blocking(new JsoupBrowser())
 
 }

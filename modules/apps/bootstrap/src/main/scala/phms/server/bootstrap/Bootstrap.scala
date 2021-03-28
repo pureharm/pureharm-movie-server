@@ -38,7 +38,7 @@ object Bootstrap {
   def bootstrap[F[_]](
     uca:        UserAccountAlgebra[F],
     uba:        UserAccountBootstrapAlgebra[F],
-  )(implicit F: MonadThrow[F], logging: Logging[F]): F[Unit] =
+  )(using F: MonadThrow[F], logging: Logging[F]): F[Unit] =
     for {
 
       usb   <- ServerBootstrapAlgebra.create[F](uca, uba).pure[F]

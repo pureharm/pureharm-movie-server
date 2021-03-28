@@ -20,9 +20,9 @@ import phms.*
 import java.{time as jt}
 
 object LocalDate {
-  def now[F[_]](implicit t: Time[F]): F[LocalDate] = t.LocalDate.now
+  def now[F[_]](using t: Time[F]): F[LocalDate] = t.LocalDate.now
 
   //TODO: adapt error
-  def fromString[F[_]](s: String)(implicit F: ApplicativeThrow[F]): F[LocalDate] =
+  def fromString[F[_]](s: String)(using F: ApplicativeThrow[F]): F[LocalDate] =
     F.catchNonFatal(jt.LocalDate.parse(s, TimeFormatters.LocalDateFormatter))
 }

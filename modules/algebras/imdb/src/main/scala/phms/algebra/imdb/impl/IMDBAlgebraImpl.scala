@@ -27,7 +27,7 @@ import phms.*
 final private[imdb] class IMDBAlgebraImpl[F[_]](
   val throttler: EffectThrottler[F],
   val browser:   JsoupWrapper[F],
-)(implicit
+)(using
   F:             Sync[F]
 ) extends IMDBAlgebra[F] {
   import net.ruippeixotog.scalascraper.model.Document

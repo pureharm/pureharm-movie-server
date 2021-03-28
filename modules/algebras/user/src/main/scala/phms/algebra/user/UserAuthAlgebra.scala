@@ -83,7 +83,7 @@ abstract class UserAuthAlgebra[F[_]: MonadThrow] {
 
 object UserAuthAlgebra {
 
-  def resource[F[_]](implicit
+  def resource[F[_]](using
     dbPool:  DBPool[F],
     F:       MonadCancelThrow[F],
     time:    Time[F],

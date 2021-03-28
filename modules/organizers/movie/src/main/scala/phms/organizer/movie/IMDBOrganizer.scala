@@ -30,7 +30,7 @@ import phms.*
 final class IMDBOrganizer[F[_]] private (
   protected val movieAlgebra: MovieAlgebra[F],
   protected val imdbAlgebra:  IMDBAlgebra[F],
-)(implicit F:                 MonadThrow[F]) {
+)(using F:                 MonadThrow[F]) {
 
   //TODO: scraping from IMDB can be improved by scraping two pages, first page you do the
   // search query, and then you get the link to your first search result, and gather
@@ -70,7 +70,7 @@ final class IMDBOrganizer[F[_]] private (
 
 object IMDBOrganizer {
 
-  def resource[F[_]](movieAlgebra: MovieAlgebra[F], imdbAlgebra: IMDBAlgebra[F])(implicit
+  def resource[F[_]](movieAlgebra: MovieAlgebra[F], imdbAlgebra: IMDBAlgebra[F])(using
     F:                             MonadThrow[F]
   ): Resource[F, IMDBOrganizer[F]] =
     Resource.pure[F, IMDBOrganizer[F]](new IMDBOrganizer[F](movieAlgebra, imdbAlgebra))

@@ -13,8 +13,8 @@ final class MailhogEmailTest extends PHMSTest {
 
   private val emailPort = ResourceFixture[EmailPort[IO]] {
     for {
-      supervisor <- Supervisor[IO]
-      logging    <- Logging.resource[IO]
+      given Supervisor[IO] <- Supervisor[IO]
+      given Logging[IO]    <- Logging.resource[IO]
       emailPort  <- EmailPort.resource[IO](
         GmailConfig(
           from     = EmailSender("phms-testing@example.com"),
@@ -25,7 +25,7 @@ final class MailhogEmailTest extends PHMSTest {
           auth     = SmtpAuth.False,
           startTLS = SmtpStartTLS.False,
         )
-      )(Sync[IO], supervisor, logging)
+      )
     } yield emailPort
   }
 

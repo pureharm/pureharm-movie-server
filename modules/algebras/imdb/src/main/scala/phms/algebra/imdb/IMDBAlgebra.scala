@@ -27,7 +27,7 @@ trait IMDBAlgebra[F[_]] {
 }
 
 object IMDBAlgebra {
-  def resource[F[_]](throttler: EffectThrottler[F])(implicit F: Sync[F]): Resource[F, IMDBAlgebra[F]] =
+  def resource[F[_]](throttler: EffectThrottler[F])(using Sync[F]): Resource[F, IMDBAlgebra[F]] =
     for {
       jsoup <- JsoupWrapper.resource[F]
     } yield new IMDBAlgebraImpl[F](throttler, jsoup)

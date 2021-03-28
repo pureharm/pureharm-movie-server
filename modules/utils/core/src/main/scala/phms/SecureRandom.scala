@@ -24,7 +24,7 @@ sealed trait SecureRandom[F[_]] {
 
 object SecureRandom {
 
-  def resource[F[_]](implicit F: Sync[F]): Resource[F, SecureRandom[F]] =
+  def resource[F[_]](using F: Sync[F]): Resource[F, SecureRandom[F]] =
     Resource.eval[F, SecureRandom[F]] {
       cats.effect.std.Random.javaSecuritySecureRandom(8).map { (r: Random[F]) =>
         new SecureRandom[F] {

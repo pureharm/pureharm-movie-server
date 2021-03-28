@@ -41,7 +41,7 @@ object EmailPort {
 
   def resource[F[_]](
     config:        GmailConfig
-  )(implicit sync: Sync[F], supervisor: Supervisor[F], logging: Logging[F]): Resource[F, EmailPort[F]] =
+  )(using sync: Sync[F], supervisor: Supervisor[F], logging: Logging[F]): Resource[F, EmailPort[F]] =
     impl.EmailPortJavaxMail.resource[F](config).widen
 
 }

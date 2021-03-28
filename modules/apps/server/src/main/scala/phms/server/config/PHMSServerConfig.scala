@@ -16,8 +16,8 @@
 
 package phms.server.config
 
-import phms.*
-import phms.config.*
+import phms.{*, given}
+import phms.config.{*, given}
 import phms.algebra.imdb.*
 import phms.db.config.*
 import phms.port.email.*

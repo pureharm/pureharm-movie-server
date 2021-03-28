@@ -29,7 +29,7 @@ import phms.algebra.user.*
 final private[bootstrap] class ServerBootstrapAlgebra[F[_]] private (
   private val uca: UserAccountAlgebra[F],
   private val uba: UserAccountBootstrapAlgebra[F],
-)(implicit F:      MonadThrow[F], logging: Logging[F]) {
+)(using F:      MonadThrow[F], logging: Logging[F]) {
 
   private val logger = logging.of(this)
 
@@ -58,6 +58,6 @@ private[bootstrap] object ServerBootstrapAlgebra {
   def create[F[_]](
     uca:        UserAccountAlgebra[F],
     uba:        UserAccountBootstrapAlgebra[F],
-  )(implicit F: MonadThrow[F], logging: Logging[F]): ServerBootstrapAlgebra[F] = new ServerBootstrapAlgebra(uca, uba)
+  )(using F: MonadThrow[F], logging: Logging[F]): ServerBootstrapAlgebra[F] = new ServerBootstrapAlgebra(uca, uba)
 
 }

@@ -35,7 +35,7 @@ import javax.mail.internet.*
 private[email] class EmailPortJavaxMail[F[_]] private (
   private val config:  GmailConfig,
   private val session: Session,
-)(implicit F:                Sync[F], supervisor: Supervisor[F], logging: Logging[F])
+)(using F: Sync[F], supervisor: Supervisor[F], logging: Logging[F])
   extends EmailPort[F] {
 
   private val logger:  Logger[F]              = logging.of(this)
@@ -90,7 +90,7 @@ private[email] object EmailPortJavaxMail {
 
   def resource[F[_]](
     config:     GmailConfig
-  )(implicit
+  )(using
     F:          Sync[F],
     supervisor: Supervisor[F],
     logging:    Logging[F],

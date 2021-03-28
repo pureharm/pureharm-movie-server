@@ -51,7 +51,7 @@ object PSQLUserInvitations {
   /*_*/
 }
 
-final case class PSQLUserInvitations[F[_]](private val session: Session[F])(implicit F: MonadCancelThrow[F]) {
+final case class PSQLUserInvitations[F[_]](private val session: Session[F])(using F: MonadCancelThrow[F]) {
   import PSQLUserInvitations.*
   import phms.db.codecs.*
   /*_*/

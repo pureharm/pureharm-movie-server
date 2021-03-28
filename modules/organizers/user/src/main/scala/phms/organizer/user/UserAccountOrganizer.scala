@@ -28,9 +28,7 @@ import phms.port.email.EmailPort
 final class UserAccountOrganizer[F[_]] private (
   private val userAccount: UserAccountAlgebra[F],
   private val emailPort:   EmailPort[F],
-)(implicit
-  private val F:           Concurrent[F]
-) {
+)(using F: Concurrent[F]) {
 
   def invitationStep1(inv: UserInvitation)(implicit authCtx: AuthCtx): F[Unit] =
     for {

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package phms
+package phms.config
 
+import phms.*
 import com.comcast.ip4s.{Host, Port}
 
-package object config {
+
   final type Effect[A] = ciris.Effect[A]
 
   type ConfigDecoder[A, B] = ciris.ConfigDecoder[A, B]
@@ -27,7 +28,7 @@ package object config {
   type EnvDecoder[A] = ConfigDecoder[String, A]
 
   object EnvDecoder {
-    def apply[A](implicit i: EnvDecoder[A]): EnvDecoder[A] = i
+    def apply[A](using i: EnvDecoder[A]): EnvDecoder[A] = i
   }
 
   type ConfigValue[+F[_], A] = ciris.ConfigValue[F, A]
@@ -37,28 +38,28 @@ package object config {
 
   def default[A](value: => A): ConfigValue[Effect, A] = ciris.default(value)
 
-  implicit def defaultCirisEnvVarNewTypeConfigDecoder[O, N](implicit
+  implicit def defaultCirisEnvVarNewTypeConfigDecoder[O, N](using
     nt: NewType[O, N],
     ev: ConfigDecoder[String, O],
   ): ConfigDecoder[String, N] = ev.map(nt.newType)
 
-  implicit def defaultCirisEnvVarRefinedTypeConfigDecoder[O, N](implicit
+  implicit def defaultCirisEnvVarRefinedTypeConfigDecoder[O, N](using
     nt: RefinedTypeThrow[O, N],
     ev: ConfigDecoder[String, O],
   ): ConfigDecoder[String, N] = ev.sproutRefined[N]
 
-  implicit class Ops[O](v: EnvDecoder[O]) {
-    def sprout[N](implicit s: NewType[O, N]): EnvDecoder[N] = v.map(s.newType)
+  extension [O](v: EnvDecoder[O]) {
+    def sprout[N](using s: NewType[O, N]): EnvDecoder[N] = v.map(s.newType)
 
-    def sproutRefined[N](implicit s: RefinedTypeThrow[O, N]): EnvDecoder[N] =
+    def sproutRefined[N](using s: RefinedTypeThrow[O, N]): EnvDecoder[N] =
       v.mapEither { (cfgKey, value) =>
         s.newType[Attempt](value).leftMap(thr => ciris.ConfigError(s"${thr.toString} --> $cfgKey"))
       }
   }
 
-  implicit val portDecoder: ConfigDecoder[String, Port] =
+  given portDecoder: ConfigDecoder[String, Port] =
     ConfigDecoder[String, Int].mapOption("Port")(Port.fromInt)
 
-  implicit val hostDecoder: ConfigDecoder[String, Host] =
+  given hostDecoder: ConfigDecoder[String, Host] =
     ConfigDecoder[String, String].mapOption("Host")(Host.fromString)
-}
+

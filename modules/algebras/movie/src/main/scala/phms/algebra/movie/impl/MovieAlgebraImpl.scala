@@ -26,10 +26,10 @@ import phms.*
   */
 final private[movie] class MovieAlgebraImpl[F[_]](
   override protected val userAuth: UserAuthAlgebra[F]
-)(implicit
+)(using
   override val concurrent:         Concurrent[F],
-  val random:                      Random[F],
-  val dbPool:                      DBPool[F],
+  random:                      Random[F],
+  dbPool:                      DBPool[F],
 ) extends MovieAlgebra[F] {
 
   override protected def createMovieImpl(mc: MovieCreation): F[Movie] =

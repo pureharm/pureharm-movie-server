@@ -28,8 +28,8 @@ import phms.logger.Logging
   */
 trait UserAccountAlgebra[F[_]] {
 
-  implicit protected def monadThrow: MonadThrow[F]
-  protected def authAlgebra:         UserAuthAlgebra[F]
+  protected given monadThrow: MonadThrow[F]
+  protected def authAlgebra:  UserAuthAlgebra[F]
 
   final def invitationStep1(
     inv:  UserInvitation
@@ -55,7 +55,7 @@ trait UserAccountAlgebra[F[_]] {
 
 object UserAccountAlgebra {
 
-  def resource[F[_]](implicit
+  def resource[F[_]](using
     dbPool:  DBPool[F],
     F:       MonadCancelThrow[F],
     time:    Time[F],

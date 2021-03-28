@@ -45,7 +45,7 @@ object PSQLUserAuth {
   /*_*/
 }
 
-final case class PSQLUserAuth[F[_]](private val session: Session[F])(implicit F: MonadCancelThrow[F]) {
+final case class PSQLUserAuth[F[_]](private val session: Session[F])(using F: MonadCancelThrow[F]) {
   import PSQLUserAuth.*
 
   /*_*/

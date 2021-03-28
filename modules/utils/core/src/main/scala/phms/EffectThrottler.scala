@@ -29,7 +29,7 @@ import scala.concurrent.duration.*
 final class EffectThrottler[F[_]](
   private val interval:  FiniteDuration,
   private val semaphore: Semaphore[F],
-)(implicit val F:        Temporal[F]) {
+)(using F:        Temporal[F]) {
 
   /** Returns an F that will be "slowed" time to the configured rate
     * of execution.
@@ -55,7 +55,7 @@ object EffectThrottler {
   def resource[F[_]](
     interval:   FiniteDuration,
     amount:     Long,
-  )(implicit F: Temporal[F]): Resource[F, EffectThrottler[F]] =
+  )(using Temporal[F]): Resource[F, EffectThrottler[F]] =
     Resource.eval {
       for {
         sem <- Semaphore(amount)

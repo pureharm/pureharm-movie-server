@@ -20,7 +20,7 @@ import phms.*
 import phms.db.*
 import phms.algebra.movie.*
 
-final case class PSQLMovies[F[_]](session: Session[F])(implicit F: MonadCancelThrow[F]) {
+final case class PSQLMovies[F[_]](session: Session[F])(using F: MonadCancelThrow[F]) {
   import PSQLMovies.*
 
   /*_*/

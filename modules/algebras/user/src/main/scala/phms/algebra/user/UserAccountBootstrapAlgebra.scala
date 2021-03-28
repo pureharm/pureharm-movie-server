@@ -31,7 +31,7 @@ final class UserAccountBootstrapAlgebra[F[_]] private (
 
 object UserAccountBootstrapAlgebra {
 
-  def resource[F[_]](uca: UserAccountAlgebra[F])(implicit
+  def resource[F[_]](uca: UserAccountAlgebra[F])(using
     F:                    MonadThrow[F]
   ): Resource[F, UserAccountBootstrapAlgebra[F]] =
     new UserAccountBootstrapAlgebra[F](uca).pure[Resource[F, *]].widen

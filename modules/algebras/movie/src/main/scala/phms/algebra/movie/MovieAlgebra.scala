@@ -25,7 +25,7 @@ import phms.*
   */
 trait MovieAlgebra[F[_]] {
 
-  implicit protected def concurrent: Concurrent[F]
+  protected given concurrent: Concurrent[F]
 
   protected def userAuth: UserAuthAlgebra[F]
 
@@ -52,6 +52,6 @@ object MovieAlgebra {
 
   def resource[F[_]](
     userAuth:   UserAuthAlgebra[F]
-  )(implicit F: Concurrent[F], random: Random[F], dbPool: DBPool[F]): Resource[F, MovieAlgebra[F]] =
+  )(using F: Concurrent[F], random: Random[F], dbPool: DBPool[F]): Resource[F, MovieAlgebra[F]] =
     new MovieAlgebraImpl(userAuth).pure[Resource[F, *]].widen
 }
