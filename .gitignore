@@ -1,33 +1,26 @@
-### OS ###
+### Java ###
+*.class
 
-# Linux #
-*~
+### SBT ###
+target/
 
-# MacOS #
-.DS_Store
+### Bloop + Metals + BSP ###
+project/project
+project/.bloop
+.bloop
+metals.sbt
+bloop.settings.json
+root-test.json
+root.json
+.metals
+.bsp
 
-### IDEs ###
-
-# IntelliJ
-.idea
-.idea_modules
-
-# VSCode
+### VSCode ###
 .vscode
 
-### Scala ###
+### IntelliJ ###
+.idea
 
-# SBT
-target
-
-# Metals
-.metals
-
-# BSP
-.bsp
-project/project
-
-### Java ###
-
-*.class
-*.log
+### MacOS ###
+.DS_Store
+Icon
