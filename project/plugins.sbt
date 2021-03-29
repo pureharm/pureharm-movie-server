@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// format: off
+
 /** The best thing since sliced bread.
   *
   * https://github.com/scalameta/scalafmt
@@ -45,3 +47,9 @@ addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.5.3")
   * https://github.com/sbt/sbt-header/releases
   */
 addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.6.0")
+
+// all these are used to build the docs
+addSbtPlugin("com.lightbend.paradox"     % "sbt-paradox"    % "0.9.2")  // https://github.com/lightbend/paradox/releases
+addSbtPlugin("com.typesafe.sbt"          % "sbt-site"       % "1.4.1")  // https://github.com/sbt/sbt-site/releases
+addSbtPlugin("com.typesafe.sbt"          % "sbt-ghpages"    % "0.6.3")  // https://github.com/sbt/sbt-ghpages/releases
+addSbtPlugin("org.scalameta"             % "sbt-mdoc"       % "2.2.18") // https://github.com/scalameta/mdoc/releases
