@@ -33,6 +33,41 @@ Global / licenses         := List("Apache-2.0" -> url("http://www.apache.org/lic
 //=============================================================================
 //=============================================================================
 
+lazy val docs = project
+  .in(file("modules/docs"))
+  .enablePlugins(AutomateHeaderPlugin)
+  .enablePlugins(ParadoxPlugin)
+  .enablePlugins(ParadoxSitePlugin)
+  .enablePlugins(GhpagesPlugin)
+  .enablePlugins(MdocPlugin)
+  .settings(commonSettings)
+  .settings(
+    scalacOptions      := Nil,
+    git.remoteRepo     := "git@github.com:busymachines/pureharm-movie-server.git",
+    ghpagesNoJekyll    := true,
+    publish / skip     := true,
+    paradoxTheme       := Some(builtinParadoxTheme("generic")),
+    version            := version.value.takeWhile(_ != '+'),
+    paradoxProperties ++= Map(
+      "scala-versions"          -> scalaVersion.value,
+      "org"                     -> organization.value,
+      "scala.binary.version"    -> s"2.${CrossVersion.partialVersion(scalaVersion.value).get._2}",
+      "version"                 -> version.value,
+    ),
+    mdocIn := (baseDirectory.value) / "src" / "main" / "paradox",
+    Compile / paradox / sourceDirectory := mdocOut.value,
+    makeSite := makeSite.dependsOn(mdoc.toTask("")).value,
+    mdocExtraArguments := Seq("--no-link-hygiene"), // paradox handles this
+    libraryDependencies ++= Seq()
+).dependsOn(
+  `phms-app-server`
+)
+
+//=============================================================================
+//=============================================================================
+//=============================================================================
+
+
 lazy val root = Project(id = "pureharm-movie-server", file("."))
   .settings(commonSettings)
   .aggregate(
