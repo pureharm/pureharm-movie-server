@@ -27,9 +27,7 @@ package object phms
   extends PureharmCoreAliases with PureharmCoreImplicits with syntax.AllSyntax with syntax.AllSyntaxBinCompat0
   with syntax.AllSyntaxBinCompat1 with syntax.AllSyntaxBinCompat2 with syntax.AllSyntaxBinCompat3
   with syntax.AllSyntaxBinCompat4 with syntax.AllSyntaxBinCompat5 with syntax.AllSyntaxBinCompat6
-  with instances.AllInstances with instances.AllInstancesBinCompat0 with instances.AllInstancesBinCompat1
-  with instances.AllInstancesBinCompat2 with instances.AllInstancesBinCompat3 with instances.AllInstancesBinCompat4
-  with instances.AllInstancesBinCompat5 with instances.AllInstancesBinCompat6 with EffectsSyntax.Implicits {
+  with syntax.AllSyntaxBinCompat7 with EffectsSyntax.Implicits {
 
   type Stream[+F[_], +O] = fs2.Stream[F, O]
   val Stream: fs2.Stream.type = fs2.Stream
