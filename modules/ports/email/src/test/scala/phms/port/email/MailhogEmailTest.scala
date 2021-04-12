@@ -46,7 +46,7 @@ final class MailhogEmailTest extends PHMSTest {
     for {
       to <- Email[IO]("phms-mailhog-test@example.com")
       _  <- Stream
-        .range[IO](0, 1000)
+        .range[IO, Int](0, 1000)
         .parEvalMapUnordered(Runtime.getRuntime.availableProcessors()) { idx =>
           for {
             background <- emailPort.sendEmail(to, Subject(s"subject -- $idx"), Content(s"content $idx")) { case _ =>
