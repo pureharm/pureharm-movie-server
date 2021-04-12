@@ -32,6 +32,23 @@ final class PHMSHttp4sErrorHandler[F[_]](implicit
           .withEntity(fromAnomaly(UnhandledCatastrophe(t)))
       } yield resp
 
+    case t: org.http4s.InvalidMessageBodyFailure =>
+      val anomaly = t.cause match {
+        case Some(t: AnomalyLike) => t
+        case Some(circe: io.circe.DecodingFailure) =>
+          InvalidInputAnomaly(
+            circe.message,
+            parameters = Anomaly.Parameters("circeOps" -> circe.history.map(_.toString)),
+          )
+        case Some(t) => InvalidInputAnomaly(t.toString)
+        case None    => InvalidInputAnomaly(t.toString)
+      }
+      for {
+        _ <- logger.debug(t)(s"Malformed request body: \n$t")
+        resp = Response[F](status = Status.RequestTimeout)
+          .withEntity(fromAnomaly(anomaly))
+      } yield resp
+
     case t: Throwable =>
       for {
         _ <- logger.warn(t)(s"Unhandled throwable: \n$t")
