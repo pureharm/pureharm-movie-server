@@ -16,9 +16,9 @@
 
 /** The best thing since sliced bread.
   *
-  * https://github.com/scalameta/scalafmt
+  * //https://github.com/scalameta/sbt-scalafmt/releases
   */
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.2") //https://github.com/scalameta/sbt-scalafmt/releases
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.2")
 
 //=============================================================================
 //=============================================================================
@@ -28,14 +28,7 @@ addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.2") //https://github.com/sc
   *
   * https://github.com/sbt/sbt-native-packager/releases
   */
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.8.0")
-
-//=============================================================================
-//=============================================================================
-
-/** https://github.com/lampepfl/dotty/releases
-  */
-addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.5.3")
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.8.1")
 
 //=============================================================================
 //=============================================================================
