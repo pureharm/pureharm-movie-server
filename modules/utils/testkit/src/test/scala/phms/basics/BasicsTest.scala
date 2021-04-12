@@ -65,15 +65,6 @@ final class BasicsTest extends PHMSTest {
   def concatStringOldSchool(s1: String, s2: String): String =
     s"$s1 $s2"
 
-  //s1 < 0 -> "s is negative"
-  //s1 >= 0 -> s1
-  def validateEmail[F[_]](email: String)(implicit F: MonadThrow[F]): F[String] = {
-    val wheresAt: Option[Int] = email.zipWithIndex.find { case (char, _) => char == '@' }.map(_._2)
-    for {
-      _ <- wheresAt.liftTo[F](new RuntimeException("there is no @ in my code"))
-    } yield email
-  }
-
   def failOnNegative[F[_]](s1: Int)(implicit F: MonadThrow[F]): F[Int] =
     if (s1 >= 0) s1.pure[F] else new RuntimeException("s is negative").raiseError[F, Int]
 
