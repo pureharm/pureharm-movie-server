@@ -24,27 +24,26 @@ import sbt._
   *
   * As you can see, there's quite a lot of them.
   */
-
 object Libraries {
-  val sproutV           = "0.0.1"         //https://github.com/lorandszakacs/sprout/releases
-  val pureharmCoreV     = "0.1.0"         //https://github.com/busymachines/pureharm/releases
-  val catsCoreV         = "2.4.2"         //https://github.com/typelevel/cats/releases
-  val catsEffectV       = "3.0.0-RC2"     //https://github.com/typelevel/cats-effect/releases
-  val munitV            = "0.13.1"        //https://github.com/typelevel/munit-cats-effect/releases
-  val fs2V              = "3.0.0-M9"      //https://github.com/typelevel/fs2/releases
+  val sproutV           = "0.0.2"         //https://github.com/lorandszakacs/sprout/releases
+  val pureharmCoreV     = "0.2.0"         //https://github.com/busymachines/pureharm/releases
+  val catsCoreV         = "2.5.0"         //https://github.com/typelevel/cats/releases
+  val catsEffectV       = "3.0.2"         //https://github.com/typelevel/cats-effect/releases
+  val munitV            = "1.0.1"         //https://github.com/typelevel/munit-cats-effect/releases
+  val fs2V              = "3.0.1"         //https://github.com/typelevel/fs2/releases
   val circeV            = "0.13.0"        //https://github.com/circe/circe/releases
-  val http4sV           = "1.0.0-M19"     //https://github.com/http4s/http4s/releases
-  val skunkV            = "0.1.0-M1"      //https://github.com/tpolecat/skunk/releases
-  val flywayV           = "7.6.0"         //java - https://github.com/flyway/flyway/releases
+  val http4sV           = "1.0.0-M21"     //https://github.com/http4s/http4s/releases
+  val skunkV            = "0.1.0"         //https://github.com/tpolecat/skunk/releases
+  val flywayV           = "7.7.3"         //java - https://github.com/flyway/flyway/releases
   val pgJDBCV           = "42.2.19"       //java — https://github.com/pgjdbc/pgjdbc/releases
-  val log4catsV         = "2.0.0-RC1"     //https://github.com/typelevel/log4cats/releases
+  val log4catsV         = "2.0.1"         //https://github.com/typelevel/log4cats/releases
   val logbackClassicV   = "1.2.3"         //java - https://github.com/qos-ch/logback/releases
   val javaxMailV        = "1.6.2"         //https://github.com/javaee/javamail/releases
   val scalaScrapperV    = "2.2.0"         //https://github.com/ruippeixotog/scala-scraper/releases
-  val cirisV            = "2.0.0-RC1"     //https://github.com/vlovgr/ciris/releases
-  val ips4sV            = "3.0.0-RC2"     //https://github.com/Comcast/ip4s/releases
+  val cirisV            = "2.0.0-RC2"     //https://github.com/vlovgr/ciris/releases
+  val ips4sV            = "3.0.1"         //https://github.com/Comcast/ip4s/releases
   val javaBcryptV       = "0.9.0"         //java - https://github.com/patrickfav/bcrypt/releases
-  val scalaJavaTimeV    = "2.2.0"         //https://github.com/cquiroz/scala-java-time/releases
+  val scalaJavaTimeV    = "2.2.1"         //https://github.com/cquiroz/scala-java-time/releases
   
   val cats               = "org.typelevel"     %% "cats-core"             % catsCoreV        withSources() // foundational pure FP library
   val catsEffect         = "org.typelevel"     %% "cats-effect"           % catsEffectV      withSources() // pure FP library for concurrency, resource safety, and handling side-effects
