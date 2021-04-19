@@ -23,6 +23,8 @@ import phms.algebra.user._
 import phms._
 import phms.kernel._
 
+import scala.concurrent.duration._
+
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
   */
@@ -30,6 +32,7 @@ final class UserLoginRoutes[F[_]](
   private val userAuthAlgebra: UserAuthAlgebra[F]
 )(implicit
   val F:                       Concurrent[F],
+  val temporal:                Temporal[F],
   val D:                       Defer[F],
 ) extends Http4sDsl[F] with UserRoutesJSON {
 
@@ -66,7 +69,9 @@ final class UserLoginRoutes[F[_]](
 
   private val loginRoutes: HttpRoutes[F] =
     HttpRoutes.of[F] { case req @ POST -> Root / "user" / "login" =>
-      Ok(findBasicAuth(req.headers).flatMap(logInWithUserNamePassword))
+      Ok(
+        findBasicAuth(req.headers).flatMap(logInWithUserNamePassword).fixedTime(2.seconds)
+      )
     }
 
   val routes: HttpRoutes[F] = loginRoutes
