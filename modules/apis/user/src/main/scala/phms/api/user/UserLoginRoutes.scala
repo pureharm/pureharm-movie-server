@@ -36,10 +36,18 @@ final class UserLoginRoutes[F[_]](
   val D:                       Defer[F],
 ) extends Http4sDsl[F] with UserRoutesJSON {
 
-  /** User/password gets transimited in the ``Authorization``
-    * Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==
+  /** User/password gets transmitted in the ``Authorization`` header using
+    * the Basic authentication scheme. More details here:
+    *   [[https://tools.ietf.org/html/rfc7617#page-5 RFC-7617]]
     *
-    * base64Encoding($user:$password)
+    * header example
+    * {{{
+    *   Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==
+    * }}}
+    * structure of string after 'Basic'
+    * {{{
+    *   base64Encoding($user:$password)
+    * }}}
     */
   private def logInWithUserNamePassword(bc: BasicCredentials): F[AuthCtx] =
     for {
