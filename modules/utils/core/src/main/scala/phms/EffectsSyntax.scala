@@ -31,12 +31,18 @@ object EffectsSyntax {
 
   final class PHMSTemporalOps[F[_], A](val fa: F[A]) extends AnyVal {
 
-    def fixedTime(maxDuration: FiniteDuration)(implicit temporal: Temporal[F]): F[A] = {
+    /** @param minDuration
+      *   Ensures that given effect executes in _at least_ the provided
+      *   time. It can take longer that, since there's no way around that
+      *   problem. Also, it does not delay execution if the underlying effect
+      *   is cancelled.
+      */
+    def minTime(minDuration: FiniteDuration)(implicit temporal: Temporal[F]): F[A] = {
       val attempted: F[Attempt[A]] = fa.attempt
       for {
-        timed: (FiniteDuration, Attempt[A]) <- temporal.timed(attempted)
-        (duration, attempt) = timed
-        _      <- temporal.sleep((maxDuration - duration).max(0.seconds))
+        timed  <- temporal.timed(attempted)
+        (duration: FiniteDuration, attempt: Attempt[A]) = timed
+        _      <- temporal.sleep((minDuration - duration).max(0.seconds))
         result <- attempt.liftTo[F]
       } yield result
     }
