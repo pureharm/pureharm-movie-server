@@ -70,7 +70,7 @@ final class UserLoginRoutes[F[_]](
   private val loginRoutes: HttpRoutes[F] =
     HttpRoutes.of[F] { case req @ POST -> Root / "user" / "login" =>
       Ok(
-        findBasicAuth(req.headers).flatMap(logInWithUserNamePassword).fixedTime(2.seconds)
+        findBasicAuth(req.headers).flatMap(logInWithUserNamePassword).minTime(2.seconds)
       )
     }
 
