@@ -16,6 +16,8 @@
 
 package phms
 
+import scala.concurrent.duration._
+
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 08 May 2019
   */
@@ -23,11 +25,20 @@ object EffectsSyntax {
 
   trait Implicits {
 
-    implicit def transformFAIntoFAWithSyntax[F[_]: Concurrent, A](fa: F[A]): ConcurrentFAOps[F, A] =
-      new ConcurrentFAOps(fa)
+    implicit def pureharmTemporalOps[F[_], A](fa: F[A]): PHMSTemporalOps[F, A] =
+      new PHMSTemporalOps[F, A](fa)
   }
 
-  class ConcurrentFAOps[F[_], A](fa: F[A])(implicit F: Concurrent[F]) {
-    def forkAndForget: F[Unit] = F.start(fa).void
+  final class PHMSTemporalOps[F[_], A](val fa: F[A]) extends AnyVal {
+
+    def fixedTime(maxDuration: FiniteDuration)(implicit temporal: Temporal[F]): F[A] = {
+      val attempted: F[Attempt[A]] = fa.attempt
+      for {
+        timed: (FiniteDuration, Attempt[A]) <- temporal.timed(attempted)
+        (duration, attempt) = timed
+        _      <- temporal.sleep((maxDuration - duration).max(0.seconds))
+        result <- attempt.liftTo[F]
+      } yield result
+    }
   }
 }
