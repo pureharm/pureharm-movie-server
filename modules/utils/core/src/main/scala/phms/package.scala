@@ -19,7 +19,7 @@ import scala.{concurrent => sc}
 
 import cats.{effect => ce}
 import cats.syntax
-import cats.instances
+
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 05 Apr 2019
   */

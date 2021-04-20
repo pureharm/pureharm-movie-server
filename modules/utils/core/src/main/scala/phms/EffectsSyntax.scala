@@ -16,6 +16,8 @@
 
 package phms
 
+import scala.concurrent.duration._
+
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 08 May 2019
   */
@@ -23,11 +25,26 @@ object EffectsSyntax {
 
   trait Implicits {
 
-    implicit def transformFAIntoFAWithSyntax[F[_]: Concurrent, A](fa: F[A]): ConcurrentFAOps[F, A] =
-      new ConcurrentFAOps(fa)
+    implicit def pureharmTemporalOps[F[_], A](fa: F[A]): PHMSTemporalOps[F, A] =
+      new PHMSTemporalOps[F, A](fa)
   }
 
-  class ConcurrentFAOps[F[_], A](fa: F[A])(implicit F: Concurrent[F]) {
-    def forkAndForget: F[Unit] = F.start(fa).void
+  final class PHMSTemporalOps[F[_], A](val fa: F[A]) extends AnyVal {
+
+    /** @param minDuration
+      *   Ensures that given effect executes in _at least_ the provided
+      *   time. It can take longer that, since there's no way around that
+      *   problem. Also, it does not delay execution if the underlying effect
+      *   is cancelled.
+      */
+    def minTime(minDuration: FiniteDuration)(implicit temporal: Temporal[F]): F[A] = {
+      val attempted: F[Attempt[A]] = fa.attempt
+      for {
+        timed  <- temporal.timed(attempted)
+        (duration: FiniteDuration, attempt: Attempt[A]) = timed
+        _      <- temporal.sleep((minDuration - duration).max(0.seconds))
+        result <- attempt.liftTo[F]
+      } yield result
+    }
   }
 }

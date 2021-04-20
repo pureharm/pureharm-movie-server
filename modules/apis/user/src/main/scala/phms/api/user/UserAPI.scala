@@ -33,7 +33,7 @@ object UserAPI {
     userAlgebra:          UserAlgebra[F],
     userAuthAlgebra:      UserAuthAlgebra[F],
     userAccountOrganizer: UserAccountOrganizer[F],
-  )(implicit F:           Concurrent[F], D: Defer[F]): Resource[F, UserAPI[F]] =
+  )(implicit temporal:    Temporal[F], D: Defer[F]): Resource[F, UserAPI[F]] =
     for {
       userRoutes        <- Resource.pure[F, UserRoutes[F]](new UserRoutes[F](userAlgebra))
       userLoginRoutes   <- Resource.pure[F, UserLoginRoutes[F]](new UserLoginRoutes[F](userAuthAlgebra))
