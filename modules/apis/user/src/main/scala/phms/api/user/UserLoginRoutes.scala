@@ -23,7 +23,7 @@ import phms.algebra.user.*
 import phms.*
 import phms.kernel.*
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018

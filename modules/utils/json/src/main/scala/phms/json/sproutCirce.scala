@@ -15,10 +15,11 @@ trait SproutRefinedCirceDec[O](using Decoder[O]) {self: SproutRefinedThrow[O] =>
   given Decoder[self.Type] = Decoder[O].emapTry(this.newType[Try])
 }
 
-extension [O](c: Codec[O]) {
-  def sprout[N](using nt: NewType[O, N]): Codec[N] = c.imap(nt.newType)(nt.oldType)
-  def sproutRefined[N](using nt: RefinedTypeThrow[O, N]): Codec[N] = Codec.from[N](
-    decodeA = c.emapTry(nt.newType[Try]),
-    encodeA = c.contramap(nt.oldType),
-  )
+extension [O](enc: Encoder[O]) {
+  def sprout[N](using nt: OldType[O, N]): Encoder[N] = enc.contramap(nt.oldType)
+}
+
+extension[O](dec: Decoder[O]){
+  def sprout[N](using nt: NewType[O, N]): Decoder[N] = dec.imap(nt.newType)(nt.oldType)
+  def sproutRefined[N](using nt: RefinedTypeThrow[O, N]): Decoder[N] = dec.emapTry(nt.newType[Try])
 }

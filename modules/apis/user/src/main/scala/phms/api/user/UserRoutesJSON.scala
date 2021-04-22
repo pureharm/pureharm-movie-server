@@ -26,8 +26,11 @@ import phms.organizer.user.*
   */
 trait UserRoutesJSON {
 
-  given Codec[UserInviteToken]    = Codec[String].sprout[UserInviteToken]
-  given Codec[PasswordResetToken] = Codec[String].sprout[PasswordResetToken]
+  given Encoder[UserInviteToken]    = Encoder[String].sprout[UserInviteToken]
+  given Encoder[PasswordResetToken] = Encoder[String].sprout[PasswordResetToken]
+
+  given Decoder[UserInviteToken]    = Decoder[String].sprout[UserInviteToken]
+  given Decoder[PasswordResetToken] = Decoder[String].sprout[PasswordResetToken]
 
   given userRoleCirceCodec: Codec[UserRole] = Codec.from(
     Decoder[String].emapTry(s => UserRole.fromName[Try](s)),
