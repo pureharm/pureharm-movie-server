@@ -20,8 +20,7 @@ import sbt._
 object Settings {
 
   val common3Settings: Seq[Setting[_]] = Seq(
-    scalaVersion := "3.0.0-RC1",
-    testFrameworks += new TestFramework("munit.Framework"),
+    scalaVersion := "3.0.0-RC2",
     scalacOptions ++= CompilerFlags.scala3Flags,
   )
 }
