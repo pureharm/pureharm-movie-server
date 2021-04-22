@@ -28,7 +28,7 @@ addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.2")
   *
   * https://github.com/sbt/sbt-native-packager/releases
   */
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.8.0")
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.8.1")
 
 //=============================================================================
 //=============================================================================
