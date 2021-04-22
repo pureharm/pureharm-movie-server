@@ -16,7 +16,7 @@
 
 package phms
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 08 May 2019
@@ -37,11 +37,10 @@ object EffectsSyntax {
       *   problem. Also, it does not delay execution if the underlying effect
       *   is cancelled.
       */
-    def minTime(minDuration: FiniteDuration)(implicit temporal: Temporal[F]): F[A] = {
+    def minTime(minDuration: FiniteDuration)(using temporal: Temporal[F]): F[A] = {
       val attempted: F[Attempt[A]] = fa.attempt
       for {
-        timed  <- temporal.timed(attempted)
-        (duration: FiniteDuration, attempt: Attempt[A]) = timed
+        (duration: FiniteDuration, attempt: Attempt[A]) <- temporal.timed(attempted)
         _      <- temporal.sleep((minDuration - duration).max(0.seconds))
         result <- attempt.liftTo[F]
       } yield result

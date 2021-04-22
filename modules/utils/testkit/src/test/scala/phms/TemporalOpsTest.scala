@@ -2,7 +2,7 @@ package phms
 
 import munit._
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 class TemporalOpsTest extends CatsEffectSuite {
   test("fixed time in happy case") {
