@@ -16,23 +16,23 @@
 
 package phms.db
 
-import phms._
+import phms.*
 
 object codecs extends skunk.codec.AllCodecs with KernelSkunkCodecs {
 
-  implicit class Ops[O](val c: skunk.Codec[O]) extends AnyVal {
+  extension[O](c: skunk.Codec[O]) {
 
-    def sprout[N](implicit s: NewType[O, N]): skunk.Codec[N] =
+    def sprout[N](using s: NewType[O, N]): skunk.Codec[N] =
       c.imap(s.newType)(s.oldType)
 
-    def sproutRefined[N](implicit s: RefinedTypeThrow[O, N]): skunk.Codec[N] =
+    def sproutRefined[N](using s: RefinedTypeThrow[O, N]): skunk.Codec[N] =
       skunk.Codec.from[N](
         enc = c.contramap(s.oldType),
         dec = c.emap(v => s.newType[Attempt](v).leftMap(_.toString)),
       )
   }
 
-  implicit class CodecCompanionOps(val c: skunk.Codec.type) extends AnyVal {
+  extension(c: skunk.Codec.type) {
 
     def from[A](enc: skunk.Encoder[A], dec: skunk.Decoder[A]): skunk.Codec[A] = {
       def initException = new java.lang.ExceptionInInitializerError(

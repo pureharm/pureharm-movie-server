@@ -16,10 +16,10 @@
 
 package phms.organizer.user
 
-import phms._
-import phms.kernel._
-import phms.port.email._
-import phms.algebra.user._
+import phms.*
+import phms.kernel.*
+import phms.port.email.*
+import phms.algebra.user.*
 import phms.port.email.EmailPort
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
@@ -28,11 +28,9 @@ import phms.port.email.EmailPort
 final class UserAccountOrganizer[F[_]] private (
   private val userAccount: UserAccountAlgebra[F],
   private val emailPort:   EmailPort[F],
-)(implicit
-  private val F:           Concurrent[F]
-) {
+)(using F: Concurrent[F]) {
 
-  def invitationStep1(inv: UserInvitation)(implicit authCtx: AuthCtx): F[Unit] =
+  def invitationStep1(inv: UserInvitation)(using authCtx: AuthCtx): F[Unit] =
     for {
       inviteToken <- userAccount.invitationStep1(inv)
       _           <-

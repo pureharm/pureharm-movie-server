@@ -16,8 +16,8 @@
 
 package phms.algebra
 
-import phms._
-import java.time._
+import phms.*
+import java.time.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018

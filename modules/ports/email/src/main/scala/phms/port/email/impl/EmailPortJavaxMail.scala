@@ -16,14 +16,14 @@
 
 package phms.port.email.impl
 
-import phms._
-import phms.kernel._
-import phms.port.email._
-import phms.logger._
+import phms.*
+import phms.kernel.*
+import phms.port.email.*
+import phms.logger.*
 
 import java.util.Properties
-import javax.mail._
-import javax.mail.internet._
+import javax.mail.*
+import javax.mail.internet.*
 
 /** Uses javax-mail to send emails. Configured to work only for
   * gmail account:
@@ -33,9 +33,9 @@ import javax.mail.internet._
   * @since 05 Jun 2018
   */
 private[email] class EmailPortJavaxMail[F[_]] private (
-  private[this] val config:  GmailConfig,
-  private[this] val session: Session,
-)(implicit F:                Sync[F], supervisor: Supervisor[F], logging: Logging[F])
+  private val config:  GmailConfig,
+  private val session: Session,
+)(using F: Sync[F], supervisor: Supervisor[F], logging: Logging[F])
   extends EmailPort[F] {
 
   private val logger:  Logger[F]              = logging.of(this)
@@ -90,7 +90,7 @@ private[email] object EmailPortJavaxMail {
 
   def resource[F[_]](
     config:     GmailConfig
-  )(implicit
+  )(using
     F:          Sync[F],
     supervisor: Supervisor[F],
     logging:    Logging[F],

@@ -16,12 +16,12 @@
 
 package phms.time
 
-import phms._
-import java.{time => jt}
+import phms.*
+import java.{time as jt}
 
 sealed trait Time[F[_]] {
 
-  implicit protected def sync: Sync[F]
+  protected given sync: Sync[F]
 
   def zoneOffset: ZoneOffset
 
@@ -35,9 +35,9 @@ sealed trait Time[F[_]] {
 
 object Time {
 
-  def resource[F[_]](implicit F: Sync[F]): Resource[F, Time[F]] =
+  def resource[F[_]](using F: Sync[F]): Resource[F, Time[F]] =
     new Time[F] {
-      implicit override protected val sync: Sync[F] = F
+      override protected given sync: Sync[F] = F
 
       override val zoneOffset: ZoneOffset = jt.ZoneOffset.UTC
     }.pure[Resource[F, *]]

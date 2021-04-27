@@ -16,10 +16,10 @@
 
 package phms.server.bootstrap
 
-import phms._
-import phms.kernel._
-import phms.logger._
-import phms.algebra.user._
+import phms.*
+import phms.kernel.*
+import phms.logger.*
+import phms.algebra.user.*
 
 /** This should be used only in development, and testing!
   *
@@ -29,7 +29,7 @@ import phms.algebra.user._
 final private[bootstrap] class ServerBootstrapAlgebra[F[_]] private (
   private val uca: UserAccountAlgebra[F],
   private val uba: UserAccountBootstrapAlgebra[F],
-)(implicit F:      MonadThrow[F], logging: Logging[F]) {
+)(using F:      MonadThrow[F], logging: Logging[F]) {
 
   private val logger = logging.of(this)
 
@@ -58,6 +58,6 @@ private[bootstrap] object ServerBootstrapAlgebra {
   def create[F[_]](
     uca:        UserAccountAlgebra[F],
     uba:        UserAccountBootstrapAlgebra[F],
-  )(implicit F: MonadThrow[F], logging: Logging[F]): ServerBootstrapAlgebra[F] = new ServerBootstrapAlgebra(uca, uba)
+  )(using F: MonadThrow[F], logging: Logging[F]): ServerBootstrapAlgebra[F] = new ServerBootstrapAlgebra(uca, uba)
 
 }

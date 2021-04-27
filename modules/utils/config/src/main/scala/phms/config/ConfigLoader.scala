@@ -16,10 +16,10 @@
 
 package phms.config
 
-import phms._
+import phms.*
 
 trait ConfigLoader[T] {
   def configValue: ConfigValue[Effect, T]
-  def load[F[_]](implicit F:     Config[F]): F[T]           = F.load(configValue)
-  def resource[F[_]](implicit F: Config[F]): Resource[F, T] = Resource.eval(F.load(configValue))
+  def load[F[_]](using F:     Config[F]): F[T]           = F.load(configValue)
+  def resource[F[_]](using F: Config[F]): Resource[F, T] = Resource.eval(F.load(configValue))
 }

@@ -25,16 +25,16 @@ import sbt._
   * As you can see, there's quite a lot of them.
   */
 object Libraries {
-  val sproutV           = "0.0.2"         //https://github.com/lorandszakacs/sprout/releases
+  val sproutV           = "0.0.3"         //https://github.com/lorandszakacs/sprout/releases
   val pureharmCoreV     = "0.2.0"         //https://github.com/busymachines/pureharm/releases
-  val catsCoreV         = "2.5.0"         //https://github.com/typelevel/cats/releases
-  val catsEffectV       = "3.0.2"         //https://github.com/typelevel/cats-effect/releases
-  val munitV            = "1.0.1"         //https://github.com/typelevel/munit-cats-effect/releases
+  val catsCoreV         = "2.6.0"         //https://github.com/typelevel/cats/releases
+  val catsEffectV       = "3.1.0"         //https://github.com/typelevel/cats-effect/releases
+  val munitV            = "1.0.2"         //https://github.com/typelevel/munit-cats-effect/releases
   val fs2V              = "3.0.1"         //https://github.com/typelevel/fs2/releases
-  val circeV            = "0.13.0"        //https://github.com/circe/circe/releases
+  val circeV            = "0.14.0-M5"     //https://github.com/circe/circe/releases
   val http4sV           = "1.0.0-M21"     //https://github.com/http4s/http4s/releases
   val skunkV            = "0.1.0"         //https://github.com/tpolecat/skunk/releases
-  val flywayV           = "7.7.3"         //java - https://github.com/flyway/flyway/releases
+  val flywayV           = "7.8.1"         //java - https://github.com/flyway/flyway/releases
   val pgJDBCV           = "42.2.19"       //java — https://github.com/pgjdbc/pgjdbc/releases
   val log4catsV         = "2.0.1"         //https://github.com/typelevel/log4cats/releases
   val logbackClassicV   = "1.2.3"         //java - https://github.com/qos-ch/logback/releases
@@ -43,19 +43,19 @@ object Libraries {
   val cirisV            = "2.0.0-RC2"     //https://github.com/vlovgr/ciris/releases
   val ips4sV            = "3.0.1"         //https://github.com/Comcast/ip4s/releases
   val javaBcryptV       = "0.9.0"         //java - https://github.com/patrickfav/bcrypt/releases
-  val scalaJavaTimeV    = "2.2.1"         //https://github.com/cquiroz/scala-java-time/releases
+  val scalaJavaTimeV    = "2.2.2"         //https://github.com/cquiroz/scala-java-time/releases
   
   val cats               = "org.typelevel"     %% "cats-core"             % catsCoreV        withSources() // foundational pure FP library
   val catsEffect         = "org.typelevel"     %% "cats-effect"           % catsEffectV      withSources() // pure FP library for concurrency, resource safety, and handling side-effects
   val fs2Core            = "co.fs2"            %% "fs2-core"              % fs2V             withSources() // pure FP streaming library
   val fs2IO              = "co.fs2"            %% "fs2-io"                % fs2V             withSources() // streaming support for the file system
-  val phCore             = "com.busymachines"  %% s"pureharm-core"        % pureharmCoreV    withSources() // pureharm library - brings in anomalies, and glue for sprouts
+  val phCore             = "com.busymachines"  %% "pureharm-core"         % pureharmCoreV    withSources() // pureharm library - brings in anomalies, and glue for sprouts
   val sprout             = "com.lorandszakacs" %% "sprout"                % sproutV          withSources() // new-type encodings that allow us to remove stringly typed domain code
   val circeCore          = "io.circe"          %% "circe-core"            % circeV           withSources() // json library
   val circeGeneric       = "io.circe"          %% "circe-generic"         % circeV           withSources() // semi-automatic derivation of json codecs for case classes
   val http4sEmberServer  = "org.http4s"        %% "http4s-ember-server"   % http4sV          withSources() // concrete implementation of a backend http server, ember in particular is a ground up pure FP rewrite. Other options would be blaze, jetty, netty servers
   val http4sServer       = "org.http4s"        %% "http4s-server"         % http4sV          withSources() // common http4s server abstractions, e.g. AuthMiddleware
-  val http4sCirce        = "org.http4s"        %% "http4s-circe"          % http4sV          withSources() // integration between rest API and JSON library
+  //val http4sCirce        = "org.http4s"        %% "http4s-circe"          % http4sV          withSources() // integration between rest API and JSON library
   val http4sDSL          = "org.http4s"        %% "http4s-dsl"            % http4sV          withSources() // library used to define the rest API routes 
   val skunk              = "org.tpolecat"      %% "skunk-core"            % skunkV           withSources() // postgresql database driver written for cats-effect-3
   val flyway             = "org.flywaydb"       % "flyway-core"           % flywayV          withSources() // java - database schema migration tool

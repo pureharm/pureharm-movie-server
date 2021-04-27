@@ -16,8 +16,8 @@
 
 package phms.algebra
 
-import phms._
-import phms.time._
+import phms.*
+import phms.time.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018
@@ -41,5 +41,5 @@ package object user {
   type UserInviteExpiration = UserInviteExpiration.Type
   object UserInviteExpiration extends SproutTimestamp
 
-  type UserModuleAlgebra[F[_]] = UserAuthAlgebra[F] with UserAlgebra[F] with UserAccountAlgebra[F]
+  type UserModuleAlgebra[F[_]] = UserAuthAlgebra[F] & UserAlgebra[F] & UserAccountAlgebra[F]
 }

@@ -16,20 +16,20 @@
 
 package phms.algebra.movie.impl
 
-import phms.db._
-import phms.algebra.movie._
+import phms.db.*
+import phms.algebra.movie.*
 import phms.algebra.user.UserAuthAlgebra
-import phms._
+import phms.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
   */
 final private[movie] class MovieAlgebraImpl[F[_]](
   override protected val userAuth: UserAuthAlgebra[F]
-)(implicit
+)(using
   override val concurrent:         Concurrent[F],
-  val random:                      Random[F],
-  val dbPool:                      DBPool[F],
+  random:                      Random[F],
+  dbPool:                      DBPool[F],
 ) extends MovieAlgebra[F] {
 
   override protected def createMovieImpl(mc: MovieCreation): F[Movie] =

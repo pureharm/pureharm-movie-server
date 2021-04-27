@@ -16,25 +16,22 @@
 
 package phms.api.user
 
-import org.http4s.dsl._
-import org.http4s._
-import phms.stack.http._
-import phms.algebra.user._
-import phms._
-import phms.kernel._
+import org.http4s.dsl.*
+import org.http4s.*
+import phms.stack.http.{*, given}
+import phms.algebra.user.*
+import phms.*
+import phms.kernel.*
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
   */
 final class UserLoginRoutes[F[_]](
   private val userAuthAlgebra: UserAuthAlgebra[F]
-)(implicit
-  val F:                       Concurrent[F],
-  val temporal:                Temporal[F],
-  val D:                       Defer[F],
-) extends Http4sDsl[F] with UserRoutesJSON {
+)(implicit temporal:           Temporal[F], D: Defer[F])
+  extends Http4sDsl[F] with UserRoutesJSON {
 
   /** User/password gets transmitted in the ``Authorization`` header using
     * the Basic authentication scheme. More details here:

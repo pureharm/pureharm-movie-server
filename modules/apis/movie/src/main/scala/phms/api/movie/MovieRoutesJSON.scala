@@ -16,8 +16,8 @@
 
 package phms.api.movie
 
-import phms.algebra.movie._
-import phms.json._
+import phms.algebra.movie.*
+import phms.json.{*, given}
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
@@ -25,9 +25,14 @@ import phms.json._
 object MovieRoutesJSON extends MovieRoutesJSON
 
 trait MovieRoutesJSON {
-
-  implicit val movieCirceCodec: Codec[Movie] = derive.codec[Movie]
-
-  implicit val movieCreationCirceCodec: Codec[MovieCreation] =
-    derive.codec[MovieCreation]
+  given Encoder[MovieID] = Encoder[java.util.UUID].sprout
+  given Decoder[MovieID] = Decoder[java.util.UUID].sprout
+  given Encoder[MovieTitle] = Encoder[String].sprout
+  given Decoder[MovieTitle] = Decoder[String].sprout
+  given Encoder[ReleaseDate] = Encoder[java.time.LocalDate].sprout
+  given Decoder[ReleaseDate] = Decoder[java.time.LocalDate].sprout
+  given Encoder[Movie] = derive.encoder[Movie]
+  given Decoder[Movie] = derive.decoder[Movie]
+  given Encoder[MovieCreation] = derive.encoder[MovieCreation]
+  given Decoder[MovieCreation] = derive.decoder[MovieCreation]
 }

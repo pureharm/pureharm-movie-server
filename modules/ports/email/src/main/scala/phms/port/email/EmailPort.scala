@@ -16,9 +16,9 @@
 
 package phms.port.email
 
-import phms._
-import phms.kernel._
-import phms.logger._
+import phms.*
+import phms.kernel.*
+import phms.logger.*
 
 /** This style of writing algebras (in layman terms: interface) is called
   * "final tagless".
@@ -41,7 +41,7 @@ object EmailPort {
 
   def resource[F[_]](
     config:        GmailConfig
-  )(implicit sync: Sync[F], supervisor: Supervisor[F], logging: Logging[F]): Resource[F, EmailPort[F]] =
+  )(using sync: Sync[F], supervisor: Supervisor[F], logging: Logging[F]): Resource[F, EmailPort[F]] =
     impl.EmailPortJavaxMail.resource[F](config).widen
 
 }

@@ -19,7 +19,7 @@ package phms.api.user
 import org.http4s.HttpRoutes
 import phms.stack.http.AuthCtxRoutes
 import phms.algebra.user.{UserAlgebra, UserAuthAlgebra}
-import phms._
+import phms.*
 import phms.organizer.user.UserAccountOrganizer
 
 trait UserAPI[F[_]] {
@@ -33,7 +33,7 @@ object UserAPI {
     userAlgebra:          UserAlgebra[F],
     userAuthAlgebra:      UserAuthAlgebra[F],
     userAccountOrganizer: UserAccountOrganizer[F],
-  )(implicit temporal:    Temporal[F], D: Defer[F]): Resource[F, UserAPI[F]] =
+  )(using Temporal[F], Defer[F]): Resource[F, UserAPI[F]] =
     for {
       userRoutes        <- Resource.pure[F, UserRoutes[F]](new UserRoutes[F](userAlgebra))
       userLoginRoutes   <- Resource.pure[F, UserLoginRoutes[F]](new UserLoginRoutes[F](userAuthAlgebra))

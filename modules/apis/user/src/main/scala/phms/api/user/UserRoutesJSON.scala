@@ -16,35 +16,41 @@
 
 package phms.api.user
 
-import phms._
-import phms.algebra.user._
-import phms.json._
-import phms.organizer.user._
+import phms.*
+import phms.algebra.user.*
+import phms.json.{*, given}
+import phms.organizer.user.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018
   */
 trait UserRoutesJSON {
 
-  implicit val userRoleCirceCodec: Codec[UserRole] = Codec.from(
+  given Encoder[UserInviteToken]    = Encoder[String].sprout[UserInviteToken]
+  given Encoder[PasswordResetToken] = Encoder[String].sprout[PasswordResetToken]
+
+  given Decoder[UserInviteToken]    = Decoder[String].sprout[UserInviteToken]
+  given Decoder[PasswordResetToken] = Decoder[String].sprout[PasswordResetToken]
+
+  given userRoleCirceCodec: Codec[UserRole] = Codec.from(
     Decoder[String].emapTry(s => UserRole.fromName[Try](s)),
     Encoder[String].contramap(_.toName),
   )
 
-  implicit val userInvitationCirceCodec: Codec[UserInvitation] =
+  given userInvitationCirceCodec: Codec[UserInvitation] =
     derive.codec[UserInvitation]
 
-  implicit val userConfirmationCirceCodec: Codec[UserConfirmation] =
+  given userConfirmationCirceCodec: Codec[UserConfirmation] =
     derive.codec[UserConfirmation]
 
-  implicit val userCirceCodec: Codec[User] = derive.codec[User]
+  given userCirceCodec: Codec[User] = derive.codec[User]
 
-  implicit val pwResetReqCirceCodec: Codec[PasswordResetRequest] =
+  given pwResetReqCirceCodec: Codec[PasswordResetRequest] =
     derive.codec[PasswordResetRequest]
 
-  implicit val pwResetComCirceCodec: Codec[PasswordResetCompletion] =
+  given pwResetComCirceCodec: Codec[PasswordResetCompletion] =
     derive.codec[PasswordResetCompletion]
 
-  implicit val authCtxCirceCodec: Codec[AuthCtx] = derive.codec[AuthCtx]
+  given authCtxCirceCodec: Codec[AuthCtx] = derive.codec[AuthCtx]
 
 }

@@ -16,9 +16,9 @@
 
 package phms.api.movie
 
-import phms.stack.http.AuthCtxRoutes
+import phms.stack.http.{*, given}
 import phms.algebra.movie.MovieAlgebra
-import phms._
+import phms.*
 import phms.organizer.movie.IMDBOrganizer
 
 trait MovieAPI[F[_]] {
@@ -27,7 +27,7 @@ trait MovieAPI[F[_]] {
 
 object MovieAPI {
 
-  def resource[F[_]](imdbOrganizer: IMDBOrganizer[F], movieAlgebra: MovieAlgebra[F])(implicit
+  def resource[F[_]](imdbOrganizer: IMDBOrganizer[F], movieAlgebra: MovieAlgebra[F])(using
     F:                              Concurrent[F],
     D:                              Defer[F],
   ): Resource[F, MovieAPI[F]] =

@@ -1,10 +1,10 @@
 package phms.crypto
 
-import phms._
+import phms.*
 import phms.kernel.PlainTextPassword
 
 object BCrypt {
-  import at.favre.lib.crypto.{bcrypt => jbcrypt}
+  import at.favre.lib.crypto.{bcrypt as jbcrypt}
 
   private val version:   jbcrypt.BCrypt.Version  = jbcrypt.BCrypt.Version.VERSION_2A
   private val hasher:    jbcrypt.BCrypt.Hasher   = jbcrypt.BCrypt.`with`(version)
@@ -13,7 +13,7 @@ object BCrypt {
 
   private val cost_factor: Int = 4 //between 4 and 31
 
-  def createBCrypt[F[_]](ptp: PlainTextPassword)(implicit F: MonadThrow[F], sr: SecureRandom[F]): F[BCryptHash] = for {
+  def createBCrypt[F[_]](ptp: PlainTextPassword)(using F: MonadThrow[F], sr: SecureRandom[F]): F[BCryptHash] = for {
     //by providing the salt explicitly we ensure that we use our SecureRandom generator, instead of the library's
     saltBytes <- sr.nextBytes(16)
     pwBytes = ptp.utf8Bytes
@@ -22,7 +22,7 @@ object BCrypt {
     bcryptHash <- BCryptHash[F](hashBytes)
   } yield bcryptHash
 
-  def verify[F[_]](password: PlainTextPassword, hash: BCryptHash)(implicit
+  def verify[F[_]](password: PlainTextPassword, hash: BCryptHash)(using
     F:                       MonadThrow[F],
     sr:                      SecureRandom[F],
   ): F[Boolean] = for {

@@ -17,15 +17,15 @@
 package phms.http
 
 import org.http4s.{ParseFailure, QueryParamDecoder}
-import phms._
-import phms.time._
+import phms.*
+import phms.time.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 28 Jun 2018
   */
 trait JavaTimeQueryParameterDecoders {
 
-  implicit val localDateQueryParamDecoder: QueryParamDecoder[LocalDate] =
+  given localDateQueryParamDecoder: QueryParamDecoder[LocalDate] =
     QueryParamDecoder.stringQueryParamDecoder.emap(s =>
       LocalDate
         .fromString[Attempt](s)

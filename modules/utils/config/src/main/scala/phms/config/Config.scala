@@ -16,7 +16,7 @@
 
 package phms.config
 
-import phms._
+import phms.*
 
 /** Capability for reading config files.
   *
@@ -24,14 +24,14 @@ import phms._
   * reads configurations
   */
 sealed trait Config[F[_]] {
-  implicit protected[this] val async: Async[F]
+  protected given async: Async[F]
   def load[T](value: ConfigValue[F, T]): F[T] = value.load[F]
 }
 
 object Config {
 
-  def resource[F[_]](implicit F: Async[F]): Resource[F, Config[F]] =
+  def resource[F[_]](using F: Async[F]): Resource[F, Config[F]] =
     new Config[F] {
-      override protected[this] val async: Async[F] = F
+      override protected given async: Async[F] = F
     }.pure[Resource[F, *]]
 }

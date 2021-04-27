@@ -15,9 +15,9 @@
  */
 
 import busymachines.pureharm.{PureharmCoreAliases, PureharmCoreImplicits}
-import scala.{concurrent => sc}
+import scala.{concurrent as sc}
 
-import cats.{effect => ce}
+import cats.{effect as ce}
 import cats.syntax
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
@@ -26,8 +26,7 @@ import cats.syntax
 package object phms
   extends PureharmCoreAliases with PureharmCoreImplicits with syntax.AllSyntax with syntax.AllSyntaxBinCompat0
   with syntax.AllSyntaxBinCompat1 with syntax.AllSyntaxBinCompat2 with syntax.AllSyntaxBinCompat3
-  with syntax.AllSyntaxBinCompat4 with syntax.AllSyntaxBinCompat5 with syntax.AllSyntaxBinCompat6
-  with syntax.AllSyntaxBinCompat7 with EffectsSyntax.Implicits {
+  with syntax.AllSyntaxBinCompat4 with syntax.AllSyntaxBinCompat5 with syntax.AllSyntaxBinCompat6 {
 
   type Stream[+F[_], +O] = fs2.Stream[F, O]
   val Stream: fs2.Stream.type = fs2.Stream

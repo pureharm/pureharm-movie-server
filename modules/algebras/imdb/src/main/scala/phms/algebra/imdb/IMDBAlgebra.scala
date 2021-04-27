@@ -16,8 +16,8 @@
 
 package phms.algebra.imdb
 
-import phms.algebra.imdb.impl.IMDBAlgebraImpl
-import phms._
+import phms.algebra.imdb.impl.{IMDBAlgebraImpl, JsoupWrapper}
+import phms.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
@@ -27,9 +27,9 @@ trait IMDBAlgebra[F[_]] {
 }
 
 object IMDBAlgebra {
-  import net.ruippeixotog.scalascraper.browser.JsoupBrowser
-
-  def resource[F[_]](throttler: EffectThrottler[F])(implicit F: Sync[F]): Resource[F, IMDBAlgebra[F]] =
-    new IMDBAlgebraImpl[F](throttler, new JsoupBrowser()).pure[Resource[F, *]]
+  def resource[F[_]](throttler: EffectThrottler[F])(using Sync[F]): Resource[F, IMDBAlgebra[F]] =
+    for {
+      jsoup <- JsoupWrapper.resource[F]
+    } yield new IMDBAlgebraImpl[F](throttler, jsoup)
 
 }

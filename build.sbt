@@ -18,7 +18,7 @@ import sbt._
 import Settings._
 
 addCommandAlias("mkJar", ";clean;update;compile;phms-app-server/stage")
-
+addCommandAlias("rebuild", ";clean;Test/clean;compile;Test/compile;")
 //=============================================================================
 //=============================================================================
 //=============================================================================
@@ -34,7 +34,7 @@ Global / licenses         := List("Apache-2.0" -> url("http://www.apache.org/lic
 //=============================================================================
 
 lazy val root = Project(id = "pureharm-movie-server", file("."))
-  .settings(commonSettings)
+  .settings(common3Settings)
   .aggregate(
     `phms-util-core`,
     `phms-util-testkit`,
@@ -64,7 +64,6 @@ lazy val root = Project(id = "pureharm-movie-server", file("."))
 //=============================================================================
 
 lazy val `phms-app-server` = appProject("server")
-  .settings(commonSettings)
   .enablePlugins(JavaAppPackaging)
   .settings(
     Compile / mainClass             := Option("phms.server.PHMSMain"),
@@ -79,6 +78,7 @@ lazy val `phms-app-server` = appProject("server")
     `phms-util-core`,
     `phms-util-logger`,
     `phms-util-config`,
+    `phms-util-db`,
     `phms-util-db-config`,
     `phms-util-http`,
     `phms-organizer-user`,
@@ -90,7 +90,6 @@ lazy val `phms-app-server` = appProject("server")
   )
 
 lazy val `phms-app-bootstrap` = appProject("bootstrap")
-  .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq()
   )
@@ -204,7 +203,7 @@ lazy val `phms-stack-http-sec` = stackProject("http-sec")
 lazy val `phms-algebra-imdb` = algebraProject("imdb")
   .settings(
     libraryDependencies ++= Seq(
-      Libraries.scalaScrapper
+      Libraries.scalaScrapper.cross(CrossVersion.for3Use2_13)
     )
   )
   .dependsOn(
@@ -305,7 +304,6 @@ lazy val `phms-util-http` = utilProject("http")
     libraryDependencies ++= Seq(
       Libraries.http4sDSL,
       Libraries.http4sServer,
-      Libraries.http4sCirce,
     )
   )
   .dependsOn(
@@ -313,6 +311,15 @@ lazy val `phms-util-http` = utilProject("http")
     `phms-util-json`,
     `phms-util-logger`,
     asTestingLibrary(`phms-util-testkit`),
+  )
+
+lazy val `phms-util-kernel` = utilProject("kernel")
+  .settings(
+    libraryDependencies ++= Seq()
+  )
+  .dependsOn(
+    `phms-util-core`,
+    `phms-util-json`,
   )
 
 lazy val `phms-util-json` = utilProject("json")
@@ -324,7 +331,6 @@ lazy val `phms-util-json` = utilProject("json")
   )
   .dependsOn(
     `phms-util-core`,
-    `phms-util-kernel`,
     `phms-util-time`,
   )
 
@@ -362,14 +368,6 @@ lazy val `phms-util-crypto` = utilProject("crypto")
     asTestingLibrary(`phms-util-testkit`),
   )
 
-lazy val `phms-util-kernel` = utilProject("kernel")
-  .settings(
-    libraryDependencies ++= Seq()
-  )
-  .dependsOn(
-    `phms-util-core`
-  )
-
 lazy val `phms-util-testkit` = utilProject("testkit")
   .settings(
     libraryDependencies ++= Seq(
@@ -380,7 +378,7 @@ lazy val `phms-util-testkit` = utilProject("testkit")
     `phms-util-core`
   )
 
-lazy val `phms-util-core` = utilProject("core")
+lazy val `phms-util-core` = utilProject(name = "core")
   .settings(
     libraryDependencies ++= Seq(
       Libraries.sprout,
@@ -394,14 +392,14 @@ lazy val `phms-util-core` = utilProject("core")
 //=============================================================================
 //=============================================================================
 // format: off
-def utilProject      (name: String): Project = Project(s"phms-util-$name",      file(s"modules/utils/$name"))     .settings(commonSettings)
-def troveProject     (name: String): Project = Project(s"phms-trove-$name",     file(s"modules/troves/$name"))    .settings(commonSettings)
-def portProject      (name: String): Project = Project(s"phms-port-$name",      file(s"modules/ports/$name"))     .settings(commonSettings)
-def algebraProject   (name: String): Project = Project(s"phms-algebra-$name",   file(s"modules/algebras/$name"))  .settings(commonSettings)
-def stackProject     (name: String): Project = Project(s"phms-stack-$name"  ,   file(s"modules/stacks/$name"))    .settings(commonSettings)
-def organizerProject (name: String): Project = Project(s"phms-organizer-$name", file(s"modules/organizers/$name")).settings(commonSettings)
-def apiProject       (name: String): Project = Project(s"phms-api-$name",       file(s"modules/apis/$name"))      .settings(commonSettings)
-def appProject       (name: String): Project = Project(s"phms-app-$name",       file(s"modules/apps/$name"))      .settings(commonSettings)
+def utilProject      (name: String): Project = Project(s"phms-util-$name",      file(s"modules/utils/$name"))     .settings(common3Settings)
+def troveProject     (name: String): Project = Project(s"phms-trove-$name",     file(s"modules/troves/$name"))    .settings(common3Settings)
+def portProject      (name: String): Project = Project(s"phms-port-$name",      file(s"modules/ports/$name"))     .settings(common3Settings)
+def algebraProject   (name: String): Project = Project(s"phms-algebra-$name",   file(s"modules/algebras/$name"))  .settings(common3Settings)
+def stackProject     (name: String): Project = Project(s"phms-stack-$name"  ,   file(s"modules/stacks/$name"))    .settings(common3Settings)
+def organizerProject (name: String): Project = Project(s"phms-organizer-$name", file(s"modules/organizers/$name")).settings(common3Settings)
+def apiProject       (name: String): Project = Project(s"phms-api-$name",       file(s"modules/apis/$name"))      .settings(common3Settings)
+def appProject       (name: String): Project = Project(s"phms-app-$name",       file(s"modules/apps/$name"))      .settings(common3Settings)
 // format: on
 /** See SBT docs:
   * https://www.scala-sbt.org/release/docs/Multi-Project.html#Per-configuration+classpath+dependencies

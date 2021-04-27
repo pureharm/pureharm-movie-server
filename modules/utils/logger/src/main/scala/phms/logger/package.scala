@@ -23,6 +23,7 @@ import org.typelevel.log4cats
   */
 package object logger {
   type Logger[F[_]] = log4cats.SelfAwareStructuredLogger[F]
-  val Logger: log4cats.slf4j.Slf4jLogger.type = log4cats.slf4j.Slf4jLogger
+  val Logger: log4cats.SelfAwareStructuredLogger.type = log4cats.SelfAwareStructuredLogger
 
+  val Slf4jLogger: log4cats.slf4j.Slf4jLogger.type = log4cats.slf4j.Slf4jLogger
 }

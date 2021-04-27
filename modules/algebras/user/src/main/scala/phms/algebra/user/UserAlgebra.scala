@@ -17,29 +17,20 @@
 package phms.algebra.user
 
 import phms.algebra.user.impl.UserAlgebraImpl
-import phms._
-import phms.time._
-import phms.db._
+import phms.*
+import phms.time.*
+import phms.db.*
 import phms.logger.Logging
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018
   */
 trait UserAlgebra[F[_]] {
-
-  def findUser(id: UserID)(implicit auth: AuthCtx): F[Option[User]]
-
+  def findUser(id: UserID)(using auth: AuthCtx): F[Option[User]]
 }
 
 object UserAlgebra {
 
-  def resource[F[_]](implicit
-    dbPool:  DBPool[F],
-    F:       MonadCancelThrow[F],
-    time:    Time[F],
-    r:       Random[F],
-    sr:      SecureRandom[F],
-    logging: Logging[F],
-  ): Resource[F, UserAlgebra[F]] =
+  def resource[F[_]](using MonadCancelThrow[F], DBPool[F], Time[F], Random[F], SecureRandom[F], Logging[F]): Resource[F, UserAlgebra[F]] =
     Resource.pure[F, UserAlgebra[F]](new UserAlgebraImpl())
 }

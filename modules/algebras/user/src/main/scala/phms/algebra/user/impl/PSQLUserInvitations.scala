@@ -16,10 +16,10 @@
 
 package phms.algebra.user.impl
 
-import phms._
-import phms.kernel._
-import phms.db._
-import phms.algebra.user._
+import phms.*
+import phms.kernel.*
+import phms.db.{*, given}
+import phms.algebra.user.*
 
 object PSQLUserInvitations {
 
@@ -29,7 +29,7 @@ object PSQLUserInvitations {
     invitationToken: UserInviteToken,
     expiresAt:       UserInviteExpiration,
   )
-  import phms.db.codecs._
+  import phms.db.codecs.*
 
   /*_*/
   private val email:            Column = const"email"
@@ -51,9 +51,9 @@ object PSQLUserInvitations {
   /*_*/
 }
 
-final case class PSQLUserInvitations[F[_]](private val session: Session[F])(implicit F: MonadCancelThrow[F]) {
-  import PSQLUserInvitations._
-  import phms.db.codecs._
+final case class PSQLUserInvitations[F[_]](private val session: Session[F])(using F: MonadCancelThrow[F]) {
+  import PSQLUserInvitations.*
+  import phms.db.codecs.*
   /*_*/
 
   //TODO: do not void result, and check for completion, and conflict

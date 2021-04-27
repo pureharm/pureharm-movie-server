@@ -17,7 +17,7 @@
 package phms.algebra.user
 
 import phms.Fail
-import phms._
+import phms.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 20 Jun 2018
@@ -33,7 +33,7 @@ object UserRole {
       .get(s)
       .liftTo[F](Fail.invalid(s"UserRole has to be one of $allString, but was: $s"))
 
-  implicit val userRoleOrdering: Ordering[UserRole] =
+  given userRoleOrdering: Ordering[UserRole] =
     (x: UserRole, y: UserRole) => x.compare(y)
 
   private val LT = -1

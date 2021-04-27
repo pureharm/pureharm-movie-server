@@ -16,9 +16,9 @@
 
 package phms.server.bootstrap
 
-import phms._
+import phms.*
 import phms.algebra.user.{UserAccountAlgebra, UserAccountBootstrapAlgebra}
-import phms.kernel._
+import phms.kernel.*
 import phms.logger.Logging
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
@@ -38,7 +38,7 @@ object Bootstrap {
   def bootstrap[F[_]](
     uca:        UserAccountAlgebra[F],
     uba:        UserAccountBootstrapAlgebra[F],
-  )(implicit F: MonadThrow[F], logging: Logging[F]): F[Unit] =
+  )(using F: MonadThrow[F], logging: Logging[F]): F[Unit] =
     for {
 
       usb   <- ServerBootstrapAlgebra.create[F](uca, uba).pure[F]

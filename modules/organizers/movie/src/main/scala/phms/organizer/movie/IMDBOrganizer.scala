@@ -18,11 +18,11 @@ package phms.organizer.movie
 
 import java.time.LocalDate
 
-import phms.algebra.imdb._
-import phms.algebra.movie._
-import phms.algebra.user._
+import phms.algebra.imdb.*
+import phms.algebra.movie.*
+import phms.algebra.user.*
 import phms.Fail
-import phms._
+import phms.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018
@@ -30,13 +30,13 @@ import phms._
 final class IMDBOrganizer[F[_]] private (
   protected val movieAlgebra: MovieAlgebra[F],
   protected val imdbAlgebra:  IMDBAlgebra[F],
-)(implicit F:                 MonadThrow[F]) {
+)(using F:                 MonadThrow[F]) {
 
   //TODO: scraping from IMDB can be improved by scraping two pages, first page you do the
   // search query, and then you get the link to your first search result, and gather
   // all information from there. From there you can gather much more, at the cost
   // of two external requests instead of just one.
-  def scrapeIMDBForTitle(title: TitleQuery)(implicit authCtx: AuthCtx): F[Movie] =
+  def scrapeIMDBForTitle(title: TitleQuery)(using authCtx: AuthCtx): F[Movie] =
     for {
       maybe: Option[IMDBMovie] <- imdbAlgebra.scrapeMovieByTitle(title)
       //TODO: this is a fairly common shape transformation, F[Option[A]] into F[B],
@@ -70,7 +70,7 @@ final class IMDBOrganizer[F[_]] private (
 
 object IMDBOrganizer {
 
-  def resource[F[_]](movieAlgebra: MovieAlgebra[F], imdbAlgebra: IMDBAlgebra[F])(implicit
+  def resource[F[_]](movieAlgebra: MovieAlgebra[F], imdbAlgebra: IMDBAlgebra[F])(using
     F:                             MonadThrow[F]
   ): Resource[F, IMDBOrganizer[F]] =
     Resource.pure[F, IMDBOrganizer[F]](new IMDBOrganizer[F](movieAlgebra, imdbAlgebra))

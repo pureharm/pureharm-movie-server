@@ -16,7 +16,7 @@
 
 package phms.stack.http
 
-import phms._
+import phms.*
 import phms.algebra.user.AuthCtx
 import org.http4s.{AuthedRequest, AuthedRoutes, Response}
 
@@ -25,7 +25,7 @@ import org.http4s.{AuthedRequest, AuthedRoutes, Response}
   */
 object AuthCtxRoutes {
 
-  def apply[F[_]](pf: PartialFunction[AuthedRequest[F, AuthCtx], F[Response[F]]])(implicit
+  def apply[F[_]](pf: PartialFunction[AuthedRequest[F, AuthCtx], F[Response[F]]])(using
     F:                Defer[F],
     FA:               Applicative[F],
   ): AuthedRoutes[AuthCtx, F] = AuthedRoutes.of(pf)

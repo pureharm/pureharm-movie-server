@@ -16,10 +16,10 @@
 
 package phms.algebra.user.impl
 
-import phms._
-import phms.kernel._
-import phms.db._
-import phms.algebra.user._
+import phms.*
+import phms.kernel.*
+import phms.db.{*, given}
+import phms.algebra.user.*
 
 object PSQLUsers {
 
@@ -30,7 +30,7 @@ object PSQLUsers {
     bcryptPW:     UserCrypto.BcryptPW,
     pwResetToken: Option[PasswordResetToken],
   )
-  import phms.db.codecs._
+  import phms.db.codecs.*
 
   /*_*/
   private val id:                   Column = const"id"
@@ -53,9 +53,9 @@ object PSQLUsers {
   /*_*/
 }
 
-final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: MonadCancelThrow[F]) {
-  import PSQLUsers._
-  import phms.db.codecs._
+final case class PSQLUsers[F[_]](private val session: Session[F])(using F: MonadCancelThrow[F]) {
+  import PSQLUsers.*
+  import phms.db.codecs.*
 
   /*_*/
   def insert(toInsert: UserRepr): F[Unit] = session

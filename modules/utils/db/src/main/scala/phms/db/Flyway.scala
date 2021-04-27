@@ -16,14 +16,14 @@
 
 package phms.db
 
-import phms.logger._
-import phms._
-import phms.db.config._
+import phms.logger.*
+import phms.*
+import phms.db.config.*
 
 trait Flyway[F[_]] {
-  def runMigrations(implicit logger: Logger[F]): F[Int]
+  def runMigrations(using logger: Logger[F]): F[Int]
 
-  def cleanDB(implicit logger: Logger[F]): F[Unit]
+  def cleanDB(using logger: Logger[F]): F[Unit]
 }
 
 object Flyway {
@@ -39,12 +39,12 @@ object Flyway {
     private[Flyway] val config:           FlywayConfig,
   ) extends Flyway[F] {
 
-    override def runMigrations(implicit logger: Logger[F]): F[Int] =
+    override def runMigrations(using logger: Logger[F]): F[Int] =
       Flyway
         .migrate[F](dbConfig = connectionConfig, flywayConfig = config)
         .flatTap(migs => logger.info(s"Successfully applied: $migs flyway migrations"))
 
-    override def cleanDB(implicit logger: Logger[F]): F[Unit] =
+    override def cleanDB(using logger: Logger[F]): F[Unit] =
       for {
         _ <- logger.warn(s"CLEANING DB: ${connectionConfig.jdbcURL} — better make sure this isn't on prod, lol")
         _ <- Flyway.clean[F](dbConfig = connectionConfig)
@@ -52,12 +52,12 @@ object Flyway {
   }
 
   private object Flyway {
-    import org.flywaydb.core.{Flyway => JFlyway}
+    import org.flywaydb.core.{Flyway as JFlyway}
 
     def migrate[F[_]](
       dbConfig:     DBConnectionConfig,
       flywayConfig: FlywayConfig,
-    )(implicit F:   Sync[F]): F[Int] =
+    )(using F:   Sync[F]): F[Int] =
       for {
         fw   <- flywayInit[F](dbConfig.jdbcURL, dbConfig.username, dbConfig.password, Option(flywayConfig))
         migs <- F.delay(fw.migrate())
@@ -65,14 +65,14 @@ object Flyway {
 
     def clean[F[_]](
       dbConfig:   DBConnectionConfig
-    )(implicit F: Sync[F]): F[Unit] =
+    )(using F: Sync[F]): F[Unit] =
       this.clean[F](url = dbConfig.jdbcURL, username = dbConfig.username, password = dbConfig.password)
 
     def clean[F[_]](
       url:        JDBCUrl,
       username:   DBUsername,
       password:   DBPassword,
-    )(implicit F: Sync[F]): F[Unit] =
+    )(using F: Sync[F]): F[Unit] =
       for {
         fw <- flywayInit[F](url, username, password, Option.empty)
         _  <- F.delay(fw.clean())
@@ -83,7 +83,7 @@ object Flyway {
       username:   DBUsername,
       password:   DBPassword,
       config:     Option[FlywayConfig],
-    )(implicit F: Sync[F]): F[JFlyway] =
+    )(using F: Sync[F]): F[JFlyway] =
       F.delay {
         val fwConfig = JFlyway.configure()
         fwConfig.dataSource(url, username, password)
@@ -92,10 +92,10 @@ object Flyway {
           case None    => () //default everything. Do nothing, lol, java
           case Some(c) =>
             if (c.migrationLocations.nonEmpty) {
-              fwConfig.locations(c.migrationLocations.map(MigrationLocation.oldType): _*)
+              fwConfig.locations(c.migrationLocations.map(MigrationLocation.oldType) *)
             }
             if (c.schemas.nonEmpty) {
-              fwConfig.schemas(c.schemas: _*)
+              fwConfig.schemas(c.schemas *)
             }
             fwConfig.ignoreMissingMigrations(c.ignoreMissingMigrations)
             fwConfig.cleanOnValidationError(c.cleanOnValidationError)

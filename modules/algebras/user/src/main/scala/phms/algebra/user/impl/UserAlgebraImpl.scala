@@ -16,24 +16,24 @@
 
 package phms.algebra.user.impl
 
-import phms._
-import phms.time._
-import phms.db._
-import phms.kernel._
-import phms.algebra.user._
-import phms.logger._
+import phms.*
+import phms.time.*
+import phms.db.*
+import phms.kernel.*
+import phms.algebra.user.*
+import phms.logger.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 21 Jun 2018
   */
-final private[user] class UserAlgebraImpl[F[_]](implicit
+final private[user] class UserAlgebraImpl[F[_]](using
   F:            MonadCancelThrow[F],
   random:       Random[F],
   secureRandom: SecureRandom[F],
   time:         Time[F],
   dbPool:       DBPool[F],
   logging:      Logging[F],
-) extends UserAuthAlgebra[F]()(F) with UserAccountAlgebra[F] with UserAlgebra[F] {
+) extends UserAuthAlgebra[F]()(using F) with UserAccountAlgebra[F] with UserAlgebra[F] {
 
   private val logger: Logger[F] = logging.named("user_algebra")
 
@@ -189,7 +189,7 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
       _    <- Fail.nicata(s"Reset password step 2: new hash: $hash").raiseError[F, Unit]
     } yield ()
 
-  override def findUser(id: UserID)(implicit auth: AuthCtx): F[Option[User]] =
+  override def findUser(id: UserID)(using auth: AuthCtx): F[Option[User]] =
     //TODO: implement security policy for user retrieval
     dbPool.use(session => PSQLUsers(session).findByID(id).map(_.map(fromRepr)))
 

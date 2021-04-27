@@ -16,8 +16,8 @@
 
 package phms.organizer.user
 
-import phms.kernel._
-import phms.algebra.user._
+import phms.kernel.*
+import phms.algebra.user.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018

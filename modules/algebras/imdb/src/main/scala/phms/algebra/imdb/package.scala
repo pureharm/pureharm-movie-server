@@ -18,7 +18,7 @@ package phms.algebra
 
 import java.time.Year
 
-import phms._
+import phms.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 25 Jun 2018

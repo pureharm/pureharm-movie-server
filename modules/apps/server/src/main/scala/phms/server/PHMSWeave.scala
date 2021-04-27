@@ -16,25 +16,26 @@
 
 package phms.server
 
-import fs2.io.net.Network
-import phms.stack.http._
-import phms.algebra.imdb._
+import phms.http.*
+import phms.config.*
+import phms.time.*
+import phms.db.*
+import phms.port.email.*
+import phms.logger.*
+import phms.stack.http.{*, given}
+import phms.algebra.imdb.*
 import phms.algebra.movie.MovieAlgebra
-import phms.algebra.user._
-import phms.config._
-import phms.time._
-import phms.db._
-import phms.port.email._
-import phms.logger._
-import phms._
-import phms.api.movie.MovieAPI
-import phms.api.user.UserAPI
-import phms.server.config._
-import phms.organizer.movie.IMDBOrganizer
-import phms.organizer.user.UserAccountOrganizer
-import org.http4s.server._
-import org.http4s._
-import phms.http.PHMSHttp4sErrorHandler
+import phms.algebra.user.*
+import phms.organizer.movie.*
+import phms.organizer.user.*
+import phms.api.movie.*
+import phms.api.user.*
+import phms.server.config.*
+import phms.*
+
+import org.http4s.server.*
+import org.http4s.*
+import fs2.io.net.Network
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jul 2018
@@ -48,7 +49,7 @@ final class PHMSWeave[F[_]] private (
   userBootstrapAlgebra: UserAccountBootstrapAlgebra[F],
   userAccountAlgebra:   UserAccountAlgebra[F],
   errorHandler:         PHMSHttp4sErrorHandler[F],
-)(implicit F:           Async[F], logging: Logging[F]) {
+)(using F:           Async[F], logging: Logging[F]) {
 
   def serverResource: Resource[F, Server] = {
     import org.http4s.ember.server.EmberServerBuilder
@@ -90,35 +91,24 @@ final class PHMSWeave[F[_]] private (
 
 object PHMSWeave {
 
-  @scala.annotation.nowarn
-  def resource[F[_]](implicit
-    timer: Temporal[F],
-    async: Async[F],
-  ): Resource[F, PHMSWeave[F]] =
+  def resource[F[_]](using Temporal[F], Async[F]): Resource[F, PHMSWeave[F]] = {
     for {
-      implicit0(console: Console[F]) <- Console.make[F].pure[Resource[F, *]]
-      implicit0(config: Config[F]) <- Config.resource[F]
-      implicit0(logging: Logging[F]) <- Logging.resource[F]
-      implicit0(random: Random[F]) <- Random.resource[F]
-      implicit0(time: Time[F]) <- Time.resource[F]
-      implicit0(network: Network[F]) <- Resource.pure(Network.forAsync[F])
-      implicit0(secureRandom: SecureRandom[F]) <- SecureRandom.resource[F]
-      implicit0(supervisor: Supervisor[F]) <- Supervisor[F]
+      given Console[F]      <- Console.make[F].pure[Resource[F, *]]
+      given Time[F]         <- Time.resource[F]
+      given Config[F]       <- Config.resource[F]
+      given Logging[F]      <- Logging.resource[F]
+      given Random[F]       <- Random.resource[F]
+      given SecureRandom[F] <- SecureRandom.resource[F]
+      given Supervisor[F]   <- Supervisor[F]
+      given Logger[F]       = Logging[F].named("phms.weave")
+      config                <- PHMSServerConfig.resource[F]
+      given DBPool[F]       <- DBPool.resource[F](config.dbConfig.connection)
 
-      implicit0(logger: Logger[F]) = logging.of(this)
-
-      config <- PHMSServerConfig.resource[F]
-
-      _         <- Flyway
+      _ <- Flyway
         .resource[F](config.dbConfig.connection, config.dbConfig.flyway)
-        .evalMap(flyway => flyway.runMigrations(logger))
+        .evalMap(flyway => flyway.runMigrations(using Logger[F]))
 
-      implicit0(dbPool: DBPool[F]) <- DBPool.resource[F](config.dbConfig.connection)
-
-      throttler <- EffectThrottler.resource[F](
-        config.imdbConfig.requestsInterval,
-        config.imdbConfig.requestsNumber,
-      )
+      throttler <- EffectThrottler.resource[F](config.imdbConfig.requestsInterval, config.imdbConfig.requestsNumber)
 
       emailPort <- EmailPort.resource[F](config.emailConfig)
 
@@ -147,5 +137,6 @@ object PHMSWeave {
       userAccountAlgebra   = accountAlgebra,
       errorHandler         = errorHandler,
     )
+  }
 
 }

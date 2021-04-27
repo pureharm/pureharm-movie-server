@@ -18,8 +18,8 @@ package phms.stack
 
 import org.http4s.AuthedRoutes
 import org.http4s.server.AuthMiddleware
-import phms.algebra.user._
-import phms.http._
+import phms.algebra.user.*
+import phms.http.*
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 26 Jun 2018

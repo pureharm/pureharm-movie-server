@@ -16,12 +16,12 @@
 
 package phms.algebra.movie.impl
 
-import phms._
-import phms.db._
-import phms.algebra.movie._
+import phms.*
+import phms.db.*
+import phms.algebra.movie.*
 
-final case class PSQLMovies[F[_]](session: Session[F])(implicit F: MonadCancelThrow[F]) {
-  import PSQLMovies._
+final case class PSQLMovies[F[_]](session: Session[F])(using F: MonadCancelThrow[F]) {
+  import PSQLMovies.*
 
   /*_*/
   def insert(m: Movie): F[Unit] =
@@ -67,7 +67,7 @@ final case class PSQLMovies[F[_]](session: Session[F])(implicit F: MonadCancelTh
 }
 
 object PSQLMovies {
-  import phms.db.codecs._
+  import phms.db.codecs.*
   /*_*/
   private val id:           Column = const"id"
   private val title:        Column = const"title"

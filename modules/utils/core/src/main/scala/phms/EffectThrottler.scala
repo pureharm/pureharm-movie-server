@@ -18,7 +18,7 @@ package phms
 
 import cats.effect.std.Semaphore
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 /** Used to control the rate at which Fs are computed by fixing the amount of Fs
   * to be executed in the given time interval.
@@ -27,9 +27,9 @@ import scala.concurrent.duration._
   * @param semaphore bounded by the number of Fs allowed to be executed in the configured `interval`
   */
 final class EffectThrottler[F[_]](
-  private val interval:        FiniteDuration,
-  private[this] val semaphore: Semaphore[F],
-)(implicit val F:              Temporal[F]) {
+  private val interval:  FiniteDuration,
+  private val semaphore: Semaphore[F],
+)(using F:        Temporal[F]) {
 
   /** Returns an F that will be "slowed" time to the configured rate
     * of execution.
@@ -55,7 +55,7 @@ object EffectThrottler {
   def resource[F[_]](
     interval:   FiniteDuration,
     amount:     Long,
-  )(implicit F: Temporal[F]): Resource[F, EffectThrottler[F]] =
+  )(using Temporal[F]): Resource[F, EffectThrottler[F]] =
     Resource.eval {
       for {
         sem <- Semaphore(amount)

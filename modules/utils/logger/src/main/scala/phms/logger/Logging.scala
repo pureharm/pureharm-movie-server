@@ -16,7 +16,7 @@
 
 package phms.logger
 
-import phms._
+import phms.*
 
 trait Logging[F[_]] {
   def of(a:    AnyRef): Logger[F]
@@ -25,9 +25,11 @@ trait Logging[F[_]] {
 
 object Logging {
 
+  def apply[F[_]](using l: Logging[F]): Logging[F] = l
+
   def resource[F[_]: Sync]: Resource[F, Logging[F]] =
     new Logging[F] {
-      override def of(a:    AnyRef): Logger[F] = Logger.getLoggerFromName(a.getClass.getSimpleName.stripSuffix("$"))
-      override def named(s: String): Logger[F] = Logger.getLoggerFromName(s)
+      override def of(a:    AnyRef): Logger[F] = Slf4jLogger.getLoggerFromName(a.getClass.getSimpleName.stripSuffix("$"))
+      override def named(s: String): Logger[F] = Slf4jLogger.getLoggerFromName(s)
     }.pure[Resource[F, *]]
 }
