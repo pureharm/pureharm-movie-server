@@ -58,14 +58,16 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
   import phms.db.codecs._
 
   /*_*/
-  def insert(toInsert: UserRepr): F[Unit] = session
-    .prepare(
-      sql"""
+  def insert(toInsert: UserRepr): F[Unit] = {
+    val preparedCommand: Resource[F, PreparedCommand[F, UserRepr]] = session
+      .prepare(
+        sql"""
           INSERT INTO $users_table ($users_repr_row)
           VALUES ${user_repr.values}
          """.command: Command[UserRepr]
-    )
-    .use(pc => pc.execute(toInsert).void)
+      )
+    preparedCommand.use((pc: PreparedCommand[F, UserRepr]) => pc.execute(toInsert).void)
+  }
 
   def updateRole(target: UserID, newRole: UserRole): F[Unit] = session
     .prepare(
@@ -99,23 +101,12 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
       )
       .use(_.option(target))
 
-  def findByPWReset(target: PasswordResetToken): F[Option[UserRepr]] =
-    session
-      .prepare(
-        sql"""
-           SELECT $users_repr_row
-           FROM $users_table
-           WHERE $password_reset_token = $varchar96_password_reset_token
-         """.query(user_repr): Query[PasswordResetToken, UserRepr]
-      )
-      .use(_.option(target))
-
   def setPasswordReset(target: Email, token: PasswordResetToken): F[Unit] =
     session
       .prepare(
         sql"""
          UPDATE $users_table
-         SET $password_reset_token=$varchar96_password_reset_token
+         SET $password_reset_token = $varchar96_password_reset_token
          WHERE $email=$varchar128_email
        """.command: Command[PasswordResetToken ~ Email]
       )
@@ -124,8 +115,12 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
   /** We only reset the password of a user if the
     * given reset token matches. And we set the
     * reset token to NULL
+    *
+    * @return
+    * true if the password was reset, i.e. the token exists
+    * false if the token was invalid
     */
-  def resetPassword(target: PasswordResetToken, newPW: UserCrypto.BcryptPW): F[Unit] =
+  def resetPassword(target: PasswordResetToken, newPW: UserCrypto.BcryptPW): F[Boolean] =
     session
       .prepare(
         sql"""
@@ -135,6 +130,10 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
          WHERE $password_reset_token=$varchar96_password_reset_token
        """.command: Command[Option[PasswordResetToken] ~ UserCrypto.BcryptPW ~ PasswordResetToken]
       )
-      .use(_.execute(Option.empty[PasswordResetToken] ~ newPW ~ target).void)
+      .use(pc => pc.execute(Option.empty[PasswordResetToken] ~ newPW ~ target))
+      .flatMap {
+        case skunk.data.Completion.Update(count) => (count == 1).pure[F]
+        case _                                   => Fail.iscata("update failed completely", "resetPassword").raiseError[F, Boolean]
+      }
   /*_*/
 }

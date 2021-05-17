@@ -51,9 +51,7 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
     for {
       _             <- logger.info("attempting email + pw authentication")
       userRepr      <- dbPool.use(session => PSQLUsers(session).findByEmail(email).flatMap(_.liftTo[F](invalidEmailOrPW)))
-      _             <- logger.info("user exists")
       validPassword <- UserCrypto.checkUserPassword[F](pw, userRepr.bcryptPW)
-      _             <- logger.info(s"is password valid=$validPassword")
       tuple         <-
         if (validPassword) {
           for {
@@ -177,7 +175,7 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
   override def resetPasswordStep1(email: Email): F[PasswordResetToken] =
     for {
       token <- UserCrypto.generateToken[F, PasswordResetToken]
-      _     <- Fail.nicata(s"Reset password step 1. Generated the token: $token").raiseError[F, PasswordResetToken]
+      _     <- dbPool.use(session => PSQLUsers(session).setPasswordReset(email, token))
     } yield token
 
   override def undoPasswordResetStep1(email: Email): F[Unit] =
@@ -186,7 +184,13 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
   override def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit] =
     for {
       hash <- UserCrypto.hashPWWithBcrypt[F](newPassword)
-      _    <- Fail.nicata(s"Reset password step 2: new hash: $hash").raiseError[F, Unit]
+      _    <- dbPool.use { session =>
+        for {
+          wasValid <- PSQLUsers(session).resetPassword(token, hash)
+          _        <-
+            if (wasValid) F.unit else Fail.notFound(msg = "Invalid password reset token").raiseError[F, Unit]
+        } yield ()
+      }
     } yield ()
 
   override def findUser(id: UserID)(implicit auth: AuthCtx): F[Option[User]] =
