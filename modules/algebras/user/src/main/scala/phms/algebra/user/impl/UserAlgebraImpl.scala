@@ -193,6 +193,28 @@ final private[user] class UserAlgebraImpl[F[_]](implicit
       }
     } yield ()
 
+  override def deleteUser(userID: UserID)(implicit auth: AuthCtx): F[Unit] = {
+    val ownRole = auth.user.role
+    val validateOwnRole: F[Unit] =
+      if (ownRole == UserRole.SuperAdmin || ownRole == UserRole.Curator)
+        if (userID == auth.user.id)
+          Fail.denied("Cannot delete self").raiseError[F, Unit]
+        else F.unit
+      else Fail.denied("Cannot delete users unless you're a SuperAdmin or Curator").raiseError[F, Unit]
+
+    validateOwnRole *> dbPool.use { session: Session[F] =>
+      for {
+        toDelete <- PSQLUsers(session)
+          .findByID(userID)
+          .flatMap(_.liftTo[F](Fail.notFound(s"User w/ id: $userID does not exist")))
+        _        <-
+          if (ownRole > toDelete.role)
+            PSQLUsers(session).deleteUser(toDelete.id)
+          else Fail.denied("Cannot delete a user w/ same role as you.").raiseError[F, Unit]
+      } yield ()
+    }
+  }
+
   override def findUser(id: UserID)(implicit auth: AuthCtx): F[Option[User]] =
     //TODO: implement security policy for user retrieval
     dbPool.use(session => PSQLUsers(session).findByID(id).map(_.map(fromRepr)))
