@@ -52,6 +52,12 @@ final class UserAccountRoutes[F[_]](
       } yield resp
   }
 
+  private val deleteUserRoute: AuthCtxRoutes[F] = AuthCtxRoutes[F] {
+    case (DELETE -> Root / "user" / "delete" / UUIDVar(userID)) as user =>
+      val userToDelete: UserID = UserID(userID)
+      userOrganizer.deleteUser(userToDelete)(user).flatMap(_ => NoContent())
+  }
+
   private val userPasswordResetRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ POST -> Root / "user" / "password_reset" / "request" =>
       for {
@@ -77,6 +83,11 @@ final class UserAccountRoutes[F[_]](
       .reduceK
 
   val authedRoutes: AuthCtxRoutes[F] =
-    userInvitationStep1Routes
+    NonEmptyList
+      .of[AuthCtxRoutes[F]](
+        userInvitationStep1Routes,
+        deleteUserRoute,
+      )
+      .reduceK
 
 }

@@ -51,6 +51,8 @@ trait UserAccountAlgebra[F[_]] {
   def undoPasswordResetStep1(email: Email): F[Unit]
 
   def resetPasswordStep2(token: PasswordResetToken, newPassword: PlainTextPassword): F[Unit]
+
+  def deleteUser(userID: UserID)(implicit auth: AuthCtx): F[Unit]
 }
 
 object UserAccountAlgebra {

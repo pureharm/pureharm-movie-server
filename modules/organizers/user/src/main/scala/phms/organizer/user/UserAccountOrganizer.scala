@@ -69,6 +69,8 @@ final class UserAccountOrganizer[F[_]] private (
   def resetPasswordStep2(pwr: PasswordResetCompletion): F[Unit] =
     userAccount.resetPasswordStep2(pwr.token, pwr.newPws)
 
+  def deleteUser(userToDelete: UserID)(implicit authCtx: AuthCtx): F[Unit] =
+    userAccount.deleteUser(userToDelete)
 }
 
 object UserAccountOrganizer {

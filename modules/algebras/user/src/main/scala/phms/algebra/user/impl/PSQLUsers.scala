@@ -54,6 +54,7 @@ object PSQLUsers {
 }
 
 final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: MonadCancelThrow[F]) {
+
   import PSQLUsers._
   import phms.db.codecs._
 
@@ -135,5 +136,11 @@ final case class PSQLUsers[F[_]](private val session: Session[F])(implicit F: Mo
         case skunk.data.Completion.Update(count) => (count == 1).pure[F]
         case _                                   => Fail.iscata("update failed completely", "resetPassword").raiseError[F, Boolean]
       }
+
+  def deleteUser(toDelete: UserID): F[Unit] = session
+    .prepare(
+      sql"""DELETE FROM $users_table WHERE $id = $uuid_user_id""".command: Command[UserID]
+    )
+    .use(pc => pc.execute(toDelete).void)
   /*_*/
 }
